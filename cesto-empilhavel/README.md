@@ -1,14 +1,21 @@
 # Cesto Mini Organizador Empilhável e Encaixável — peça única em PP
 
 **Status:** 3D fechado, pronto para cotação de ferramental · **Data:** 16/09/2026
-**Referência:** anúncio "10 peças Cesto Mini Organizador Empilhável Caixinha Multiuso"
+**Referência:** STL enviado em 16/09 (bin de 150 × 100 × 80 mm, 192 faces) + anúncio
+"10 peças Cesto Mini Organizador Empilhável" (MLBU4092388469) + fotos cotadas
 (Mercado Livre MLBU4092388469) + fotos cotadas enviadas em 16/09/2026
 **Modelo:** `cad/modelo3d.py` · **Economia:** `economia.py` · **Arquivos:** `cad/cesto.step`
 
-**Réplica da referência, com uma única alteração: os cortes verticais viraram furos redondos.**
-Cotas, rebaixo frontal curvo, ripado vertical na frente, abas laterais, pés e conicidade seguem
-a referência. Peça única injetada — sem dobradiça, sem painel, sem montagem. O gradiente dos
-furos (Ø maior em cima, diminuindo para baixo) e o fundo sólido são o pedido de 16/09.
+**Forma adaptada do STL de referência, com o vazado em furos redondos.** A silhueta lateral foi
+**medida no próprio sólido** do STL, não interpretada de foto: é uma caixa com **dois chanfros a
+45°** na frente — um no topo e um no pé — deixando uma face frontal curta centrada na meia-altura.
+Escalada para a nossa altura, e com os raios da lateral trabalhados conforme pedido. Peça única
+injetada: sem dobradiça, sem painel, sem montagem.
+
+> **Correção de rumo.** As versões anteriores deste arquivo descreviam uma *sela* no topo da
+> lateral e depois uma *aba em gancho* avançando à frente. As duas eram minha leitura das fotos e
+> as duas estavam erradas — o STL mostrou que a forma é bem mais simples. O histórico está nos
+> commits; o que vale é o que está abaixo.
 
 > **Substitui o estudo da caixa dobrável** em [`../cesto-dobravel/`](../cesto-dobravel/), que
 > partiu de um vídeo de referência com o produto errado. Daquele estudo seguem valendo e foram
@@ -22,14 +29,14 @@ furos (Ø maior em cima, diminuindo para baixo) e o fundo sólido são o pedido 
 | Requisito | Situação |
 |---|---|
 | Peça única empilhável e encaixável | **Viável** — é a arquitetura mais simples possível: 1 peça, 1 molde, zero montagem |
-| Cotas 21,5 × 20 × 13 cm | **Atendidas** — boca 215 × 200 mm, altura 130 mm |
-| Furos redondos em gradiente | **Resolvido** — 5 bandas, Ø 14 → 6 mm, 87 furos, faixa cega de 48 mm no pé |
+| Forma da referência | **Medida no STL, não interpretada** — chanfros de 52 mm a 45° e face frontal de 26 mm (seção 2.2) |
+| Furos redondos em gradiente | **Resolvido** — 4 bandas, Ø 15 → 6 mm, passo 21 mm, 68 furos, faixa cega de 40 mm |
 | Fundo sólido | **Atendido** — chapa de 2,0 mm sem furo |
-| Empilhar com acesso frontal | **Resolvido** — 4 pés de canto assentam nos 2 pilares da frente e nos 2 cantos de trás; frente a 40 mm |
-| Encaixar para reduzir volume | **Geometria confirmada** — corpo 9,5 mm menor que a boca; **passo do encaixe a medir na amostra** (seção 4.2) |
+| Empilhar com acesso frontal | **Resolvido** — 4 pés de canto assentam no trilho do rim; chanfro de topo de 52 mm dá o acesso |
+| Encaixar para reduzir volume | **Geometria confirmada** — saída de 3,5°/lado; **passo do encaixe a medir na amostra** (seção 4.2) |
 | Injeção no parque atual | **1 cavidade numa 200 t (76%)** — a casa tem **12 máquinas** dessa classe |
 | Ferramental | **USD 19,5 mil FOB**, 1 molde — por analogia direta com dois moldes da casa |
-| Payback | **~4,8 meses** a 150 mil un/ano |
+| Payback | **~4,9 meses** a 150 mil un/ano, com o molde estimado por cima |
 | Preço do anúncio de referência | **Não obtido** — o proxy desta sessão bloqueia o Mercado Livre (seção 6) |
 
 O produto é uma **commodity de volume**: contribuição de ~R$ 2,20 por peça, então a conta fecha
@@ -45,67 +52,74 @@ que custaria a família dobrável) e **o risco é o volume de venda**.
 |---|---|
 | Boca (rim) | **215 × 200 mm** |
 | Base | 199,1 × 184,1 mm |
-| Altura | **130 mm** · frente rebaixada a **40 mm** |
-| Envelope real | 221,5 × 200 × 136,5 mm (os pilares projetam 3,3 mm por lado) |
+| Altura | **130 mm** |
+| Envelope real | **215 × 197 × 130 mm** |
+| Chanfros da frente | **52 mm a 45°**, no topo e no pé |
+| Face frontal | **26 mm**, centrada na meia-altura |
+| Raios trabalhados | **R20** nas duas pontas dos chanfros · **R12** nas duas quinas da face frontal |
 | Saída de molde | **3,5° por lado** — é ela que permite o encaixe |
 | Parede / fundo / rim | 1,4 / 2,0 / 3,2 mm |
-| Raio de canto em planta | R14 |
-| Capacidade | **4,91 L** nominal · **3,70 L** até a borda frontal |
-| Peso | **230,4 g** (254,6 cm³ de PP) |
+| Capacidade | **4,50 L** |
+| Peso | **155,4 g** (171,7 cm³ de PP) |
 | Área projetada | 430 cm² |
 
-### 2.2 O perfil em sela e os pilares de canto
+### 2.2 A silhueta, medida no STL de referência
 
-A aresta superior da lateral é uma **sela**, não uma descida única: sai da **altura cheia no pilar
-de canto da frente** (y = −100 a −80 mm), desce num cosseno até o ponto baixo em **z 72 mm**
-(y = −55), e volta a subir numa curva longa até os **130 mm da parede do fundo**.
+O STL tem 150 × 100 × 80 mm. Extraindo os vértices do plano lateral:
 
-Isso cria **quatro topos na altura cheia**: os dois pilares da frente e os dois cantos de trás.
-São os quatro apoios em que a peça de cima assenta — e é o que o produto chama de acoplar. Sem os
-pilares, a frente da peça de cima não teria em que apoiar, porque a parede frontal tem só 40 mm.
+| Ponto | y | z |
+|---|---|---|
+| fundo, atrás | −80 | 0 |
+| costas, no alto | −80 | 80 |
+| fim do topo | +38 | 80 |
+| topo da face frontal | +70 | 48 |
+| pé da face frontal | +70 | 32 |
+| fim do chanfro do pé | +38 | 0 |
 
-O ponto baixo da sela é, ao mesmo tempo, a **pega lateral** e o vão por onde a peça entra
-inclinada para encaixar.
+Ou seja: o topo corre **78,7% da profundidade**, os chanfros têm **32 mm a 45° exatos**, e a face
+frontal tem **16 mm centrada na meia-altura** — 40% / 20% / 40% da altura. Escalado para a nossa
+altura de 130 mm: **52 / 26 / 52**, que fecham exatos.
 
-### 2.1 Peso — é o ponto a atacar no try-out
+No modelo isso é **um perfil 2D único** usado como interseção (`silhueta()` em `cad/modelo3d.py`),
+então a forma tem um só lugar para mexer — e é nele que os fillets R20/R12 entram.
 
-230,4 g para 4,91 L, contra o **Cesto Organizador Vime 7 L (047) da casa, que faz 7 L com 213 g**.
-A nossa peça é mais alta em relação ao volume e carrega rebordo de empilhamento, rim reforçado e
-os pilares de canto, mas ainda assim há gordura: **cada 10 g economizados valem
-R$ 0,15/peça**, ou R$ 22 mil/ano a 150 mil peças. Alvo para o try-out: **210 g**. Caminhos:
-parede de 1,2 mm na banda superior (onde não há carga), rim de 2,8 mm, nervurar os pés de canto por dentro,
-e aliviar os pilares com alma em H em vez de seção cheia.
+### 2.1 Peso
+
+155,4 g para 4,50 L, contra o **Cesto Organizador Vime 7 L (047) da casa, que faz 7 L com 213 g**.
+A **32,9 g/L**, a peça fica na mesma eficiência do 047 (30,4 g/L) — sinal de que a parede de
+1,4 mm está coerente com a prática da casa. O peso caiu de 230 para 155 g ao trocar a forma: os
+chanfros tiram material e a aba em gancho da versão anterior saiu inteira.
+
+Não vejo mais gordura óbvia para cortar. Se o try-out pedir, o caminho é parede de 1,2 mm na
+banda superior, onde não há carga de empilhamento.
 
 ---
 
 ## 3. O vazado
 
-Furos **redondos** em 5 bandas horizontais de cota Z fixa, com o diâmetro caindo de cima para
-baixo — é a única alteração em relação à referência.
+Furos **redondos** em 4 bandas horizontais de cota Z fixa, com o diâmetro caindo de cima para
+baixo — é a alteração pedida em relação ao vazado de cortes verticais da referência.
 
 | Banda | Cota | Ø |
 |---|---|---|
-| 1 (topo) | z 111 mm | **14,0 mm** |
-| 2 | z 96 mm | 12,0 mm |
-| 3 | z 81 mm | 10,0 mm |
-| 4 | z 66 mm | 8,0 mm |
-| 5 | z 51 mm | **6,0 mm** |
-| faixa cega | z 0 a 48 mm | — |
-| parede frontal | z 20 mm | 9,0 mm (uma fila) |
+| 1 (topo) | z 111 mm | **15,0 mm** |
+| 2 | z 90 mm | 12,0 mm |
+| 3 | z 69 mm | 9,0 mm |
+| 4 | z 48 mm | **6,0 mm** |
+| faixa cega | z 0 a 40 mm | — |
 
-Passo do retículado: 15 mm. Total: **87 furos**. Nenhum furo entra no raio de canto (R14), para
-não criar parede fina na quina.
+Passo do retículado: **21 mm**, o que dá 6 mm de web na fileira de cima e 15 mm na de baixo.
+Total: **68 furos**. Fundo **sólido**.
 
-As quatro bandas ocupam **a mesma faixa que os cortes verticais ocupam na referência** — a metade
-de cima da parede — e a metade de baixo fica sólida. Nas laterais as bandas são recortadas pela
-curva do rebaixo, então o campo de furos acompanha o rebaixo, como os cortes fazem na foto.
+Duas coisas que o modelo aprendeu na marra e ficaram como regra:
 
-**Por que a faixa do pé é cega:** é onde a carga de empilhamento desce até o rebordo e onde a
-peça apoia. Furo ali seria concentrador de tensão no caminho da carga.
+1. **Passo ≥ Ø do topo + 6 mm.** A 15 mm de passo com Ø14, os furos da fileira de cima se fundiam
+   numa fileira contínua — 1 mm de web não é furo nem parede.
+2. **Colunas calculadas uma vez**, com a margem do maior diâmetro, e usadas por todas as fileiras.
+   Calculando por fileira, a de Ø15 saía com 5 colunas e a de Ø6 com 7, e o retículado desalinhava.
 
-**Por que o gradiente ajuda:** a parede sofre mais embaixo (a coluna de peso das peças empilhadas
-mais o conteúdo) e menos em cima. Diâmetro caindo para baixo põe material onde a tensão está. O
-pedido estético e o cálculo apontam para o mesmo lado.
+Nas laterais as bandas são recortadas pela silhueta, com 9 mm de folga — então o campo de furos
+acompanha o chanfro do topo.
 
 ### 3.1 O que isso custa no molde
 
@@ -126,32 +140,24 @@ Duas consequências para a cotação:
 
 ## 4. Empilhar e encaixar — os dois modos
 
-### 4.1 Empilhado — quatro apoios de canto
+### 4.1 Empilhado
 
-A peça é tronco-piramidal, então o corpo é menor que a boca e afundaria. O que segura são os
-**quatro pés de canto**: bordos de 32 × 32 mm que alcançam a medida da boca e assentam nos quatro
-topos cheios da peça de baixo — os **dois pilares da frente** e os **dois cantos de trás**.
-Nivelada, a peça empilha com **passo de 130 mm**, e a parede frontal de 40 mm mais a sela dão
-acesso ao conteúdo sem desempilhar.
+Os **quatro pés de canto** (32 × 32 mm, ocos, 6 mm de altura) alcançam a medida da boca e assentam
+no **trilho do rim** da peça de baixo — a faixa engrossada de 3,2 mm que corre no alto da parede.
+Passo empilhado: **130 mm**. O chanfro de topo de 52 mm dá o acesso frontal sem desempilhar.
 
-Não há rebordo contínuo na base: só os quatro bordos de canto, como na referência.
+Os pés dianteiros ficam a 16 mm do fim do chanfro do pé, que é onde o fundo da peça realmente
+começa (o chanfro corta o fundo de 200 para 148 mm de profundidade).
 
 ### 4.2 Encaixado
 
-O corpo tem **9,5 mm de folga em X e 7,9 mm em Y** dentro da boca, e a saída de 3,5° faz a peça
-afundar **78 mm** antes de as paredes travarem. O que impede o encaixe na vertical são os pés de
-canto, que ficariam sobre os pilares; por isso o encaixe é **deslocado ou inclinado**, com os pés
-passando ao lado dos pilares — e a peça entra pelo vão de 90 mm da frente rebaixada, que é como as
-fotos da referência mostram, com a pilha encaixada deitada.
+A saída de **3,5° por lado** faz o corpo ser menor que a boca: a peça afunda na de baixo. O que
+limita o afundamento são os pés de canto, que ficariam sobre o trilho — por isso o encaixe é
+**deslocado ou inclinado**, com os pés passando ao lado.
 
-**O passo do encaixe não está calculado.** Depende do ângulo de inclinação e da cinemática da
-entrada, e não vou fingir precisão: o render usa 26 mm como ilustração. **Medir na amostra física
-ou num protótipo impresso** — é o número que sustenta a promessa de embalagem do pacote de 10.
-
-Para dimensionar o impacto: a 30 mm de passo, 10 peças encaixadas dão ~400 mm de altura contra
-1.300 mm empilhadas. É o que torna o pacote de 10 transportável.
-
----
+**O passo do encaixe não está calculado**, e não vou fingir precisão: depende da cinemática da
+entrada. É o número que sustenta a promessa de embalagem do pacote de 10, e sai de uma medição na
+amostra ou num protótipo impresso.
 
 ## 5. Injeção
 
@@ -197,10 +203,20 @@ resina virgem**, o que só fecha rodando moído.
 
 | Cenário | Custo | Preço | Margem | Contribuição | Pacote de 10 |
 |---|---|---|---|---|---|
-| Virgem RP 141 (R$ 15/kg custo, R$ 25/kg preço) | R$ 3,46 | R$ 5,76 | 40% | R$ 2,30 | R$ 57,60 |
-| Moído + pigmento (R$ 11,50 / R$ 24) | R$ 2,65 | R$ 5,53 | 52% | R$ 2,88 | R$ 55,30 |
+| Virgem RP 141 (R$ 15/kg custo) | R$ 2,33 | R$ 4,58 | 49% | R$ 2,25 | R$ 45,80 |
+| Moído + pigmento (R$ 11,50/kg custo) | R$ 1,79 | R$ 4,58 | 61% | R$ 2,79 | R$ 45,80 |
 
-Resina no cenário virgem: 0,2304 kg × R$ 9,54 = **R$ 2,20** por peça.
+Resina no cenário virgem: 0,1554 kg × R$ 9,54 = **R$ 1,48** por peça.
+
+**Sobre o preço adotado.** Nas versões anteriores eu precifiquei por R$/kg, o mesmo critério do
+custo. Está errado como critério de preço: **a regra por kg penaliza a redução de peso**. O
+mercado paga pela função e pelo tamanho, não pelos gramas. Então adotei o preço do comparável
+direto — **R$ 4,58 do Cesto Vime 7 L (047)** — e é aí que está o ganho: tirar 75 g da peça derruba
+o custo em R$ 1,13 sem derrubar o preço, e a margem sai de 40% para 49%.
+
+A R$ 0,86/L o produto fica acima do 047 (R$ 0,65/L), o que é esperado: 4,5 L com empilhamento e
+encaixe vale mais por litro que 7 L de cesto simples. Se o comercial achar o preço agressivo,
+R$ 3,99 ainda entrega 42% de margem no cenário virgem.
 
 **A cor laranja é o que decide entre os dois cenários.** A casa compra PP moído **branco**
 (R$ 7,69/kg, 124 t/ano) e **preto** (R$ 6,19/kg, 337 t/ano) — não laranja. Laranja em moído exige
@@ -226,9 +242,15 @@ Os dois moldes comparáveis da casa, ambos **peça única aberta** e ambos da **
 | **214-U** Organizador Rattan 6 div. | 160 × 178 × 191 mm | 235 g | 250 t | 450 × 550 × 580 | 1.128 kg | **18.900** |
 | **284-U** Cesto Transporta Tudo | 182 × 263 × 313 mm | 313 g | 280 t | 600 × 550 × 600 | 1.556 kg | **20.100** |
 
-Nossa peça (215 × 200 × 130 mm, 221 g) fica **entre as duas** em envelope e abaixo em peso. Daí
-**USD 19,5 mil FOB para 1 cavidade** — estimativa por analogia direta com compras reais da casa,
-não por fórmula de USD/kg de bloco.
+Nossa peça (215 × 197 × 130 mm, 155 g) fica **entre as duas** em envelope e **abaixo das duas** em
+peso e em complexidade. Daí **USD 19,5 mil FOB para 1 cavidade** — estimativa por analogia direta
+com compras reais da casa, não por fórmula de USD/kg de bloco.
+
+**Essa estimativa agora está conservadora, e de propósito.** A forma final é uma casca
+tronco-piramidal com dois chanfros planos: sem aba, sem sela, sem pilar. Desmoldagem direta em Z,
+nenhuma gaveta, nenhum movimento lateral, e os 68 furos são encostos redondos simples. É mais
+simples que o 214-U, que tem seis divisórias internas. Espero cotação **abaixo** dos USD 19,5 mil;
+mantive o número alto para o payback não se apoiar em otimismo.
 
 ### 6.5 Payback
 
@@ -237,10 +259,10 @@ Investimento nacionalizado de 1 cavidade: USD 19,5 mil × R$ 5,45 × 1,30 = **R$
 
 | Volume/ano | Cenário | Contribuição/ano | Payback | Horas de máquina |
 |---|---|---|---|---|
-| 60.000 | virgem | R$ 138,0 mil | 12,0 meses | 368 h |
-| **150.000** | **virgem** | **R$ 345,0 mil** | **4,8 meses** | 920 h |
-| 150.000 | moído | R$ 432,0 mil | 3,8 meses | 920 h |
-| 300.000 | virgem | R$ 690,0 mil | 2,4 meses | 1.840 h |
+| 60.000 | virgem | R$ 135,0 mil | 12,3 meses | 368 h |
+| **150.000** | **virgem** | **R$ 337,5 mil** | **4,9 meses** | 920 h |
+| 150.000 | moído | R$ 418,5 mil | 4,0 meses | 920 h |
+| 300.000 | virgem | R$ 675,0 mil | 2,5 meses | 1.840 h |
 
 Referência de volume: o **041 (Organizador Multiuso 3 divisórias) vendeu 262 mil unidades em 12
 meses** para 1.847 clientes — é o campeão de volume da casa em organizador pequeno. Se o cesto
@@ -252,7 +274,8 @@ novo chegar à metade disso, o payback é de 4,8 meses.
 
 | Item | Gravidade | Por quê |
 |---|---|---|
-| **Amostra física da referência** | **Alta** | O que ainda é leitura de foto: a seção exata dos pilares, a cota do ponto baixo da sela, e como os pés passam ao lado dos pilares no encaixe |
+| **Capacidade de 4,50 L é suficiente?** | **Alta** | Os dois chanfros custam volume: o do pé corta o fundo de 200 para 148 mm. Reduzi-lo de 52 para 30 mm devolve ~0,4 L sem tocar no acesso frontal (seção 2.2) |
+| **Amostra física** | **Alta** | O passo do encaixe e o engate exato dos pés no trilho |
 | **Passo do encaixe** | **Alta** | É a promessa de embalagem do pacote de 10. Medir na amostra ou em protótipo impresso (seção 4.2) |
 | Preço do anúncio de referência | Alta | **Não consegui abrir** — o proxy da sessão bloqueia o Mercado Livre. Precisa do preço do pacote de 10 para validar o cenário de preço |
 | Volume-alvo de venda | Alta | É o que decide 1 ou 2 cavidades e o payback. A conta é de volume, não de margem |
