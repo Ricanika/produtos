@@ -23,13 +23,13 @@ furos (Ø maior em cima, diminuindo para baixo) e o fundo sólido são o pedido 
 |---|---|
 | Peça única empilhável e encaixável | **Viável** — é a arquitetura mais simples possível: 1 peça, 1 molde, zero montagem |
 | Cotas 21,5 × 20 × 13 cm | **Atendidas** — boca 215 × 200 mm, altura 130 mm |
-| Furos redondos em gradiente | **Resolvido** — 4 bandas, Ø 14 → 6 mm, 74 furos, metade de baixo sólida |
+| Furos redondos em gradiente | **Resolvido** — 5 bandas, Ø 14 → 6 mm, 87 furos, faixa cega de 48 mm no pé |
 | Fundo sólido | **Atendido** — chapa de 2,0 mm sem furo |
-| Empilhar com acesso frontal | **Resolvido** — rebordo da base assenta no rim; frente rebaixada a 55 mm |
+| Empilhar com acesso frontal | **Resolvido** — 4 pés de canto assentam nos 2 pilares da frente e nos 2 cantos de trás; frente a 40 mm |
 | Encaixar para reduzir volume | **Geometria confirmada** — corpo 9,5 mm menor que a boca; **passo do encaixe a medir na amostra** (seção 4.2) |
 | Injeção no parque atual | **1 cavidade numa 200 t (76%)** — a casa tem **12 máquinas** dessa classe |
 | Ferramental | **USD 19,5 mil FOB**, 1 molde — por analogia direta com dois moldes da casa |
-| Payback | **~4,5 meses** a 150 mil un/ano |
+| Payback | **~4,8 meses** a 150 mil un/ano |
 | Preço do anúncio de referência | **Não obtido** — o proxy desta sessão bloqueia o Mercado Livre (seção 6) |
 
 O produto é uma **commodity de volume**: contribuição de ~R$ 2,20 por peça, então a conta fecha
@@ -45,48 +45,55 @@ que custaria a família dobrável) e **o risco é o volume de venda**.
 |---|---|
 | Boca (rim) | **215 × 200 mm** |
 | Base | 199,1 × 184,1 mm |
-| Altura | **130 mm** · frente rebaixada a **55 mm** |
-| Envelope real | 241,8 × 200 × 136,5 mm — inclui as **abas laterais**, que projetam 13,4 mm por lado |
+| Altura | **130 mm** · frente rebaixada a **40 mm** |
+| Envelope real | 221,5 × 200 × 136,5 mm (os pilares projetam 3,3 mm por lado) |
 | Saída de molde | **3,5° por lado** — é ela que permite o encaixe |
 | Parede / fundo / rim | 1,4 / 2,0 / 3,2 mm |
 | Raio de canto em planta | R14 |
-| Capacidade | **4,91 L** nominal · **3,73 L** até a borda frontal |
-| Peso | **242,5 g** (267,9 cm³ de PP) |
+| Capacidade | **4,91 L** nominal · **3,70 L** até a borda frontal |
+| Peso | **230,4 g** (254,6 cm³ de PP) |
 | Área projetada | 430 cm² |
 
-A projeção das abas (13,4 mm/lado) é leitura de foto e define a caixa master — **conferir na
-amostra**, porque 27 mm de largura extra por peça mexe na embalagem do pacote de 10.
+### 2.2 O perfil em sela e os pilares de canto
 
-A aresta superior das laterais segue a referência: **trecho reto na altura cheia** nos 20% do
-fundo (até y = +40 mm), depois um **S de cosseno** descendo até a borda frontal a 55 mm — sem
-quina em nenhuma das pontas. É ela que dá o acesso frontal quando empilhado e o vão por onde a
-peça entra inclinada para encaixar.
+A aresta superior da lateral é uma **sela**, não uma descida única: sai da **altura cheia no pilar
+de canto da frente** (y = −100 a −80 mm), desce num cosseno até o ponto baixo em **z 72 mm**
+(y = −55), e volta a subir numa curva longa até os **130 mm da parede do fundo**.
+
+Isso cria **quatro topos na altura cheia**: os dois pilares da frente e os dois cantos de trás.
+São os quatro apoios em que a peça de cima assenta — e é o que o produto chama de acoplar. Sem os
+pilares, a frente da peça de cima não teria em que apoiar, porque a parede frontal tem só 40 mm.
+
+O ponto baixo da sela é, ao mesmo tempo, a **pega lateral** e o vão por onde a peça entra
+inclinada para encaixar.
 
 ### 2.1 Peso — é o ponto a atacar no try-out
 
-242,5 g para 4,91 L, contra o **Cesto Organizador Vime 7 L (047) da casa, que faz 7 L com 213 g**.
+230,4 g para 4,91 L, contra o **Cesto Organizador Vime 7 L (047) da casa, que faz 7 L com 213 g**.
 A nossa peça é mais alta em relação ao volume e carrega rebordo de empilhamento, rim reforçado e
-uma frente sólida de 55 mm, mas ainda assim há gordura: **cada 10 g economizados valem
+os pilares de canto, mas ainda assim há gordura: **cada 10 g economizados valem
 R$ 0,15/peça**, ou R$ 22 mil/ano a 150 mil peças. Alvo para o try-out: **210 g**. Caminhos:
-parede de 1,2 mm na banda superior (onde não há carga), rim de 2,8 mm, nervurar o rebordo em vez
-de engrossá-lo, e aliviar a frente sólida por dentro.
+parede de 1,2 mm na banda superior (onde não há carga), rim de 2,8 mm, nervurar os pés de canto por dentro,
+e aliviar os pilares com alma em H em vez de seção cheia.
 
 ---
 
 ## 3. O vazado
 
-Furos **redondos** em 4 bandas horizontais de cota Z fixa, com o diâmetro caindo de cima para
+Furos **redondos** em 5 bandas horizontais de cota Z fixa, com o diâmetro caindo de cima para
 baixo — é a única alteração em relação à referência.
 
 | Banda | Cota | Ø |
 |---|---|---|
 | 1 (topo) | z 111 mm | **14,0 mm** |
-| 2 | z 96 mm | 11,3 mm |
-| 3 | z 81 mm | 8,7 mm |
-| 4 | z 66 mm | **6,0 mm** |
-| faixa cega | z 0 a 58 mm | — |
+| 2 | z 96 mm | 12,0 mm |
+| 3 | z 81 mm | 10,0 mm |
+| 4 | z 66 mm | 8,0 mm |
+| 5 | z 51 mm | **6,0 mm** |
+| faixa cega | z 0 a 48 mm | — |
+| parede frontal | z 20 mm | 9,0 mm (uma fila) |
 
-Passo do retículado: 15 mm. Total: **74 furos**. Nenhum furo entra no raio de canto (R14), para
+Passo do retículado: 15 mm. Total: **87 furos**. Nenhum furo entra no raio de canto (R14), para
 não criar parede fina na quina.
 
 As quatro bandas ocupam **a mesma faixa que os cortes verticais ocupam na referência** — a metade
@@ -119,24 +126,23 @@ Duas consequências para a cotação:
 
 ## 4. Empilhar e encaixar — os dois modos
 
-### 4.1 Empilhado
+### 4.1 Empilhado — quatro apoios de canto
 
-A peça é tronco-piramidal, então o corpo é menor que a boca e afundaria. O que segura é o
-**rebordo da base**: um flange de 8 mm de altura alargado até a medida da boca (215 × 200), que
-assenta no rim da peça de baixo. Nivelada, a peça empilha com **passo de 130 mm** e a frente
-rebaixada dá acesso ao conteúdo sem desempilhar.
+A peça é tronco-piramidal, então o corpo é menor que a boca e afundaria. O que segura são os
+**quatro pés de canto**: bordos de 32 × 32 mm que alcançam a medida da boca e assentam nos quatro
+topos cheios da peça de baixo — os **dois pilares da frente** e os **dois cantos de trás**.
+Nivelada, a peça empilha com **passo de 130 mm**, e a parede frontal de 40 mm mais a sela dão
+acesso ao conteúdo sem desempilhar.
 
-As **pegas laterais** (as abas que aparecem na foto da referência, no alto da lateral junto à
-frente) são para puxar a peça empilhada — não têm função estrutural de empilhamento. Essa é uma
-leitura minha da foto: se na amostra física elas forem o apoio do empilhamento, o rebordo da base
-sai e o projeto muda (seção 7).
+Não há rebordo contínuo na base: só os quatro bordos de canto, como na referência.
 
 ### 4.2 Encaixado
 
 O corpo tem **9,5 mm de folga em X e 7,9 mm em Y** dentro da boca, e a saída de 3,5° faz a peça
-afundar **78 mm** antes de as paredes travarem. O que impede o encaixe na vertical é justamente o
-rebordo da base; por isso o encaixe é **inclinado**, entrando pelo vão de 75 mm da frente
-rebaixada — que é exatamente como as fotos da referência mostram, com a pilha encaixada deitada.
+afundar **78 mm** antes de as paredes travarem. O que impede o encaixe na vertical são os pés de
+canto, que ficariam sobre os pilares; por isso o encaixe é **deslocado ou inclinado**, com os pés
+passando ao lado dos pilares — e a peça entra pelo vão de 90 mm da frente rebaixada, que é como as
+fotos da referência mostram, com a pilha encaixada deitada.
 
 **O passo do encaixe não está calculado.** Depende do ângulo de inclinação e da cinemática da
 entrada, e não vou fingir precisão: o render usa 26 mm como ilustração. **Medir na amostra física
@@ -191,15 +197,15 @@ resina virgem**, o que só fecha rodando moído.
 
 | Cenário | Custo | Preço | Margem | Contribuição | Pacote de 10 |
 |---|---|---|---|---|---|
-| Virgem RP 141 (R$ 15/kg custo, R$ 25/kg preço) | R$ 3,64 | R$ 6,06 | 40% | R$ 2,43 | R$ 60,60 |
-| Moído + pigmento (R$ 11,50 / R$ 24) | R$ 2,79 | R$ 5,82 | 52% | R$ 3,03 | R$ 58,20 |
+| Virgem RP 141 (R$ 15/kg custo, R$ 25/kg preço) | R$ 3,46 | R$ 5,76 | 40% | R$ 2,30 | R$ 57,60 |
+| Moído + pigmento (R$ 11,50 / R$ 24) | R$ 2,65 | R$ 5,53 | 52% | R$ 2,88 | R$ 55,30 |
 
-Resina no cenário virgem: 0,2425 kg × R$ 9,54 = **R$ 2,31** por peça.
+Resina no cenário virgem: 0,2304 kg × R$ 9,54 = **R$ 2,20** por peça.
 
 **A cor laranja é o que decide entre os dois cenários.** A casa compra PP moído **branco**
 (R$ 7,69/kg, 124 t/ano) e **preto** (R$ 6,19/kg, 337 t/ano) — não laranja. Laranja em moído exige
 lote dedicado de moído claro mais masterbatch, com risco de variação de tom entre lotes. É uma
-pergunta para a produção, e vale **R$ 0,85 por peça** (R$ 128 mil/ano a 150 mil peças).
+pergunta para a produção, e vale **R$ 0,81 por peça** (R$ 122 mil/ano a 150 mil peças).
 
 ### 6.3 Resina
 
@@ -231,14 +237,14 @@ Investimento nacionalizado de 1 cavidade: USD 19,5 mil × R$ 5,45 × 1,30 = **R$
 
 | Volume/ano | Cenário | Contribuição/ano | Payback | Horas de máquina |
 |---|---|---|---|---|
-| 60.000 | virgem | R$ 145,8 mil | 11,4 meses | 368 h |
-| **150.000** | **virgem** | **R$ 364,5 mil** | **4,5 meses** | 920 h |
-| 150.000 | moído | R$ 454,5 mil | 3,6 meses | 920 h |
-| 300.000 | virgem | R$ 729,0 mil | 2,3 meses | 1.840 h |
+| 60.000 | virgem | R$ 138,0 mil | 12,0 meses | 368 h |
+| **150.000** | **virgem** | **R$ 345,0 mil** | **4,8 meses** | 920 h |
+| 150.000 | moído | R$ 432,0 mil | 3,8 meses | 920 h |
+| 300.000 | virgem | R$ 690,0 mil | 2,4 meses | 1.840 h |
 
 Referência de volume: o **041 (Organizador Multiuso 3 divisórias) vendeu 262 mil unidades em 12
 meses** para 1.847 clientes — é o campeão de volume da casa em organizador pequeno. Se o cesto
-novo chegar à metade disso, o payback é de 4,5 meses.
+novo chegar à metade disso, o payback é de 4,8 meses.
 
 ---
 
@@ -246,7 +252,7 @@ novo chegar à metade disso, o payback é de 4,5 meses.
 
 | Item | Gravidade | Por quê |
 |---|---|---|
-| **Amostra física da referência** | **Alta** | Duas leituras minhas saíram de foto e não de peça: (a) as abas laterais são pega e o apoio do empilhamento é o rebordo da base; (b) o passo do encaixe. Se (a) estiver errado, muda o projeto |
+| **Amostra física da referência** | **Alta** | O que ainda é leitura de foto: a seção exata dos pilares, a cota do ponto baixo da sela, e como os pés passam ao lado dos pilares no encaixe |
 | **Passo do encaixe** | **Alta** | É a promessa de embalagem do pacote de 10. Medir na amostra ou em protótipo impresso (seção 4.2) |
 | Preço do anúncio de referência | Alta | **Não consegui abrir** — o proxy da sessão bloqueia o Mercado Livre. Precisa do preço do pacote de 10 para validar o cenário de preço |
 | Volume-alvo de venda | Alta | É o que decide 1 ou 2 cavidades e o payback. A conta é de volume, não de margem |
