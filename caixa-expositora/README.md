@@ -1,16 +1,21 @@
 # Caixa Expositora Tri-Kit
 
-**Status:** projeto de embalagem · **Revisão 1** · 16/09/2026
-**Escopo:** uma única caixa de papelão ondulado que transporta e expõe três kits diferentes
+**Status:** projeto de embalagem · **Revisão 2** · 16/09/2026
+**Escopo:** uma caixa de papelão ondulado que transporta e expõe **os três kits juntos**
 
-Caixa de transporte que vira expositor de chão no ponto de venda. Picote na frente subindo até o
-topo: destaca-se o painel frontal inteiro e dobra-se a aba superior traseira 180° para cima,
-virando a **testeira** com a arte da marca.
+Caixa **sortida**: os três kits viajam e vendem na mesma caixa, cada um na sua coluna vertical,
+três facings. O picote sobe pela frente a partir de 240 mm, corre pelas duas quinas até o fim do
+topo e **morre ali** — a peça não sai. Ela fica articulada no vinco TOPO/TRASEIRA, gira para cima
+e dobra sobre si mesma virando uma **testeira de parede dupla**.
 
-**Medidas internas recomendadas: 560 × 530 × 720 mm** (frente × profundidade × altura) ·
-externo 574 × 544 × 734 mm · onda BC 7 mm · chapa 2248 × 1268 mm.
+**Internas: 780 × 580 × 900 mm** · externo 790 × 590 × 910 mm · ocupa um meio-palete 800 × 600
+inteiro · **64 kits** (16 A + 18 B + 30 C) · onda C simples · chapa 3060 × 1415 mm.
 
-Todos os números vêm de `calculo-expositora.py` e os desenhos de `gera-desenhos.py`.
+> **Revisão 2 — o que mudou em relação à Rev. 1:** a caixa passou de mono-kit para **sortida**;
+> a testeira deixou de ser aba destacável e virou **peça articulada que dobra** (frente + topo);
+> a construção deixou de ser caixa americana e virou **wrap**, porque o topo precisa ser um painel
+> inteiriço preso na traseira; o footprint passou a ser ditado pelo **meio-palete**; e a onda caiu
+> de BC para **C simples**, porque a frente não é mais destruída (seção 5).
 
 ---
 
@@ -18,238 +23,224 @@ Todos os números vêm de `calculo-expositora.py` e os desenhos de `gera-desenho
 
 | Requisito | Situação |
 |---|---|
-| Uma caixa só para os 3 kits | **Viável** — os três fecham no mesmo footprint |
-| Picote frontal até o topo | **Viável**, desde que as abas superiores laterais virem aro de travamento (seção 5) |
-| Tampa que dobra e vira expositor | **Viável** — aba superior traseira de 266 mm dobrada 180° = testeira |
-| Profundidade interna de **520 mm** | **Corrigir para 530 mm** — dois kits retangulares dão 2 × 260 = 520 exatos, folga zero (seção 3.1) |
-| Altura interna de **720 mm** | Funciona. **760 mm rende +10% de kits** pelo mesmo custo de chapa (seção 3.2) |
-| Resistência com a frente destacada | **Folgada** com onda BC: 419 kgf contra 300 kgf exigidos (seção 4) |
-| Paletização | **Ponto fraco herdado da medida**: 2 caixas por camada no PBR, 52% do palete (seção 8) |
-| Peso do kit | **Bloqueio de dado** — a carga de projeto de 30 kg/caixa é estimativa, precisa ser confirmada |
+| Os 3 kits na mesma caixa | **Resolvido** — uma coluna por kit, três facings, 16 trios completos |
+| Picote que vai até o fim do topo e não sai | **Resolvido** — picote em **U**, peça articulada no vinco TOPO/TRASEIRA |
+| Testeira por dobra | **Resolvido** — 580 mm, **parede dupla**, travada por uma aba de 80 mm |
+| Cubagem que faça sentido | **81% de ocupação interna**, meio-palete 800 × 600 **100% usado** |
+| Construção | Deixa de ser caixa americana: vira **wrap** (seção 4) |
+| Chapa de 3060 mm | **Risco de formato** — confirmar com o fornecedor; alternativa em 2 peças (seção 4.3) |
+| Peso bruto ~42 kg | **Bloqueio de dado** — depende do peso do kit, ainda não confirmado |
 
 ---
 
-## 2. Os três kits
+## 2. A altura não é escolha, é consequência
 
-| Kit | Dimensões (cm) | Volume | Por camada | Camadas | Total na caixa |
-|---|---|---|---|---|---|
-| A — quadrado | 23,5 × 25,5 × 10,5 | 6,29 L | 4 (2 × 2) | 6 | **24 kits** |
-| B — retangular alto | 18 × 26 × 14 | 6,55 L | 6 (3 × 2) | 5 | **30 kits** |
-| C — retangular baixo | 18 × 26 × 8 | 3,74 L | 6 (3 × 2) | 8 | **48 kits** |
+Esse é o número que amarra o projeto inteiro. A peça que dobra tem duas partes: a **face**
+(o pedaço alto da frente) e o **dorso** (o topo). Quando o dorso sobe e fica em pé, a face desce
+por cima dele. Para a face cobrir o dorso e ainda travar, ela precisa ser **maior que a
+profundidade**:
 
-Arranjo na camada — ver `arranjos.svg`:
+```
+altura interna  =  muro de retenção  +  profundidade  +  aba de travamento
+      900       =        240         +       580      +        80
+```
 
-- **Kit A:** 25,5 cm no eixo da frente (2 × 25,5 = 51, folga 5 cm) e 23,5 cm na profundidade
-  (2 × 23,5 = 47, folga 6 cm). Folgas equilibradas; a orientação invertida daria folga de 9 cm num
-  eixo só e o kit escorregaria.
-- **Kits B e C:** 18 cm na frente (3 × 18 = 54, folga 2 cm) e 26 cm na profundidade
-  (2 × 26 = 52, folga 1 cm). É esse arranjo que dimensiona a caixa.
+Em outras palavras: **quem escolhe a altura é a profundidade.** Mudou a profundidade, mudou a
+altura, ou a testeira deixa de travar. Ninguém pode mexer nesses três números isoladamente.
 
-Ocupação volumétrica: 71% (A), 92% (B), 84% (C).
+E o resultado bate com o que a carga pede:
 
----
-
-## 3. As duas correções de medida
-
-### 3.1 Profundidade 520 → 530 mm (obrigatória)
-
-Os kits B e C têm 26 cm. Só cabem dois lado a lado, e **2 × 26 = 52 cm exatos**. Com profundidade
-interna de 520 mm a folga é zero — e caixa de kit em papelão barriga 2 a 3 mm por peça depois de
-paletizada. Na prática o segundo kit não entra, ou entra forçado e deforma a caixa expositora.
-
-Se os 520 mm forem medida **externa**, o interno cai para 506 mm e o arranjo simplesmente não existe.
-
-**530 mm internos** resolvem: 10 mm de folga no eixo crítico, 6 mm de custo de chapa. É a única cota
-do briefing que não pode ficar como está.
-
-### 3.2 Altura 720 → 760 mm (opcional, mas paga bem)
-
-A altura da caixa só rende kit em degraus — cada camada é indivisível. Varrendo a altura interna
-(com 3 mm de barriga por camada empilhada):
-
-| Altura interna | Kit A | Kit B | Kit C | Total de kits | Vazio médio |
-|---|---|---|---|---|---|
-| 700 mm | 6 cam / 24 | 4 cam / 24 | 8 cam / 48 | 96 | 9,0 cm |
-| **720 mm (briefing)** | 6 cam / 24 | 5 cam / 30 | 8 cam / 48 | **102** | 6,3 cm |
-| 740 mm | 6 cam / 24 | 5 cam / 30 | 8 cam / 48 | 102 | 8,3 cm |
-| 750 mm | 6 cam / 24 | 5 cam / 30 | 9 cam / 54 | 108 | 6,7 cm |
-| **760 mm** | **7 cam / 28** | 5 cam / 30 | **9 cam / 54** | **112** | **4,2 cm** |
-| 780 mm | 7 cam / 28 | 5 cam / 30 | 9 cam / 54 | 112 | 6,2 cm |
-
-**760 mm é o ponto ótimo**: +4 kits no A (+17%), +6 no C (+12,5%), e o menor vazio médio da faixa.
-Custa 40 mm a mais de largura de chapa (~3%) e sobe o externo para 774 mm — ainda dá duas caixas
-empilhadas por palete dentro de 1,62 m.
-
-De 740 a 780 mm não muda nada em relação a 760: quem escolher a altura por outro critério (gôndola,
-caminhão) deve escolher **760 ou 720**, nunca um valor no meio.
-
-### 3.3 Calço de fundo — uma caixa, três alturas de carga
-
-Como as camadas são indivisíveis, cada kit para numa altura diferente e a caixa fica com um vazio no
-topo. Um **calço de fundo em papelão** empurra a carga para cima e faz o expositor parecer cheio nos
-três casos (caixa interna de 720 mm):
-
-| Kit | Camadas | Carga | Calço |
-|---|---|---|---|
-| A — quadrado | 6 | 630 mm | **90 mm** |
-| B — retangular alto | 5 | 700 mm | **20 mm** |
-| C — retangular baixo | 8 | 640 mm | **80 mm** |
-
-É um berço simples de onda C dobrada, sem faca dedicada. Sem ele, o kit A fica 9 cm abaixo da borda
-e o expositor lê como "já acabou o produto".
-
----
-
-## 4. Papelão e resistência
-
-**Onda BC (dupla parede), 7 mm, canaletas VERTICAIS.** A composição da canaleta vertical não é
-detalhe de acabamento: é ela que sustenta os 720 mm de altura em compressão.
-
-Composição sugerida: **175 K / miolo 130 / 150 / miolo 130 / 175 K**, ECT ≥ 10 kgf/cm.
-
-BCT por McKee (`BCT = 5,87 × ECT × √(t × perímetro)`, perímetro 218 cm, t 0,7 cm):
-
-| Papel | ECT | BCT fechada | BCT com a frente destacada (−45%) |
-|---|---|---|---|
-| Onda C simples K180/K180 | 5,2 | 377 kgf | 207 kgf |
-| Onda C simples K200/K200 | 6,8 | 493 kgf | 271 kgf |
-| **Onda BC dupla 175/150/175** | **10,5** | **761 kgf** | **419 kgf** |
-| Onda BC dupla K200/K200 | 13,0 | 943 kgf | 518 kgf |
-
-Carga de projeto: 3 caixas empilhadas × 30 kg = **60 kg** na de baixo. Com fator 5 (6 meses de
-estoque, umidade relativa 80%) exige-se **300 kgf**; com fator 7, 420 kgf.
-
-O derate de 45% é o custo de destacar a frente: com um painel a menos, a caixa perde perto de metade
-da capacidade de compressão. **Onda C simples não fecha a conta** depois do destaque — é por isso que
-a especificação é BC e não C.
-
-Peso estimado da caixa vazia: **2,0 kg** (2,85 m² de chapa a ~700 g/m²).
-
----
-
-## 5. Construção
-
-Peça única, emenda colada, **abas superiores desiguais**. Ver `faca-expositora.svg`.
-
-Painéis na chapa, da esquerda para a direita:
-
-| | Largura |
+| | |
 |---|---|
-| Aba de cola | 40 mm |
-| Traseira | 567 mm |
-| Lateral | 537 mm |
-| Frente | 567 mm |
-| Lateral | 537 mm |
-| **Chapa** | **2248 mm** |
+| Altura interna | 900 mm |
+| Folga de topo | 30 mm |
+| **Altura útil de carga** | **870 mm** |
+| Altura real da pilha | **840 mm** nos três kits (seção 3) |
 
-| Abas | Altura |
+---
+
+## 3. O sortimento
+
+Uma coluna vertical por kit. Cada coluna tem seu próprio número de camadas, e um **calço nivela
+os três topos em 840 mm** — o expositor fica plano, sem degrau.
+
+| Coluna | Kit | Facing | Fundos | Por camada | Camadas | Pilha | Calço | **Kits** |
+|---|---|---|---|---|---|---|---|---|
+| A | quadrado 23,5 × 25,5 × 10,5 | 235 mm | 2 × 255 | 2 | 8 | 840 mm | — | **16** |
+| B | ret. alto 18 × 26 × 14 | 260 mm | 3 × 180 | 3 | 6 | 840 mm | — | **18** |
+| C | ret. baixo 18 × 26 × 8 | 260 mm | 3 × 180 | 3 | 10 | 800 mm | **40 mm** | **30** |
+
+**Total: 64 kits · 16 trios completos · 331 L de produto em 407 L internos = 81% de ocupação.**
+
+As três colunas + 2 divisórias de 3 mm somam 761 mm dos 780 internos — sobram 19 mm de folga
+operacional, distribuídos.
+
+### 3.1 Por que 840 mm fecha nos três
+
+É coincidência aritmética, e é ela que faz o expositor ficar bonito:
+
+```
+kit A:  8 camadas × 105 = 840
+kit B:  6 camadas × 140 = 840
+kit C: 10 camadas ×  80 = 800  + calço de 40 = 840
+```
+
+105 e 140 têm MMC 420; 840 é o primeiro múltiplo que também fica perto de um múltiplo de 80.
+Qualquer outra altura útil quebra pelo menos uma das três colunas.
+
+### 3.2 O mix
+
+A proporção **16 : 18 : 30** sai da geometria, não de giro. Se o comercial quiser outro mix, a
+alavanca é a largura do facing — trocar a coluna C por uma segunda coluna B move 12 unidades de C
+para B. O que **não** dá para mexer sem refazer a conta é o número de colunas: três facings de
+235 + 260 + 260 já consomem 780 mm, que é a frente inteira.
+
+### 3.3 Divisórias
+
+Duas divisórias verticais de onda simples, 580 × 840 mm, encaixadas entre as colunas. Não são
+decorativas: sem elas os três kits se misturam na primeira reposição e o display vira bagunça.
+De quebra entram no caminho de carga e ajudam na compressão.
+
+---
+
+## 4. Construção: por que wrap e não caixa americana
+
+O topo tem que ser **um painel inteiriço preso na traseira**. Em caixa americana o topo são quatro
+abas, e quatro abas não dobram para virar testeira. Então a chapa dá a volta:
+
+```
+FUNDO (585) | FRENTE (905) | TOPO (585) | TRASEIRA (905) | aba de cola (80)
+```
+
+| | |
 |---|---|
-| Inferiores das laterais (camada interna, se encontram na frente) | 281,5 mm |
-| Inferiores da frente/traseira (camada externa, se encontram na profundidade) | 266,5 mm |
-| Superiores da frente/traseira (fecham o transporte) | 266,5 mm |
-| Superiores das laterais (**aro de travamento**) | 100 mm |
-| **Chapa** | **1268 mm** |
+| Painel (largura) | 785 mm |
+| Abas laterais (fundo, frente e traseira) | 315 mm cada, **sobrepõem 50 mm** no meio da lateral |
+| Abas de cola do topo | 60 mm cada lado — **é o que o picote libera** |
+| **Chapa** | **3060 × 1415 mm = 4,33 m²** |
+| Peso da caixa vazia | 2,2 kg em onda C · 3,0 kg em BC |
 
-**O fundo é total** — as duas camadas se encontram, cobertura dupla. É onde a caixa apanha: 30 kg de
-kit sobre uma caixa de 0,3 m² de base.
+A parede lateral é formada pelas abas da FRENTE e da TRASEIRA, que se encontram com 50 mm de
+sobreposição colada. As abas do FUNDO sobem por dentro e reforçam os primeiros 315 mm da lateral —
+justamente onde a carga senta.
 
-**O aro de travamento é o que viabiliza o picote até o topo.** Quando a frente sai, a caixa deixa de
-ser um tubo fechado e as duas laterais tendem a abrir. As abas superiores laterais de 100 mm dobradas
-para dentro amarram uma lateral na outra e seguram a geometria. Sem elas o expositor barriga sob
-carga. Elas ficam a 100 mm de cada lado, deixando 330 mm livres de abertura superior — folgado para
-passar qualquer um dos três kits (o maior tem 260 mm).
+### 4.1 O picote em U
 
----
+Uma linha só, em forma de U, e ela **não fecha**:
 
-## 6. Geometria do picote
-
-Cotas medidas a partir do vinco inferior da frente (painel de 567 × 720 mm):
-
-| Elemento | Cota |
+| Trecho | Onde |
 |---|---|
-| Altura da frente que fica (muro de retenção), nas quinas | **240 mm** |
-| Flecha do arco no centro | **40 mm** (frente de 200 mm no centro) |
-| Raio do arco | **R 1025 mm** |
-| Recuo do picote vertical para dentro da lateral | **15 mm** |
-| Picote vertical | de 240 mm até o vinco superior (o "até o topo" do briefing) |
-| Dedeira de início do destaque, corte real | **Ø 35 mm**, centrada no ponto baixo do arco |
-| Tipo de picote | **zíper** (dupla linha desencontrada) — obrigatório em onda dupla |
+| Travessa | na FRENTE, a **240 mm** do fundo, atravessando o painel |
+| Duas longarinas | **15 mm para dentro** dos vincos das abas laterais, da travessa até o vinco TOPO/TRASEIRA |
+| Fim | morre no vinco TOPO/TRASEIRA — **a peça fica pendurada ali** |
+| Dedeira | Ø 35 mm em **corte real**, no centro da travessa, no painel que fica |
 
-**Por que 240 mm.** É a altura que retém a pilha depois que a frente sai, e casa com os três kits:
-2 camadas do kit A (210 mm), 3 camadas do kit C (240 mm exatos), e mais de meia camada do kit B
-(140 mm + 100 de sobra). Abaixo de 200 mm o produto de cima empurra a pilha para fora; acima de
-280 mm o kit fica escondido e a caixa deixa de vender.
+As longarinas correm 15 mm para dentro porque **picote em cima de vinco rasga torto**. Os dois
+filetes de 15 mm que sobram ficam presos nas abas laterais e viram parte da parede — a lateral
+não perde nada.
 
-**Por que o picote vertical entra 15 mm na lateral** em vez de correr sobre o vinco da quina: picote
-em cima de vinco rasga torto e deixa fiapo. Correndo em área plana, 15 mm para dentro, o destaque sai
-reto. O que sai é a frente inteira + 15 mm de cada lateral + a aba superior da frente.
+### 4.2 Os dois vincos que não são iguais aos outros
 
-**Picote em zíper, não perfuração simples.** Em onda BC a linha de corte simples atravessa o miolo
-sem controle e o rasgo foge. O zíper força o caminho.
-
----
-
-## 7. Conversão em expositor
-
-Ver `conversao.svg`. Cinco movimentos, sem ferramenta:
-
-1. Abrir as abas superiores (fita ou hot-melt).
-2. Enfiar o dedo na dedeira Ø 35 e puxar a frente para cima pelo picote. Sai o painel inteiro com a
-   aba superior da frente junto.
-3. Dobrar as duas abas superiores laterais **para dentro** — é o aro de travamento.
-4. Dobrar a aba superior traseira **180° para cima**: vira a testeira de 266 mm com a arte da marca.
-5. Encaixar o cartaz promocional nas duas fendas de 60 × 4 mm da testeira.
-
-O vinco da testeira dobra ao contrário do fechamento de transporte. Pedir ao fornecedor **vinco
-reverso** nessa linha, senão ela racha na dobra.
-
----
-
-## 8. Paletização
-
-Externo 574 × 544 mm (com a correção de profundidade).
-
-| Palete | Por camada | Aproveitamento |
+| Vinco | Função | Especificação |
 |---|---|---|
-| PBR 100 × 120 cm | 2 caixas | 52% |
-| Meio-palete 60 × 80 cm | 1 caixa | serve como display de chão pronto |
+| TOPO / TRASEIRA | é a **dobradiça** da testeira. Abre de 90° para 180° | vinco normal, mas **reforçado** (a peça vai girar com a caixa cheia) |
+| FRENTE / TOPO | a face dobra 180° **para o lado contrário** do que dobrou na montagem | **VINCO REVERSO** — obrigatório |
 
-Duas caixas empilhadas: 2 × 734 + 145 de palete = **1613 mm**. Quatro caixas por PBR.
+Sem o vinco reverso, a face racha na dobra. E racha na loja, na frente do cliente.
 
-**O aproveitamento de 52% é herdado das medidas, não da construção.** Para caber 4 no PBR o externo
-teria que fechar em 500 × 600 mm, o que baixa o interno para 486 mm e quebra o arranjo 2 × 260 dos
-kits B e C — passaria de 6 para 4 kits por camada, −33%. **O footprint 530 × 560 está certo para os
-kits; o custo é o palete.** Se o frete for o gargalo, o caminho é meio-palete, não mudar a caixa.
+### 4.3 O problema da chapa de 3060 mm
 
----
+3,06 m de comprimento de chapa não passa em impressora plana comum. Duas saídas:
 
-## 9. Checklist para o fornecedor
+1. **Uma peça**, em corte rotativo ou casemaker de grande formato — confirmar o formato máximo.
+2. **Duas peças**: a "capa" (FRENTE + TOPO + TRASEIRA, 2401 × 1415) e uma **bandeja de fundo**
+   colada. Mesma área total de papelão, duas facas menores, uma operação de colagem a mais.
 
-- [ ] Onda **BC dupla**, 7 mm, **canaletas verticais**, ECT ≥ 10 kgf/cm
-- [ ] Chapa **2248 × 1268 mm** — confirmar o formato máximo da máquina. Se não passar, dividir em
-      duas peças com duas abas de cola (2 × ~1125 × 1268)
-- [ ] Fundo total (as duas camadas se encontram), colagem hot-melt + fita H
-- [ ] Abas superiores laterais de **100 mm** — não substituir por aba RSC padrão
-- [ ] **Vinco reverso** na aba superior traseira (testeira)
-- [ ] Picote **em zíper**, não perfuração simples
-- [ ] Dedeira Ø 35 mm em **corte real**, não picote
-- [ ] Duas fendas de 60 × 4 mm na testeira para o cartaz
-- [ ] Impressão: definir flexo pós-impressa × litho laminada (a frente destacável leva arte de alta
-      cobertura; flexo direto em BC dá risco de lavadeira)
-- [ ] Amostra física antes da faca definitiva, com o teste de destaque feito por quem vai repor a
-      gôndola, não pelo engenheiro
+Perguntar isso ao fornecedor **antes** de fechar a faca.
 
 ---
 
-## 10. O que falta confirmar
+## 5. Papelão: por que C simples agora basta
+
+Na Rev. 1 a frente era destacada e saía fora, e a caixa perdia ~45% da compressão — daí a onda BC.
+**Agora a frente não sai.** Em transporte a caixa está inteira, os quatro painéis trabalham, e o
+derate sumiu. Além disso a caixa viaja em meio-palete, que não empilha três alturas.
+
+BCT por McKee (`5,87 × ECT × √(t × perímetro)`, perímetro 272 cm):
+
+| Papel | ECT | Espessura | BCT | Margem sobre o exigido |
+|---|---|---|---|---|
+| Onda C simples K180/K180 | 5,2 | 5 mm | 356 kgf | 1,7× |
+| **Onda C simples K200/K200** | **6,8** | **5 mm** | **465 kgf** | **2,2×** |
+| Onda BC dupla 175/150/175 | 10,5 | 7 mm | 850 kgf | 4,1× |
+
+Carga: uma caixa sobre a outra = **42 kg** (estimado), fator 5 para seis meses de estoque a 80% de
+umidade → **210 kgf exigidos**.
+
+**Recomendação: onda C simples K200/K200, canaletas verticais no corpo.** Economiza ~30% do papelão
+contra BC, e a testeira já é parede dupla por construção — não precisa de onda dupla para ficar em
+pé. Subir para BC só se o peso do kit vier bem acima da estimativa, ou se decidirem empilhar três
+caixas no armazém.
+
+---
+
+## 6. Conversão em expositor
+
+1. Abrir a caixa e enfiar o dedo na dedeira Ø 35.
+2. Puxar o picote em U — os dois lados e a travessa. A peça solta mas **não sai**.
+3. **O topo gira 90° e fica em pé**, alinhado com a traseira: é o **dorso** da testeira (580 mm).
+4. **A face dobra 180° sobre o dorso**: testeira de parede dupla, arte para o cliente.
+5. Os 80 mm que sobram da face descem por dentro da caixa, contra a traseira: **é o travamento**.
+   Sem ferramenta, sem fita, sem peça avulsa.
+
+A arte **não fica de cabeça para baixo**: a borda que estava no alto da frente continua no alto da
+testeira. A face externa da frente — a que o cliente via na caixa fechada — é a mesma que ele vê na
+testeira. Uma arte só serve para as duas situações.
+
+Altura final do display: 910 (caixa) + 580 (testeira) + 144 (palete) = **1634 mm**.
+
+---
+
+## 7. Palete
+
+| | |
+|---|---|
+| Meio-palete EUR 800 × 600 | caixa 790 × 590 → **10 mm de folga em cada eixo, 1 caixa, 100% do meio-palete** |
+| Dois meios-paletes | 800 × 1200 mm — cabem num PBR 1000 × 1200 (80% do piso) |
+| Altura carregada | 910 + 144 = 1054 mm por meio-palete |
+
+A caixa **é** o display: sai do caminhão, vai para o chão da loja, rasga e monta. Não há
+transbordo, não há montagem de expositor avulso.
+
+---
+
+## 8. Checklist para o fornecedor
+
+- [ ] **Onda C simples K200/K200**, ECT ≥ 6,5 kgf/cm, **canaletas verticais** no corpo
+- [ ] Construção **wrap**: FUNDO | FRENTE | TOPO | TRASEIRA | aba de cola
+- [ ] Chapa **3060 × 1415 mm** — **confirmar formato máximo**; se não passar, versão em 2 peças
+- [ ] Abas laterais da frente e da traseira **sobrepondo 50 mm**, coladas
+- [ ] Abas do fundo subindo por dentro da lateral (reforço de 315 mm)
+- [ ] **VINCO REVERSO** no vinco FRENTE/TOPO — sem isso a testeira racha
+- [ ] Vinco TOPO/TRASEIRA reforçado: é a dobradiça, gira com a caixa cheia
+- [ ] Picote **em zíper** em U; as longarinas **15 mm para dentro** dos vincos, nunca sobre o vinco
+- [ ] O picote **termina** no vinco TOPO/TRASEIRA — não contornar, a peça não sai
+- [ ] Dedeira Ø 35 mm em **corte real**
+- [ ] 2 divisórias de 580 × 840 mm e 1 calço de 40 mm (onda simples, sem faca dedicada)
+- [ ] Arte: a face da frente acima de 240 mm **é** a testeira — tratar como peça de comunicação
+- [ ] Amostra física antes da faca definitiva, com o teste de dobra feito **cheio**, não vazio
+
+---
+
+## 9. O que falta confirmar
 
 | Dado | Por que importa |
 |---|---|
-| **Peso de cada kit** | A carga de projeto de 30 kg/caixa é estimativa. Se o kit A pesar mais de 1,25 kg, a conta de BCT precisa ser refeita |
-| **520 / 560 / 720 são internas ou externas?** | Este estudo tratou como internas. Se forem externas, o arranjo dos kits B e C não existe (seção 3.1) |
-| **Qual face é a frente** | Adotada a de 560 mm (maior frontagem). Trocar para a de 530 não muda a contagem de kits, só espelha a faca |
-| **Altura: 720 ou 760?** | Decisão comercial. 760 rende +10 kits (seção 3.2) |
-| **Formato máximo de chapa do fornecedor** | Define se a caixa sai em uma peça ou duas |
+| **Peso de cada kit** | Os 42 kg de peso bruto são estimativa (0,12 kg/L). Acima de 55 kg a onda sobe para BC |
+| **Formato máximo de chapa do fornecedor** | Define uma peça × duas peças (seção 4.3) |
+| **O mix 16 / 18 / 30 serve ao comercial?** | Sai da geometria. Mudar exige trocar coluna, não ajustar quantidade (seção 3.2) |
+| **Meio-palete é EUR 800 × 600 ou meio-PBR 1000 × 600?** | Em meio-PBR a frente vai a 984 mm e cabem 5 colunas — outro projeto, mais kits |
+| **Altura de gôndola / porta da loja** | 1634 mm de display montado; se houver limite, ele volta para a profundidade (seção 2) |
 
 ---
 
@@ -257,8 +248,8 @@ kits; o custo é o palete.** Se o frete for o gargalo, o caminho é meio-palete,
 
 | Arquivo | Conteúdo |
 |---|---|
-| `calculo-expositora.py` | Memória de cálculo: arranjo, camadas, McKee, chapa, palete |
+| `calculo-expositora.py` | Memória de cálculo: colunas, camadas, calço, chapa, McKee, palete |
 | `gera-desenhos.py` | Gerador dos SVGs |
-| `faca-expositora.svg` | Planificação 1:1 com vincos, cortes e picote |
-| `arranjos.svg` | Vista superior do arranjo de cada kit na camada |
-| `conversao.svg` | As três etapas: caixa fechada → destaque → expositor |
+| `faca-expositora.svg` | Planificação do wrap com vincos, vinco reverso e o picote em U |
+| `arranjo.svg` | Vista superior das 3 colunas + vista frontal das pilhas |
+| `conversao.svg` | As 4 etapas até o expositor montado |

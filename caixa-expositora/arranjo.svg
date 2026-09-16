@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-150 -150 2600 1430" role="img">
+<style>text{font-family:var(--figmono, ui-monospace),SFMono-Regular,Menlo,Consolas,monospace}</style>
+<rect x="-150" y="-150" width="2600" height="1430" fill="var(--figbg,#FFFFFF)"/>
+<rect x="0.0" y="60.0" width="780.0" height="580.0" fill="none" fill-opacity="1.0" stroke="var(--cut,#14171A)" stroke-width="3"/>
+<rect x="3.0" y="63.0" width="229.0" height="249.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="2"/>
+<text x="117.5" y="195.5" font-size="22" font-weight="500" fill="var(--picote,#BC3C19)" text-anchor="middle">235x255</text>
+<rect x="3.0" y="318.0" width="229.0" height="249.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="2"/>
+<text x="117.5" y="450.5" font-size="22" font-weight="500" fill="var(--picote,#BC3C19)" text-anchor="middle">235x255</text>
+<text x="117.5" y="44.0" font-size="26" font-weight="700" fill="var(--cut,#14171A)" text-anchor="middle">COLUNA A</text>
+<line x1="0.0" y1="688.0" x2="235.0" y2="688.0" stroke="var(--mut,#5F686D)" stroke-width="1.3"/><path d="M0.0 688.0 l8 -4.5 v9 z" fill="var(--mut,#5F686D)"/><path d="M235.0 688.0 l-8 -4.5 v9 z" fill="var(--mut,#5F686D)"/><text x="117.5" y="679.0" font-size="19" font-weight="500" fill="var(--mut,#5F686D)" text-anchor="middle">235</text>
+<rect x="235.0" y="60.0" width="9.0" height="580.0" fill="var(--mut,#5F686D)" fill-opacity="0.55" stroke="var(--mut,#5F686D)" stroke-width="1"/>
+<rect x="241.0" y="63.0" width="254.0" height="174.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="2"/>
+<text x="368.0" y="158.0" font-size="22" font-weight="500" fill="var(--picote,#BC3C19)" text-anchor="middle">260x180</text>
+<rect x="241.0" y="243.0" width="254.0" height="174.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="2"/>
+<text x="368.0" y="338.0" font-size="22" font-weight="500" fill="var(--picote,#BC3C19)" text-anchor="middle">260x180</text>
+<rect x="241.0" y="423.0" width="254.0" height="174.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="2"/>
+<text x="368.0" y="518.0" font-size="22" font-weight="500" fill="var(--picote,#BC3C19)" text-anchor="middle">260x180</text>
+<text x="368.0" y="44.0" font-size="26" font-weight="700" fill="var(--cut,#14171A)" text-anchor="middle">COLUNA B</text>
+<line x1="238.0" y1="688.0" x2="498.0" y2="688.0" stroke="var(--mut,#5F686D)" stroke-width="1.3"/><path d="M238.0 688.0 l8 -4.5 v9 z" fill="var(--mut,#5F686D)"/><path d="M498.0 688.0 l-8 -4.5 v9 z" fill="var(--mut,#5F686D)"/><text x="368.0" y="679.0" font-size="19" font-weight="500" fill="var(--mut,#5F686D)" text-anchor="middle">260</text>
+<rect x="498.0" y="60.0" width="9.0" height="580.0" fill="var(--mut,#5F686D)" fill-opacity="0.55" stroke="var(--mut,#5F686D)" stroke-width="1"/>
+<rect x="504.0" y="63.0" width="254.0" height="174.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="2"/>
+<text x="631.0" y="158.0" font-size="22" font-weight="500" fill="var(--picote,#BC3C19)" text-anchor="middle">260x180</text>
+<rect x="504.0" y="243.0" width="254.0" height="174.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="2"/>
+<text x="631.0" y="338.0" font-size="22" font-weight="500" fill="var(--picote,#BC3C19)" text-anchor="middle">260x180</text>
+<rect x="504.0" y="423.0" width="254.0" height="174.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="2"/>
+<text x="631.0" y="518.0" font-size="22" font-weight="500" fill="var(--picote,#BC3C19)" text-anchor="middle">260x180</text>
+<text x="631.0" y="44.0" font-size="26" font-weight="700" fill="var(--cut,#14171A)" text-anchor="middle">COLUNA C</text>
+<line x1="501.0" y1="688.0" x2="761.0" y2="688.0" stroke="var(--mut,#5F686D)" stroke-width="1.3"/><path d="M501.0 688.0 l8 -4.5 v9 z" fill="var(--mut,#5F686D)"/><path d="M761.0 688.0 l-8 -4.5 v9 z" fill="var(--mut,#5F686D)"/><text x="631.0" y="679.0" font-size="19" font-weight="500" fill="var(--mut,#5F686D)" text-anchor="middle">260</text>
+<line x1="0.0" y1="-10.0" x2="780.0" y2="-10.0" stroke="var(--mut,#5F686D)" stroke-width="1.3"/><path d="M0.0 -10.0 l8 -4.5 v9 z" fill="var(--mut,#5F686D)"/><path d="M780.0 -10.0 l-8 -4.5 v9 z" fill="var(--mut,#5F686D)"/><text x="390.0" y="-19.0" font-size="24" font-weight="500" fill="var(--mut,#5F686D)" text-anchor="middle">frente interna 780</text>
+<line x1="892.0" y1="60.0" x2="892.0" y2="640.0" stroke="var(--mut,#5F686D)" stroke-width="1.3"/><path d="M892.0 60.0 l-4.5 8 h9 z" fill="var(--mut,#5F686D)"/><path d="M892.0 640.0 l-4.5 -8 h9 z" fill="var(--mut,#5F686D)"/><text x="882.0" y="350.0" font-size="24" font-weight="500" fill="var(--mut,#5F686D)" text-anchor="middle" transform="rotate(-90,882.0,350.0)">prof. 580</text>
+<text x="390.0" y="770.0" font-size="26" font-weight="500" fill="var(--mut,#5F686D)" text-anchor="middle">VISTA SUPERIOR - uma coluna por kit, tres facings</text>
+<rect x="1100.0" y="60.0" width="780.0" height="900.0" fill="none" fill-opacity="1.0" stroke="var(--cut,#14171A)" stroke-width="3"/>
+<rect x="1102.0" y="857.0" width="231.0" height="101.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1102.0" y="752.0" width="231.0" height="101.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1102.0" y="647.0" width="231.0" height="101.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1102.0" y="542.0" width="231.0" height="101.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1102.0" y="437.0" width="231.0" height="101.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1102.0" y="332.0" width="231.0" height="101.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1102.0" y="227.0" width="231.0" height="101.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1102.0" y="122.0" width="231.0" height="101.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<text x="1217.5" y="44.0" font-size="24" font-weight="700" fill="var(--cut,#14171A)" text-anchor="middle">8 x 2 = 16 kits</text>
+<rect x="1340.0" y="822.0" width="256.0" height="136.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1340.0" y="682.0" width="256.0" height="136.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1340.0" y="542.0" width="256.0" height="136.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1340.0" y="402.0" width="256.0" height="136.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1340.0" y="262.0" width="256.0" height="136.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1340.0" y="122.0" width="256.0" height="136.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<text x="1468.0" y="44.0" font-size="24" font-weight="700" fill="var(--cut,#14171A)" text-anchor="middle">6 x 3 = 18 kits</text>
+<rect x="1603.0" y="920.0" width="256.0" height="40.0" fill="var(--mut,#5F686D)" fill-opacity="0.3" stroke="var(--mut,#5F686D)" stroke-width="1.6"/>
+<text x="1731.0" y="947.0" font-size="19" font-weight="500" fill="var(--mut,#5F686D)" text-anchor="middle">calco 40</text>
+<rect x="1603.0" y="842.0" width="256.0" height="76.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1603.0" y="762.0" width="256.0" height="76.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1603.0" y="682.0" width="256.0" height="76.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1603.0" y="602.0" width="256.0" height="76.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1603.0" y="522.0" width="256.0" height="76.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1603.0" y="442.0" width="256.0" height="76.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1603.0" y="362.0" width="256.0" height="76.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1603.0" y="282.0" width="256.0" height="76.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1603.0" y="202.0" width="256.0" height="76.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<rect x="1603.0" y="122.0" width="256.0" height="76.0" fill="var(--picote,#BC3C19)" fill-opacity="0.14" stroke="var(--picote,#BC3C19)" stroke-width="1.8"/>
+<text x="1731.0" y="44.0" font-size="24" font-weight="700" fill="var(--cut,#14171A)" text-anchor="middle">10 x 3 = 30 kits</text>
+<path d="M1060 120 H1930" stroke="var(--cut,#14171A)" stroke-width="2.6" stroke-dasharray="18 9"/><text x="1938.0" y="128.0" font-size="24" font-weight="500" fill="var(--cut,#14171A)" text-anchor="start">carga nivelada em 840</text>
+<path d="M1100 720 H1880" stroke="var(--picote,#BC3C19)" stroke-width="3.4" stroke-dasharray="26 10"/><text x="1080.0" y="728.0" font-size="24" font-weight="500" fill="var(--picote,#BC3C19)" text-anchor="end">picote 240</text>
+<line x1="2080.0" y1="60.0" x2="2080.0" y2="960.0" stroke="var(--mut,#5F686D)" stroke-width="1.3"/><path d="M2080.0 60.0 l-4.5 8 h9 z" fill="var(--mut,#5F686D)"/><path d="M2080.0 960.0 l-4.5 -8 h9 z" fill="var(--mut,#5F686D)"/><text x="2070.0" y="510.0" font-size="24" font-weight="500" fill="var(--mut,#5F686D)" text-anchor="middle" transform="rotate(-90,2070.0,510.0)">altura interna 900</text>
+<text x="1490.0" y="1090.0" font-size="26" font-weight="500" fill="var(--mut,#5F686D)" text-anchor="middle">VISTA FRONTAL - o calco de 40 nivela o kit baixo com os outros dois</text>
+
+</svg>

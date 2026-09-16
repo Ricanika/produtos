@@ -1,179 +1,145 @@
 #!/usr/bin/env python3
 """
-Memoria de calculo da caixa expositora de papelao ondulado para os 3 kits.
+Memoria de calculo da caixa expositora SORTIDA (os 3 kits na mesma caixa).
 
 CONCEITO
-  Caixa de transporte que vira expositor no ponto de venda: picote na frente
-  subindo ate o topo, destaca-se o painel frontal inteiro (com a aba superior
-  da frente junto) e dobra-se a aba superior traseira 180 graus para cima,
-  virando a TESTEIRA com a arte da marca.
+  Caixa tipo WRAP: uma chapa unica da a volta FUNDO -> FRENTE -> TOPO -> TRAS.
+  O topo e um painel inteirico preso na traseira - e isso que permite a testeira.
 
-  Estrutura: caixa de 1 peca, emenda colada, abas superiores DESIGUAIS.
-    - abas inferiores: fundo total (as duas camadas se encontram)
-    - abas superiores frente/tras: metade da profundidade (fecham o transporte)
-    - abas superiores laterais: 100 mm, dobram para DENTRO e viram o aro de
-      travamento que impede a caixa de abrir quando a frente sai
+  O picote sobe pela frente a partir de 240 mm, corre pelas duas quinas frontais
+  ate o topo e MORRE ali. A peca [frente alta + topo] NAO sai: fica articulada no
+  vinco TRAS/TOPO. Para montar o expositor:
+     1. o TOPO gira 90 graus e fica em pe, na altura da traseira  -> testeira
+     2. a FRENTE ALTA dobra 180 graus sobre ele                   -> parede dupla
+     3. o que sobra da frente desce por dentro da caixa           -> travamento
 
-REGRA QUE DIMENSIONA TUDO
-  Os dois kits retangulares tem 26 cm: 2 x 26 = 52 cm exatos. Com profundidade
-  interna de 52 a folga e ZERO. A profundidade interna precisa ser 53 cm.
+A ALTURA E CONSEQUENCIA DA MECANICA, NAO ESCOLHA:
+     H = frente que fica (240) + profundidade (topo) + aba de travamento
+
+ARRANJO
+  Uma coluna vertical por kit, tres facings. Cada coluna tem sua propria
+  contagem de camadas; um calco nivela os tres topos na mesma altura.
 
 Uso:  python3 calculo-expositora.py
 """
 import math
 
-# ---------------------------------------------------------------- entradas
-KITS = {
-    "A - kit quadrado":       (23.5, 25.5, 10.5),
-    "B - kit retangular alto": (18.0, 26.0, 14.0),
-    "C - kit retangular baixo": (18.0, 26.0,  8.0),
+ESP = 5.0                      # espessura da onda C simples (mm)
+KITS = {                       # (a, b, altura) em mm
+    "A - quadrado":        (235, 255, 105),
+    "B - retangular alto": (180, 260, 140),
+    "C - retangular baixo":(180, 260,  80),
 }
+BARRIGA = 3                    # barriga por camada empilhada (mm)
 
-# caixa: (frente, profundidade, altura) INTERNAS, em cm
-BRIEF = (56.0, 52.0, 72.0)   # medidas passadas
-REC   = (56.0, 53.0, 72.0)   # com folga no eixo dos 26 cm
-ALTA  = (56.0, 53.0, 75.0)   # + ganho de camada
+# ----------------------------------------------------------------- geometria
+W, D = 780, 580                # frente e profundidade INTERNAS
+FRENTE_FICA = 240              # muro de retencao que sobra na frente
+ABA_TRAVA = 80                 # aba que desce por dentro e trava a testeira
+H = FRENTE_FICA + D + ABA_TRAVA        # 900 - travado pela mecanica
+FOLGA_TOPO = 30
+DIV = 3                        # espessura da divisoria entre colunas
 
-ESP = 0.7        # espessura da onda BC (cm)
-FOLGA_H = 0.3    # barriga por camada empilhada de caixinha de kit (cm)
-
-
-def por_camada(F, P, kit):
-    """Melhor arranjo em 2 blocos: bloco principal + faixa residual rodada."""
-    a, b, _ = kit
-    melhor = (0, "")
-    for (u, v) in ((a, b), (b, a)):          # orientacao do bloco principal
-        nu, nv = int(F // u), int(P // v)
-        if nu == 0 or nv == 0:
-            continue
-        n = nu * nv
-        desc = f"{nu} x {nv} ({u:g} x {v:g} cm)"
-        # faixa que sobra na profundidade, preenchida com a peca rodada
-        sobra = P - nv * v
-        mu, mv = int(F // v), int(sobra // u)
-        if mu and mv:
-            n += mu * mv
-            desc += f" + {mu} x {mv} rodados"
-        # faixa que sobra na frente
-        sobraF = F - nu * u
-        ku, kv = int(sobraF // v), int(P // u)
-        if ku and kv:
-            n2 = nu * nv + ku * kv
-            if n2 > n:
-                n, desc = n2, f"{nu} x {nv} ({u:g} x {v:g} cm) + {ku} x {kv} rodados"
-        if n > melhor[0]:
-            melhor = (n, desc)
-    return melhor
+# coluna: (kit, dim na frente, dim na profundidade)
+COLUNAS = [("A - quadrado", 235, 255),
+           ("B - retangular alto", 260, 180),
+           ("C - retangular baixo", 260, 180)]
 
 
-def camadas(H, h):
-    n = int((H + 1e-9) // (h + FOLGA_H))
-    return n, n * h
+def analisa():
+    carga = H - FOLGA_TOPO
+    larg_usada = sum(c[1] for c in COLUNAS) + DIV * (len(COLUNAS) - 1)
+    print(f"Interno {W} x {D} x {H} mm   |   externo "
+          f"{W+2*ESP:.0f} x {D+2*ESP:.0f} x {H+2*ESP:.0f} mm")
+    print(f"H = {FRENTE_FICA} (frente que fica) + {D} (topo) + {ABA_TRAVA} "
+          f"(aba de travamento) = {H} mm\n")
+    print(f"{'coluna':<24}{'facing':<10}{'fundos':<10}{'/camada':<10}{'camadas':<10}"
+          f"{'kits':<8}{'pilha':<10}{'calco'}")
+    tot, vol, alturas = {}, 0.0, []
+    for nome, fr, pf in COLUNAS:
+        a, b, h = KITS[nome]
+        ny = int((D - 10) // pf)
+        cam = int((carga + 1e-9) // (h + BARRIGA))
+        n = ny * cam
+        pilha = cam * h
+        alturas.append(pilha)
+        tot[nome] = n
+        vol += n * a * b * h
+        print(f"{nome:<24}{fr:<10}{ny:<10}{ny:<10}{cam:<10}{n:<8}{pilha:<10}", end="")
+        print("")
+    nivel = max(alturas)
+    print()
+    for (nome, fr, pf), pilha in zip(COLUNAS, alturas):
+        print(f"  calco da coluna {nome[0]}: {nivel - pilha:>3.0f} mm  "
+              f"-> topo da carga nivelado em {nivel:.0f} mm")
+    print(f"\nlargura usada pelas colunas + {len(COLUNAS)-1} divisorias: "
+          f"{larg_usada} mm de {W} (folga {W - larg_usada} mm)")
+    print(f"TOTAL: {sum(tot.values())} kits  |  "
+          f"{' + '.join(f'{v} {k[0]}' for k, v in tot.items())}  |  "
+          f"{min(tot.values())} trios completos")
+    print(f"Volume de produto {vol/1e6:.1f} L de {W*D*H/1e6:.1f} L internos "
+          f"-> ocupacao {vol/(W*D*H)*100:.0f}%")
+    return tot, vol
 
 
-def analise(caixa, titulo):
-    F, P, H = caixa
-    vol_caixa = F * P * H
-    print(f"\n{titulo}  ->  interno {F:g} x {P:g} x {H:g} cm  ({vol_caixa/1000:.1f} L)")
-    print(f"{'kit':<26}{'por camada':<30}{'camadas':<10}{'total':<8}{'ocup.':<8}{'folgas (F/P/H)'}")
-    tot = {}
-    for nome, kit in KITS.items():
-        n, desc = por_camada(F, P, kit)
-        nc, hu = camadas(H, kit[2])
-        total = n * nc
-        ocup = total * kit[0] * kit[1] * kit[2] / vol_caixa
-        # folga real do arranjo escolhido
-        print(f"{nome:<26}{desc:<30}{nc:<10}{total:<8}{ocup*100:>5.0f}%   "
-              f"sobra alt. {H - hu:.1f} cm")
-        tot[nome] = total
-    return tot
+def chapa():
+    """Wrap: FUNDO | FRENTE | TOPO | TRAS | aba de cola."""
+    pw = W + ESP
+    paineis = [("FUNDO", D + ESP), ("FRENTE", H + ESP),
+               ("TOPO", D + ESP), ("TRAS", H + ESP), ("aba de cola", 80)]
+    comp = sum(p[1] for p in paineis)
+    aba_lat = D / 2 + 25                  # laterais se sobrepoem 50 mm
+    larg = pw + 2 * aba_lat
+    print(f"\n{'-'*88}\nCHAPA (wrap, onda C 5 mm)")
+    for nome, v in paineis:
+        print(f"  {nome:<14}{v:>7.0f} mm")
+    print(f"  {'aba lateral':<14}{aba_lat:>7.0f} mm (x2, sobrepoem 50 mm no meio da lateral)")
+    print(f"  {'painel':<14}{pw:>7.0f} mm de largura")
+    print(f"  CHAPA {comp:.0f} x {larg:.0f} mm = {comp*larg/1e6:.2f} m2")
+    for g, nome in ((0.50, "onda C simples"), (0.70, "onda BC dupla")):
+        print(f"    peso da caixa em {nome}: {comp*larg/1e6*g:.1f} kg")
+    return comp, larg
 
 
-def mckee(F, P, ect, t=ESP, derate=1.0):
-    """BCT (kgf) por McKee. ect em kgf/cm, t e perimetro em cm."""
-    Z = 2 * (F + P)
-    return 5.87 * ect * math.sqrt(t * Z) * derate
+def mckee(ect, t, derate=1.0):
+    Z = 2 * (W + D) / 10
+    return 5.87 * ect * math.sqrt(t / 10 * Z) * derate
 
 
-def blank(F, P, H, esp=ESP):
-    """Cotas da chapa planificada (cm). Painel = interno + espessura."""
-    pf, pp = F + esp, P + esp
-    aba_cola = 4.0
-    comp = 2 * pf + 2 * pp + aba_cola
-    aba_inf_lat = pf / 2 - 0.2      # laterais se encontram na frente (56)
-    aba_inf_ft  = pp / 2 - 0.2      # frente/tras se encontram na prof. (53)
-    aba_sup_ft  = pp / 2 - 0.2
-    aba_sup_lat = 10.0              # aro de travamento
-    larg = aba_inf_lat + H + aba_sup_ft
-    return dict(comp=comp, larg=larg, aba_cola=aba_cola,
-                painel_frente=pf, painel_lateral=pp,
-                aba_inf_lat=aba_inf_lat, aba_inf_ft=aba_inf_ft,
-                aba_sup_ft=aba_sup_ft, aba_sup_lat=aba_sup_lat,
-                area=comp * larg / 1e4)
+def resistencia(peso_bruto):
+    print(f"\n{'-'*88}\nCOMPRESSAO (McKee) - perimetro {2*(W+D)/10:.0f} cm")
+    print(f"{'papel':<32}{'ECT':<8}{'esp.':<8}{'BCT fechada':<16}{'margem p/ 2 alturas'}")
+    exigido = peso_bruto * 5          # fator 5: 6 meses, UR 80%
+    for nome, ect, t in (("onda C simples K180/K180", 5.2, 5.0),
+                         ("onda C simples K200/K200", 6.8, 5.0),
+                         ("onda BC dupla 175/150/175", 10.5, 7.0)):
+        b = mckee(ect, t)
+        print(f"{nome:<32}{ect:<8.1f}{t:<8.1f}{b:<16.0f}{b/exigido:.1f}x")
+    print(f"\n  Em TRANSPORTE a caixa esta inteira - o picote nao rompeu, os 4 paineis")
+    print(f"  trabalham. O derate de painel aberto da Rev.1 nao se aplica mais.")
+    print(f"  Carga: 1 caixa sobre a outra = {peso_bruto:.0f} kg; fator 5 -> "
+          f"{exigido:.0f} kgf exigidos.")
 
 
-def palete(F, P, esp=ESP, pal=(100.0, 120.0)):
-    fe, pe = F + 2 * esp, P + 2 * esp
-    melhor = (0, "")
-    for (u, v) in ((fe, pe), (pe, fe)):
-        n = int(pal[0] // u) * int(pal[1] // v)
-        if n > melhor[0]:
-            melhor = (n, f"{int(pal[0]//u)} x {int(pal[1]//v)}")
-    return fe, pe, melhor
+def palete():
+    we, de, he = W + 2*ESP, D + 2*ESP, H + 2*ESP
+    print(f"\n{'-'*88}\nPALETE")
+    print(f"  meio-palete EUR 800 x 600: caixa {we:.0f} x {de:.0f} -> "
+          f"folga {800-we:.0f} / {600-de:.0f} mm  (1 caixa, 100% do meio-palete)")
+    print(f"  altura do display: {he:.0f} (caixa) + {D} (testeira) + 144 (palete) "
+          f"= {he+D+144:.0f} mm")
+    print(f"  2 meios-paletes = 800 x 1200 mm -> cabem num PBR 1000 x 1200 (80% do piso)")
 
 
 if __name__ == "__main__":
-    print("=" * 96)
-    print("CAIXA EXPOSITORA - 3 KITS")
-    print("=" * 96)
-    print(f"{'kit':<26}{'dimensoes (cm)':<22}{'volume (L)'}")
-    for nome, (a, b, c) in KITS.items():
-        print(f"{nome:<26}{a:g} x {b:g} x {c:g}{'':<8}{a*b*c/1000:.2f}")
-
-    t1 = analise(BRIEF, "1) COMO VEIO NO BRIEFING")
-    t2 = analise(REC,   "2) RECOMENDADO - profundidade 53 cm (folga no eixo dos 26)")
-    t3 = analise(ALTA,  "3) OPCIONAL - altura interna 75 cm")
-
-    print("\nGANHO DA ALTURA 75 cm:")
-    for k in KITS:
-        d = t3[k] - t2[k]
-        print(f"  {k:<26}{t2[k]:>3} -> {t3[k]:>3} kits   ({d:+d}, {d/t2[k]*100:+.0f}%)")
-
-    print("\n" + "-" * 96)
-    print("CALCO DE FUNDO (nivela o topo da carga nos 3 kits, caixa interna 72 cm)")
-    F, P, H = REC
-    for nome, kit in KITS.items():
-        nc, hu = camadas(H, kit[2])
-        print(f"  {nome:<26}{nc} camadas = {hu:.1f} cm   ->  calco de {H-hu:.1f} cm")
-
-    print("\n" + "-" * 96)
-    print("RESISTENCIA A COMPRESSAO (McKee) - caixa 56 x 53, perimetro 218 cm")
-    print(f"{'papel':<34}{'ECT':<10}{'BCT fechada':<16}{'BCT c/ frente aberta (-45%)'}")
-    for papel, ect in (("onda C simples K180/K180", 5.2),
-                       ("onda C simples K200/K200", 6.8),
-                       ("onda BC dupla 175/150/175", 10.5),
-                       ("onda BC dupla K200/K200", 13.0)):
-        b1 = mckee(F, P, ect)
-        b2 = mckee(F, P, ect, derate=0.55)
-        print(f"{papel:<34}{ect:<10.1f}{b1:<16.0f}{b2:.0f} kgf")
-
-    print("\n  Carga de projeto: 3 caixas empilhadas x 30 kg = 60 kg na de baixo.")
-    for fs, desc in ((5, "6 meses de estoque + umidade 80% (fator 5)"),
-                     (7, "cenario conservador (fator 7)")):
-        print(f"    fator {fs} -> BCT minimo exigido = {60*fs} kgf   ({desc})")
-
-    print("\n" + "-" * 96)
-    print("CHAPA PLANIFICADA (onda BC 7 mm, medidas em cm)")
-    b = blank(*REC)
-    for k, v in b.items():
-        print(f"  {k:<18}{v:.1f}")
-    print(f"  peso estimado da caixa (BC ~700 g/m2): {b['area']*0.70:.2f} kg")
-
-    print("\n" + "-" * 96)
-    print("PALETIZACAO")
-    for nome, cx in (("briefing 56x52", BRIEF), ("recomendado 56x53", REC)):
-        fe, pe, (n, arr) = palete(cx[0], cx[1])
-        area = n * fe * pe / (100 * 120)
-        print(f"  {nome:<20}externo {fe:.1f} x {pe:.1f} cm  ->  PBR 100x120: "
-              f"{n} caixas/camada ({arr}), {area*100:.0f}% do palete")
-    print("  meio-palete 60 x 80 cm: 1 caixa, 57.4 <= 60 e 54.4 <= 80  -> serve como display de chao")
+    print("=" * 88)
+    print("CAIXA EXPOSITORA SORTIDA - 3 KITS NA MESMA CAIXA")
+    print("=" * 88)
+    tot, vol = analisa()
+    chapa()
+    # peso bruto estimado: densidade de embalagem de utilidade domestica em plastico
+    peso = vol / 1e6 * 0.12 + 2.2
+    print(f"\n  peso bruto estimado: {vol/1e6:.0f} L x 0,12 kg/L + 2,2 kg de caixa "
+          f"= {peso:.0f} kg  (ESTIMATIVA - confirmar)")
+    resistencia(peso)
+    palete()
