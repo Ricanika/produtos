@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-140 -140 2528 1778.0" role="img" style="max-width:100%;height:auto">
+<style>text{font-family:var(--figmono),ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}</style>
+<rect x="-140" y="-140" width="2528" height="1778.0" fill="var(--figbg,#FFFFFF)"/>
+<rect x="0.0" y="266.5" width="2248.0" height="720.0" fill="var(--board,#EFECE4)" stroke="var(--cut,#16181A)" stroke-width="2.2"/>
+<rect x="42.0" y="0.0" width="563.0" height="266.5" fill="var(--board,#EFECE4)" stroke="var(--cut,#16181A)" stroke-width="2.2"/>
+<rect x="42.0" y="986.5" width="563.0" height="266.5" fill="var(--board,#EFECE4)" stroke="var(--cut,#16181A)" stroke-width="2.2"/>
+<rect x="1146.0" y="0.0" width="563.0" height="266.5" fill="var(--board,#EFECE4)" stroke="var(--cut,#16181A)" stroke-width="2.2"/>
+<rect x="1146.0" y="986.5" width="563.0" height="266.5" fill="var(--board,#EFECE4)" stroke="var(--cut,#16181A)" stroke-width="2.2"/>
+<rect x="609.0" y="166.5" width="533.0" height="100.0" fill="var(--board,#EFECE4)" stroke="var(--cut,#16181A)" stroke-width="2.2"/>
+<rect x="609.0" y="986.5" width="533.0" height="281.5" fill="var(--board,#EFECE4)" stroke="var(--cut,#16181A)" stroke-width="2.2"/>
+<rect x="1713.0" y="166.5" width="533.0" height="100.0" fill="var(--board,#EFECE4)" stroke="var(--cut,#16181A)" stroke-width="2.2"/>
+<rect x="1713.0" y="986.5" width="533.0" height="281.5" fill="var(--board,#EFECE4)" stroke="var(--cut,#16181A)" stroke-width="2.2"/>
+<path d="M40 266.5 V986.5 M607 266.5 V986.5 M1144 266.5 V986.5 M1711 266.5 V986.5 M0 266.5 H2248 M0 986.5 H2248" stroke="var(--vinco,#2F6FA8)" stroke-width="2" stroke-dasharray="14 7" fill="none"/>
+<path d="M1129 746.5 H1144 A1025 1025 0 0 0 1711 746.5 H1726 V266.5 H1711 M1129 746.5 V266.5 H1144" stroke="var(--picote,#D2451E)" stroke-width="3.4" fill="none" stroke-dasharray="26 9"/>
+<path d="M1410.0 786.5 a17.5 17.5 0 0 0 35 0" fill="none" stroke="var(--cut,#16181A)" stroke-width="2.2"/>
+<path d="M1144 750.5 A1025 1025 0 0 0 1711 750.5 L1711 266.5 L1144 266.5 Z" fill="var(--picote,#D2451E)" opacity="0.10"/>
+<path d="M1146 0 h563 v266.5 h-563 z" fill="var(--picote,#D2451E)" opacity="0.10"/>
+<rect x="210" y="70" width="60" height="4" rx="2" fill="var(--cut,#16181A)"/>
+<rect x="437" y="70" width="60" height="4" rx="2" fill="var(--cut,#16181A)"/>
+<text x="20.0" y="626.5" font-size="16" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle" transform="rotate(-90,20.0,626.5)">ABA DE COLA</text>
+
+<text x="323.5" y="826.5" font-size="28" font-weight="700" fill="var(--cut,#16181A)" text-anchor="middle">TRASEIRA</text>
+
+<text x="875.5" y="826.5" font-size="28" font-weight="700" fill="var(--cut,#16181A)" text-anchor="middle">LATERAL</text>
+
+<text x="1427.5" y="826.5" font-size="28" font-weight="700" fill="var(--cut,#16181A)" text-anchor="middle">FRENTE</text>
+
+<text x="1979.5" y="826.5" font-size="28" font-weight="700" fill="var(--cut,#16181A)" text-anchor="middle">LATERAL</text>
+
+<text x="1427.5" y="871.5" font-size="17" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="middle">painel destacavel</text>
+
+<text x="323.5" y="150.0" font-size="18" font-weight="700" fill="var(--cut,#16181A)" text-anchor="middle">TESTEIRA  (dobra 180 para cima)</text>
+
+<text x="875.5" y="228.5" font-size="16" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">aro de travamento</text>
+
+<text x="1979.5" y="228.5" font-size="16" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">aro de travamento</text>
+
+<text x="323.5" y="1136.5" font-size="16" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">fundo</text>
+
+<text x="1427.5" y="1136.5" font-size="16" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">fundo</text>
+
+<text x="875.5" y="1136.5" font-size="16" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">fundo</text>
+
+<text x="1979.5" y="1136.5" font-size="16" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">fundo</text>
+
+<line x1="40" y1="1330.0" x2="607" y2="1330.0" stroke="var(--mut,#6B7280)" stroke-width="1.2"/><path d="M40 1330.0 l7 -4 v8 z" fill="var(--mut,#6B7280)"/><path d="M607 1330.0 l-7 -4 v8 z" fill="var(--mut,#6B7280)"/><text x="323.5" y="1323.0" font-size="15" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">567</text>
+
+<line x1="607" y1="1330.0" x2="1144" y2="1330.0" stroke="var(--mut,#6B7280)" stroke-width="1.2"/><path d="M607 1330.0 l7 -4 v8 z" fill="var(--mut,#6B7280)"/><path d="M1144 1330.0 l-7 -4 v8 z" fill="var(--mut,#6B7280)"/><text x="875.5" y="1323.0" font-size="15" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">537</text>
+
+<line x1="1144" y1="1330.0" x2="1711" y2="1330.0" stroke="var(--mut,#6B7280)" stroke-width="1.2"/><path d="M1144 1330.0 l7 -4 v8 z" fill="var(--mut,#6B7280)"/><path d="M1711 1330.0 l-7 -4 v8 z" fill="var(--mut,#6B7280)"/><text x="1427.5" y="1323.0" font-size="15" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">567</text>
+
+<line x1="1711" y1="1330.0" x2="2248" y2="1330.0" stroke="var(--mut,#6B7280)" stroke-width="1.2"/><path d="M1711 1330.0 l7 -4 v8 z" fill="var(--mut,#6B7280)"/><path d="M2248 1330.0 l-7 -4 v8 z" fill="var(--mut,#6B7280)"/><text x="1979.5" y="1323.0" font-size="15" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">537</text>
+
+<line x1="0" y1="1386.0" x2="2248" y2="1386.0" stroke="var(--mut,#6B7280)" stroke-width="1.2"/><path d="M0 1386.0 l7 -4 v8 z" fill="var(--mut,#6B7280)"/><path d="M2248 1386.0 l-7 -4 v8 z" fill="var(--mut,#6B7280)"/><text x="1124.0" y="1379.0" font-size="19" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">chapa 2248 mm</text>
+
+<line x1="2306" y1="266.5" x2="2306" y2="986.5" stroke="var(--mut,#6B7280)" stroke-width="1.2"/><path d="M2306 266.5 l-4 7 h8 z" fill="var(--mut,#6B7280)"/><path d="M2306 986.5 l-4 -7 h8 z" fill="var(--mut,#6B7280)"/><text x="2298.0" y="626.5" font-size="15" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle" transform="rotate(-90,2298,626.5)">720</text>
+
+<line x1="2306" y1="0" x2="2306" y2="266.5" stroke="var(--mut,#6B7280)" stroke-width="1.2"/><path d="M2306 0 l-4 7 h8 z" fill="var(--mut,#6B7280)"/><path d="M2306 266.5 l-4 -7 h8 z" fill="var(--mut,#6B7280)"/><text x="2298.0" y="133.2" font-size="15" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle" transform="rotate(-90,2298,133.25)">266</text>
+
+<line x1="2306" y1="986.5" x2="2306" y2="1268.0" stroke="var(--mut,#6B7280)" stroke-width="1.2"/><path d="M2306 986.5 l-4 7 h8 z" fill="var(--mut,#6B7280)"/><path d="M2306 1268.0 l-4 -7 h8 z" fill="var(--mut,#6B7280)"/><text x="2298.0" y="1127.2" font-size="15" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle" transform="rotate(-90,2298,1127.25)">282</text>
+
+<line x1="2366" y1="0" x2="2366" y2="1268.0" stroke="var(--mut,#6B7280)" stroke-width="1.2"/><path d="M2366 0 l-4 7 h8 z" fill="var(--mut,#6B7280)"/><path d="M2366 1268.0 l-4 -7 h8 z" fill="var(--mut,#6B7280)"/><text x="2358.0" y="634.0" font-size="19" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle" transform="rotate(-90,2358,634.0)">chapa 1268 mm</text>
+
+<line x1="1092" y1="986.5" x2="1092" y2="746.5" stroke="var(--mut,#6B7280)" stroke-width="1.2"/><path d="M1092 986.5 l-4 7 h8 z" fill="var(--mut,#6B7280)"/><path d="M1092 746.5 l-4 -7 h8 z" fill="var(--mut,#6B7280)"/><text x="1084.0" y="866.5" font-size="15" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle" transform="rotate(-90,1084,866.5)">240</text>
+
+<line x1="1547.5" y1="786.5" x2="1677.5" y2="858.5" stroke="var(--picote,#D2451E)" stroke-width="1.2"/>
+<text x="1685.5" y="864.5" font-size="17" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="start">flecha 40 / R1025</text>
+
+<line x1="1427.5" y1="804.5" x2="1237.5" y2="896.5" stroke="var(--cut,#16181A)" stroke-width="1.2"/>
+<text x="1229.5" y="902.5" font-size="17" font-weight="500" fill="var(--cut,#16181A)" text-anchor="end">dedeira D35 (corte)</text>
+
+<line x1="40" y1="1458.0" x2="130" y2="1458.0" stroke="var(--cut,#16181A)" stroke-width="3.4" stroke-dasharray="none"/>
+<text x="148.0" y="1465.0" font-size="20" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="start">corte (faca)</text>
+
+<line x1="600" y1="1458.0" x2="690" y2="1458.0" stroke="var(--vinco,#2F6FA8)" stroke-width="3.4" stroke-dasharray="14 7"/>
+<text x="708.0" y="1465.0" font-size="20" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="start">vinco</text>
+
+<line x1="1160" y1="1458.0" x2="1250" y2="1458.0" stroke="var(--picote,#D2451E)" stroke-width="3.4" stroke-dasharray="26 9"/>
+<text x="1268.0" y="1465.0" font-size="20" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="start">picote ziper</text>
+
+<text x="2248.0" y="1465.0" font-size="20" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="end">cotas em mm - escala 1:1 - onda BC 7 mm - canaletas VERTICAIS</text>
+
+</svg>

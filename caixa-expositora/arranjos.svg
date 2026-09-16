@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-90 -90 2240 920" role="img" style="max-width:100%;height:auto">
+<style>text{font-family:var(--figmono),ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}</style>
+<rect x="-90" y="-90" width="2240" height="920" fill="var(--figbg,#FFFFFF)"/>
+<rect x="0" y="80" width="560" height="530" fill="none" stroke="var(--cut,#16181A)" stroke-width="3"/>
+<rect x="3" y="83" width="249" height="229" fill="var(--picote,#D2451E)" fill-opacity="0.14" stroke="var(--picote,#D2451E)" stroke-width="2" rx="6"/>
+<text x="127.5" y="204.5" font-size="20" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="middle">25.5x23.5</text>
+
+<rect x="3" y="318" width="249" height="229" fill="var(--picote,#D2451E)" fill-opacity="0.14" stroke="var(--picote,#D2451E)" stroke-width="2" rx="6"/>
+<text x="127.5" y="439.5" font-size="20" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="middle">25.5x23.5</text>
+
+<rect x="258" y="83" width="249" height="229" fill="var(--picote,#D2451E)" fill-opacity="0.14" stroke="var(--picote,#D2451E)" stroke-width="2" rx="6"/>
+<text x="382.5" y="204.5" font-size="20" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="middle">25.5x23.5</text>
+
+<rect x="258" y="318" width="249" height="229" fill="var(--picote,#D2451E)" fill-opacity="0.14" stroke="var(--picote,#D2451E)" stroke-width="2" rx="6"/>
+<text x="382.5" y="439.5" font-size="20" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="middle">25.5x23.5</text>
+
+<rect x="510" y="80" width="50" height="530" fill="var(--mut,#6B7280)" opacity="0.12"/>
+<rect x="0" y="550" width="510" height="60" fill="var(--mut,#6B7280)" opacity="0.12"/>
+<text x="280.0" y="0.0" font-size="30" font-weight="700" fill="var(--cut,#16181A)" text-anchor="middle">KIT QUADRADO</text>
+
+<text x="280.0" y="668.0" font-size="23" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">4 por camada - 6 camadas - 24 kits</text>
+
+<text x="280.0" y="706.0" font-size="21" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">folga 5 cm x 6 cm</text>
+
+<line x1="0" y1="54" x2="560" y2="54" stroke="var(--mut,#6B7280)" stroke-width="1.2"/><path d="M0 54 l7 -4 v8 z" fill="var(--mut,#6B7280)"/><path d="M560 54 l-7 -4 v8 z" fill="var(--mut,#6B7280)"/><text x="280.0" y="47.0" font-size="21" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">560 (frente)</text>
+
+<line x1="590" y1="80" x2="590" y2="610" stroke="var(--mut,#6B7280)" stroke-width="1.2"/><path d="M590 80 l-4 7 h8 z" fill="var(--mut,#6B7280)"/><path d="M590 610 l-4 -7 h8 z" fill="var(--mut,#6B7280)"/><text x="582.0" y="345.0" font-size="21" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle" transform="rotate(-90,582,345.0)">530</text>
+
+<rect x="750" y="80" width="560" height="530" fill="none" stroke="var(--cut,#16181A)" stroke-width="3"/>
+<rect x="753" y="83" width="174" height="254" fill="var(--picote,#D2451E)" fill-opacity="0.14" stroke="var(--picote,#D2451E)" stroke-width="2" rx="6"/>
+<text x="840.0" y="217.0" font-size="20" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="middle">18x26</text>
+
+<rect x="753" y="343" width="174" height="254" fill="var(--picote,#D2451E)" fill-opacity="0.14" stroke="var(--picote,#D2451E)" stroke-width="2" rx="6"/>
+<text x="840.0" y="477.0" font-size="20" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="middle">18x26</text>
+
+<rect x="933" y="83" width="174" height="254" fill="var(--picote,#D2451E)" fill-opacity="0.14" stroke="var(--picote,#D2451E)" stroke-width="2" rx="6"/>
+<text x="1020.0" y="217.0" font-size="20" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="middle">18x26</text>
+
+<rect x="933" y="343" width="174" height="254" fill="var(--picote,#D2451E)" fill-opacity="0.14" stroke="var(--picote,#D2451E)" stroke-width="2" rx="6"/>
+<text x="1020.0" y="477.0" font-size="20" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="middle">18x26</text>
+
+<rect x="1113" y="83" width="174" height="254" fill="var(--picote,#D2451E)" fill-opacity="0.14" stroke="var(--picote,#D2451E)" stroke-width="2" rx="6"/>
+<text x="1200.0" y="217.0" font-size="20" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="middle">18x26</text>
+
+<rect x="1113" y="343" width="174" height="254" fill="var(--picote,#D2451E)" fill-opacity="0.14" stroke="var(--picote,#D2451E)" stroke-width="2" rx="6"/>
+<text x="1200.0" y="477.0" font-size="20" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="middle">18x26</text>
+
+<rect x="1290" y="80" width="20" height="530" fill="var(--mut,#6B7280)" opacity="0.12"/>
+<rect x="750" y="600" width="540" height="10" fill="var(--mut,#6B7280)" opacity="0.12"/>
+<text x="1030.0" y="0.0" font-size="30" font-weight="700" fill="var(--cut,#16181A)" text-anchor="middle">KIT RET. ALTO</text>
+
+<text x="1030.0" y="668.0" font-size="23" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">6 por camada - 5 camadas - 30 kits</text>
+
+<text x="1030.0" y="706.0" font-size="21" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">folga 2 cm x 1 cm</text>
+
+<line x1="750" y1="54" x2="1310" y2="54" stroke="var(--mut,#6B7280)" stroke-width="1.2"/><path d="M750 54 l7 -4 v8 z" fill="var(--mut,#6B7280)"/><path d="M1310 54 l-7 -4 v8 z" fill="var(--mut,#6B7280)"/><text x="1030.0" y="47.0" font-size="21" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">560 (frente)</text>
+
+<line x1="1340" y1="80" x2="1340" y2="610" stroke="var(--mut,#6B7280)" stroke-width="1.2"/><path d="M1340 80 l-4 7 h8 z" fill="var(--mut,#6B7280)"/><path d="M1340 610 l-4 -7 h8 z" fill="var(--mut,#6B7280)"/><text x="1332.0" y="345.0" font-size="21" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle" transform="rotate(-90,1332,345.0)">530</text>
+
+<rect x="1500" y="80" width="560" height="530" fill="none" stroke="var(--cut,#16181A)" stroke-width="3"/>
+<rect x="1503" y="83" width="174" height="254" fill="var(--picote,#D2451E)" fill-opacity="0.14" stroke="var(--picote,#D2451E)" stroke-width="2" rx="6"/>
+<text x="1590.0" y="217.0" font-size="20" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="middle">18x26</text>
+
+<rect x="1503" y="343" width="174" height="254" fill="var(--picote,#D2451E)" fill-opacity="0.14" stroke="var(--picote,#D2451E)" stroke-width="2" rx="6"/>
+<text x="1590.0" y="477.0" font-size="20" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="middle">18x26</text>
+
+<rect x="1683" y="83" width="174" height="254" fill="var(--picote,#D2451E)" fill-opacity="0.14" stroke="var(--picote,#D2451E)" stroke-width="2" rx="6"/>
+<text x="1770.0" y="217.0" font-size="20" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="middle">18x26</text>
+
+<rect x="1683" y="343" width="174" height="254" fill="var(--picote,#D2451E)" fill-opacity="0.14" stroke="var(--picote,#D2451E)" stroke-width="2" rx="6"/>
+<text x="1770.0" y="477.0" font-size="20" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="middle">18x26</text>
+
+<rect x="1863" y="83" width="174" height="254" fill="var(--picote,#D2451E)" fill-opacity="0.14" stroke="var(--picote,#D2451E)" stroke-width="2" rx="6"/>
+<text x="1950.0" y="217.0" font-size="20" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="middle">18x26</text>
+
+<rect x="1863" y="343" width="174" height="254" fill="var(--picote,#D2451E)" fill-opacity="0.14" stroke="var(--picote,#D2451E)" stroke-width="2" rx="6"/>
+<text x="1950.0" y="477.0" font-size="20" font-weight="500" fill="var(--picote,#D2451E)" text-anchor="middle">18x26</text>
+
+<rect x="2040" y="80" width="20" height="530" fill="var(--mut,#6B7280)" opacity="0.12"/>
+<rect x="1500" y="600" width="540" height="10" fill="var(--mut,#6B7280)" opacity="0.12"/>
+<text x="1780.0" y="0.0" font-size="30" font-weight="700" fill="var(--cut,#16181A)" text-anchor="middle">KIT RET. BAIXO</text>
+
+<text x="1780.0" y="668.0" font-size="23" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">6 por camada - 8 camadas - 48 kits</text>
+
+<text x="1780.0" y="706.0" font-size="21" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">folga 2 cm x 1 cm</text>
+
+<line x1="1500" y1="54" x2="2060" y2="54" stroke="var(--mut,#6B7280)" stroke-width="1.2"/><path d="M1500 54 l7 -4 v8 z" fill="var(--mut,#6B7280)"/><path d="M2060 54 l-7 -4 v8 z" fill="var(--mut,#6B7280)"/><text x="1780.0" y="47.0" font-size="21" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle">560 (frente)</text>
+
+<line x1="2090" y1="80" x2="2090" y2="610" stroke="var(--mut,#6B7280)" stroke-width="1.2"/><path d="M2090 80 l-4 7 h8 z" fill="var(--mut,#6B7280)"/><path d="M2090 610 l-4 -7 h8 z" fill="var(--mut,#6B7280)"/><text x="2082.0" y="345.0" font-size="21" font-weight="500" fill="var(--mut,#6B7280)" text-anchor="middle" transform="rotate(-90,2082,345.0)">530</text>
+
+</svg>
