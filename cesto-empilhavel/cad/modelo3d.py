@@ -1,28 +1,32 @@
 #!/usr/bin/env python3
 """
-Modelo 3D parametrico do cesto mini organizador empilhavel e encaixavel.
+Cesto organizador empilhavel e encaixavel -- peca unica em PP.
 
-PECA UNICA injetada -- sem dobradica, sem painel, sem montagem. Referencia:
-cesto mini organizador empilhavel de 21,5 x 20 x 13 cm.
+FORMA: adaptada do STL de referencia enviado em 16/09 (bin de 150 x 100 x 80 mm).
+A silhueta lateral de la, medida no proprio solido, e uma caixa com DOIS
+CHANFROS A 45 GRAUS na frente -- um no topo e um no pe -- deixando uma face
+frontal curta centrada na meia-altura:
 
-GEOMETRIA
-  Caixa tronco-piramidal com saida de DRAFT por lado (e a saida que permite o
-  encaixe: a base e menor que a boca, entao uma peca afunda na outra). A parede
-  frontal e rebaixada e a aresta superior das laterais desce do fundo para a
-  frente numa curva -- e essa curva que deixa a peca entrar inclinada na de
-  baixo para encaixar, e que da acesso frontal quando empilhada.
+    topo ________________________
+        |                        \\
+        |                         \\  chanfro de topo, 45 graus
+        |                          |  face frontal (26 mm)
+        |                         /
+        |________________________/   chanfro do pe, 45 graus
+    fundo
 
-DOIS MODOS
-  Empilhado: a peca de cima assenta nas quatro ORELHAS externas logo abaixo do
-  rim; passo = altura da peca, e a frente fica acessivel sem desempilhar.
-  Encaixado: inclina para a frente, os pes passam ao lado das orelhas e o corpo
-  afunda -- passo de encaixe muito menor.
+Proporcao do STL de referencia (150 x 100 x 80): chanfros de 32 mm e face
+frontal de 16 mm, ou 40% e 20% da altura. Escalado para a nossa altura de
+130 mm: chanfros de 52 mm e face frontal de 26 mm (52 + 26 + 52 = 130).
 
-VAZADO
-  Furos redondos em bandas horizontais de Z fixo, com o diametro caindo de cima
-  para baixo (D_TOPO -> D_BASE). Nas laterais as filas sao recortadas pela curva
-  da aresta, entao o campo de furos acompanha o rebaixo. Fundo SOLIDO e faixa
-  cega no pe da peca. A frente rebaixada e solida, com ripado vertical externo.
+O PEDIDO sobre essa forma:
+  - raios da lateral trabalhados, com as pontas arredondadas -> os quatro
+    cantos da silhueta saem em R20 (chanfro/topo e chanfro/fundo) e R12 (as
+    duas quinas da face frontal), por fillet no perfil 2D;
+  - vazado em FUROS REDONDOS com o diametro caindo de cima para baixo, faixa
+    cega no pe e FUNDO SOLIDO;
+  - empilha: os quatro pes de canto assentam no trilho do rim da peca de baixo;
+  - encaixa: saida de 3,5 graus por lado faz o corpo afundar na boca.
 
 Uso:  python3 modelo3d.py
 """
@@ -34,86 +38,73 @@ from build123d import (Align, Axis, Box, Cylinder, Plane, Polyline, Pos,
 
 RHO = 0.905e-3            # g/mm3 - PP copolimero
 
-# --- envelope (cotas da referencia) -----------------------------------------
-LARG      = 215.0         # X - largura frontal
-PROF      = 200.0         # Y - profundidade do CORPO
-PROJ_ABA  = 50.0          # avanco das abas para a frente -> 250 mm no total
-ALT       = 130.0         # Z - altura no fundo
-ALT_FRENTE = 40.0         # altura da parede frontal rebaixada
-RAIO      = 14.0          # raio de canto em planta
-DRAFT     = 3.5           # graus por lado - saida de molde E folga de encaixe
+# --- envelope ---------------------------------------------------------------
+LARG   = 215.0            # X - largura da boca
+PROF   = 200.0            # Y - profundidade
+ALT    = 130.0            # Z - altura
+DRAFT  = 3.5              # graus por lado: saida de molde e folga de encaixe
 
-T_PAREDE  = 1.4
-T_FUNDO   = 2.0
-T_RIM     = 3.2           # espessura da parede na faixa do rim
-H_RIM     = 10.0          # altura da faixa engrossada do rim
-H_PE      = 6.0           # pe
-# --- sela da aresta superior da lateral --------------------------------------
-# Sai da altura cheia no pilar frontal, desce ate um ponto baixo e volta a
-# subir ate a parede do fundo. E o que da o acesso frontal e a pega lateral.
-# A aba dianteira e uma placa em gancho que avanca PROJ_ABA para a frente. Seu
-# topo e um trilho RETO na altura cheia -- e nele que o pe da peca de cima
-# assenta, junto com os dois cantos de tras. As pontas sao arredondadas (R_ABA).
-Y_ABA_NARIZ = -(200.0 / 2) - 50.0    # nariz da aba -> 250 mm de profundidade total
-Y_ABA_FIM   = -(200.0 / 2) + 15.0    # onde o trilho termina e comeca a sela
-Y_ABA_RAIZ  = -(200.0 / 2) + 30.0    # onde a aba se funde na lateral
-T_ABA    = 3.5            # espessura da aba
-Z_ABA_BASE = 45.0         # borda inferior da aba
-R_ABA    = 14.0           # raio das pontas da aba -- o pedido
-Y_SELA   = -30.0          # onde a sela tem o ponto baixo
-Z_SELA   = 68.0           # cota do ponto baixo
-EXP_SUBIDA = 1.3          # forma da subida da sela ate o fundo
+# --- silhueta lateral, na proporcao do STL de referencia --------------------
+CHANFRO   = 52.0          # 40% da altura, a 45 graus
+FRENTE_H  = ALT - 2 * CHANFRO      # 26 mm - face frontal, na meia-altura
+R_CANTO   = 20.0          # raio nas duas pontas dos chanfros (o pedido)
+R_FRENTE  = 12.0          # raio nas duas quinas da face frontal
 
-# --- rebordo da base: o apoio do empilhamento -------------------------------
-# A peca e tronco-piramidal (boca maior que a base), entao uma afunda na outra.
-# O rebordo da base e alargado ate a medida da boca: nivelada, a peca de cima
-# assenta nele; inclinada ~14 graus, o rebordo passa livre pela frente
-# rebaixada e a peca afunda -- que e o encaixe das fotos da referencia.
-H_FLANGE = 6.0
-T_FLANGE = 2.5
-
-# --- pega lateral (a aba que aparece na foto, para puxar a peca empilhada) ---
-PG_L, PG_H, PG_P = 46.0, 9.0, 11.0
+# --- paredes ----------------------------------------------------------------
+T_PAREDE = 1.4
+T_FUNDO  = 2.0
+T_RIM    = 3.2            # parede engrossada na faixa do rim
+H_RIM    = 10.0
+H_PE     = 6.0
 
 # --- vazado -----------------------------------------------------------------
 PASSO   = 15.0
 D_TOPO  = 14.0
 D_BASE  = 6.0
-Z_TOPO  = ALT - H_RIM - 9.0           # centro da 1a fila
-BANDA   = 48.0                        # faixa cega no pe da parede
-FOLGA_C = 7.0                         # folga entre furo e a curva do rebaixo
-
+Z_TOPO  = ALT - H_RIM - 9.0
+BANDA   = 40.0            # faixa cega no pe da parede
+FOLGA_S = 9.0             # folga entre furo e a silhueta
 
 TAN = np.tan(np.radians(DRAFT))
-BASE_X = LARG - 2 * ALT * TAN          # medida da base (menor que a boca)
+BASE_X = LARG - 2 * ALT * TAN
 BASE_Y = PROF - 2 * ALT * TAN
 
 
 def secao(z, folga=0.0):
-    """Planta externa na cota z (boca = LARG x PROF no topo)."""
+    """Planta externa na cota z (a boca e LARG x PROF no topo)."""
     return (BASE_X + 2 * z * TAN - 2 * folga,
             BASE_Y + 2 * z * TAN - 2 * folga)
 
 
-def z_aresta(y):
-    """Cota da aresta superior da lateral em y.
+def silhueta():
+    """Perfil lateral (plano YZ) com as pontas arredondadas. Frente em -Y."""
+    yf, yb = -PROF / 2, PROF / 2
+    pts = [
+        (yb, 0.0),                       # fundo, atras
+        (yb, ALT),                       # costas, no alto
+        (yf + CHANFRO, ALT),             # topo corre ate o inicio do chanfro
+        (yf, ALT - CHANFRO),             # chanfro de topo, 45 graus
+        (yf, CHANFRO),                   # face frontal
+        (yf + CHANFRO, 0.0),             # chanfro do pe, 45 graus
+    ]
+    sk = make_face(Polyline(*pts, close=True))
+    # pontas dos chanfros
+    sk = fillet(sk.vertices().filter_by_position(Axis.X, yf + CHANFRO - 1,
+                                                 yf + CHANFRO + 1), R_CANTO)
+    # quinas da face frontal
+    sk = fillet(sk.vertices().filter_by_position(Axis.X, yf - 1, yf + 1), R_FRENTE)
+    return sk
 
-    Tres trechos: o TRILHO reto na altura cheia sobre a aba dianteira, a SELA
-    descendo num cosseno ate o ponto baixo (que e a pega lateral e o vao do
-    encaixe), e a subida longa ate a parede do fundo, tambem na altura cheia.
-    Trilho da frente e canto de tras sao os quatro apoios do empilhamento.
-    """
-    if y <= Y_ABA_FIM:
+
+def z_silhueta(y):
+    """Cota do topo da silhueta em y -- usada para recortar o campo de furos."""
+    yf = -PROF / 2
+    if y >= yf + CHANFRO:
         return ALT
-    if y <= Y_SELA:
-        t = (y - Y_ABA_FIM) / (Y_SELA - Y_ABA_FIM)
-        return ALT + (Z_SELA - ALT) * (0.5 - 0.5 * np.cos(np.pi * t))
-    t = (y - Y_SELA) / (PROF / 2 - Y_SELA)
-    return Z_SELA + (ALT - Z_SELA) * t ** EXP_SUBIDA
+    return (ALT - CHANFRO) + (y - yf)      # a 45 graus
 
 
 def filas():
-    """(z, diametro) de cada banda horizontal, de cima para baixo."""
     n = int((Z_TOPO - BANDA) // PASSO) + 1
     ds = np.linspace(D_TOPO, D_BASE, n)
     return [(Z_TOPO - i * PASSO, float(ds[i])) for i in range(n)]
@@ -126,139 +117,71 @@ def grade(extensao, passo):
     return [(-(n - 1) * passo / 2) + i * passo for i in range(n)]
 
 
-def corte_rebaixo():
-    """Solido acima da curva do rebaixo, atravessando toda a largura."""
-    ys = np.linspace(-PROF / 2 - 2, PROF / 2 + 2, 40)
-    pts = [(float(y), float(z_aresta(min(max(y, -PROF / 2), PROF / 2))))
-           for y in ys]
-    pts += [(PROF / 2 + 2, ALT + 40), (-PROF / 2 - 2, ALT + 40)]
-    perfil = make_face(Polyline(*[(p[0], p[1]) for p in pts], close=True))
-    s = extrude(Plane.YZ * perfil, LARG / 2 + 30, both=True)
-    return s
-
-
 def cesto():
-    fora = extrude(RectangleRounded(BASE_X, BASE_Y, RAIO), ALT, taper=-DRAFT)
+    # casca tronco-piramidal
+    fora = extrude(RectangleRounded(BASE_X, BASE_Y, 14.0), ALT, taper=-DRAFT)
     p = fora - Pos(0, 0, T_FUNDO) * extrude(
-        RectangleRounded(BASE_X - 2 * T_PAREDE, BASE_Y - 2 * T_PAREDE,
-                         RAIO - T_PAREDE), ALT, taper=-DRAFT)
-
-    # faixa do rim: parede engrossada, acompanhando a curva do rebaixo
-    cheio_rim = fora - Pos(0, 0, T_FUNDO) * extrude(
-        RectangleRounded(BASE_X - 2 * T_RIM, BASE_Y - 2 * T_RIM, RAIO - T_RIM),
+        RectangleRounded(BASE_X - 2 * T_PAREDE, BASE_Y - 2 * T_PAREDE, 12.0),
         ALT, taper=-DRAFT)
-    corte = corte_rebaixo()
-    banda_rim = Pos(0, 0, -H_RIM) * corte - corte
-    p += cheio_rim & banda_rim
 
-    # rebaixo frontal
-    p -= corte
+    # faixa do rim: parede engrossada no alto
+    cheio = fora - Pos(0, 0, T_FUNDO) * extrude(
+        RectangleRounded(BASE_X - 2 * T_RIM, BASE_Y - 2 * T_RIM, 11.0),
+        ALT, taper=-DRAFT)
+    p += cheio & Pos(0, 0, ALT - H_RIM) * extrude(
+        RectangleRounded(LARG + 40, PROF + 40, 0.1), H_RIM + 10)
+
+    # recorta pela silhueta: e isso que da a forma do STL de referencia
+    p = p & extrude(Plane.YZ * silhueta(), LARG / 2 + 30, both=True)
 
     # --- vazado ---
     furos, n = [], 0
     for z, d in filas():
-        # parede do fundo (normal em Y)
-        meia_larg = secao(z, T_RIM)[0] / 2
-        for x in grade(2 * meia_larg - d - 2 * RAIO - 8, PASSO):
-            furos.append(Pos(x, 0, z) * Rot(90, 0, 0) * Cylinder(d / 2, PROF + 40))
+        mx, my = secao(z, T_RIM)
+        for x in grade(mx - d - 30, PASSO):                  # parede do fundo
+            furos.append(Pos(x, 0, z) * Rot(90, 0, 0) * Cylinder(d / 2, PROF + 60))
             n += 1
-        # paredes laterais (normal em X), recortadas pela curva
-        meia_prof = secao(z, T_RIM)[1] / 2
-        for y in grade(2 * meia_prof - d - 2 * RAIO - 8, PASSO):
-            if z + d / 2 + FOLGA_C > z_aresta(y):
+        for y in grade(my - d - 30, PASSO):                  # laterais
+            if z + d / 2 + FOLGA_S > z_silhueta(y):
                 continue
-            furos.append(Pos(0, y, z) * Rot(0, 90, 0) * Cylinder(d / 2, LARG + 40))
+            furos.append(Pos(0, y, z) * Rot(0, 90, 0) * Cylinder(d / 2, LARG + 60))
             n += 2
     p -= furos
 
-    # --- abas dianteiras em gancho, com as pontas arredondadas ---
-    # Placa no plano YZ que avanca para a frente do corpo. Topo reto na altura
-    # cheia (o trilho de apoio), borda inferior reta, e as quatro pontas
-    # arredondadas em R_ABA -- que e o ajuste pedido no layout.
-    # Perfil em gancho: da raiz na lateral a borda inferior sobe para a frente,
-    # o nariz arredondado avanca, e o topo volta para o TRILHO reto na altura
-    # cheia -- que e a mesa de apoio do empilhamento.
-    y_raiz = -PROF / 2 + 15.0
-    perfil_aba = [
-        (y_raiz, Z_ABA_BASE),                       # raiz, embaixo
-        (Y_ABA_NARIZ + 14, Z_ABA_BASE + 41),        # borda inferior subindo
-        (Y_ABA_NARIZ, Z_ABA_BASE + 59),             # nariz
-        (Y_ABA_NARIZ + 26, ALT),                    # volta ao trilho
-        (y_raiz, ALT),                              # trilho reto ate a raiz
-    ]
-    aba2d = make_face(Polyline(*perfil_aba, close=True))
-    aba2d = fillet(aba2d.vertices().filter_by_position(
-        Axis.X, Y_ABA_NARIZ - 1, Y_ABA_NARIZ + 30), R_ABA)
-    alivios = []
-    for i, (yy, zz) in enumerate([(Y_ABA_NARIZ + 30, 100), (Y_ABA_NARIZ + 52, 86),
-                                  (Y_ABA_NARIZ + 52, 110)]):
-        alivios.append(Pos(0, yy, zz) * Rot(0, 90, 0) * Cylinder(5.0, LARG + 60))
+    # --- pes de canto: alcancam a medida da boca e assentam no rim de baixo ---
+    y_pe_f = -PROF / 2 + CHANFRO + 16
     for sx in (-1, 1):
-        x_aba = secao((ALT + Z_ABA_BASE) / 2)[0] / 2
-        p += Pos(sx * (x_aba - T_ABA / 2), 0, 0) * \
-            extrude(Plane.YZ * aba2d, T_ABA, both=True)
-    p -= alivios
-
-    # --- pes de canto: bordos que alcancam a medida da boca ---
-    # Assentam nos quatro topos cheios da peca de baixo: os dois pilares da
-    # frente e os dois cantos de tras.
-    for sx in (-1, 1):
-        for sy in (-1, 1):
-            p += Pos(sx * (LARG / 2 - 16), sy * (PROF / 2 - 16), H_PE / 2) * \
-                Box(32, 32, H_PE)
-            p -= Pos(sx * (LARG / 2 - 16), sy * (PROF / 2 - 16), H_PE / 2 - 1.6) * \
-                Box(28, 28, H_PE)
-
-    # --- pes nos quatro cantos, ocos (aro de 2 mm) ---
-    for sx in (-1, 1):
-        for sy in (-1, 1):
-            c = Pos(sx * (LARG / 2 - 21), sy * (PROF / 2 - 21), -H_PE / 2)
-            p += c * Box(34, 34, H_PE + 1)
-            p -= c * Pos(0, 0, -1.5) * Box(30, 30, H_PE + 1)
-
-    # --- furos na parede frontal rebaixada, no mesmo reticulado ---
-    z_fr = H_PE + T_FUNDO + 12
-    furos_fr = []
-    meia = secao(z_fr, T_RIM)[0] / 2
-    for x in grade(2 * meia - 2 * RAIO - 20, PASSO):
-        furos_fr.append(Pos(x, 0, z_fr) * Rot(90, 0, 0) * Cylinder(4.5, PROF + 40))
-    p -= furos_fr
-
-    p.label = "cesto"
+        for y_pe in (y_pe_f, PROF / 2 - 16):
+            c = Pos(sx * (LARG / 2 - 16), y_pe, H_PE / 2)
+            p += c * Box(32, 32, H_PE)
+            p -= c * Pos(0, 0, -1.6) * Box(28, 28, H_PE)
     return p, n
 
 
 def capacidade():
-    """Volume interno ate a borda do rebaixo frontal, em litros."""
-    planta = RectangleRounded(BASE_X - 2 * T_PAREDE, BASE_Y - 2 * T_PAREDE,
-                              RAIO - T_PAREDE)
-    cav = Pos(0, 0, T_FUNDO) * extrude(planta, ALT - T_FUNDO, taper=-DRAFT)
-    nominal = cav.volume / 1e6
-    util = (cav - corte_rebaixo()).volume / 1e6
-    return nominal, util
+    cav = Pos(0, 0, T_FUNDO) * extrude(
+        RectangleRounded(BASE_X - 2 * T_PAREDE, BASE_Y - 2 * T_PAREDE, 12.0),
+        ALT - T_FUNDO, taper=-DRAFT)
+    cav = cav & extrude(Plane.YZ * silhueta(), LARG / 2 + 30, both=True)
+    return cav.volume / 1e6
 
 
 def main():
     dest = os.path.dirname(os.path.abspath(__file__))
     p, n = cesto()
-    nominal, util = capacidade()
-    peso = p.volume * RHO
     bb = p.bounding_box()
-
-    print(f"CESTO MINI ORGANIZADOR EMPILHAVEL - peca unica")
-    print(f"Boca (rim)    {LARG:.1f} x {PROF:.1f} mm | base {BASE_X:.1f} x {BASE_Y:.1f} mm")
-    print(f"Envelope      {bb.size.X:.1f} x {bb.size.Y:.1f} x {bb.size.Z:.1f} mm "
-          f"(inclui as pegas laterais)")
-    print(f"Altura frente {ALT_FRENTE:.0f} mm | saida {DRAFT:.1f} deg/lado | "
-          f"parede {T_PAREDE:.1f} mm | fundo {T_FUNDO:.1f} mm")
-    print(f"Capacidade    {nominal:.2f} L nominal | {util:.2f} L ate a borda frontal")
-    print(f"Peso          {peso:.1f} g   (volume {p.volume/1000:.1f} cm3)")
+    print("CESTO ORGANIZAVEL EMPILHAVEL - forma adaptada do STL de referencia")
+    print(f"Boca {LARG:.0f} x {PROF:.0f} mm | base {BASE_X:.1f} x {BASE_Y:.1f} mm "
+          f"| altura {ALT:.0f} mm | saida {DRAFT:.1f} deg/lado")
+    print(f"Silhueta: chanfros de {CHANFRO:.0f} mm a 45 deg, face frontal de "
+          f"{FRENTE_H:.0f} mm | pontas R{R_CANTO:.0f} e R{R_FRENTE:.0f}")
+    print(f"Envelope {bb.size.X:.1f} x {bb.size.Y:.1f} x {bb.size.Z:.1f} mm")
+    print(f"Capacidade {capacidade():.2f} L | peso {p.volume*RHO:.1f} g "
+          f"(volume {p.volume/1000:.1f} cm3)")
     fl = filas()
-    print(f"Vazado        {len(fl)} bandas, D "
-          f"{' / '.join(f'{d:.1f}' for _, d in fl)} mm | {n} furos | "
-          f"faixa cega {BANDA:.0f} mm")
-    proj = LARG * PROF / 100.0
-    print(f"Area projetada {proj:.0f} cm2")
+    print(f"Vazado: {len(fl)} bandas, D {' / '.join(f'{d:.1f}' for _, d in fl)} mm"
+          f" | {n} furos | faixa cega {BANDA:.0f} mm | fundo solido")
+    print(f"Area projetada {LARG*PROF/100:.0f} cm2")
 
     export_step(p, os.path.join(dest, "cesto.step"))
     export_stl(p, os.path.join(dest, "cesto.stl"))
@@ -267,31 +190,16 @@ def main():
     import render
     m = trimesh.load(os.path.join(dest, "cesto.stl"))
     cor = (0.93, 0.44, 0.13)
-
-    def cena_pilha(k, dz):
-        out = []
-        for i in range(k):
-            t = m.copy()
-            t.apply_translation([0, 0, i * dz])
-            out.append((t, tuple(c * (1 - 0.05 * (i % 2)) for c in cor)))
-        return out
-
-    def cena_encaixe(k, dz, dy):
-        out = []
-        for i in range(k):
-            t = m.copy()
-            t.apply_transform(trimesh.transformations.rotation_matrix(
-                np.radians(-14), [1, 0, 0]))
-            t.apply_translation([0, i * dy, i * dz])
-            out.append((t, tuple(c * (1 - 0.05 * (i % 2)) for c in cor)))
-        return out
-
-    vistas = [("01-cesto.png", [(m, cor)], (-1.0, -1.35, -0.62)),
-              ("02-frente.png", [(m, cor)], (0.05, -1.0, -0.30)),
-              ("03-empilhado.png", cena_pilha(3, ALT), (-1.0, -1.3, -0.5)),
-              ("04-encaixado.png", cena_encaixe(8, 26, 7), (-1.0, -1.2, -0.42))]
-    for arq, cena, d in vistas:
-        render.salvar(render.render(cena, direcao=d, largura=1500),
+    pilha = []
+    for i in range(3):
+        t = m.copy()
+        t.apply_translation([0, 0, i * ALT])
+        pilha.append((t, tuple(c * (1 - 0.05 * (i % 2)) for c in cor)))
+    for arq, cena, d in [("01-cesto.png", [(m, cor)], (-1.0, -1.35, -0.62)),
+                         ("02-frente.png", [(m, cor)], (0.03, -1.0, -0.16)),
+                         ("dbg-lateral.png", [(m, cor)], (-1.0, 0.02, -0.02)),
+                         ("03-empilhado.png", pilha, (-1.0, -1.25, -0.5))]:
+        render.salvar(render.render(cena, direcao=d, largura=1400), 
                       os.path.join(dest, arq))
         print("gerado", arq)
 
