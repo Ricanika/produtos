@@ -33,15 +33,18 @@ M       = 60.0                 # modulo
 SAIDA   = 0.50                 # graus por lado
 BASE_T  = 2.00                 # espessura do fundo (igual nos quatro)
 PE_H    = 6.00                 # altura do pe embutido
-PE_L, PE_W = 110.0, 84.6       # pe embutido, igual nos quatro
-R_PE    = 13.0
+PE_L    = 113.0                # pe embutido, igual nos quatro
+W_BORDA = 1.40                 # parede nos 10 mm abaixo da borda, igual nos quatro
+ABA_W   = 3.00                 # aba da borda virada para fora, por lado
+ABA_T   = 1.60                 # espessura da aba
+LIP_H   = 3.50                 # labio descendente na ponta da aba
+LIP_T   = 1.20                 # espessura do labio
 WALL    = {1: 1.15, 2: 1.20, 3: 1.30, 4: 1.40}
 ELEV    = {1: 1.8,  2: 3.4,  3: 2.7,  4: 0.0}   # elevacao do fundo
-# tampa
-TP_L, TP_W, TP_R = 125.2, 97.3, 20.0
-TRAY_L, TRAY_W, TRAY_R = 111.1, 85.7, 13.0
-TP_TOPO, TP_PISO, TP_FUNDO, TP_SAIA = 1.5, -2.0, -3.5, -11.0
-TP_PAREDE = 1.5
+# tampa (z = 0 no plano da borda do pote)
+FOLGA_SAIA, ESP_SAIA = 0.30, 1.50
+TP_TOPO, TP_PISO, TP_FUNDO, TP_SAIA = 1.5, -2.0, -3.5, -8.0
+VED_Z, VED_TIP = -7.5, -8.0    # altura onde o labio de vedacao encosta na boca
 # aro de TPE
 ARO_SEC = (2.8, 2.2)
 
@@ -66,6 +69,16 @@ def anel(L, W, R, n):
     return pts
 
 
+def wo(L):
+    """Largura correspondente a um comprimento L: offset uniforme do retangulo base."""
+    return L - (EXT_L - EXT_W)
+
+
+def ro(L):
+    """Raio de canto correspondente: offset uniforme tambem no raio."""
+    return R_EXT + (L - EXT_L) / 2
+
+
 class Casca:
     """Acumula aneis e emite triangulos."""
 
@@ -73,8 +86,10 @@ class Casca:
         self.n, self.loops, self.tris = n, [], []
         self.bands, self.caps = [], []   # receita da malha, para o visualizador
 
-    def add(self, z, L, W, R):
-        self.loops.append(dict(z=z, L=L, W=W, R=R))
+    def add(self, z, L, W=None, R=None):
+        """Um anel na altura z. Sem W e R, sao derivados de L por offset uniforme."""
+        self.loops.append(dict(z=z, L=L, W=wo(L) if W is None else W,
+                               R=ro(L) if R is None else R))
         return len(self.loops) - 1
 
     def _pts(self, i):
@@ -107,77 +122,99 @@ class Casca:
 
 
 def corpo(n_mod, seg):
-    """Um pote. z=0 no plano de apoio (base do pe)."""
+    """Um pote. z=0 no plano de apoio (base do pe).
+
+    A borda termina numa ABA virada para fora com um labio descendente. Ela faz
+    tres coisas ao mesmo tempo: enrijece a boca (secao em U, ~34x a inercia da
+    parede simples, que e o que impede o lado reto de abrir e vazar), da a
+    superficie onde a saia da tampa encaixa, e serve de pega para abrir.
+    """
     w, elev = WALL[n_mod], ELEV[n_mod]
-    H = n_mod * M + BASE_T                      # altura externa do corpo
-    piso = elev + BASE_T                        # face interna do fundo
-    # o corpo estreita para baixo pela saida; a cota cheia esta no bocal
-    def body(z):   return EXT_L - 2 * (H - z) * T, EXT_W - 2 * (H - z) * T
-    def pe(z):     return PE_L - 2 * (PE_H - z) * T, PE_W - 2 * (PE_H - z) * T
+    H = n_mod * M + BASE_T
+    piso = elev + BASE_T
+    def body(z):  return EXT_L - 2 * (H - z) * T
+    def pe(z):    return PE_L - 2 * (PE_H - z) * T
+    aba = EXT_L + 2 * ABA_W
 
     c = Casca(seg)
-    pe0L, pe0W = pe(0.0)
-    peHL, peHW = pe(PE_H)
-    bdL, bdW = body(PE_H)
-    L0 = c.add(0.0,   pe0L, pe0W, R_PE)                      # pe, base
-    L1 = c.add(PE_H,  peHL, peHW, R_PE)                      # pe, topo
-    L2 = c.add(PE_H,  bdL,  bdW,  R_EXT)                     # corpo no degrau
-    L3 = c.add(H,     EXT_L, EXT_W, R_EXT)                   # borda
-    L4 = c.add(H,     EXT_L - 2 * w, EXT_W - 2 * w, R_EXT - w)
-    L5 = c.add(PE_H,  bdL - 2 * w, bdW - 2 * w, R_EXT - w)
-    L6 = c.add(PE_H,  peHL - 2 * w, peHW - 2 * w, R_PE - w)
-    L7 = c.add(piso,  pe(piso)[0] - 2 * w, pe(piso)[1] - 2 * w, R_PE - w)
-    c.banda(L0, L1)                    # face externa do pe
-    c.banda(L1, L2)         # ombro do degrau (olha para baixo)
-    c.banda(L2, L3)                    # face externa do corpo
-    c.banda(L3, L4)                    # topo da borda
-    c.banda(L4, L5)         # face interna do corpo
-    c.banda(L5, L6)                    # degrau interno
-    c.banda(L6, L7)         # face interna do pe
-    c.cap(L7, True)                    # fundo, por dentro
-    if elev >= 0.05:                   # rebaixo por baixo do fundo
-        L9 = c.add(elev, pe(elev)[0] - 2 * w, pe(elev)[1] - 2 * w, R_PE - w)
-        L8 = c.add(0.0,  pe0L - 2 * w, pe0W - 2 * w, R_PE - w)
-        c.cap(L9, False)               # teto do rebaixo
-        c.banda(L9, L8)                # parede do rebaixo
-        c.banda(L8, L0)     # anel de apoio
+    L0  = c.add(0.0,            pe(0.0))                       # pe, base
+    L1  = c.add(PE_H,           pe(PE_H))                      # pe, topo
+    L2  = c.add(PE_H,           body(PE_H))                    # corpo no degrau
+    L3  = c.add(H - ABA_T,      body(H - ABA_T))               # topo da parede
+    L4  = c.add(H - ABA_T,      aba - 2 * LIP_T)               # face inferior da aba
+    L5  = c.add(H - ABA_T - LIP_H, aba - 2 * LIP_T)            # face interna do labio
+    L6  = c.add(H - ABA_T - LIP_H, aba)                        # aresta do labio
+    L7  = c.add(H,              aba)                           # face externa do labio
+    L8  = c.add(H,              EXT_L - 2 * W_BORDA)           # topo da borda -> boca
+    L9  = c.add(H - 10.0,       body(H - 10.0) - 2 * w)        # fim da faixa de borda
+    L10 = c.add(PE_H,           body(PE_H) - 2 * w)            # face interna do corpo
+    L11 = c.add(PE_H,           pe(PE_H) - 2 * w)
+    L12 = c.add(piso,           pe(piso) - 2 * w)
+    for a, b in ((L0,L1),(L1,L2),(L2,L3),(L3,L4),(L4,L5),(L5,L6),(L6,L7),
+                 (L7,L8),(L8,L9),(L9,L10),(L10,L11),(L11,L12)):
+        c.banda(a, b)
+    c.cap(L12, True)                                           # fundo, por dentro
+    if elev >= 0.05:                                           # rebaixo por baixo
+        L14 = c.add(elev, pe(elev) - 2 * w)
+        L15 = c.add(0.0,  pe(0.0) - 2 * w)
+        c.cap(L14, False); c.banda(L14, L15); c.banda(L15, L0)
     else:
-        L8 = c.add(0.0, pe0L - 2 * w, pe0W - 2 * w, R_PE - w)
-        c.cap(L8, False)
-        c.banda(L8, L0)
+        L15 = c.add(0.0, pe(0.0) - 2 * w)
+        c.cap(L15, False); c.banda(L15, L0)
     return c, H
 
 
 def tampa(seg):
-    """Tampa-bandeja. z=0 no plano da borda do pote."""
+    """Tampa comum aos quatro. z=0 no plano da borda do pote.
+
+    Quem veda e o LABIO, moldado junto com a tampa, que desce na boca e raspa a
+    parede interna da borda. A saia so encaixa no labio da aba e a bandeja so
+    empilha. Nao ha aro nesta tampa: aro so na de teca, onde nao da para moldar
+    labio nenhum.
+    """
+    boca = EXT_L - 2 * W_BORDA
+    aba = EXT_L + 2 * ABA_W
+    saia_out = aba + 2 * (FOLGA_SAIA + ESP_SAIA)
+    saia_in = aba + 2 * FOLGA_SAIA
+    tray = PE_L + 1.0                       # vao livre da bandeja
+    par_bandeja = 1.2
+
     c = Casca(seg)
-    M0 = c.add(TP_SAIA, TP_L, TP_W, TP_R)
-    M1 = c.add(TP_TOPO, TP_L, TP_W, TP_R)
-    M2 = c.add(TP_TOPO, TRAY_L, TRAY_W, TRAY_R)
-    M3 = c.add(TP_PISO, TRAY_L, TRAY_W, TRAY_R)
-    M4 = c.add(TP_FUNDO, TRAY_L, TRAY_W, TRAY_R)
-    M5 = c.add(TP_FUNDO, TP_L - 2 * TP_PAREDE, TP_W - 2 * TP_PAREDE, TP_R - TP_PAREDE)
-    M6 = c.add(TP_SAIA,  TP_L - 2 * TP_PAREDE, TP_W - 2 * TP_PAREDE, TP_R - TP_PAREDE)
-    c.banda(M0, M1)                    # face externa da saia
-    c.banda(M1, M2)                    # topo da tampa
-    c.banda(M2, M3)         # parede da bandeja
-    c.cap(M3, True)                    # piso da bandeja = plano modular
-    c.cap(M4, False)                   # face inferior do piso
-    c.banda(M4, M5)         # face inferior do patamar
-    c.banda(M5, M6)         # face interna da saia
-    c.banda(M6, M0)         # aresta inferior da saia
+    M0  = c.add(TP_TOPO,  saia_out)                   # topo, borda externa
+    M1  = c.add(TP_SAIA,  saia_out)                   # saia por fora
+    M2  = c.add(TP_SAIA,  saia_in)                    # aresta da saia
+    M3  = c.add(0.0,      saia_in)                    # face interna da saia
+    M4  = c.add(0.0,      tray + 2 * par_bandeja)     # apoia na aba e desce
+    M5  = c.add(VED_Z,    boca)                       # labio encosta na boca
+    M6  = c.add(VED_TIP,  boca - 1.6)                 # ponta do labio
+    M7  = c.add(-6.5,     tray + 1.2)                 # face interna do labio
+    M8  = c.add(TP_FUNDO, tray)                       # face inferior do piso
+    M9  = c.add(TP_PISO,  tray)                       # piso da bandeja
+    M10 = c.add(TP_TOPO,  tray)                       # face interna da bandeja
+    # o perfil e percorrido no sentido oposto ao do corpo (comeca no topo, nao
+    # na base), entao as bandas vao no sentido inverso para a normal sair para fora
+    for a, b in ((M1,M0),(M2,M1),(M3,M2),(M4,M3),(M5,M4),(M6,M5),(M7,M6),
+                 (M8,M7),(M10,M9),(M0,M10)):
+        c.banda(a, b)
+    c.cap(M8, False)                                  # face inferior do piso
+    c.cap(M9, True)                                   # piso = plano modular
     return c
 
 
 def aro(seg):
-    """Aro de TPE: secao retangular correndo no perimetro de vedacao."""
+    """Aro de TPE da tampa de TECA: assenta na aba da borda.
+
+    So a tampa de madeira usa aro - a de PP veda com labio moldado. O aro e
+    comprimido axialmente contra a aba, que e plana e rigida o bastante para
+    isso.
+    """
     sw, sh = ARO_SEC
-    Lm, Wm, Rm = EXT_L - 2 * 2.6, EXT_W - 2 * 2.6, R_EXT - 3
+    Lm = EXT_L + ABA_W - 1.0        # linha de vedacao, em cima da aba
     c = Casca(seg)
-    A0 = c.add(0.0, Lm - sw, Wm - sw, Rm - sw / 2)
-    A1 = c.add(0.0, Lm + sw, Wm + sw, Rm + sw / 2)
-    A2 = c.add(sh,  Lm + sw, Wm + sw, Rm + sw / 2)
-    A3 = c.add(sh,  Lm - sw, Wm - sw, Rm - sw / 2)
+    A0 = c.add(0.0, Lm - sw)
+    A1 = c.add(0.0, Lm + sw)
+    A2 = c.add(sh,  Lm + sw)
+    A3 = c.add(sh,  Lm - sw)
     c.banda(A0, A1)
     c.banda(A1, A2)
     c.banda(A2, A3)
@@ -200,17 +237,18 @@ def cavidade(n_mod, seg):
     w, elev = WALL[n_mod], ELEV[n_mod]
     H = n_mod * M + BASE_T
     piso = elev + BASE_T
-    def body(z): return EXT_L - 2 * (H - z) * T, EXT_W - 2 * (H - z) * T
-    def pe(z):   return PE_L - 2 * (PE_H - z) * T, PE_W - 2 * (PE_H - z) * T
-    bdL, bdW = body(PE_H)
+    def body(z): return EXT_L - 2 * (H - z) * T
+    def pe(z):   return PE_L - 2 * (PE_H - z) * T
     c = Casca(seg)
-    K0 = c.add(piso,  pe(piso)[0] - 2 * w, pe(piso)[1] - 2 * w, R_PE - w)
-    K1 = c.add(PE_H,  pe(PE_H)[0] - 2 * w, pe(PE_H)[1] - 2 * w, R_PE - w)
-    K2 = c.add(PE_H,  bdL - 2 * w, bdW - 2 * w, R_EXT - w)
-    K3 = c.add(H,     EXT_L - 2 * w, EXT_W - 2 * w, R_EXT - w)
+    K0 = c.add(piso,     pe(piso) - 2 * w)
+    K1 = c.add(PE_H,     pe(PE_H) - 2 * w)
+    K2 = c.add(PE_H,     body(PE_H) - 2 * w)
+    K3 = c.add(H - 10.0, body(H - 10.0) - 2 * w)
+    K4 = c.add(H,        EXT_L - 2 * W_BORDA)
     c.cap(K0, False)
-    c.banda(K0, K1); c.banda(K1, K2); c.banda(K2, K3)
-    c.cap(K3, True)
+    for a, b in ((K0,K1),(K1,K2),(K2,K3),(K3,K4)):
+        c.banda(a, b)
+    c.cap(K4, True)
     return volume_assinado(c.tris)
 
 
@@ -269,10 +307,7 @@ def main():
     print('    orientado para fora);')
     print('  - cavidade dentro de 0,7% da capacidade nominal - a folga e a')
     print('    poligonal de 12 segmentos por canto, nao erro de cota;')
-    print('  - corpos: peso da malha 0 a 4% abaixo de calculo-modular.py - e a')
-    print('    borda reforcada e a nervura de pe que a malha nao modela;')
-    print('  - tampa: 27,9 g na malha contra 24,5 g no calculo, porque aqui a')
-    print('    parede da bandeja esta modelada macica em vez de casca de 1,5 mm.')
+    print('  - peso da malha dentro de 3% de calculo-modular.py nas seis pecas.')
 
 
 if __name__ == '__main__':

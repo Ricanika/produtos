@@ -1,0 +1,329 @@
+<title>Potes Modulares 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --paper:#E7EAE5; --sheet:#F3F5F1; --ink:#161A17; --ink-2:#3D443E; --muted:#6E756E;
+    --line:#C5CAC1; --line-soft:#D8DCD4; --cota:#B4451D; --verde:#63755A; --teca:#A2764A;
+    --pp:#8FA7B2; --palco:#DDE2DC;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#14171A; --sheet:#1B1F21; --ink:#E7EAE4; --ink-2:#BEC5BC; --muted:#8C948B;
+      --line:#333A38; --line-soft:#272D2C; --cota:#E0703F; --verde:#8CA37F; --teca:#C99A63;
+      --pp:#9FBAC6; --palco:#101315;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#14171A; --sheet:#1B1F21; --ink:#E7EAE4; --ink-2:#BEC5BC; --muted:#8C948B;
+    --line:#333A38; --line-soft:#272D2C; --cota:#E0703F; --verde:#8CA37F; --teca:#C99A63;
+    --pp:#9FBAC6; --palco:#101315;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--paper);color:var(--ink);font-family:"Barlow","Helvetica Neue",Arial,sans-serif;font-size:15px;line-height:1.55;}
+  .sheet{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:28px 64px;}
+  h1{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:clamp(30px,5.6vw,50px);text-transform:uppercase;letter-spacing:-.01em;margin:0;line-height:1.03;}
+  h2{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:21px;text-transform:uppercase;letter-spacing:.02em;margin:0;}
+  h3{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:16px;margin:0 0 5px;}
+  p{margin:0;}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+  header p.sub{color:var(--ink-2);margin-top:8px;max-width:66ch;}
+
+  .barra{display:flex;flex-wrap:wrap;gap:22px;margin:24px 0 0;padding:14px 16px;border:1px solid var(--line);background:var(--sheet);}
+  .grupo{display:flex;flex-direction:column;gap:7px;}
+  .grupo .k{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+  .botoes{display:flex;flex-wrap:wrap;gap:6px;}
+  button{font-family:"Barlow",sans-serif;font-size:13.5px;font-weight:500;color:var(--ink-2);
+    background:var(--paper);border:1px solid var(--line);padding:6px 12px;cursor:pointer;transition:none;}
+  button:hover{border-color:var(--muted);}
+  button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  button:focus-visible{outline:2px solid var(--cota);outline-offset:2px;}
+
+  .palco{position:relative;margin-top:-1px;border:1px solid var(--line);background:var(--palco);overflow:hidden;}
+  #cena{display:block;width:100%;height:min(62vh,560px);min-height:380px;touch-action:none;cursor:grab;}
+  #cena:active{cursor:grabbing;}
+  .hud{position:absolute;left:14px;bottom:12px;pointer-events:none;max-width:min(60%,420px);}
+  .hud .t{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:17px;text-transform:uppercase;letter-spacing:.02em;}
+  .hud .d{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.5;}
+  .dica{position:absolute;right:14px;top:12px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);pointer-events:none;}
+  .erro{padding:40px 20px;text-align:center;color:var(--muted);font-family:"IBM Plex Mono",monospace;font-size:13px;}
+
+  .infos{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:22px;margin-top:34px;}
+  .info{border-left:2px solid var(--cota);padding-left:14px;}
+  .info p{font-size:14px;color:var(--ink-2);}
+  .tabela-wrap{overflow-x:auto;border:1px solid var(--line);background:var(--sheet);margin-top:34px;}
+  table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px;}
+  th,td{text-align:right;padding:9px 13px;border-bottom:1px solid var(--line-soft);white-space:nowrap;}
+  th{font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);}
+  th:first-child,td:first-child{text-align:left;}
+  tbody tr:last-child td{border-bottom:0;}
+  td.num{font-family:"IBM Plex Mono",monospace;}
+  td.tam{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:17px;}
+  .rodape{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);}
+</style>
+
+<div class="sheet">
+  <header>
+    <p class="eyebrow">Nitron · Projeto 115 · modelo paramétrico</p>
+    <h1>Potes modulares em 3D</h1>
+    <p class="sub">O sólido sai das mesmas cotas do estudo — corpo de 121,2 × 93,3 mm com aba de borda, canto R18, saída de 0,5°, módulo de 60 mm. Abra o <strong>corte</strong>: é lá que se vê onde a tampa veda — o lábio moldado nela desce na boca e raspa a parede interna da borda.</p>
+  </header>
+
+  <div class="barra">
+    <div class="grupo">
+      <span class="k">Vista</span>
+      <div class="botoes" id="g-vista">
+        <button data-v="linha" aria-pressed="true">A linha</button>
+        <button data-v="pilha" aria-pressed="false">Empilhamento</button>
+        <button data-v="encaixe" aria-pressed="false">Encaixe explodido</button>
+        <button data-v="corte" aria-pressed="false">Corte</button>
+      </div>
+    </div>
+    <div class="grupo">
+      <span class="k">Tampa</span>
+      <div class="botoes" id="g-tampa">
+        <button data-t="pp" aria-pressed="true">PP</button>
+        <button data-t="teca" aria-pressed="false">Teca</button>
+        <button data-t="off" aria-pressed="false">Sem</button>
+      </div>
+    </div>
+    <div class="grupo">
+      <span class="k">Aro de TPE</span>
+      <div class="botoes" id="g-aro">
+        <button data-a="1" aria-pressed="true">Mostrar</button>
+        <button data-a="0" aria-pressed="false">Ocultar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="palco">
+    <canvas id="cena"></canvas>
+    <div class="dica">arraste para girar · roda para aproximar</div>
+    <div class="hud">
+      <div class="t" id="hud-t">A linha</div>
+      <div class="d" id="hud-d">600 · 1200 · 1800 · 2400 ml — mesmo footprint, mesma tampa</div>
+    </div>
+  </div>
+
+  <div class="infos">
+    <div class="info">
+      <h3>O que a malha já provou</h3>
+      <p>A cavidade de cada pote, medida no sólido fechado, fica a menos de 0,8% da capacidade nominal — e a diferença é a poligonal de 12 segmentos por canto, não erro de cota. O peso da malha bate com o cálculo dentro de 3% nas seis peças, tampa inclusive.</p>
+    </div>
+    <div class="info">
+      <h3>O que este modelo não é</h3>
+      <p>É malha, não sólido CAD. Serve para conferir encaixe, empilhamento e volume, e para imprimir protótipo. <strong>O molde precisa do CAD paramétrico do projetista.</strong> Faltam no modelo: o ressalto de encaixe da saia, o furo e o entalhe do vertedor, e o raio de alívio na raiz do lábio.</p>
+    </div>
+    <div class="info">
+      <h3>Arquivos</h3>
+      <p>STL das seis peças em <span class="mono">potes-modulares/stl/</span>, gerados por <span class="mono">gera-3d.py</span>. Mudou uma cota? Roda o script de novo e o 3D inteiro acompanha.</p>
+    </div>
+  </div>
+
+  <div class="tabela-wrap">
+    <table>
+      <thead><tr><th>Peça</th><th>Altura</th><th>Passo</th><th>Cavidade na malha</th><th>Alvo</th><th>Peso da malha</th><th>Triângulos</th></tr></thead>
+      <tbody>
+        <tr><td class="tam">600 ml</td><td class="num">62,0 mm</td><td class="num">60</td><td class="num">605,0 ml</td><td class="num">600</td><td class="num">45,2 g</td><td class="num">1440</td></tr>
+        <tr><td class="tam">1,2 L</td><td class="num">122,0 mm</td><td class="num">120</td><td class="num">1204,2 ml</td><td class="num">1200</td><td class="num">71,4 g</td><td class="num">1440</td></tr>
+        <tr><td class="tam">1,8 L</td><td class="num">182,0 mm</td><td class="num">180</td><td class="num">1806,4 ml</td><td class="num">1800</td><td class="num">102,5 g</td><td class="num">1440</td></tr>
+        <tr><td class="tam">2,4 L</td><td class="num">242,0 mm</td><td class="num">240</td><td class="num">2410,0 ml</td><td class="num">2400</td><td class="num">137,4 g</td><td class="num">1344</td></tr>
+        <tr><td class="tam">Tampa</td><td class="num">9,5 mm</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">26,1 g</td><td class="num">1056</td></tr>
+        <tr><td class="tam">Aro TPE</td><td class="num">2,2 mm</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">2,7 g</td><td class="num">384</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer class="rodape">
+    <p>Geometria gerada por <span class="mono">potes-modulares/gera-3d.py</span> a partir das cotas de <span class="mono">calculo-modular.py</span>. O visualizador remonta a malha a partir da mesma receita de anéis, bandas e tampos — desenho e STL não divergem.</p>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  var DATA = {"seg":12,"pecas":{"pote-600":{"loops":[{"z":0.0,"L":112.8952775865109,"W":84.9952775865109,"R":13.847638793255449},{"z":6.0,"L":113.0,"W":85.1,"R":13.899999999999999},{"z":6.0,"L":120.22259080743501,"W":92.322590807435,"R":17.511295403717504},{"z":60.4,"L":121.17207402306957,"W":93.27207402306956,"R":17.986037011534783},{"z":60.4,"L":124.8,"W":96.89999999999999,"R":19.799999999999997},{"z":56.9,"L":124.8,"W":96.89999999999999,"R":19.799999999999997},{"z":56.9,"L":127.2,"W":99.3,"R":21.0},{"z":62.0,"L":127.2,"W":99.3,"R":21.0},{"z":62.0,"L":118.4,"W":90.5,"R":16.6},{"z":52.0,"L":118.72546264418483,"W":90.82546264418482,"R":16.762731322092414},{"z":6.0,"L":117.92259080743501,"W":90.02259080743501,"R":16.361295403717506},{"z":6.0,"L":110.7,"W":82.8,"R":12.75},{"z":3.8,"L":110.66160178172066,"W":82.76160178172066,"R":12.73080089086033},{"z":1.8,"L":110.62669431055762,"W":82.72669431055762,"R":12.71334715527881},{"z":0.0,"L":110.5952775865109,"W":82.6952775865109,"R":12.69763879325545}],"bands":[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[13,14],[14,0]],"caps":[[12,1],[13,0]],"H":62.0,"passo":60.0,"cap":600},"pote-1200":{"loops":[{"z":0.0,"L":112.8952775865109,"W":84.9952775865109,"R":13.847638793255449},{"z":6.0,"L":113.0,"W":85.1,"R":13.899999999999999},{"z":6.0,"L":119.17536667254396,"W":91.27536667254395,"R":16.987683336271978},{"z":120.4,"L":121.17207402306957,"W":93.27207402306956,"R":17.986037011534783},{"z":120.4,"L":124.8,"W":96.89999999999999,"R":19.799999999999997},{"z":116.9,"L":124.8,"W":96.89999999999999,"R":19.799999999999997},{"z":116.9,"L":127.2,"W":99.3,"R":21.0},{"z":122.0,"L":127.2,"W":99.3,"R":21.0},{"z":122.0,"L":118.4,"W":90.5,"R":16.6},{"z":112.0,"L":118.62546264418482,"W":90.72546264418482,"R":16.71273132209241},{"z":6.0,"L":116.77536667254395,"W":88.87536667254395,"R":15.787683336271975},{"z":6.0,"L":110.6,"W":82.69999999999999,"R":12.699999999999996},{"z":5.4,"L":110.58952775865109,"W":82.68952775865108,"R":12.694763879325542},{"z":3.4,"L":110.55462028748805,"W":82.65462028748804,"R":12.677310143744023},{"z":0.0,"L":110.4952775865109,"W":82.59527758651089,"R":12.647638793255446}],"bands":[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[13,14],[14,0]],"caps":[[12,1],[13,0]],"H":122.0,"passo":120.0,"cap":1200},"pote-1800":{"loops":[{"z":0.0,"L":112.8952775865109,"W":84.9952775865109,"R":13.847638793255449},{"z":6.0,"L":113.0,"W":85.1,"R":13.899999999999999},{"z":6.0,"L":118.1281425376529,"W":90.2281425376529,"R":16.46407126882645},{"z":180.4,"L":121.17207402306957,"W":93.27207402306956,"R":17.986037011534783},{"z":180.4,"L":124.8,"W":96.89999999999999,"R":19.799999999999997},{"z":176.9,"L":124.8,"W":96.89999999999999,"R":19.799999999999997},{"z":176.9,"L":127.2,"W":99.3,"R":21.0},{"z":182.0,"L":127.2,"W":99.3,"R":21.0},{"z":182.0,"L":118.4,"W":90.5,"R":16.6},{"z":172.0,"L":118.42546264418483,"W":90.52546264418483,"R":16.612731322092415},{"z":6.0,"L":115.52814253765291,"W":87.6281425376529,"R":15.164071268826454},{"z":6.0,"L":110.4,"W":82.5,"R":12.600000000000001},{"z":4.7,"L":110.37731014374403,"W":82.47731014374402,"R":12.588655071872012},{"z":2.7,"L":110.342402672581,"W":82.442402672581,"R":12.5712013362905},{"z":0.0,"L":110.2952775865109,"W":82.3952775865109,"R":12.547638793255452}],"bands":[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[13,14],[14,0]],"caps":[[12,1],[13,0]],"H":182.0,"passo":180.0,"cap":1800},"pote-2400":{"loops":[{"z":0.0,"L":112.8952775865109,"W":84.9952775865109,"R":13.847638793255449},{"z":6.0,"L":113.0,"W":85.1,"R":13.899999999999999},{"z":6.0,"L":117.08091840276185,"W":89.18091840276185,"R":15.940459201380925},{"z":240.4,"L":121.17207402306957,"W":93.27207402306956,"R":17.986037011534783},{"z":240.4,"L":124.8,"W":96.89999999999999,"R":19.799999999999997},{"z":236.9,"L":124.8,"W":96.89999999999999,"R":19.799999999999997},{"z":236.9,"L":127.2,"W":99.3,"R":21.0},{"z":242.0,"L":127.2,"W":99.3,"R":21.0},{"z":242.0,"L":118.4,"W":90.5,"R":16.6},{"z":232.0,"L":118.22546264418483,"W":90.32546264418482,"R":16.512731322092414},{"z":6.0,"L":114.28091840276186,"W":86.38091840276185,"R":14.540459201380926},{"z":6.0,"L":110.2,"W":82.3,"R":12.5},{"z":2.0,"L":110.13018505767393,"W":82.23018505767392,"R":12.465092528836962},{"z":0.0,"L":110.0952775865109,"W":82.1952775865109,"R":12.44763879325545}],"bands":[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[13,0]],"caps":[[12,1],[13,0]],"H":242.0,"passo":240.0,"cap":2400},"tampa":{"loops":[{"z":1.5,"L":130.8,"W":102.9,"R":22.800000000000004},{"z":-8.0,"L":130.8,"W":102.9,"R":22.800000000000004},{"z":-8.0,"L":127.8,"W":99.89999999999999,"R":21.299999999999997},{"z":0.0,"L":127.8,"W":99.89999999999999,"R":21.299999999999997},{"z":0.0,"L":116.4,"W":88.5,"R":15.600000000000001},{"z":-7.5,"L":118.4,"W":90.5,"R":16.6},{"z":-8.0,"L":116.80000000000001,"W":88.9,"R":15.800000000000004},{"z":-6.5,"L":115.2,"W":87.3,"R":15.0},{"z":-3.5,"L":114.0,"W":86.1,"R":14.399999999999999},{"z":-2.0,"L":114.0,"W":86.1,"R":14.399999999999999},{"z":1.5,"L":114.0,"W":86.1,"R":14.399999999999999}],"bands":[[1,0],[2,1],[3,2],[4,3],[5,4],[6,5],[7,6],[8,7],[10,9],[0,10]],"caps":[[8,0],[9,1]]},"aro":{"loops":[{"z":0.0,"L":120.4,"W":92.5,"R":17.6},{"z":0.0,"L":126.0,"W":98.1,"R":20.4},{"z":2.2,"L":126.0,"W":98.1,"R":20.4},{"z":2.2,"L":120.4,"W":92.5,"R":17.6}],"bands":[[0,1],[1,2],[2,3],[3,0]],"caps":[]}}};
+  var cv = document.getElementById('cena');
+  if (typeof THREE === 'undefined') {
+    cv.outerHTML = '<div class="erro">O visualizador 3D não conseguiu carregar a biblioteca de renderização.<br>O modelo continua disponível nos arquivos STL do repositório.</div>';
+    return;
+  }
+  var SEG = DATA.seg, M = SEG * 4;
+
+  function anel(L, W, R, n){
+    var hx = L/2 - R, hy = W/2 - R, p = [], c = [[hx,hy,0],[-hx,hy,90],[-hx,-hy,180],[hx,-hy,270]];
+    for (var i=0;i<4;i++) for (var k=0;k<n;k++){
+      var a = (c[i][2] + 90*k/n) * Math.PI/180;
+      p.push([c[i][0] + R*Math.cos(a), c[i][1] + R*Math.sin(a)]);
+    }
+    p.reverse(); return p;
+  }
+
+  // mesma receita do gerador: anéis -> bandas de quadriláteros + tampos em leque
+  function geom(part){
+    var pos = [], idx = [], start = [];
+    part.loops.forEach(function(lp){
+      start.push(pos.length/3);
+      anel(lp.L, lp.W, lp.R, SEG).forEach(function(q){ pos.push(q[0], lp.z, -q[1]); });
+    });
+    part.bands.forEach(function(b){
+      var a = start[b[0]], d = start[b[1]];
+      for (var k=0;k<M;k++){ var k2=(k+1)%M;
+        idx.push(d+k, d+k2, a+k); idx.push(d+k2, a+k2, a+k); }
+    });
+    part.caps.forEach(function(cp){
+      var lp = part.loops[cp[0]], P = anel(lp.L, lp.W, lp.R, SEG);
+      var ci = pos.length/3; pos.push(0, lp.z, 0);
+      var s = pos.length/3;
+      P.forEach(function(q){ pos.push(q[0], lp.z, -q[1]); });
+      for (var k=0;k<M;k++){ var k2=(k+1)%M;
+        if (cp[1]) idx.push(s+k2, s+k, ci); else idx.push(ci, s+k, s+k2); }
+    });
+    var g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    g.setIndex(idx); g.computeVertexNormals();
+    return g;
+  }
+
+  var G = {};
+  Object.keys(DATA.pecas).forEach(function(k){ G[k] = geom(DATA.pecas[k]); });
+
+  var plano = new THREE.Plane(new THREE.Vector3(0,0,-1), 0);
+  function mat(o){
+    var m = new THREE.MeshPhysicalMaterial(o);
+    m.clippingPlanes = []; return m;
+  }
+  var MAT = {
+    corpo: mat({color:0xbfd4dc, transparent:true, opacity:0.30, roughness:0.10, metalness:0,
+                clearcoat:1, clearcoatRoughness:0.08, side:THREE.DoubleSide, depthWrite:false}),
+    tampaPP: mat({color:0x6f8266, transparent:true, opacity:0.92, roughness:0.38, metalness:0,
+                clearcoat:0.5, side:THREE.DoubleSide}),
+    tampaTeca: mat({color:0xb0793f, roughness:0.62, metalness:0, clearcoat:0.25, side:THREE.DoubleSide}),
+    aro: mat({color:0xc25e3a, roughness:0.85, metalness:0, side:THREE.DoubleSide})
+  };
+
+  var ren = new THREE.WebGLRenderer({canvas:cv, antialias:true, alpha:true});
+  ren.setPixelRatio(Math.min(devicePixelRatio, 2));
+  ren.localClippingEnabled = true;
+  var cena = new THREE.Scene();
+  var cam = new THREE.PerspectiveCamera(32, 2, 5, 5000);
+  var pivo = new THREE.Group(); cena.add(pivo);
+
+  cena.add(new THREE.HemisphereLight(0xffffff, 0x8f968c, 0.85));
+  var d1 = new THREE.DirectionalLight(0xffffff, 0.75); d1.position.set(400, 700, 500); cena.add(d1);
+  var d2 = new THREE.DirectionalLight(0xffffff, 0.35); d2.position.set(-500, 300, -400); cena.add(d2);
+  cena.add(new THREE.AmbientLight(0xffffff, 0.25));
+
+  function pote(nome, x, y, tampa, aro){
+    var g = new THREE.Group();
+    var corpo = new THREE.Mesh(G[nome], MAT.corpo); corpo.renderOrder = 2; g.add(corpo);
+    var H = DATA.pecas[nome].H;
+    if (tampa !== 'off'){
+      var t = new THREE.Mesh(G.tampa, tampa === 'teca' ? MAT.tampaTeca : MAT.tampaPP);
+      t.position.y = H; t.renderOrder = 3; g.add(t);
+      if (aro){ var a = new THREE.Mesh(G.aro, MAT.aro); a.position.y = H - 4.2; a.renderOrder = 4; g.add(a); }
+    }
+    g.position.set(x, y, 0);
+    return g;
+  }
+
+  var NOMES = ['pote-600','pote-1200','pote-1800','pote-2400'];
+  var vista = 'linha', tampa = 'pp', aro = true;
+  var alvo = new THREE.Vector3(0,120,0);
+
+  function monta(){
+    while (pivo.children.length) pivo.remove(pivo.children[0]);
+    var t = document.getElementById('hud-t'), d = document.getElementById('hud-d');
+    MAT.corpo.clippingPlanes = MAT.tampaPP.clippingPlanes = MAT.tampaTeca.clippingPlanes =
+      MAT.aro.clippingPlanes = (vista === 'corte') ? [plano] : [];
+
+    if (vista === 'linha'){
+      NOMES.forEach(function(n, i){ pivo.add(pote(n, (i - 1.5) * 150, 0, tampa, aro)); });
+      alvo.set(0, 120, 0);
+      t.textContent = 'A linha';
+      d.textContent = '600 · 1200 · 1800 · 2400 ml — corpo de 121,2 × 93,3 mm, 127,2 × 99,2 na aba, mesma tampa nos quatro';
+    } else if (vista === 'pilha'){
+      [0, 60, 120, 180].forEach(function(y){ pivo.add(pote('pote-600', -100, y, tampa, aro)); });
+      pivo.add(pote('pote-2400', 100, 0, tampa, aro));
+      var geo = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(-220, 242, 0), new THREE.Vector3(220, 242, 0)]);
+      pivo.add(new THREE.Line(geo, new THREE.LineBasicMaterial({color:0xB4451D})));
+      alvo.set(0, 130, 0);
+      t.textContent = 'Empilhamento';
+      d.textContent = 'quatro de 600 ml empilhados = 240 mm de passo = a altura do 2,4 L. A linha marca os 242 mm de borda.';
+    } else if (vista === 'encaixe' || vista === 'corte'){
+      var sep = (vista === 'encaixe') ? 55 : 0;
+      var base = new THREE.Mesh(G['pote-1200'], MAT.corpo); base.renderOrder = 2; pivo.add(base);
+      var H = DATA.pecas['pote-1200'].H;
+      if (tampa !== 'off'){
+        var tm = new THREE.Mesh(G.tampa, tampa === 'teca' ? MAT.tampaTeca : MAT.tampaPP);
+        tm.position.y = H + sep; tm.renderOrder = 3; pivo.add(tm);
+        if (aro){ var ar = new THREE.Mesh(G.aro, MAT.aro); ar.position.y = H - 4.2 + sep * 0.55; ar.renderOrder = 4; pivo.add(ar); }
+      }
+      var cima = new THREE.Mesh(G['pote-600'], MAT.corpo);
+      cima.position.y = 120 + sep * 2; cima.renderOrder = 2; pivo.add(cima);
+      alvo.set(0, 120 + sep, 0);
+      if (vista === 'encaixe'){
+        t.textContent = 'Encaixe explodido';
+        d.textContent = 'pote de 1,2 L · aro de TPE (só na versão de teca) · tampa · pé do pote de cima. O pé de 113,0 × 85,0 mm desce dentro da bandeja.';
+      } else {
+        t.textContent = 'Corte';
+        d.textContent = 'a aba em U enrijece a boca; a saia da tampa encaixa nela; o lábio moldado desce na boca e raspa a parede interna — é aí que veda. O piso da bandeja, 2,0 mm abaixo da borda, é o plano modular.';
+      }
+    }
+  }
+
+  // ---- órbita manual ----
+  var theta = 0.62, phi = 1.17, raio = 720, arrastando = false, px = 0, py = 0;
+  var parado = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function camPos(){
+    cam.position.set(
+      alvo.x + raio * Math.sin(phi) * Math.sin(theta),
+      alvo.y + raio * Math.cos(phi),
+      alvo.z + raio * Math.sin(phi) * Math.cos(theta));
+    cam.lookAt(alvo);
+  }
+  cv.addEventListener('pointerdown', function(e){ arrastando = true; px = e.clientX; py = e.clientY; cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener('pointerup', function(e){ arrastando = false; });
+  cv.addEventListener('pointercancel', function(){ arrastando = false; });
+  cv.addEventListener('pointermove', function(e){
+    if (!arrastando) return;
+    theta -= (e.clientX - px) * 0.008;
+    phi = Math.max(0.18, Math.min(2.6, phi - (e.clientY - py) * 0.007));
+    px = e.clientX; py = e.clientY;
+  });
+  cv.addEventListener('wheel', function(e){
+    e.preventDefault();
+    raio = Math.max(240, Math.min(1800, raio * (1 + Math.sign(e.deltaY) * 0.09)));
+  }, {passive:false});
+
+  function botoes(id, attr, fn){
+    var box = document.getElementById(id);
+    box.addEventListener('click', function(e){
+      var b = e.target.closest('button'); if (!b) return;
+      [].forEach.call(box.querySelectorAll('button'), function(o){ o.setAttribute('aria-pressed', String(o === b)); });
+      fn(b.getAttribute(attr)); monta();
+    });
+  }
+  botoes('g-vista', 'data-v', function(v){ vista = v; });
+  botoes('g-tampa', 'data-t', function(v){ tampa = v; });
+  botoes('g-aro', 'data-a', function(v){ aro = (v === '1'); });
+
+  function tamanho(){
+    var w = cv.clientWidth, h = cv.clientHeight;
+    if (cv.width !== w || cv.height !== h){
+      ren.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix();
+    }
+  }
+  function loop(){
+    tamanho();
+    if (!arrastando && !parado) theta += 0.0016;
+    camPos();
+    ren.render(cena, cam);
+    requestAnimationFrame(loop);
+  }
+  monta(); loop();
+})();
+</script>

@@ -1,7 +1,11 @@
 // Roda o construtor de malha do visualizador FORA do navegador, com um THREE
-// de mentira, e confere o volume assinado contra o que o gerador Python fez.
+// de mentira, e confere o volume assinado contra o STL que o gerador Python
+// escreveu. Se os dois divergirem, o 3D que o time ve nao e a peca que vai
+// para a ferramentaria.
+//
+// Uso: node verifica-malha.js [dir-stl] [visualizador.html]
 const fs = require('fs');
-const html = fs.readFileSync('potes-3d.html', 'utf8');
+const html = fs.readFileSync(process.argv[3] || 'visualizador-3d.html', 'utf8');
 const ini = html.indexOf('  function anel(');
 const fim = html.indexOf('  var G = {};');
 const fonte = html.slice(ini, fim);
@@ -28,8 +32,26 @@ function volume(g){
   }
   return v;
 }
-// o visualizador usa (x, z, -y): rotação, mantém o volume e a mão
-const py = {'pote-600':45.1,'pote-1200':74.2,'pote-1800':108.6,'pote-2400':147.2,'tampa':21.5,'aro':2.3};
+// lê o volume do STL que o gerador Python acabou de escrever, em vez de
+// comparar com número fixo que envelhece
+function volSTL(caminho){
+  const b = fs.readFileSync(caminho);
+  const n = b.readUInt32LE(80);
+  let v = 0, o = 84;
+  for (let i = 0; i < n; i++){
+    o += 12;
+    const p = [0,1,2].map(k => [b.readFloatLE(o+k*12), b.readFloatLE(o+k*12+4), b.readFloatLE(o+k*12+8)]);
+    o += 36 + 2;
+    const [a,c,d2] = p;
+    v += (a[0]*(c[1]*d2[2]-c[2]*d2[1]) - a[1]*(c[0]*d2[2]-c[2]*d2[0]) + a[2]*(c[0]*d2[1]-c[1]*d2[0]))/6;
+  }
+  return v/1000;
+}
+const ARQ = {'pote-600':'pote-600','pote-1200':'pote-1200','pote-1800':'pote-1800',
+             'pote-2400':'pote-2400','tampa':'tampa','aro':'aro-tpe'};
+const DIR = process.argv[2] || 'stl';
+const py = {};
+for (const k of Object.keys(ARQ)) py[k] = volSTL(`${DIR}/${ARQ[k]}.stl`);
 let ok = true;
 console.log('peça          volume na malha JS   volume no STL Python   desvio');
 for (const k of Object.keys(DATA.pecas)){
