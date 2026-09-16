@@ -58,8 +58,8 @@ H_RIM    = 10.0
 H_PE     = 6.0
 
 # --- vazado -----------------------------------------------------------------
-PASSO   = 15.0
-D_TOPO  = 14.0
+PASSO   = 21.0            # >= D_TOPO + 6 mm de web, senao os furos se fundem
+D_TOPO  = 15.0
 D_BASE  = 6.0
 Z_TOPO  = ALT - H_RIM - 9.0
 BANDA   = 40.0            # faixa cega no pe da parede
