@@ -1,5 +1,25 @@
 # Linha Cestos Organizadores Dobráveis Empilháveis em PP
 
+> **ARQUIVADO EM 16/09/2026 — produto errado.**
+> Este estudo saiu de um vídeo de referência que mostrava uma **caixa dobrável**.
+> O produto realmente pedido é outro: **cesto mini organizador empilhável de peça
+> única**, 21,5 × 20 × 13 cm, que empilha de pé e encaixa inclinado — sem dobradiça
+> e sem montagem. O projeto vivo está em
+> [`../cesto-empilhavel/`](../cesto-empilhavel/).
+>
+> **O que aqui continua valendo** e foi reaproveitado no projeto novo: o parque de
+> injeção e suas tonelagens (seção 7), o levantamento de resinas e preços (seção 8),
+> o modelo de custo por kg da categoria (seção 10.1), o tamanho da categoria de
+> organização e o canal Amazon (seções 3 e 6), e os bloqueios de dado
+> (`AD_INJETORAFICHA` vazia, IML não confirmado, centros "NITRON" de até 1.100 t).
+>
+> **O que não vale:** toda a arquitetura de 5 peças, a dobra, o ferramental de
+> USD 114,6 mil e o payback. Arquitetura diferente, ordem de grandeza diferente.
+>
+> Fica registrado em vez de apagado porque a caixa dobrável de 20 L é um produto
+> que a casa já fez (ref. 213) e tem projeto aprovado no ERP (projeto 100) — se
+> alguém voltar a esse tema, a engenharia está feita.
+
 **Status:** estudo de viabilidade técnica · **Data:** 16/09/2026
 **Origem:** vídeo de referência recebido em 16/09/2026 · **Planta:** Nitron – Fábrica (CODPLP 1)
 **Mandato no ERP:** Projeto 100 "Relançar caixa dobrável" — **Aprovado** desde 04/10/2021, sem molde lançado
