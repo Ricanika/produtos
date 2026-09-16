@@ -34,7 +34,7 @@ BG = 'var(--figbg,#FFFFFF)'
 FAM = "var(--figmono, ui-monospace)"
 
 
-STYLE = ('<style>text{font-family:var(--figmono),ui-monospace,SFMono-Regular,'
+STYLE = ('<style>text{font-family:var(--figmono, ui-monospace),SFMono-Regular,'
          'Menlo,Consolas,monospace}</style>')
 
 

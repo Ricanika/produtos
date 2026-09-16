@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-90 -90 2240 920" role="img" style="max-width:100%;height:auto">
-<style>text{font-family:var(--figmono),ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}</style>
+<style>text{font-family:var(--figmono, ui-monospace),SFMono-Regular,Menlo,Consolas,monospace}</style>
 <rect x="-90" y="-90" width="2240" height="920" fill="var(--figbg,#FFFFFF)"/>
 <rect x="0" y="80" width="560" height="530" fill="none" stroke="var(--cut,#16181A)" stroke-width="3"/>
 <rect x="3" y="83" width="249" height="229" fill="var(--picote,#D2451E)" fill-opacity="0.14" stroke="var(--picote,#D2451E)" stroke-width="2" rx="6"/>
