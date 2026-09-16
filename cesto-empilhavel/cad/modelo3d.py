@@ -135,13 +135,18 @@ def cesto():
     p = p & extrude(Plane.YZ * silhueta(), LARG / 2 + 30, both=True)
 
     # --- vazado ---
+    # Colunas calculadas UMA vez, com a margem do maior diametro, para que
+    # todas as fileiras usem as mesmas colunas e o reticulado alinhe.
+    z_ref = filas()[0][0]
+    cols_fundo = grade(secao(z_ref, T_RIM)[0] - D_TOPO - 30, PASSO)
+    cols_lat = grade(secao(z_ref, T_RIM)[1] - D_TOPO - 30, PASSO)
+
     furos, n = [], 0
     for z, d in filas():
-        mx, my = secao(z, T_RIM)
-        for x in grade(mx - d - 30, PASSO):                  # parede do fundo
+        for x in cols_fundo:                                 # parede do fundo
             furos.append(Pos(x, 0, z) * Rot(90, 0, 0) * Cylinder(d / 2, PROF + 60))
             n += 1
-        for y in grade(my - d - 30, PASSO):                  # laterais
+        for y in cols_lat:                                   # laterais
             if z + d / 2 + FOLGA_S > z_silhueta(y):
                 continue
             furos.append(Pos(0, y, z) * Rot(0, 90, 0) * Cylinder(d / 2, LARG + 60))
