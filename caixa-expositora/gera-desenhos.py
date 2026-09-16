@@ -18,13 +18,16 @@ PD, PH = D + ESP, H + ESP
 ABA_COLA = 80
 ABA_LAT = D / 2 + 25                  # 315 - sobrepoem 50 mm no meio da lateral
 ABA_TOPO_LAT = 60                     # aba de cola do topo
-FRENTE_FICA = 240
+MURO = 560                            # muro de retencao nas quinas
+FLECHA = 80                           # arco do rasgo
+ABERTURA = H - MURO                   # 340 - tambem e a aba de travamento
+C_TEST = D // 2                       # 290 - vinco de montagem no topo
 RECUO = 15                            # picote entra 15 mm no painel
 DEDEIRA = 35
 
 CUT = 'var(--cut,#14171A)'
 VINCO = 'var(--vinco,#2C6A9E)'
-REV = 'var(--rev,#1E8A6E)'            # vinco reverso
+REV = 'var(--rev,#1E8A6E)'            # vinco de montagem (plano na caixa)
 PICOTE = 'var(--picote,#BC3C19)'
 FILL = 'var(--board,#ECE8DE)'
 MUT = 'var(--mut,#5F686D)'
@@ -97,23 +100,29 @@ def faca():
          f'M0 {y1} H{X_END}', f'M0 {y2} H{X_END}']
     o.append(f'<path d="{" ".join(v)}" stroke="{VINCO}" stroke-width="2.2" '
              f'stroke-dasharray="16 8" fill="none"/>')
-    # vinco reverso FRENTE/TOPO
-    o.append(f'<path d="M{X_TOP} {y1-ABA_TOPO_LAT} V{y2+ABA_TOPO_LAT}" stroke="{REV}" '
+    # vinco de MONTAGEM no topo: plano na caixa, dobra 180 na loja
+    xc = X_TRA - C_TEST
+    o.append(f'<path d="M{xc} {y1-ABA_TOPO_LAT} V{y2+ABA_TOPO_LAT}" stroke="{REV}" '
              f'stroke-width="3.4" stroke-dasharray="26 7 5 7" fill="none"/>')
+    o.append(txt(xc, y1 - ABA_TOPO_LAT - 96, "vinco de montagem", 20, color=REV, weight=700))
 
-    # ---- picote em U
-    xp = X_FRE + FRENTE_FICA
+    # ---- picote em U, com arco no rasgo
+    xp = X_FRE + MURO
     ya, yb = y1 + RECUO, y2 - RECUO
-    o.append(f'<path d="M{X_TRA} {ya} H{xp} V{yb} H{X_TRA}" stroke="{PICOTE}" '
-             f'stroke-width="3.8" stroke-dasharray="28 10" fill="none"/>')
-    o.append(f'<rect x="{xp}" y="{ya}" width="{X_TRA-xp}" height="{yb-ya}" '
+    ch = yb - ya
+    R = ((ch / 2) ** 2 + FLECHA ** 2) / (2 * FLECHA)
+    o.append(f'<path d="M{X_TRA} {ya} H{xp} A{R:.0f} {R:.0f} 0 0 0 {xp} {yb} H{X_TRA}" '
+             f'stroke="{PICOTE}" stroke-width="3.8" stroke-dasharray="28 10" fill="none"/>')
+    o.append(f'<path d="M{xp} {ya} A{R:.0f} {R:.0f} 0 0 0 {xp} {yb} H{X_TRA} V{ya} Z" '
              f'fill="{PICOTE}" opacity="0.10"/>')
-    # dedeira (corte real) no painel que fica
-    ym = (ya + yb) / 2
-    o.append(f'<path d="M{xp} {ym-DEDEIRA/2} a{DEDEIRA/2} {DEDEIRA/2} 0 0 1 0 {DEDEIRA}" '
+    # dedeira (corte real) no painel que fica, no ponto mais baixo do arco
+    ym, xm = (ya + yb) / 2, xp - FLECHA
+    o.append(f'<path d="M{xm} {ym-DEDEIRA/2} a{DEDEIRA/2} {DEDEIRA/2} 0 0 0 0 {DEDEIRA}" '
              f'fill="none" stroke="{CUT}" stroke-width="2.4"/>')
-    o.append(f'<line x1="{xp-6}" y1="{ym}" x2="{xp-150}" y2="{ym+150}" stroke="{CUT}" stroke-width="1.3"/>')
-    o.append(txt(xp - 158, ym + 158, f"dedeira D{DEDEIRA} (corte real)", 19, anchor="end"))
+    o.append(f'<line x1="{xm-24}" y1="{ym}" x2="{xm-170}" y2="{ym+140}" stroke="{CUT}" stroke-width="1.3"/>')
+    o.append(txt(xm - 178, ym + 148, f"dedeira D{DEDEIRA} (corte real)", 19, anchor="end"))
+    o.append(f'<line x1="{xp}" y1="{ym}" x2="{xm}" y2="{ym}" stroke="{PICOTE}" stroke-width="1.3"/>')
+    o.append(txt((xp + xm) / 2, ym - 14, f"flecha {FLECHA}", 17, color=PICOTE))
 
     # ---- rotulos
     nomes = [(X_FUN, PD, "FUNDO"), (X_FRE, PH, "FRENTE"), (X_TOP, PD, "TOPO"),
@@ -121,9 +130,11 @@ def faca():
     for x0, w, n in nomes:
         o.append(txt(x0 + w / 2, y1 + PW / 2 - 40, n, 40, weight=700))
     o.append(txt(X_ABA + ABA_COLA / 2, y1 + PW / 2, "ABA DE COLA", 19, color=MUT, rot=-90))
-    o.append(txt((X_FRE + xp) / 2, y1 + PW / 2 + 20, "muro de retencao", 21, color=MUT))
-    o.append(txt((xp + X_TOP) / 2, y1 + PW / 2 + 20, "vira a FACE da testeira", 21, color=PICOTE))
-    o.append(txt((X_TOP + X_TRA) / 2, y1 + PW / 2 + 20, "vira o DORSO da testeira", 21, color=PICOTE))
+    o.append(txt((X_FRE + xp) / 2, y1 + PW / 2 + 22, f"muro de retencao {MURO} - fica na caixa",
+                 21, color=MUT))
+    o.append(txt((xp + X_TOP) / 2, y1 + PW / 2 + 22, "vira a ABA de travamento", 20, color=PICOTE))
+    o.append(txt((X_TOP + xc) / 2, y1 + PW / 2 + 22, "vira a FACE", 20, color=PICOTE))
+    o.append(txt((xc + X_TRA) / 2, y1 + PW / 2 + 22, "vira o DORSO", 20, color=PICOTE))
     for x0, w in ((X_FUN, PD), (X_FRE, PH), (X_TRA, PH)):
         for yy in (y0 + ABA_LAT * 0.28, y2 + ABA_LAT * 0.72):
             lbl = "parede lateral" if x0 != X_FUN else "reforco (cola por dentro)"
@@ -140,19 +151,20 @@ def faca():
     o.append(cota(X_END, y1, X_END, y2, f"{PW:.0f}", off=62))
     o.append(cota(X_END, y2, X_END, y3, f"{ABA_LAT:.0f}", off=62))
     o.append(cota(X_END, y0, X_END, y3, f"chapa {y3:.0f} mm", off=140, size=24))
-    o.append(cota(X_FRE, y1, xp, y1, f"{FRENTE_FICA}  muro", off=-62, color=PICOTE))
-    o.append(cota(xp, y1, X_TOP, y1, f"{X_TOP-xp:.0f}  face da testeira", off=-130, color=PICOTE))
-    o.append(cota(X_TOP, y1, X_TRA, y1, f"{PD:.0f}  dorso", off=-130, color=PICOTE))
-    o.append(txt(X_TRA + 34, y1 + PW + 205,
+    o.append(cota(X_FRE, y1, xp, y1, f"{MURO}  muro", off=-62, color=MUT))
+    o.append(cota(xp, y1, X_TOP, y1, f"{ABERTURA}  aba", off=-62, color=PICOTE))
+    o.append(cota(X_TOP, y1, xc, y1, f"{C_TEST}  face", off=-62, color=PICOTE))
+    o.append(cota(xc, y1, X_TRA, y1, f"{C_TEST}  dorso", off=-62, color=PICOTE))
+    o.append(txt(X_TRA + 34, y1 + PW + 268,
                  "a peca NAO sai: fica articulada neste vinco",
                  25, anchor="start", color=PICOTE, weight=700))
-    o.append(f'<path d="M{X_TRA} {y1+PW+212} l0 -110 m0 110 l-16 -22 m16 22 l16 -22" '
+    o.append(f'<path d="M{X_TRA} {y1+PW+212} l0 -170 m0 170 l-16 -22 m16 22 l16 -22" '
              f'stroke="{PICOTE}" stroke-width="3.4" fill="none"/>')
 
     # legenda
     ly = y3 + 240
     leg = [(CUT, "corte (faca)", "none"), (VINCO, "vinco", "16 8"),
-           (REV, "vinco REVERSO", "26 7 5 7"), (PICOTE, "picote ziper", "28 10")]
+           (REV, "vinco de montagem", "26 7 5 7"), (PICOTE, "picote ziper", "28 10")]
     for i, (c, s, dash) in enumerate(leg):
         x = i * 560
         o.append(f'<line x1="{x}" y1="{ly}" x2="{x+95}" y2="{ly}" stroke="{c}" '
@@ -210,10 +222,10 @@ def arranjo():
     o.append(f'<path d="M{ox2-40} {ytop} H{ox2+W+50}" stroke="{CUT}" stroke-width="2.6" '
              f'stroke-dasharray="18 9"/>')
     o.append(txt(ox2 + W + 58, ytop + 8, f"carga nivelada em {NIVEL}", 24, anchor="start"))
-    ymuro = oy + H - FRENTE_FICA
-    o.append(f'<path d="M{ox2} {ymuro} H{ox2+W}" stroke="{PICOTE}" stroke-width="3.4" '
-             f'stroke-dasharray="26 10"/>')
-    o.append(txt(ox2 - 20, ymuro + 8, f"picote {FRENTE_FICA}", 24, anchor="end", color=PICOTE))
+    ymuro = oy + H - MURO
+    o.append(f'<path d="M{ox2} {ymuro} Q{ox2+W/2} {ymuro+2*FLECHA} {ox2+W} {ymuro}" '
+             f'stroke="{PICOTE}" stroke-width="3.4" stroke-dasharray="26 10" fill="none"/>')
+    o.append(txt(ox2 - 20, ymuro + 8, f"rasgo {MURO}", 24, anchor="end", color=PICOTE))
     o.append(cota(ox2 + W, oy, ox2 + W, oy + H, f"altura interna {H}", off=200, size=24))
     o.append(txt(ox2 + W / 2, oy + H + 130,
                  "VISTA FRONTAL - o calco de 40 nivela o kit baixo com os outros dois",
@@ -223,13 +235,10 @@ def arranjo():
 
 # ======================================================== 3) CONVERSAO
 def conversao():
-    k, TH = 0.30, D                      # testeira tem a altura da profundidade
-    kD = k * D
-    TOP = H + TH
+    k = 0.30
+    kD, TOP = k * D, H + C_TEST
     FW, FH = W + kD, TOP + kD
     GAP = 300
-    HF = FRENTE_FICA
-    FACE = H - HF                        # 660 - a parte alta da frente
 
     def P(x, y, z, ox=0.0):
         return (ox + x + k * y, TOP + kD - z - k * y)
@@ -239,95 +248,109 @@ def conversao():
         return (f'<polygon points="{d}" fill="{fill}" fill-opacity="{op}" stroke="{stroke}" '
                 f'stroke-width="{sw}" stroke-linejoin="round"/>')
 
-    def corpo(ox, com_frente_alta):
-        g = [face([P(0, D, 0, ox), P(W, D, 0, ox), P(W, D, H, ox), P(0, D, H, ox)], FILL, 0.45),
-             face([P(W, 0, 0, ox), P(W, D, 0, ox), P(W, D, H, ox), P(W, 0, H, ox)], FILL, 0.8)]
-        if not com_frente_alta:
-            for n, z0, zk in ((8, 0, 105), (6, 0, 140), (10, 0, 80)):
-                pass
-            for col, (x0, x1, zk, nc) in enumerate(((0, 240, 105, 8), (243, 508, 140, 6),
-                                                    (511, 776, 80, 10))):
-                cal = 40 if col == 2 else 0
-                for j in range(nc):
-                    z = cal + j * zk
-                    g.append(face([P(x0 + 10, 40, z, ox), P(x1 - 10, 40, z, ox),
-                                   P(x1 - 10, 40, z + zk - 6, ox), P(x0 + 10, 40, z + zk - 6, ox)],
-                                  PICOTE, 0.15, MUT, 1.3))
-            g.append(face([P(0, 0, 0, ox), P(W, 0, 0, ox), P(W, 0, HF, ox), P(0, 0, HF, ox)], FILL))
-            g.append(txt(*[c + d for c, d in zip(P(W / 2, 0, HF / 2, ox), (0, 10))],
-                         str(HF), 26, color=MUT))
+    def pilhas(ox):
+        g = []
+        for col, (x0, x1, zk, nc) in enumerate(((0, 240, 105, 8), (243, 508, 140, 6),
+                                                (511, 776, 80, 10))):
+            cal = 40 if col == 2 else 0
+            for j in range(nc):
+                z = cal + j * zk
+                g.append(face([P(x0 + 10, 40, z, ox), P(x1 - 10, 40, z, ox),
+                               P(x1 - 10, 40, z + zk - 6, ox), P(x0 + 10, 40, z + zk - 6, ox)],
+                              PICOTE, 0.15, MUT, 1.3))
         return g
 
-    o, legendas = [], [
-        "1 - fechada: picote em U na frente",
-        "2 - rasga o U - a peca NAO sai",
-        "3 - o topo gira 90 e fica em pe",
-        "4 - a frente dobra 180 sobre ele"]
+    def frente_baixa(ox):
+        """parede frontal com o arco do rasgo"""
+        a, b = P(0, 0, MURO, ox), P(W, 0, MURO, ox)
+        c, d = P(0, 0, 0, ox), P(W, 0, 0, ox)
+        m = P(W / 2, 0, MURO - 2 * FLECHA, ox)
+        return (f'<path d="M{c[0]:.1f} {c[1]:.1f} L{a[0]:.1f} {a[1]:.1f} '
+                f'Q{m[0]:.1f} {m[1]:.1f} {b[0]:.1f} {b[1]:.1f} L{d[0]:.1f} {d[1]:.1f} Z" '
+                f'fill="{FILL}" stroke="{CUT}" stroke-width="2.6"/>')
 
-    for i in range(4):
+    o = []
+    legendas = ["1 - fechada: picote em U, rasgo pequeno",
+                "2 - montada: testeira dupla, topo aberto"]
+    for i in range(2):
         ox = i * (FW + GAP)
-        g = []
+        g = [face([P(0, D, 0, ox), P(W, D, 0, ox), P(W, D, H, ox), P(0, D, H, ox)], FILL, 0.45),
+             face([P(W, 0, 0, ox), P(W, D, 0, ox), P(W, D, H, ox), P(W, 0, H, ox)], FILL, 0.8)]
         if i == 0:
-            g += corpo(ox, True)
             g.append(face([P(0, 0, H, ox), P(W, 0, H, ox), P(W, D, H, ox), P(0, D, H, ox)], FILL, 0.55))
             g.append(face([P(0, 0, 0, ox), P(W, 0, 0, ox), P(W, 0, H, ox), P(0, 0, H, ox)], FILL))
-            a, b = P(20, 0, HF, ox), P(W - 20, 0, HF, ox)
+            a, b = P(20, 0, MURO, ox), P(W - 20, 0, MURO, ox)
             c, d = P(20, 0, H, ox), P(W - 20, 0, H, ox)
+            m = P(W / 2, 0, MURO - 2 * FLECHA, ox)
             g.append(f'<path d="M{c[0]:.0f} {c[1]:.0f} L{a[0]:.0f} {a[1]:.0f} '
-                     f'L{b[0]:.0f} {b[1]:.0f} L{d[0]:.0f} {d[1]:.0f}" stroke="{PICOTE}" '
-                     f'stroke-width="5" stroke-dasharray="24 10" fill="none"/>')
-            g.append(txt(*P(W / 2, 0, HF + 230, ox), "picote em U", 30, color=PICOTE))
-        elif i == 1:
-            g += corpo(ox, False)
-            # peca solta, ainda presa atras, erguida ~25 graus
-            ang = math.radians(28)
-            def Q(t, s):   # t ao longo da peca a partir da dobra em (y=D, z=H)
-                return P(s, D - t * math.cos(ang), H + t * math.sin(ang), ox)
-            g.append(face([Q(0, 0), Q(0, W), Q(D, W), Q(D, 0)], PICOTE, 0.14, PICOTE, 3))
-            g.append(txt(*[c + dd for c, dd in zip(Q(D / 2, W / 2), (0, 10))],
-                         "topo", 26, color=PICOTE))
-            p1 = P(W / 2, 0, H + 40, ox)
-            p2 = Q(D + 90, W / 2)
-            g.append(f'<path d="M{p1[0]:.0f} {p1[1]:.0f} Q{(p1[0]+p2[0])/2+180:.0f} '
-                     f'{min(p1[1],p2[1])-40:.0f} {p2[0]:.0f} {p2[1]:.0f}" stroke="{PICOTE}" '
-                     f'stroke-width="5" fill="none" marker-end="url(#ar)"/>')
+                     f'Q{m[0]:.0f} {m[1]:.0f} {b[0]:.0f} {b[1]:.0f} L{d[0]:.0f} {d[1]:.0f}" '
+                     f'stroke="{PICOTE}" stroke-width="5" stroke-dasharray="24 10" fill="none"/>')
+            g.append(txt(*P(W / 2, 0, MURO - 260, ox), "picote em U", 30, color=PICOTE))
         else:
-            g += corpo(ox, False)
-            # testeira em pe (o TOPO)
+            g += pilhas(ox)
+            # testeira: dorso em pe + face dobrada por cima
             g.append(face([P(0, D, H, ox), P(W, D, H, ox), P(W, D, TOP, ox), P(0, D, TOP, ox)],
                           FILL, 0.95))
-            if i == 2:
-                g.append(txt(*[c + d for c, d in zip(P(W / 2, D, H + TH * 0.3, ox), (0, 10))],
-                             "dorso", 28, weight=700, color=MUT))
-                # frente alta ainda horizontal, apontando para a frente
-                g.append(face([P(0, D, TOP, ox), P(W, D, TOP, ox),
-                               P(W, D - FACE, TOP, ox), P(0, D - FACE, TOP, ox)],
-                              PICOTE, 0.14, PICOTE, 3))
-                g.append(txt(*[c + d for c, d in zip(P(W / 2, D - FACE / 2, TOP, ox), (0, 10))],
-                             "face", 26, color=PICOTE))
-                p1 = P(W / 2, D - FACE, TOP + 40, ox)
-                p2 = P(W / 2, D - 40, H + TH / 2, ox)
-                g.append(f'<path d="M{p1[0]:.0f} {p1[1]:.0f} Q{p1[0]-200:.0f} '
-                         f'{(p1[1]+p2[1])/2:.0f} {p2[0]:.0f} {p2[1]:.0f}" stroke="{PICOTE}" '
-                         f'stroke-width="5" fill="none" marker-end="url(#ar)"/>')
-            else:
-                # face dobrada sobre o dorso, descendo 80 mm por dentro
-                g.append(face([P(0, D - 6, TOP, ox), P(W, D - 6, TOP, ox),
-                               P(W, D - 6, TOP - FACE, ox), P(0, D - 6, TOP - FACE, ox)],
-                              PICOTE, 0.16, PICOTE, 3))
-                g.append(txt(*[c + d for c, d in zip(P(W / 2, D - 6, TOP - FACE / 2 + 60, ox), (0, 10))],
-                             "TESTEIRA", 34, weight=700, color=PICOTE))
-                g.append(txt(*[c + d for c, d in zip(P(W / 2, D - 6, TOP - FACE / 2 - 40, ox), (0, 10))],
-                             "parede dupla", 24, color=PICOTE))
-                g.append(cota(*P(W + 30, D, TOP, ox), *P(W + 30, D, H, ox), f"{D}", off=54))
-                p1 = P(W / 2, D - 6, TOP - FACE - 10, ox)
-                g.append(txt(p1[0], p1[1] + 34, f"aba de {FACE-D:.0f} mm desce por dentro e trava",
-                             22, color=MUT))
+            g.append(face([P(0, D - 8, H, ox), P(W, D - 8, H, ox), P(W, D - 8, TOP, ox),
+                           P(0, D - 8, TOP, ox)], PICOTE, 0.16, PICOTE, 3))
+            g.append(txt(*[c + dd for c, dd in zip(P(W / 2, D - 8, H + C_TEST * 0.55, ox), (0, 10))],
+                         "TESTEIRA", 34, weight=700, color=PICOTE))
+            g.append(txt(*[c + dd for c, dd in zip(P(W / 2, D - 8, H + C_TEST * 0.2, ox), (0, 10))],
+                         f"{C_TEST} - parede dupla", 22, color=PICOTE))
+            g.append(frente_baixa(ox))
+            g.append(txt(*[c + dd for c, dd in zip(P(W / 2, 0, MURO / 2, ox), (0, 10))],
+                         str(MURO), 28, color=MUT))
         o.append("".join(g))
         o.append(txt(ox + FW / 2, FH + 100, legendas[i], 28, color=MUT))
-    defs = (f'<defs><marker id="ar" markerWidth="11" markerHeight="11" refX="8" refY="5.5" '
-            f'orient="auto"><path d="M0 0 L11 5.5 L0 11 z" fill="{PICOTE}"/></marker></defs>')
-    return svg(4 * FW + 3 * GAP - GAP + 200, FH + 150, defs + "".join(o), pad=140)
+
+    # ---------- 3) corte lateral do dobramento (camadas separadas para leitura)
+    ox = 2 * (FW + GAP)
+    SX, SZ, SEP = ox + 200, FH - kD, 55
+    def S(y, z):
+        return (SX + y, SZ - z)
+    g = []
+    # caixa em corte: fundo, traseira, frente ate o muro
+    g.append(f'<path d="M{S(0,MURO)[0]:.0f} {S(0,MURO)[1]:.0f} V{S(0,0)[1]:.0f} '
+             f'H{S(D,0)[0]:.0f} V{S(D,H)[1]:.0f}" stroke="{CUT}" stroke-width="3.4" fill="none"/>')
+    g.append(cota(*S(-70, 0), *S(-70, MURO), f"muro {MURO}", off=0, color=MUT, size=21))
+    g.append(txt(*[c + d for c, d in zip(S(D / 2, 40), (0, 0))], "produto", 22, color=MUT))
+    # fantasma da posicao de transporte
+    g.append(f'<path d="M{S(0,MURO)[0]:.0f} {S(0,MURO)[1]:.0f} V{S(0,H)[1]:.0f} '
+             f'H{S(D,H)[0]:.0f}" stroke="{MUT}" stroke-width="2.2" stroke-dasharray="11 9" '
+             f'fill="none"/>')
+    g.append(txt(*[c + d for c, d in zip(S(D * 0.35, H), (0, -18))],
+                 "onde a peca estava (transporte)", 21, color=MUT))
+    # peca montada - camadas afastadas de SEP mm so para o desenho
+    yd, yf = D, D + SEP
+    g.append(f'<path d="M{S(yd,H)[0]:.0f} {S(yd,H)[1]:.0f} V{S(yd,H+C_TEST)[1]:.0f} '
+             f'H{S(yf,H+C_TEST)[0]:.0f} V{S(yf,H)[1]:.0f} V{S(yf,H-ABERTURA)[1]:.0f}" '
+             f'stroke="{PICOTE}" stroke-width="6" fill="none" stroke-linejoin="round"/>')
+    g.append(txt(*[c + d for c, d in zip(S(yd - 18, H + C_TEST / 2), (0, 0))], "DORSO", 21,
+                 anchor="end", color=PICOTE, weight=700, rot=-90))
+    g.append(txt(*[c + d for c, d in zip(S(yf + 20, H + C_TEST / 2), (0, 0))], "FACE", 21,
+                 anchor="start", color=PICOTE, weight=700, rot=-90))
+    g.append(txt(*[c + d for c, d in zip(S(yf + 20, H - ABERTURA / 2), (0, 0))], "ABA", 21,
+                 anchor="start", color=PICOTE, weight=700, rot=-90))
+    g.append(cota(*S(yf + 150, H), *S(yf + 150, H + C_TEST), f"{C_TEST}", off=0, color=PICOTE, size=22))
+    g.append(cota(*S(yf + 150, H - ABERTURA), *S(yf + 150, H), f"{ABERTURA}", off=0,
+                 color=PICOTE, size=22))
+    # o ponto que registra a montagem
+    g.append(f'<circle cx="{S(yf,H)[0]:.0f}" cy="{S(yf,H)[1]:.0f}" r="16" fill="none" '
+             f'stroke="{REV}" stroke-width="4"/>')
+    g.append(f'<line x1="{S(yf,H)[0]-18:.0f}" y1="{S(yf,H)[1]:.0f}" '
+             f'x2="{S(D*0.45,H-150)[0]:.0f}" y2="{S(D*0.45,H-150)[1]:.0f}" '
+             f'stroke="{REV}" stroke-width="1.6"/>')
+    g.append(txt(*[c + d for c, d in zip(S(D * 0.45, H - 150), (0, 26))],
+                 "o vinco FRENTE/TOPO para na borda:", 21, anchor="end", color=REV, weight=700))
+    g.append(txt(*[c + d for c, d in zip(S(D * 0.45, H - 150), (0, 52))],
+                 "e assim que o montador ve que acertou", 21, anchor="end", color=REV))
+    g.append(txt(*[c + d for c, d in zip(S(D / 2, -130), (0, 0))],
+                 f"CORTE LATERAL - frente a esquerda - camadas afastadas {SEP} mm para leitura",
+                 22, color=MUT))
+    o.append("".join(g))
+    o.append(txt(ox + FW / 2, FH + 100, "3 - o percurso da dobra", 28, color=MUT))
+
+    return svg(3 * FW + 2 * GAP, FH + 150, "".join(o), pad=160)
 
 
 if __name__ == "__main__":

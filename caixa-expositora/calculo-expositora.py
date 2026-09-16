@@ -34,9 +34,11 @@ BARRIGA = 3                    # barriga por camada empilhada (mm)
 
 # ----------------------------------------------------------------- geometria
 W, D = 780, 580                # frente e profundidade INTERNAS
-FRENTE_FICA = 240              # muro de retencao que sobra na frente
-ABA_TRAVA = 80                 # aba que desce por dentro e trava a testeira
-H = FRENTE_FICA + D + ABA_TRAVA        # 900 - travado pela mecanica
+MURO = 560                     # muro de retencao nas quinas
+FLECHA = 80                    # arco do rasgo: desce a 480 no centro
+H = 900                        # altura interna
+ABERTURA = H - MURO            # 340 - o rasgo, e tambem a aba de travamento
+C_TESTEIRA = D // 2            # 290 - vinco novo no topo; testeira = D/2
 FOLGA_TOPO = 30
 DIV = 3                        # espessura da divisoria entre colunas
 
@@ -51,8 +53,10 @@ def analisa():
     larg_usada = sum(c[1] for c in COLUNAS) + DIV * (len(COLUNAS) - 1)
     print(f"Interno {W} x {D} x {H} mm   |   externo "
           f"{W+2*ESP:.0f} x {D+2*ESP:.0f} x {H+2*ESP:.0f} mm")
-    print(f"H = {FRENTE_FICA} (frente que fica) + {D} (topo) + {ABA_TRAVA} "
-          f"(aba de travamento) = {H} mm\n")
+    print(f"Muro de retencao {MURO} ({MURO/H*100:.0f}% da frente)  |  rasgo "
+          f"{ABERTURA} nas quinas / {ABERTURA+FLECHA} no centro")
+    print(f"Testeira {C_TESTEIRA} (= D/2), parede dupla  |  aba de travamento "
+          f"{ABERTURA} por dentro\n")
     print(f"{'coluna':<24}{'facing':<10}{'fundos':<10}{'/camada':<10}{'camadas':<10}"
           f"{'kits':<8}{'pilha':<10}{'calco'}")
     tot, vol, alturas = {}, 0.0, []
@@ -126,9 +130,28 @@ def palete():
     print(f"\n{'-'*88}\nPALETE")
     print(f"  meio-palete EUR 800 x 600: caixa {we:.0f} x {de:.0f} -> "
           f"folga {800-we:.0f} / {600-de:.0f} mm  (1 caixa, 100% do meio-palete)")
-    print(f"  altura do display: {he:.0f} (caixa) + {D} (testeira) + 144 (palete) "
-          f"= {he+D+144:.0f} mm")
+    print(f"  altura do display: {he:.0f} (caixa) + {C_TESTEIRA} (testeira) + 144 "
+          f"(palete) = {he+C_TESTEIRA+144:.0f} mm")
     print(f"  2 meios-paletes = 800 x 1200 mm -> cabem num PBR 1000 x 1200 (80% do piso)")
+
+
+def rasgo():
+    print(f"\n{'-'*88}\nO RASGO FRONTAL (o que a referencia corrige)")
+    ch = W - 50
+    R = ((ch / 2) ** 2 + FLECHA ** 2) / (2 * FLECHA)
+    print(f"  corte a {MURO} nas quinas, arco de flecha {FLECHA} -> {MURO-FLECHA} no centro, "
+          f"R {R:.0f} mm")
+    print(f"  o muro fica com {MURO/H*100:.0f}% da frente (na Rev.2 eram 27%)")
+    print(f"\n{'kit':<16}{'muro retem':<18}{'visivel pelo rasgo (carga 840)'}")
+    for nome, h in (("A quadrado", 105), ("B ret. alto", 140), ("C ret. baixo", 80)):
+        print(f"  {nome:<14}{MURO//h} camadas ({MURO//h*h} mm){'':<4}"
+              f"{(840-MURO)/h:.1f} camadas na quina / {(840-MURO+FLECHA)/h:.1f} no centro")
+    print(f"\n  O cliente PEGA POR CIMA - o topo fica aberto depois que a testeira sobe.")
+    print(f"  O rasgo e para VER, nao para pegar. E por isso que ele pode ser pequeno.")
+    print(f"\n  FOLGA ATRAS para a aba de travamento descer (papelao de {ESP} mm):")
+    for nome, fr, pf in COLUNAS:
+        ny = int((D - 10) // pf)
+        print(f"    {nome[0]}: usa {ny*pf} de {D} -> sobra {D-ny*pf} mm")
 
 
 if __name__ == "__main__":
@@ -136,6 +159,7 @@ if __name__ == "__main__":
     print("CAIXA EXPOSITORA SORTIDA - 3 KITS NA MESMA CAIXA")
     print("=" * 88)
     tot, vol = analisa()
+    rasgo()
     chapa()
     # peso bruto estimado: densidade de embalagem de utilidade domestica em plastico
     peso = vol / 1e6 * 0.12 + 2.2
