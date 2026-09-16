@@ -38,23 +38,23 @@ RHO = 0.905e-3            # g/mm3 - PP copolimero
 LARG      = 215.0         # X - largura frontal
 PROF      = 200.0         # Y - profundidade
 ALT       = 130.0         # Z - altura no fundo
-ALT_FRENTE = 45.0         # altura da parede frontal rebaixada
+ALT_FRENTE = 55.0         # altura da parede frontal rebaixada
 RAIO      = 14.0          # raio de canto em planta
-DRAFT     = 4.0           # graus por lado - saida de molde E folga de encaixe
+DRAFT     = 3.5           # graus por lado - saida de molde E folga de encaixe
 
 T_PAREDE  = 1.4
 T_FUNDO   = 2.0
 T_RIM     = 3.2           # espessura da parede na faixa do rim
 H_RIM     = 10.0          # altura da faixa engrossada do rim
 H_PE      = 6.0           # pe
-EXPO      = 1.7           # expoente da curva do rebaixo (1 = reta, >1 = concava)
+Y_PLANO   = 0.20          # fracao da profundidade em que a aresta fica reta no fundo
 
 # --- rebordo da base: o apoio do empilhamento -------------------------------
 # A peca e tronco-piramidal (boca maior que a base), entao uma afunda na outra.
 # O rebordo da base e alargado ate a medida da boca: nivelada, a peca de cima
 # assenta nele; inclinada ~14 graus, o rebordo passa livre pela frente
 # rebaixada e a peca afunda -- que e o encaixe das fotos da referencia.
-H_FLANGE = 8.0
+H_FLANGE = 6.0
 T_FLANGE = 2.5
 
 # --- pega lateral (a aba que aparece na foto, para puxar a peca empilhada) ---
@@ -64,8 +64,8 @@ PG_L, PG_H, PG_P = 46.0, 9.0, 11.0
 PASSO   = 15.0
 D_TOPO  = 14.0
 D_BASE  = 6.0
-Z_TOPO  = ALT - H_RIM - 8.0           # centro da 1a fila
-BANDA   = 30.0                        # faixa cega no pe
+Z_TOPO  = ALT - H_RIM - 9.0           # centro da 1a fila
+BANDA   = 58.0                        # faixa cega: a metade de baixo e solida
 FOLGA_C = 7.0                         # folga entre furo e a curva do rebaixo
 
 
@@ -81,9 +81,16 @@ def secao(z, folga=0.0):
 
 
 def z_aresta(y):
-    """Cota da aresta superior da lateral, no ponto y (curva do rebaixo)."""
-    t = (y + PROF / 2) / PROF                      # 0 na frente, 1 no fundo
-    return ALT_FRENTE + (ALT - ALT_FRENTE) * t ** EXPO
+    """Cota da aresta superior da lateral em y.
+
+    Trecho reto na altura cheia no fundo (como na referencia), depois um S
+    suave (cosseno) descendo ate a borda frontal -- sem quina em nenhuma ponta.
+    """
+    y_q = PROF / 2 - Y_PLANO * PROF                # onde a reta termina
+    if y >= y_q:
+        return ALT
+    t = (y + PROF / 2) / (y_q + PROF / 2)          # 0 na frente, 1 na quebra
+    return ALT_FRENTE + (ALT - ALT_FRENTE) * (0.5 - 0.5 * np.cos(np.pi * t))
 
 
 def filas():
@@ -153,24 +160,26 @@ def cesto():
 
     # --- pega lateral: a aba da foto, para puxar a peca empilhada ---
     for sx in (-1, 1):
-        y_pg = -PROF / 2 + 52
-        z_pg = z_aresta(y_pg) - PG_H / 2 - 3
+        y_pg = -PROF / 2 + 46
+        z_pg = z_aresta(y_pg) - PG_H / 2 - 2
         x_pg = secao(z_pg)[0] / 2
+        aba = extrude(RectangleRounded(PG_L, PG_H, PG_H / 2 - 0.5), PG_P + 2)
         p += Pos(sx * (x_pg + PG_P / 2 - 1), y_pg, z_pg) * \
-            Box(PG_P + 2, PG_L, PG_H)
+            Rot(0, 90 * sx, 0) * Rot(0, 0, 90) * aba
 
-    # --- pes sob o rebordo, ocos (aro de 2 mm) ---
+    # --- pes nos quatro cantos, ocos (aro de 2 mm) ---
     for sx in (-1, 1):
         for sy in (-1, 1):
-            c = Pos(sx * (LARG / 2 - 20), sy * (PROF / 2 - 20), -H_PE / 2)
-            p += c * Box(32, 32, H_PE + 1)
-            p -= c * Pos(0, 0, -1.5) * Box(28, 28, H_PE + 1)
+            c = Pos(sx * (LARG / 2 - 21), sy * (PROF / 2 - 21), -H_PE / 2)
+            p += c * Box(34, 34, H_PE + 1)
+            p -= c * Pos(0, 0, -1.5) * Box(30, 30, H_PE + 1)
 
-    # --- ripado vertical na frente rebaixada ---
-    yf = secao(ALT_FRENTE / 2)[1] / 2
-    for x in grade(secao(ALT_FRENTE / 2)[0] - 70, 9.0):
-        p += Pos(x, -yf - 1.0, ALT_FRENTE / 2 + 1) * \
-            Box(3.2, 2.6, ALT_FRENTE - H_FLANGE - 6)
+    # --- ripado vertical na frente rebaixada (o corrugado da referencia) ---
+    z_rip = (H_FLANGE + ALT_FRENTE - 6) / 2
+    h_rip = ALT_FRENTE - 6 - H_FLANGE
+    yf = secao(z_rip)[1] / 2
+    for x in grade(secao(z_rip)[0] - 34, 6.0):
+        p += Pos(x, -yf - 0.7, z_rip) * Box(4.0, 2.2, h_rip)
 
     p.label = "cesto"
     return p, n
@@ -197,7 +206,7 @@ def main():
     print(f"Boca (rim)    {LARG:.1f} x {PROF:.1f} mm | base {BASE_X:.1f} x {BASE_Y:.1f} mm")
     print(f"Envelope      {bb.size.X:.1f} x {bb.size.Y:.1f} x {bb.size.Z:.1f} mm "
           f"(inclui as pegas laterais)")
-    print(f"Altura frente {ALT_FRENTE:.0f} mm | saida {DRAFT:.0f} deg/lado | "
+    print(f"Altura frente {ALT_FRENTE:.0f} mm | saida {DRAFT:.1f} deg/lado | "
           f"parede {T_PAREDE:.1f} mm | fundo {T_FUNDO:.1f} mm")
     print(f"Capacidade    {nominal:.2f} L nominal | {util:.2f} L ate a borda frontal")
     print(f"Peso          {peso:.1f} g   (volume {p.volume/1000:.1f} cm3)")

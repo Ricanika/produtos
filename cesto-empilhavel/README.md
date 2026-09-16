@@ -5,10 +5,10 @@
 (Mercado Livre MLBU4092388469) + fotos cotadas enviadas em 16/09/2026
 **Modelo:** `cad/modelo3d.py` · **Economia:** `economia.py` · **Arquivos:** `cad/cesto.step`
 
-Produto de **peça única injetada** — sem dobradiça, sem painel, sem montagem. Empilha de pé
-com acesso frontal e encaixa inclinado para reduzir volume. Vazado por **furos redondos em
-gradiente** (Ø maior em cima, diminuindo para baixo), fundo sólido e frente rebaixada sólida
-com ripado, conforme pedido.
+**Réplica da referência, com uma única alteração: os cortes verticais viraram furos redondos.**
+Cotas, rebaixo frontal curvo, ripado vertical na frente, abas laterais, pés e conicidade seguem
+a referência. Peça única injetada — sem dobradiça, sem painel, sem montagem. O gradiente dos
+furos (Ø maior em cima, diminuindo para baixo) e o fundo sólido são o pedido de 16/09.
 
 > **Substitui o estudo da caixa dobrável** em [`../cesto-dobravel/`](../cesto-dobravel/), que
 > partiu de um vídeo de referência com o produto errado. Daquele estudo seguem valendo e foram
@@ -23,13 +23,13 @@ com ripado, conforme pedido.
 |---|---|
 | Peça única empilhável e encaixável | **Viável** — é a arquitetura mais simples possível: 1 peça, 1 molde, zero montagem |
 | Cotas 21,5 × 20 × 13 cm | **Atendidas** — boca 215 × 200 mm, altura 130 mm |
-| Furos redondos em gradiente | **Resolvido** — 6 bandas, Ø 14 → 6 mm, 92 furos, faixa cega de 30 mm no pé |
+| Furos redondos em gradiente | **Resolvido** — 4 bandas, Ø 14 → 6 mm, 74 furos, metade de baixo sólida |
 | Fundo sólido | **Atendido** — chapa de 2,0 mm sem furo |
-| Empilhar com acesso frontal | **Resolvido** — rebordo da base assenta no rim; frente rebaixada a 45 mm |
-| Encaixar para reduzir volume | **Geometria confirmada** — corpo 11,8 mm menor que a boca; **passo do encaixe a medir na amostra** (seção 4.2) |
+| Empilhar com acesso frontal | **Resolvido** — rebordo da base assenta no rim; frente rebaixada a 55 mm |
+| Encaixar para reduzir volume | **Geometria confirmada** — corpo 9,5 mm menor que a boca; **passo do encaixe a medir na amostra** (seção 4.2) |
 | Injeção no parque atual | **1 cavidade numa 200 t (76%)** — a casa tem **12 máquinas** dessa classe |
 | Ferramental | **USD 19,5 mil FOB**, 1 molde — por analogia direta com dois moldes da casa |
-| Payback | **~5 meses** a 150 mil un/ano |
+| Payback | **~4,5 meses** a 150 mil un/ano |
 | Preço do anúncio de referência | **Não obtido** — o proxy desta sessão bloqueia o Mercado Livre (seção 6) |
 
 O produto é uma **commodity de volume**: contribuição de ~R$ 2,20 por peça, então a conta fecha
@@ -44,48 +44,54 @@ que custaria a família dobrável) e **o risco é o volume de venda**.
 | Cota | Valor |
 |---|---|
 | Boca (rim) | **215 × 200 mm** |
-| Base | 196,8 × 181,8 mm |
-| Altura | **130 mm** · frente rebaixada a **45 mm** |
-| Envelope real | 225,3 × 200 × 135,6 mm (inclui as pegas laterais e os pés) |
-| Saída de molde | **4° por lado** — é ela que permite o encaixe |
+| Base | 199,1 × 184,1 mm |
+| Altura | **130 mm** · frente rebaixada a **55 mm** |
+| Envelope real | 241,8 × 200 × 136,5 mm — inclui as **abas laterais**, que projetam 13,4 mm por lado |
+| Saída de molde | **3,5° por lado** — é ela que permite o encaixe |
 | Parede / fundo / rim | 1,4 / 2,0 / 3,2 mm |
 | Raio de canto em planta | R14 |
-| Capacidade | **4,85 L** nominal · **2,73 L** até a borda frontal |
-| Peso | **221,1 g** (244,3 cm³ de PP) |
+| Capacidade | **4,91 L** nominal · **3,73 L** até a borda frontal |
+| Peso | **242,5 g** (267,9 cm³ de PP) |
 | Área projetada | 430 cm² |
 
-A aresta superior das laterais desce do fundo para a frente numa **curva concava** (expoente 1,7),
-não numa reta. É ela que dá o acesso frontal quando empilhado e o rasgo por onde a peça entra
-inclinada para encaixar.
+A projeção das abas (13,4 mm/lado) é leitura de foto e define a caixa master — **conferir na
+amostra**, porque 27 mm de largura extra por peça mexe na embalagem do pacote de 10.
+
+A aresta superior das laterais segue a referência: **trecho reto na altura cheia** nos 20% do
+fundo (até y = +40 mm), depois um **S de cosseno** descendo até a borda frontal a 55 mm — sem
+quina em nenhuma das pontas. É ela que dá o acesso frontal quando empilhado e o vão por onde a
+peça entra inclinada para encaixar.
 
 ### 2.1 Peso — é o ponto a atacar no try-out
 
-221 g para 4,85 L, contra o **Cesto Organizador Vime 7 L (047) da casa, que faz 7 L com 213 g**.
-A nossa peça é mais alta em relação ao volume e carrega rebordo de empilhamento e rim reforçado,
-mas ainda assim há gordura: **cada 10 g economizados valem R$ 0,15/peça**, ou R$ 22 mil/ano a 150
-mil peças. Alvo para o try-out: **200 g**. Caminhos: parede de 1,2 mm na banda superior (onde não
-há carga), rim de 2,8 mm, e nervurar o rebordo em vez de engrossá-lo.
+242,5 g para 4,91 L, contra o **Cesto Organizador Vime 7 L (047) da casa, que faz 7 L com 213 g**.
+A nossa peça é mais alta em relação ao volume e carrega rebordo de empilhamento, rim reforçado e
+uma frente sólida de 55 mm, mas ainda assim há gordura: **cada 10 g economizados valem
+R$ 0,15/peça**, ou R$ 22 mil/ano a 150 mil peças. Alvo para o try-out: **210 g**. Caminhos:
+parede de 1,2 mm na banda superior (onde não há carga), rim de 2,8 mm, nervurar o rebordo em vez
+de engrossá-lo, e aliviar a frente sólida por dentro.
 
 ---
 
 ## 3. O vazado
 
-Furos **redondos** em 6 bandas horizontais de cota Z fixa, com o diâmetro caindo de cima para
-baixo. Nas laterais as bandas são recortadas pela curva da aresta, então o campo de furos
-acompanha o rebaixo frontal — o gradiente lê nas duas direções.
+Furos **redondos** em 4 bandas horizontais de cota Z fixa, com o diâmetro caindo de cima para
+baixo — é a única alteração em relação à referência.
 
-| Banda | Ø |
-|---|---|
-| 1 (topo) | **14,0 mm** |
-| 2 | 12,4 mm |
-| 3 | 10,8 mm |
-| 4 | 9,2 mm |
-| 5 | 7,6 mm |
-| 6 | **6,0 mm** |
-| faixa cega | **30 mm** no pé da peça |
+| Banda | Cota | Ø |
+|---|---|---|
+| 1 (topo) | z 111 mm | **14,0 mm** |
+| 2 | z 96 mm | 11,3 mm |
+| 3 | z 81 mm | 8,7 mm |
+| 4 | z 66 mm | **6,0 mm** |
+| faixa cega | z 0 a 58 mm | — |
 
-Passo do retículado: 15 mm. Total: **92 furos**. Nenhum furo entra no raio de canto (R14), para
+Passo do retículado: 15 mm. Total: **74 furos**. Nenhum furo entra no raio de canto (R14), para
 não criar parede fina na quina.
+
+As quatro bandas ocupam **a mesma faixa que os cortes verticais ocupam na referência** — a metade
+de cima da parede — e a metade de baixo fica sólida. Nas laterais as bandas são recortadas pela
+curva do rebaixo, então o campo de furos acompanha o rebaixo, como os cortes fazem na foto.
 
 **Por que a faixa do pé é cega:** é onde a carga de empilhamento desce até o rebordo e onde a
 peça apoia. Furo ali seria concentrador de tensão no caminho da carga.
@@ -127,9 +133,9 @@ sai e o projeto muda (seção 7).
 
 ### 4.2 Encaixado
 
-O corpo tem **11,8 mm de folga em X e 10,2 mm em Y** dentro da boca, e a saída de 4° faz a peça
-afundar **84 mm** antes de as paredes travarem. O que impede o encaixe na vertical é justamente o
-rebordo da base; por isso o encaixe é **inclinado**, entrando pelo vão de 85 mm da frente
+O corpo tem **9,5 mm de folga em X e 7,9 mm em Y** dentro da boca, e a saída de 3,5° faz a peça
+afundar **78 mm** antes de as paredes travarem. O que impede o encaixe na vertical é justamente o
+rebordo da base; por isso o encaixe é **inclinado**, entrando pelo vão de 75 mm da frente
 rebaixada — que é exatamente como as fotos da referência mostram, com a pilha encaixada deitada.
 
 **O passo do encaixe não está calculado.** Depende do ângulo de inclinação e da cinemática da
@@ -185,15 +191,15 @@ resina virgem**, o que só fecha rodando moído.
 
 | Cenário | Custo | Preço | Margem | Contribuição | Pacote de 10 |
 |---|---|---|---|---|---|
-| Virgem RP 141 (R$ 15/kg custo, R$ 25/kg preço) | R$ 3,32 | R$ 5,53 | 40% | R$ 2,21 | R$ 55,30 |
-| Moído + pigmento (R$ 11,50 / R$ 24) | R$ 2,54 | R$ 5,31 | 52% | R$ 2,76 | R$ 53,06 |
+| Virgem RP 141 (R$ 15/kg custo, R$ 25/kg preço) | R$ 3,64 | R$ 6,06 | 40% | R$ 2,43 | R$ 60,60 |
+| Moído + pigmento (R$ 11,50 / R$ 24) | R$ 2,79 | R$ 5,82 | 52% | R$ 3,03 | R$ 58,20 |
 
-Resina no cenário virgem: 0,221 kg × R$ 9,54 = **R$ 2,11** por peça.
+Resina no cenário virgem: 0,2425 kg × R$ 9,54 = **R$ 2,31** por peça.
 
 **A cor laranja é o que decide entre os dois cenários.** A casa compra PP moído **branco**
 (R$ 7,69/kg, 124 t/ano) e **preto** (R$ 6,19/kg, 337 t/ano) — não laranja. Laranja em moído exige
 lote dedicado de moído claro mais masterbatch, com risco de variação de tom entre lotes. É uma
-pergunta para a produção, e vale **R$ 0,78 por peça** (R$ 117 mil/ano a 150 mil peças).
+pergunta para a produção, e vale **R$ 0,85 por peça** (R$ 128 mil/ano a 150 mil peças).
 
 ### 6.3 Resina
 
@@ -225,14 +231,14 @@ Investimento nacionalizado de 1 cavidade: USD 19,5 mil × R$ 5,45 × 1,30 = **R$
 
 | Volume/ano | Cenário | Contribuição/ano | Payback | Horas de máquina |
 |---|---|---|---|---|
-| 60.000 | virgem | R$ 132,7 mil | 12,5 meses | 368 h |
-| **150.000** | **virgem** | **R$ 331,7 mil** | **5,0 meses** | 920 h |
-| 150.000 | moído | R$ 414,0 mil | 4,0 meses | 920 h |
-| 300.000 | virgem | R$ 663,3 mil | 2,5 meses | 1.840 h |
+| 60.000 | virgem | R$ 145,8 mil | 11,4 meses | 368 h |
+| **150.000** | **virgem** | **R$ 364,5 mil** | **4,5 meses** | 920 h |
+| 150.000 | moído | R$ 454,5 mil | 3,6 meses | 920 h |
+| 300.000 | virgem | R$ 729,0 mil | 2,3 meses | 1.840 h |
 
 Referência de volume: o **041 (Organizador Multiuso 3 divisórias) vendeu 262 mil unidades em 12
 meses** para 1.847 clientes — é o campeão de volume da casa em organizador pequeno. Se o cesto
-novo chegar à metade disso, o payback é de 5 meses.
+novo chegar à metade disso, o payback é de 4,5 meses.
 
 ---
 
