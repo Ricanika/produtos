@@ -403,3 +403,33 @@ benchmark de ferramental) · `TGFITE`/`TGFCAB` (preço real de resina e venda do
 `TGFPRO` (linha modular atual, tampas, teca, TPE).
 
 Memória de cálculo: `calculo-modular.py`.
+
+---
+
+## 12. Modelo 3D
+
+`gera-3d.py` constrói o sólido a partir das mesmas cotas e escreve seis STL em `stl/`:
+os quatro corpos, a tampa e o aro de TPE. O visualizador interativo remonta a malha a partir
+da mesma receita de anéis, bandas e tampos (`perfis.json`), então desenho e STL não divergem.
+
+**Como o sólido é construído:** cada peça é uma casca fechada feita de seções de retângulo com
+cantos arredondados empilhadas em alturas diferentes; bandas de quadriláteros ligam um anel ao
+seguinte e tampos em leque fecham as pontas.
+
+**Conferências que a malha faz sozinha** (saem no terminal a cada geração):
+
+| Verificação | Resultado |
+|---|---|
+| Volume assinado positivo nas seis peças | sólido fechado e orientado para fora |
+| Cavidade × capacidade nominal | 604,4 / 1202,7 / 1802,4 / 2402,1 ml contra 600 / 1200 / 1800 / 2400 — dentro de 0,7% |
+| Peso da malha × `calculo-modular.py` (corpos) | 40,8 / 67,1 / 98,3 / 133,2 g — 0 a 4% abaixo |
+| Peso da malha × cálculo (tampa) | 27,9 g contra 24,5 g — a malha tem a parede da bandeja maciça |
+
+A folga de 0,7% na cavidade é a poligonal de 12 segmentos por canto, não erro de cota
+(`--seg 24` reduz). `verifica-malha.js` roda o construtor do visualizador fora do navegador e
+confere o volume contra o STL — as seis peças batem.
+
+**O que o modelo não é.** É malha, não sólido CAD: serve para conferir encaixe, empilhamento e
+volume, e para imprimir protótipo. **O molde precisa do CAD paramétrico do projetista.** A tampa
+está simplificada — sem o lábio de vedação, sem a canaleta do aro e sem o furo e o entalhe do
+vertedor da seção 6.3. As cotas que governam o encaixe estão corretas.
