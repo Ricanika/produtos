@@ -33,7 +33,7 @@ M       = 60.0                 # modulo
 SAIDA   = 0.50                 # graus por lado
 BASE_T  = 2.00                 # espessura do fundo (igual nos quatro)
 PE_H    = 6.00                 # altura do pe embutido
-PE_L    = 113.0                # pe embutido, igual nos quatro
+PE_L    = 112.4                # pe embutido, igual nos quatro
 W_BORDA = 1.40                 # parede nos 10 mm abaixo da borda, igual nos quatro
 ABA_W   = 3.00                 # aba da borda virada para fora, por lado
 ABA_T   = 1.60                 # espessura da aba
@@ -41,10 +41,15 @@ LIP_H   = 3.50                 # labio descendente na ponta da aba
 LIP_T   = 1.20                 # espessura do labio
 WALL    = {1: 1.15, 2: 1.20, 3: 1.30, 4: 1.40}
 ELEV    = {1: 1.8,  2: 3.4,  3: 2.7,  4: 0.0}   # elevacao do fundo
-# tampa (z = 0 no plano da borda do pote)
-FOLGA_SAIA, ESP_SAIA = 0.30, 1.50
-TP_TOPO, TP_PISO, TP_FUNDO, TP_SAIA = 1.5, -2.0, -3.5, -8.0
-VED_Z, VED_TIP = -7.5, -8.0    # altura onde o labio de vedacao encosta na boca
+# tampa tipo PLUG (z = 0 no plano da borda do pote)
+TP_TOPO, TP_PISO, TP_FUNDO = 1.5, -2.0, -3.5
+PLUG_FIM   = -12.0             # ate onde o plug desce dentro do pote
+PLUG_FOLGA = 1.00              # folga entre a face do plug e a parede do pote
+PLUG_PAR   = 1.50              # parede do plug
+CAN_Z0, CAN_Z1 = -5.0, -7.4    # canaleta do aro na face externa do plug
+CAN_PROF   = 0.60              # profundidade da canaleta
+ARO_SOBRA  = 1.20              # quanto o aro sobra da face do plug -> 0,2 mm de
+                               # compressao contra a parede do pote
 # aro de TPE
 ARO_SEC = (2.8, 2.2)
 
@@ -165,56 +170,62 @@ def corpo(n_mod, seg):
 
 
 def tampa(seg):
-    """Tampa comum aos quatro. z=0 no plano da borda do pote.
+    """Tampa tipo PLUG. z=0 no plano da borda do pote.
 
-    Quem veda e o LABIO, moldado junto com a tampa, que desce na boca e raspa a
-    parede interna da borda. A saia so encaixa no labio da aba e a bandeja so
-    empilha. Nao ha aro nesta tampa: aro so na de teca, onde nao da para moldar
-    labio nenhum.
+    Uma saia desce DENTRO do pote e leva, numa canaleta na sua face externa, o
+    aro de TPE. O aro trabalha contra a PAREDE do pote, nao contra a borda: e
+    vedacao radial, nao axial. Por isso nao precisa de trava nem de forca
+    permanente de fechamento - o que segura e a interferencia lateral.
+
+    O mesmo plug faz tres coisas: veda, forma a parede da bandeja onde o pote de
+    cima apoia, e centra a tampa. Por fora nao ha saia nenhuma: a tampa fica
+    rente a aba da borda, lisa.
     """
     boca = EXT_L - 2 * W_BORDA
     aba = EXT_L + 2 * ABA_W
-    saia_out = aba + 2 * (FOLGA_SAIA + ESP_SAIA)
-    saia_in = aba + 2 * FOLGA_SAIA
-    tray = PE_L + 1.0                       # vao livre da bandeja
-    par_bandeja = 1.2
+    plug = boca - 2 * PLUG_FOLGA              # face externa do plug
+    plug_in = plug - 2 * PLUG_PAR             # face interna = vao da bandeja
+    canal = plug - 2 * CAN_PROF               # fundo da canaleta
 
     c = Casca(seg)
-    M0  = c.add(TP_TOPO,  saia_out)                   # topo, borda externa
-    M1  = c.add(TP_SAIA,  saia_out)                   # saia por fora
-    M2  = c.add(TP_SAIA,  saia_in)                    # aresta da saia
-    M3  = c.add(0.0,      saia_in)                    # face interna da saia
-    M4  = c.add(0.0,      tray + 2 * par_bandeja)     # apoia na aba e desce
-    M5  = c.add(VED_Z,    boca)                       # labio encosta na boca
-    M6  = c.add(VED_TIP,  boca - 1.6)                 # ponta do labio
-    M7  = c.add(-6.5,     tray + 1.2)                 # face interna do labio
-    M8  = c.add(TP_FUNDO, tray)                       # face inferior do piso
-    M9  = c.add(TP_PISO,  tray)                       # piso da bandeja
-    M10 = c.add(TP_TOPO,  tray)                       # face interna da bandeja
-    # o perfil e percorrido no sentido oposto ao do corpo (comeca no topo, nao
-    # na base), entao as bandas vao no sentido inverso para a normal sair para fora
+    M0  = c.add(TP_TOPO,   aba)               # topo, rente a aba - sem saia externa
+    M1  = c.add(0.0,       aba)               # face externa da tampa
+    M2  = c.add(0.0,       plug)              # assenta na aba e entra na boca
+    M3  = c.add(CAN_Z0,    plug)              # plug ate a canaleta
+    M4  = c.add(CAN_Z0,    canal)             # ombro de cima da canaleta
+    M5  = c.add(CAN_Z1,    canal)             # fundo da canaleta
+    M6  = c.add(CAN_Z1,    plug)              # ombro de baixo
+    M7  = c.add(PLUG_FIM,  plug - 0.4)        # ponta do plug, com saida
+    M8  = c.add(PLUG_FIM,  plug_in - 0.4)     # ponta, face interna
+    M9  = c.add(TP_FUNDO,  plug_in)           # face interna sobe ate o piso
+    M10 = c.add(TP_PISO,   plug_in)           # piso da bandeja = plano modular
+    M11 = c.add(TP_TOPO,   plug_in)           # face interna da bandeja
+    # perfil percorrido do topo para baixo: bandas no sentido inverso
     for a, b in ((M1,M0),(M2,M1),(M3,M2),(M4,M3),(M5,M4),(M6,M5),(M7,M6),
-                 (M8,M7),(M10,M9),(M0,M10)):
+                 (M8,M7),(M9,M8),(M11,M10),(M0,M11)):
         c.banda(a, b)
-    c.cap(M8, False)                                  # face inferior do piso
-    c.cap(M9, True)                                   # piso = plano modular
+    c.cap(M9, False)                          # face inferior do piso
+    c.cap(M10, True)                          # piso da bandeja
     return c
 
 
 def aro(seg):
-    """Aro de TPE da tampa de TECA: assenta na aba da borda.
+    """Aro de TPE alojado na canaleta do plug.
 
-    So a tampa de madeira usa aro - a de PP veda com labio moldado. O aro e
-    comprimido axialmente contra a aba, que e plana e rigida o bastante para
-    isso.
+    Fica desenhado na medida LIVRE: a face externa passa 0,2 mm por lado alem da
+    boca do pote. Esses 0,2 mm sao a interferencia - montado, o aro comprime essa
+    diferenca contra a parede. No 3D as duas malhas se sobrepoem nesses 0,2 mm, e
+    e proposital: e onde a vedacao acontece.
     """
-    sw, sh = ARO_SEC
-    Lm = EXT_L + ABA_W - 1.0        # linha de vedacao, em cima da aba
+    boca = EXT_L - 2 * W_BORDA
+    plug = boca - 2 * PLUG_FOLGA
+    dentro = plug - 2 * CAN_PROF              # encosta no fundo da canaleta
+    fora = plug + 2 * ARO_SOBRA               # 0,2 mm alem da boca: a interferencia
     c = Casca(seg)
-    A0 = c.add(0.0, Lm - sw)
-    A1 = c.add(0.0, Lm + sw)
-    A2 = c.add(sh,  Lm + sw)
-    A3 = c.add(sh,  Lm - sw)
+    A0 = c.add(CAN_Z1, dentro)
+    A1 = c.add(CAN_Z1, fora)
+    A2 = c.add(CAN_Z0, fora)
+    A3 = c.add(CAN_Z0, dentro)
     c.banda(A0, A1)
     c.banda(A1, A2)
     c.banda(A2, A3)

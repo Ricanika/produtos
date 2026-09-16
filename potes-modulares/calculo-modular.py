@@ -34,7 +34,7 @@ M       = 60.0      # modulo: 600 ml por modulo
 SAIDA   = 0.50      # saida por lado (graus)
 BASE_T  = 2.00      # espessura do fundo - IGUAL nos quatro, trava o passo
 PE_H    = 6.00      # altura do pe embutido
-PE_L    = 113.0     # medida externa do pe - IGUAL nos quatro
+PE_L    = 112.4     # medida externa do pe - IGUAL nos quatro
 W_BORDA = 1.40      # parede nos 10 mm abaixo da borda - IGUAL nos quatro, para o
                     # labio de vedacao da tampa achar sempre a mesma medida
 ABA_W   = 3.00      # aba da borda, virada para fora, por lado
@@ -139,38 +139,53 @@ def main():
         print(f"{p['cap']:>6}ml | ciclo {CICLO[p['n']]:>2} s | {pch:>5.0f} pc/h | "
               f"{pch * 20 * 22 / 1000:>6.1f} mil pc/mes | corpo R$ {p['peso'] * 11.06 / 1000:.2f}")
 
-    # ---- tampa ----
-    # A tampa nao veda na aba nem na saia: ela desce na boca e o LABIO DE VEDACAO,
-    # moldado junto com ela em PP de 0,8 mm, raspa a parede interna da borda. A saia
-    # so segura (encaixa no labio da aba) e a bandeja so empilha. Sem aro, sem
-    # montagem - o aro de TPE fica so na tampa de teca, onde nao da para moldar labio.
-    folga_saia, esp_saia = 0.30, 1.50
-    lid_l = p0['ext_l'] + 2 * ABA_W + 2 * (folga_saia + esp_saia)
-    lid_w = p0['ext_w'] + 2 * ABA_W + 2 * (folga_saia + esp_saia)
-    lid_r = R_EXT + (lid_l - p0['ext_l']) / 2
-    boca = p0['ext_l'] - 2 * W_BORDA                      # boca interna, igual nos quatro
-    tray_l = PE_L + 1.0
-    tray_w = PE_L - (p0['ext_l'] - p0['ext_w']) + 1.0         # vao livre da bandeja
-    tray_r = R_EXT + (tray_l - p0['ext_l']) / 2
-    ved_h, ved_t = 7.5, 0.80                              # labio de vedacao
-    peso_tampa = (area(lid_l, lid_w, lid_r) * ESP_TAMPA                 # topo + piso
-                  + perim(lid_l, lid_w, lid_r) * 8.0 * esp_saia         # saia
-                  + perim(tray_l, tray_w, tray_r) * 3.5 * 1.2           # parede da bandeja
-                  + perim(tray_l, tray_w, tray_r) * ved_h * ved_t) * RHO_PP
-    print(f"\nTampa comum aos quatro: {lid_l:.1f} x {lid_w:.1f} mm | "
-          f"bandeja livre {tray_l:.1f} x {tray_w:.1f} mm | piso {BASE_T:.1f} mm abaixo da borda")
-    print(f"  labio de vedacao raspa a boca de {boca:.1f} mm, {ved_t:.1f} mm de espessura, "
-          f"{ved_h:.1f} mm de altura")
-    print(f"  em PP RP 141 ... {peso_tampa:>5.1f} g  R$ {peso_tampa * 9.54 / 1000:.2f}  (sem aro, sem montagem)")
-    print(f"  em PEBD PB 608 . {peso_tampa * .923 / .905:>5.1f} g  "
-          f"R$ {peso_tampa * .923 / .905 * 11.10 / 1000:.2f}")
-    aro = perim(p0['ext_l'] - 2.6, p0['ext_w'] - 2.6, R_EXT - 1.3) * (2.8 * 2.2) * RHO_TPE
-    print(f"  aro de TPE ..... {aro:>5.1f} g  — SO na tampa de teca, assentado na aba")
+    # ---- tampa tipo PLUG, com vedacao RADIAL ----
+    # Uma saia desce dentro do pote e leva o aro de TPE numa canaleta na face
+    # externa. O aro trabalha contra a PAREDE do pote. Vedacao radial nao precisa
+    # de forca permanente de fechamento - por isso dispensa trava e a tampa pode
+    # ser lisa por fora. O que aparece e atrito, so na hora de enfiar e de tirar.
+    PLUG_FOLGA, PLUG_PAR, CAN_PROF, ARO_SOBRA = 1.00, 1.50, 0.60, 1.20
+    aba_out = p0['ext_l'] + 2 * ABA_W
+    boca = p0['ext_l'] - 2 * W_BORDA
+    boca_w = boca - (p0['ext_l'] - p0['ext_w'])
+    plug = boca - 2 * PLUG_FOLGA
+    bandeja = plug - 2 * PLUG_PAR
+    comp = ARO_SOBRA - PLUG_FOLGA                 # compressao radial do aro
+    aro_sec = (2.4, CAN_PROF + ARO_SOBRA)
+    r_boca = R_EXT - W_BORDA
+    per_ved = perim(boca, boca_w, r_boca)
 
-    print("\nForca para fechar (perimetro de vedacao %.0f mm):" % perim(boca, boca - (p0['ext_l'] - p0['ext_w']), R_EXT - W_BORDA))
-    pv = perim(boca, boca - (p0['ext_l'] - p0['ext_w']), R_EXT - W_BORDA)
-    print(f"  labio flexivel a 0,10 N/mm .... {pv * 0.10 / 9.81:4.1f} kgf   <- especificado")
-    print(f"  aro macico comprimido a 0,8 N/mm {pv * 0.80 / 9.81:4.1f} kgf   <- inviavel sem travas")
+    peso_tampa = (area(aba_out, aba_out - (p0['ext_l'] - p0['ext_w']), R_EXT + ABA_W) * ESP_TAMPA
+                  + perim(plug, plug - (p0['ext_l'] - p0['ext_w']), R_EXT - 2.4) * 12.0 * PLUG_PAR) * RHO_PP
+    aro = per_ved * (aro_sec[0] * aro_sec[1]) * RHO_TPE
+
+    print(f"\nTampa PLUG, comum aos quatro: {aba_out:.1f} x "
+          f"{aba_out - (p0['ext_l'] - p0['ext_w']):.1f} mm, rente a aba (sem saia externa)")
+    print(f"  plug desce 12 mm na boca de {boca:.1f} mm | face do plug {plug:.1f} mm | "
+          f"folga {PLUG_FOLGA:.2f} mm")
+    print(f"  canaleta {CAN_PROF:.1f} mm de profundidade; aro sobra {ARO_SOBRA:.1f} mm "
+          f"-> {comp:.2f} mm de compressao contra a parede")
+    print(f"  vao da bandeja {bandeja:.1f} mm recebe o pe de {PE_L:.1f} mm")
+    print(f"  tampa em PP RP 141 {peso_tampa:>5.1f} g  R$ {peso_tampa * 9.54 / 1000:.2f}")
+    print(f"  aro de TPE {aro:>5.1f} g (secao {aro_sec[0]:.1f} x {aro_sec[1]:.1f} mm, "
+          f"perimetro {per_ved:.0f} mm)")
+
+    print("\nForca, com o aro trabalhando na parede (radial):")
+    E, forma, mu = 1.8, 1.8, 0.75
+    for cp in (0.15, 0.20, 0.30, 0.40):
+        pres = E * (cp / aro_sec[1]) * forma
+        larg = 0.9 * math.sqrt(aro_sec[1] * cp)
+        F = mu * pres * per_ved * larg
+        marca = "  <- especificado" if abs(cp - comp) < 0.01 else ""
+        print(f"  compressao {cp:.2f} mm -> arrancar reto {F / 9.81:5.1f} kgf | "
+              f"descascando um canto {F / 9.81 / 6:4.1f} kgf{marca}")
+    print("  (para comparar: aro esmagado entre tampa e borda pediria 32 kgf o tempo todo)")
+
+    print("\nAr presinho no fechamento (o aro so encosta nos ultimos 2 mm):")
+    A_boca = area(boca, boca_w, r_boca) / 100
+    for p in potes:
+        dp = 101.3 * (A_boca * 0.2) / p['cap']
+        print(f"  {p['cap']:>5} ml -> {dp:4.1f} kPa -> {dp * 1000 * A_boca / 1e4 / 9.81:4.1f} kgf a mais")
 
     print("\nAninhamento a vazio (6 potes de 2,4 L):")
     for s in (0.25, 0.50, 0.75, 1.00):

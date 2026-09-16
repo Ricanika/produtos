@@ -1,6 +1,6 @@
 # Linha Potes Retangulares Modulares em PP
 
-**Status:** estudo de viabilidade técnica · **Revisão 3** · 16/09/2026
+**Status:** estudo de viabilidade técnica · **Revisão 4** · 16/09/2026
 **Origem:** evolução do Projeto 115 do ERP ("Conjunto Potes Modular") · **Planta:** Nitron – Fábrica (CODPLP 1)
 
 Linha retangular em PP transparente, **parede reta com cantos arredondados**, quatro litragens
@@ -10,10 +10,14 @@ combinação empilhada chega à altura do maior.
 Todos os números de máquina, matéria-prima, custo e ferramental saíram do Sankhya, não de
 estimativa de catálogo. Fontes citadas em cada seção.
 
-> **Revisão 3 — o que mudou:** a vedação da revisão 2 não fechava e foi refeita (seção 5). A tampa
-> passa a vedar com **lábio moldado nela mesma**, que desce na boca; o aro de TPE fica só na tampa de
-> teca. A borda ganha **aba em U**, que é o que dá rigidez ao lado reto. Pé vai de 110,0 para
-> 113,0 mm e o footprint na aba passa a 127,2 × 99,2 mm.
+> **Revisão 4 — o que mudou:** a vedação passa a ser **radial**, do jeito certo: a tampa tem um
+> *plug* que desce dentro do pote e leva o aro de TPE numa canaleta, trabalhando contra a **parede**.
+> Sem trava e sem saia externa — a tampa fica lisa. Some a força permanente de fechamento; o que
+> resta é 1,0 kgf para abrir descascando um canto. Pé de 113,0 para 112,4 mm.
+>
+> **Revisão 3:** refez a vedação da revisão 2 (que não fechava) com um lábio de PP moldado na tampa,
+> e acrescentou a **aba em U** na borda, que dá rigidez ao lado reto. O lábio foi substituído pelo
+> plug na revisão 4; a aba ficou.
 >
 > **Revisão 2:** escala migrou de 500/1000/1500/2000 para 600/1200/1800/2400 ml (pacote de
 > mantimento); parede deixou de ser conada e passou a reta com R18 de canto.
@@ -28,7 +32,7 @@ estimativa de catálogo. Fontes citadas em cada seção.
 | Litragens 600 / 1200 / 1800 / 2400 ml | **Viável e exatas** — a parede reta elimina o conflito com o passo |
 | Parede reta com cantos arredondados | **Viável** com 0,5°/lado e R18 — custa aninhamento no frete (seção 3.2) |
 | Tampa única para os 4 tamanhos | **Viável** — já é prática da casa (ref. 321-T serve três alturas) |
-| Vedação da tampa | **Refeita na revisão 3**: lábio moldado que raspa a boca; aro só na teca (seção 5) |
+| Vedação da tampa | **Refeita na revisão 4**: plug com aro de TPE radial contra a parede, sem trava (seção 5) |
 | Tampa PE **ou** PP com canaleta de TPE | **Recomendado PP randômico RP 141 + canaleta** (seção 6) |
 | Injeção dos 4 corpos no parque atual | **Cabe no que já temos**, sem máquina nova |
 | Confirmação documental de curso/extração | **Bloqueio de dado**: ficha das injetoras vazia (seção 4.4) |
@@ -54,14 +58,14 @@ estimativa de catálogo. Fontes citadas em cada seção.
 ## 3. Geometria
 
 **Corpo 121,2 × 93,3 mm** · **127,2 × 99,2 mm na aba da borda** · canto **R18** · saída **0,5°/lado** · módulo **60 mm**
-Fundo de **2,0 mm igual nos quatro** · parede da borda **1,40 mm igual nos quatro** · pé embutido de **113,0 × 85,0 mm igual nos quatro**
+Fundo de **2,0 mm igual nos quatro** · parede da borda **1,40 mm igual nos quatro** · pé embutido de **112,4 × 84,4 mm igual nos quatro**
 
 | Tamanho | Altura corpo | Passo | Bocal interno | Base externa | Degrau do pé | Elev. fundo | Parede | Volume | Peso |
 |---|---|---|---|---|---|---|---|---|---|
-| 600 ml | 62,0 mm | 60 mm | 118,8 × 90,9 | 120,1 | 3,55 mm | 2,0 mm | 1,15 mm | 600 ml | 43,9 g |
-| 1,2 L | 122,0 mm | 120 mm | 118,7 × 90,8 | 119,1 | 3,03 mm | 3,4 mm | 1,20 mm | 1200 ml | 70,0 g |
-| 1,8 L | 182,0 mm | 180 mm | 118,5 × 90,6 | 118,0 | 2,50 mm | 2,7 mm | 1,30 mm | 1800 ml | 100,8 g |
-| 2,4 L | 242,0 mm | 240 mm | 118,3 × 90,4 | 117,0 | 1,98 mm | 0,0 mm | 1,40 mm | 2400 ml | 135,3 g |
+| 600 ml | 62,0 mm | 60 mm | 118,9 × 90,9 | 120,1 | 3,86 mm | 2,0 mm | 1,15 mm | 600 ml | 43,7 g |
+| 1,2 L | 122,0 mm | 120 mm | 118,8 × 90,8 | 119,1 | 3,34 mm | 3,4 mm | 1,20 mm | 1200 ml | 69,8 g |
+| 1,8 L | 182,0 mm | 180 mm | 118,6 × 90,6 | 118,0 | 2,81 mm | 2,7 mm | 1,30 mm | 1800 ml | 100,6 g |
+| 2,4 L | 242,0 mm | 240 mm | 118,4 × 90,4 | 117,0 | 2,29 mm | 0,0 mm | 1,40 mm | 2400 ml | 135,1 g |
 
 Empilhamento conferido — todas as combinações dão 240 mm:
 `600×4` · `1,2 L×2` · `600+600+1,2 L` · `600+1,8 L` · `2,4 L`.
@@ -83,8 +87,8 @@ Esta é a parte que não pode ser negociada no design, porque é ela que sustent
 1. **Fundo de 2,0 mm, igual nos quatro potes.**
 2. **A tampa é uma bandeja cujo piso fica 2,0 mm abaixo da borda do pote** — recuado para dentro da
    boca, não apoiado em cima dela. Esse piso é o plano modular: é nele que o pote de cima se apoia.
-3. **Os últimos 6 mm da base recuam para um pé embutido de 113,0 × 85,0 mm**, medida igual nos
-   quatro (o degrau varia de 2,0 a 3,6 mm para compensar a saída). Esse pé desce dentro da bandeja
+3. **Os últimos 6 mm da base recuam para um pé embutido de 112,4 × 84,4 mm**, medida igual nos
+   quatro (o degrau varia de 2,3 a 3,9 mm para compensar a saída). Esse pé desce dentro da bandeja
    da tampa de baixo.
 
 Com as três juntas: passo = 60n exato, capacidade = 600n exata, e **uma tampa só serve os quatro**.
@@ -98,18 +102,18 @@ do pé sobram 4,1 mm por lado, e tudo tem que caber ali:
 | | por lado |
 |---|---|
 | parede na faixa da borda | 1,40 mm |
-| folga do lábio de vedação da tampa | 1,00 mm |
-| parede da bandeja da tampa | 1,20 mm |
+| folga entre o plug e a parede (onde o aro trabalha) | 1,00 mm |
+| parede do plug | 1,50 mm |
 | folga de encaixe do pé | 0,50 mm |
-| **soma** | **4,10 mm** |
+| **soma** | **4,40 mm** |
 
-É esse orçamento que fixa o pé em 113,0 mm. Na revisão 2 havia um aro de TPE dentro dessa conta,
+É esse orçamento que fixa o pé em 112,4 mm. Na revisão 2 havia um aro de TPE dentro dessa conta,
 com 2,00 mm reservados para uma canaleta que precisa de 4,00 — era o número errado, e o pé de
 110,0 mm saiu dele. Tirando o aro da tampa de PP, a conta fecha e o pé cresce.
 
-**Caminho de carga:** pé do pote de cima → piso da bandeja → parede da bandeja → borda do pote →
-parede do pote. O aro de TPE fica num lábio de vedação *para dentro* da borda, vedando radialmente
-contra a boca — fora do caminho de carga, para não ser comprimido pelo peso da pilha.
+**Caminho de carga:** pé do pote de cima → piso da bandeja → parede do plug → borda do pote →
+parede do pote. O aro de TPE fica na canaleta do plug, mais abaixo, vedando radialmente contra a
+parede — fora do caminho de carga, para não ser comprimido pelo peso da pilha.
 
 ### 3.3 Quanto de saída é "reto"
 
@@ -182,125 +186,139 @@ para as 46 injetoras antes de liberar o molde: `CURSOABERT`, `CURSOEXTR`, `FORCA
 
 ---
 
-## 5. A vedação — o que estava errado na revisão 2
+## 5. A vedação — tampa plug com aro radial
 
-A revisão 2 dizia que a tampa vedava com um **aro de TPE numa canaleta de um lábio**, comprimido
-radialmente contra a boca. Refazendo as contas, aquilo não fecha. São quatro furos, e é melhor
-registrar todos:
+Duas revisões erradas antes de chegar aqui, e vale registrar as duas.
 
-**1. O aro não tinha retenção.** Uma canaleta aberta de lado, com o aro sob compressão radial e
-puxado para cima toda vez que se abre a tampa, perde o aro. Reter exige canaleta com rebaixo
-(undercut) — que num molde significa extração forçada ou gaveta.
+**Revisão 2** especificava um aro de TPE comprimido contra a boca, sem dizer como ele ficaria preso
+nem de onde viria a força. **Revisão 3** trocou por um lábio de PP moldado na tampa. Ambas partiam
+do mesmo engano: tratar a vedação como **axial** — aro ou lábio esmagado entre a tampa e a borda.
+Vedação axial num retângulo sem trava não funciona, e o número é implacável: 32 kgf de força
+permanente ao longo dos 389 mm de perímetro.
 
-**2. O orçamento de largura era ficção.** Eu tinha reservado 2,00 mm por lado para "lábio com
-canaleta do aro". Uma canaleta para um aro de seção 2,8 mm precisa de ~2,4 mm de vão mais duas
-paredes de 0,8 = **4,0 mm**. O número que eu usei não cabia — e o pé de 110,0 mm que derivei dele
-estava errado por consequência.
+**A vedação certa é radial.** Uma saia da tampa — o *plug* — desce dentro do pote e leva o aro de
+TPE numa canaleta na sua face externa. **O aro trabalha contra a parede do pote, não contra a
+borda.** Não existe força permanente de fechamento: quem segura é a interferência lateral. Por isso
+dispensa trava, e por isso a tampa pode ser lisa por fora.
 
-**3. Faltava a força de fechamento.** Aro não veda sozinho: alguém tem que comprimi-lo. Com 389 mm
-de perímetro de vedação:
+### 5.1 Por que a objeção da revisão 3 não se aplica
 
-| Tipo de vedação | Força por mm | Força para fechar |
+| | O que segura | Força |
 |---|---|---|
-| Aro maciço comprimido (o que eu havia especificado) | 0,5 a 1,2 N/mm | **20 a 49 kgf** |
-| Lábio flexível que raspa a parede | 0,05 a 0,15 N/mm | **2 a 6 kgf** |
+| Aro **axial**, esmagado entre tampa e borda | força permanente de fechamento | **32 kgf o tempo todo** — precisa de trava |
+| Aro **radial**, na parede | interferência lateral | **zero** em repouso; só atrito ao enfiar e tirar |
 
-Ninguém fecha uma tampa com 30 kgf. É exatamente por isso que Lock&Lock e afins usam **travas**:
-a alavanca é que gera essa força. Um aro maciço numa tampa de encaixe simples não tem como
-funcionar.
+Com o aro comprimindo 0,20 mm contra a parede:
 
-**4. Eu vendi hermeticidade que o formato não entrega.** Retângulo vaza no meio do lado reto, onde
-a borda abre. Com parede simples de 1,4 mm, o vão livre de 85 mm entre os cantos não tem rigidez
-para segurar vedação nenhuma.
+| Compressão | Arrancar reto | Descascando um canto |
+|---|---|---|
+| 0,15 mm | 3,8 kgf | 0,6 kgf |
+| **0,20 mm** | **5,8 kgf** | **1,0 kgf** |
+| 0,30 mm | 10,6 kgf | 1,8 kgf |
+| 0,40 mm | 16,4 kgf | 2,7 kgf |
 
-### 5.1 Como fica, então
+Ninguém puxa a tampa reta: levanta um canto e ela descasca, com ~1/6 do perímetro trabalhando por
+vez. **1,0 kgf para abrir** é tampa de pote, não alicate.
 
-**A tampa veda por dentro, com um lábio moldado nela mesma.** Não é a saia, não é a aba, e não é aro.
+Há um ganho de tabela que eu não tinha visto: **vedação radial tolera a borda flexionar.** Se o lado
+reto abre um pouco, o aro acompanha o movimento da parede em vez de perder contato — que é
+exatamente o que mata um aro axial. A aba em U continua valendo, agora para limitar a flexão a menos
+que a compressão de 0,20 mm, não para segurar a tampa.
+
+### 5.2 Cotas
 
 ```
-aba da borda ......... 3,0 mm para fora, com lábio descendente de 3,5 mm
-                       seção em U: 34x a inércia da parede simples — é o que impede
-                       o lado reto de abrir. Serve também de pega e de encaixe.
-saia da tampa ........ desce por fora e encaixa no lábio da aba — só segura
-lábio de vedação ..... moldado na tampa, 0,8 mm de espessura e 7,5 mm de altura,
-                       desce na boca e raspa a parede interna da borda
-bandeja .............. piso 2,0 mm abaixo da borda = plano modular, só empilha
+boca do pote ......... 118,4 mm (parede de 1,40 mm nos quatro tamanhos)
+face do plug ......... 116,4 mm — folga de 1,00 mm por lado
+parede do plug ....... 1,50 mm
+canaleta ............. 0,60 mm de profundidade, entre 5,0 e 7,4 mm abaixo da borda
+aro de TPE ........... seção 2,4 × 1,8 mm, sobra 1,20 mm da face do plug
+                       -> 0,20 mm de compressão contra a parede
+plug desce ........... 12 mm dentro do pote
+vão da bandeja ....... 113,4 mm, recebe o pé de 112,4 mm
 ```
 
-Consequências diretas:
+O plug faz três coisas de uma vez: **veda**, **forma a parede da bandeja** onde o pote de cima
+apoia, e **centra a tampa**. Por fora não há saia nenhuma — a tampa fica rente à aba da borda.
 
-- **O aro de TPE sai da tampa de PP.** Ele fica só na **tampa de teca**, onde não dá para moldar
-  lábio nenhum — ali ele assenta na aba, comprimido axialmente, e a aba é plana e rígida o
-  bastante para isso. Isso derruba um dos meus quatro argumentos da seção 6 ("o mesmo aro serve as
-  três tampas"): não serve. Os outros três continuam de pé, e a escolha do PP não muda.
-- **A tampa fica mais barata:** sem aro e sem montagem. 25,8 g em RP 141 = **R$ 0,25**, peça única.
-- **A parede na faixa dos 10 mm abaixo da borda passa a ser 1,40 mm nos quatro tamanhos**, para o
-  lábio encontrar sempre a mesma medida de boca (118,4 mm). Sem isso, a mesma tampa apertaria
-  diferente em cada tamanho.
-- **O pé cresce de 110,0 para 113,0 mm**, porque sem canaleta na boca sobra espaço:
-  `121,2 − 2 × (1,40 borda + 1,0 folga do lábio + 1,2 parede da bandeja + 0,5 encaixe)`.
-- **O footprint cresce para 127,2 × 99,2 mm** na aba (o corpo continua 121,2 × 93,3). Na prateleira
-  são 4 potes em 51 cm. A tampa fica 130,7 × 102,8 mm.
+### 5.3 O que ainda precisa de atenção
 
-### 5.2 O que essa vedação entrega — e o que não entrega
+**Retenção do aro.** A canaleta tem 0,60 mm de profundidade — 0,5% da largura da peça. Um plug de
+parede fina sai disso **por arranque** (stripping), com rampas de 30° nos dois ombros, sem gaveta no
+molde. O aro é montado depois, esticado sobre o plug; a própria tensão do aro mais os dois ombros o
+seguram contra o atrito da parede. **Confirmar no primeiro tryout** — é o ponto que mais merece
+teste de vida (abrir e fechar 500 vezes e ver se o aro migra).
 
-**Entrega:** barreira contra umidade, poeira e troca de cheiro, com o pote em pé. É o que mantimento
-precisa, e é o que sabão líquido guardado em pé precisa.
+**Ar preso.** O aro só encosta nos últimos 2 mm do curso, mas isso ainda comprime o ar de dentro:
 
-**Não entrega:** estanqueidade de virar de cabeça para baixo. Para isso são necessárias **travas**,
-com o projeto de trava, a articulação e o aumento de ferramenta que vêm junto — desenvolvimento à
-parte, não um detalhe desta tampa. A casa já tem linha com travas (190, 215, 216, 217), então é uma
-decisão comercial de posicionamento, não um problema técnico novo.
+| | Δp | Força a mais |
+|---|---|---|
+| 600 ml | 3,5 kPa | 3,8 kgf |
+| 1,2 L | 1,8 kPa | 1,9 kgf |
+| 2,4 L | 0,9 kPa | 0,9 kgf |
 
-**Não prometer "hermético" na embalagem.** "Veda contra umidade e cheiro" é o que se sustenta.
+No 600 ml dá para sentir. Reduz-se com **chanfro de 30° × 1,5 mm na boca**, que atrasa o contato do
+aro. E é o mesmo "pop" que a OXO transformou em argumento de venda — pode virar característica em
+vez de defeito.
 
-### 5.3 Orçamento de altura (o que a modularidade permite)
+**Aba de alavanca.** Sem saia externa, é preciso um ponto para levantar: uma aba de ~18 mm numa das
+laterais curtas, com rebaixo correspondente na aba da borda para ficar rente ao perfil. É o que
+mantém o "liso" e ainda permite descascar.
+
+**Montagem.** O aro volta a ser peça montada — não existe bi-injeção no parque. 1,8 g de TPE mais
+alguns segundos de montagem por tampa. O lado bom: o **mesmo aro serve as três tampas** (padrão,
+dosadora e teca), então o molde do aro amortiza em toda a linha. Esse argumento, que eu tinha
+derrubado na revisão 3, volta a valer.
+
+### 5.4 O que entrega
+
+**Entrega:** vedação contra umidade, poeira e cheiro, e resistência a tombo com o pote deitado.
+Vedação radial com aro é o mesmo princípio de um O-ring — segura pressão, não só poeira.
+
+**Não entrega sem teste:** estanqueidade garantida de cabeça para baixo com líquido. Com 0,20 mm de
+compressão e a borda enrijecida é **plausível**, mas isso se mede no protótipo, não se promete na
+planilha. Primeiro tryout com água colorida, pote deitado e de cabeça para baixo, 24 h.
+
+### 5.5 Orçamento de altura
 
 ```
 borda do pote ................... 62,0 mm   (600 ml)
 piso da bandeja da tampa ........ 60,0 mm   = PLANO MODULAR, 2,0 mm abaixo da borda
-vão livre da bandeja ............ 114,0 × 86,0 mm  (recebe o pé de 113,0 × 85,0)
-saia externa .................... desce 8 mm por fora da aba — não entra no passo
+vão livre da bandeja ............ 113,4 × 84,4 mm  (recebe o pé de 112,4 × 84,4)
+plug .......................... desce até 12 mm abaixo da borda, dentro do pote
 ```
 
-- O piso da bandeja fica 2,0 mm abaixo da borda, igual à espessura do fundo. As duas medidas têm
-  que casar, senão o passo não fecha.
-- O pé tem que pousar no piso **junto à parede da bandeja**, não no meio do painel: a carga desce
-  pela parede da bandeja até a borda do pote. Se cair no centro, um 2,4 L com 2 kg em cima afunda a
-  tampa.
-- **Tampa dosadora:** bico saliente não cabe acima do plano modular. A saída é a bandeja-vertedor
-  da seção 6.3.
+O pé do pote de cima tem que pousar no piso **junto à parede da bandeja** — que agora é a parede do
+plug. A carga desce plug → borda → parede do pote.
 
 ## 6. As três tampas — PE ou PP?
 
-**Recomendação: PP randômico RP 141, com lábio de vedação moldado na própria tampa.**
+**Recomendação: PP randômico RP 141, com plug e aro de TPE radial.**
 
 | | Tampa PE | **Tampa PP + aro TPE** |
 |---|---|---|
-| Peso / resina | 26,3 g · R$ 0,29 | **25,8 g · R$ 0,25, sem aro e sem montagem** |
-| Vedação | lábio moldado, mas o PE cede com o tempo | **lábio moldado em PP, mantém a pressão** |
+| Peso / resina | 23,3 g · R$ 0,26 | **22,8 g · R$ 0,22 + aro 1,8 g** |
+| Vedação | plug em PE relaxa e perde a interferência | **plug rígido mantém o aro comprimido** |
 | Empilhamento | PEBD **flui a frio** (creep): cede sob carga permanente | PP copolímero segura a carga |
 | Cadeia de resina | PEBD: **500 kg comprados em 12 meses** | PP RP 141: **299 t/ano já em casa** |
 | Reciclagem | pote PP + tampa PE = material misto | **mono-material**, o aro sai na mão |
-| Aro de TPE | continua necessário só para a teca | continua necessário só para a teca |
+| Aro de TPE | não resolve: PEBD relaxa e solta a compressão | **o mesmo aro nas três tampas** |
 | Moldes | 3 (PE + PP dosadora + aro) | 3 (PP hermética + PP dosadora + aro) |
 
 Os quatro argumentos que decidem:
 
 1. **Empilhamento é o produto.** A linha inteira existe para empilhar — a tampa é peça estrutural.
    PEBD tem fluência a frio muito maior que PP: sob um 2,4 L carregado, a tampa PE cede com o tempo.
-2. **Parede reta tira a vantagem do PE.** A virtude da tampa PE é vedar esticando sobre a borda. Com
-   parede reta a borda tem pouca geometria para agarrar — precisaria de ressalto de encaixe de
-   qualquer jeito. O aro de TPE resolve melhor e com menos exigência de tolerância.
-3. ~~**O aro de TPE passa a se pagar.**~~ **Argumento derrubado na revisão 3.** Eu tinha dito que o
-   mesmo aro serviria as três tampas e amortizaria em três vezes o volume. Não serve: a tampa de PP
-   veda com lábio moldado, sem aro. O aro fica só na teca, com o volume de uma versão só. A escolha
-   do PP não muda — muda o motivo.
+2. **O plug precisa ser rígido.** Ele mantém o aro comprimido contra a parede. Em PEBD o plug
+   relaxa e a interferência de 0,20 mm some com o tempo — a vedação vai embora sozinha. PP segura.
+3. **O aro de TPE se paga.** Com a vedação radial, o **mesmo aro serve as três tampas** — padrão,
+   dosadora e teca — e o molde amortiza em toda a linha. (Eu tinha derrubado este argumento na
+   revisão 3, quando a tampa vedava com lábio de PP; com o plug ele volta a valer.)
 4. **Suprimentos.** PEBD é compra residual e viraria contrato novo por causa de uma tampa. O PP
    randômico RP 141 já entra 299 t/ano e é mais barato (R$ 9,54/kg).
 
-Ressalvas honestas: a tampa PP é **mais dura de abrir** que a PE — precisa de aba de alavanca bem
-resolvida no design; e tem que ser **copolímero** (CP 141), não homopolímero, por causa de impacto
+Ressalvas honestas: a tampa PP precisa de **aba de alavanca bem resolvida** no design, que é o que
+permite descascar em vez de puxar reto; e tem que ser **copolímero** (CP 141), não homopolímero, por causa de impacto
 em baixa temperatura — e é aí que o randômico RP 141 resolve melhor que o homopolímero (ver 6.2).
 O custo por peça fica empatado (R$ 0,23 + aro contra R$ 0,28), então a decisão é técnica, não de custo.
 
@@ -354,8 +372,8 @@ rebaixada de 2,0 mm. Ela é reaproveitada como bacia anti-gota, sem peça nova:
    se soltar em vez de escorrer pela face do pote. É o detalhe que resolve o "não vai sujar".
 4. **Piso da bandeja com caimento de 2 a 3° para o furo.** O que respinga ou volta cai na bandeja e
    escorre de volta para dentro do pote pelo mesmo furo. Nada fica na parte de fora.
-5. **Aba com dobradiça viva** fechando o furo, rente ao piso. Ela não veda — quem veda é o aro de TPE
-   da borda. A aba só barra poeira e cheiro, e abre com o polegar.
+5. **Aba com dobradiça viva** fechando o furo, rente ao piso. Ela não veda — quem veda é o aro do
+   plug. A aba só barra poeira e cheiro, e abre com o polegar.
 
 Por que é barato: **zero peça adicional**, zero componente comprado, tudo na mesma ferramenta da tampa,
 e sem gaveta no molde — o furo, o entalhe e a aba saem todos no sentido de abertura.
@@ -398,7 +416,8 @@ Preços reais de compra dos últimos 12 meses (`TGFITE`/`TGFCAB`):
 | Corpo 1,2 L | 70,0 g | R$ 0,77 |
 | Corpo 1,8 L | 100,8 g | R$ 1,11 |
 | Corpo 2,4 L | 135,3 g | R$ 1,50 |
-| Tampa PP RP 141 | 25,8 g | R$ 0,25 |
+| Tampa PP RP 141 | 22,8 g | R$ 0,22 |
+| Aro de TPE | 1,8 g | a cotar |
 | Aro TPE | 2,6 g | a cotar |
 
 Só matéria-prima. Transformação entra pelo custo do PCP; a tampa de teca, pelo custo da WOOD.
@@ -500,8 +519,9 @@ confere o volume contra o STL — as seis peças batem.
 
 **O que o modelo não é.** É malha, não sólido CAD: serve para conferir encaixe, empilhamento e
 volume, e para imprimir protótipo. **O molde precisa do CAD paramétrico do projetista.** Estão no
-modelo a aba da borda e o lábio de vedação; faltam o ressalto de encaixe da saia, o furo e o
-entalhe do vertedor da seção 6.3, e o raio de alívio na raiz do lábio.
+modelo a aba da borda, o plug e o aro na canaleta; faltam a aba de alavanca, o chanfro de entrada da
+boca e o furo e o entalhe do vertedor da seção 6.3. O aro está desenhado na medida livre, e por isso
+invade 0,2 mm a parede no modelo — é justamente a interferência.
 
-O corte do visualizador é onde se vê a vedação: o lábio descendo na boca e raspando a parede
-interna da borda.
+O corte do visualizador é onde se vê a vedação: o plug descendo dentro do pote e o aro trabalhando
+contra a parede.

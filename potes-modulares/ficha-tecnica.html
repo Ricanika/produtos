@@ -114,11 +114,11 @@
 
   <header class="cartucho">
     <div class="cartucho-top">
-      <p class="eyebrow">Nitron · Estudo de viabilidade · Projeto 115 · Revisão 3</p>
+      <p class="eyebrow">Nitron · Estudo de viabilidade · Projeto 115 · Revisão 4</p>
       <h1>Potes retangulares modulares</h1>
       <p class="sub">Parede reta com cantos arredondados, quatro litragens de mantimento, três tampas e um só bocal. Empilhados em qualquer combinação, chegam à altura do maior. Geometria, encaixe, alocação de injetora e custo conferidos contra produção, compras e cadastro no ERP.</p>
       <div class="rev">
-        <b>Revisão 3 —</b> a vedação da revisão 2 não fechava e foi refeita: a tampa passa a vedar com <strong>lábio moldado nela mesma</strong>, que desce na boca; o aro de TPE fica só na tampa de teca. A borda ganha <strong>aba em U</strong>, que é o que dá rigidez ao lado reto. Pé de 110,0 para 113,0 mm e footprint na aba de 127,2 × 99,2 mm.
+        <b>Revisão 4 —</b> a vedação passa a ser <strong>radial</strong>: a tampa tem um <strong>plug</strong> que desce dentro do pote e leva o aro de TPE numa canaleta, trabalhando contra a <strong>parede</strong>. Some a força permanente de fechamento — resta 1,0 kgf para abrir descascando um canto. Sem trava e sem saia externa: a tampa fica lisa. Pé de 113,0 para 112,4 mm.
       </div>
     </div>
     <div class="cartucho-grid">
@@ -220,11 +220,11 @@
     <div class="regras">
       <div class="regra"><span class="num">1</span><div><h3>Fundo de 2,0 mm, igual nos quatro</h3><p>Se um pote tiver fundo mais grosso que o outro, o passo dele deixa de ser múltiplo do módulo.</p></div></div>
       <div class="regra"><span class="num">2</span><div><h3>Piso da bandeja 2,0 mm abaixo da borda</h3><p>Exatamente a espessura do fundo. Esse piso é o plano modular: é onde o pote de cima pousa. As duas medidas têm que casar.</p></div></div>
-      <div class="regra"><span class="num">3</span><div><h3>Pé embutido de 113,0 × 85,0 mm</h3><p>Os últimos 6 mm da base recuam, com a mesma medida nos quatro tamanhos — o degrau varia de 2,0 a 3,6 mm para compensar a saída. Sem ele o pote de cima não caberia na bandeja: a boca tem 118,4 mm e o corpo, 121,2 mm.</p></div></div>
+      <div class="regra"><span class="num">3</span><div><h3>Pé embutido de 112,4 × 84,4 mm</h3><p>Os últimos 6 mm da base recuam, com a mesma medida nos quatro tamanhos — o degrau varia de 2,3 a 3,9 mm para compensar a saída. Sem ele o pote de cima não caberia na bandeja: a boca tem 118,4 mm e o corpo, 121,2 mm.</p></div></div>
     </div>
 
     <div class="desenho" style="margin-top:22px">
-      <svg viewBox="0 0 700 360" role="img" aria-label="Corte ampliado do encaixe entre um pote, sua tampa e o pé do pote de cima, mostrando o plano modular dois milímetros abaixo da borda">
+      <svg viewBox="0 0 700 370" role="img" aria-label="Corte ampliado do encaixe entre um pote, sua tampa e o pé do pote de cima, mostrando o plano modular dois milímetros abaixo da borda">
         <defs>
           <pattern id="hatch2" width="5" height="5" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
             <line x1="0" y1="0" x2="0" y2="5" stroke="var(--pp)" stroke-width="1" opacity=".5"/>
@@ -235,28 +235,28 @@
         </defs>
 
         <!-- POTE DE CIMA: parede, ombro do degrau, pe e fundo -->
-        <path d="M 96 40 L 96 128 L 145 128 L 145 194 L 268 194 L 268 174 L 162 174 L 162 145 L 113 145 L 113 40 Z" fill="var(--sheet)"/>
-        <path d="M 96 40 L 96 128 L 145 128 L 145 194 L 268 194 L 268 174 L 162 174 L 162 145 L 113 145 L 113 40 Z"
+        <path d="M 96 40 L 96 122 L 149 122 L 149 194 L 268 194 L 268 174 L 163 174 L 163 139 L 113 139 L 113 40 Z" fill="var(--sheet)"/>
+        <path d="M 96 40 L 96 122 L 149 122 L 149 194 L 268 194 L 268 174 L 163 174 L 163 139 L 113 139 L 113 40 Z"
               fill="url(#hatch2)" stroke="var(--pp)" stroke-width="1.8"/>
-        <text x="176" y="112" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">POTE DE CIMA</text>
+        <text x="180" y="105" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">POTE DE CIMA</text>
 
-        <!-- TAMPA: saia, apoio na aba, parede da bandeja, piso e labio de vedacao -->
-        <path d="M 38 152 L 139 152 L 139 194 L 268 194 L 268 212 L 139 212 L 134 216 L 122 255
-                 L 113 260 L 125 194 L 125 170 L 56 170 L 56 266 L 38 266 Z"
-              fill="var(--verde)" opacity=".6"/>
-        <path d="M 38 152 L 139 152 L 139 194 L 268 194 L 268 212 L 139 212 L 134 216 L 122 255
-                 L 113 260 L 125 194 L 125 170 L 56 170 L 56 266 L 38 266 Z"
+        <!-- TAMPA PLUG: rente a aba por fora, plug com canaleta por dentro -->
+        <path d="M 60 152 L 143 152 L 143 194 L 268 194 L 268 212 L 143 212 L 143 314 L 125 314
+                 L 125 259 L 132 259 L 132 230 L 125 230 L 125 170 L 60 170 Z"
+              fill="var(--verde)" opacity=".62"/>
+        <path d="M 60 152 L 143 152 L 143 194 L 268 194 L 268 212 L 143 212 L 143 314 L 125 314
+                 L 125 259 L 132 259 L 132 230 L 125 230 L 125 170 L 60 170 Z"
               fill="none" stroke="var(--verde)" stroke-width="1.5"/>
 
-        <!-- POTE DE BAIXO: parede com a aba em U na borda -->
-        <path d="M 60 170 L 113 170 L 113 330 L 96 330 L 96 189 L 74 189 L 74 231 L 60 231 Z" fill="var(--sheet)"/>
-        <path d="M 60 170 L 113 170 L 113 330 L 96 330 L 96 189 L 74 189 L 74 231 L 60 231 Z"
-              fill="url(#hatch2)" stroke="var(--pp)" stroke-width="1.8"/>
-        <text x="30" y="318" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">POTE</text>
-        <text x="30" y="331" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">DE BAIXO</text>
+        <!-- ARO DE TPE na canaleta, encostando na parede -->
+        <path d="M 111 230 L 132 230 L 132 259 L 111 259 Z" fill="var(--tpe)"/>
 
-        <!-- contato da vedacao -->
-        <circle cx="116" cy="252" r="9" fill="none" stroke="var(--cota)" stroke-width="1.8"/>
+        <!-- POTE DE BAIXO: parede com a aba em U na borda -->
+        <path d="M 60 170 L 113 170 L 113 340 L 96 340 L 96 189 L 74 189 L 74 231 L 60 231 Z" fill="var(--sheet)"/>
+        <path d="M 60 170 L 113 170 L 113 340 L 96 340 L 96 189 L 74 189 L 74 231 L 60 231 Z"
+              fill="url(#hatch2)" stroke="var(--pp)" stroke-width="1.8"/>
+        <text x="28" y="328" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">POTE</text>
+        <text x="28" y="341" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">DE BAIXO</text>
 
         <!-- cotas -->
         <line x1="24" y1="170" x2="400" y2="170" stroke="var(--cota)" stroke-width=".8" stroke-dasharray="4 3"/>
@@ -274,51 +274,53 @@
 
         <!-- chamadas -->
         <g stroke="var(--cota)" stroke-width=".9" fill="none">
-          <path d="M 67 240 L 67 282 L 296 282"/>
-          <path d="M 122 264 L 122 312 L 296 312"/>
-          <path d="M 152 200 L 152 342 L 296 342"/>
+          <path d="M 121 245 L 121 258 L 300 258"/>
+          <path d="M 134 300 L 134 292 L 300 292"/>
+          <path d="M 67 240 L 67 322 L 300 322"/>
+          <path d="M 90 160 L 90 348 L 300 348"/>
         </g>
         <g fill="var(--cota)">
-          <circle cx="67" cy="240" r="2.8"/><circle cx="122" cy="264" r="2.8"/><circle cx="152" cy="200" r="2.8"/>
+          <circle cx="121" cy="245" r="3.2"/><circle cx="134" cy="300" r="2.8"/>
+          <circle cx="67" cy="240" r="2.8"/><circle cx="90" cy="160" r="2.8"/>
         </g>
         <g font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink-2)">
-          <text x="304" y="278">aba em U — 34x a inércia da parede simples.</text>
-          <text x="304" y="292" font-size="10.5" fill="var(--muted)">impede o lado reto de abrir; a saia encaixa nela</text>
-          <text x="304" y="308" fill="var(--cota)">LÁBIO DE VEDAÇÃO — 0,8 mm, moldado na tampa.</text>
-          <text x="304" y="322" font-size="10.5" fill="var(--muted)">desce na boca e raspa a parede interna. VEDA AQUI.</text>
-          <text x="304" y="346">pé do pote de cima apoia junto à parede da bandeja</text>
+          <text x="308" y="254" fill="var(--cota)">ARO DE TPE — comprime 0,20 mm contra a PAREDE.</text>
+          <text x="308" y="268" font-size="10.5" fill="var(--muted)">vedação radial — nada segura axialmente, e por isso dispensa trava</text>
+          <text x="308" y="296">plug desce 12 mm dentro do pote</text>
+          <text x="308" y="326">aba em U — enrijece a boca e serve de pega</text>
+          <text x="308" y="352">sem saia externa: a tampa fica rente à aba, lisa</text>
         </g>
 
         <g font-family="IBM Plex Mono, monospace" font-size="10.5">
           <text x="360" y="42" fill="var(--muted)">CORTE NA BORDA · escala 12:1</text>
-          <text x="360" y="62" fill="var(--ink-2)">carga: pé → piso da bandeja → parede da bandeja →</text>
+          <text x="360" y="62" fill="var(--ink-2)">carga: pé → piso da bandeja → parede do plug →</text>
           <text x="360" y="76" fill="var(--ink-2)">borda → parede do pote</text>
-          <text x="360" y="98" fill="var(--cota)">nesta tampa não há aro de TPE.</text>
-          <text x="360" y="112" fill="var(--cota)">ele fica só na tampa de teca, assentado na aba.</text>
+          <text x="360" y="98" fill="var(--cota)">abrir: 1,0 kgf descascando um canto</text>
+          <text x="360" y="112" fill="var(--muted)">(5,8 kgf se puxar reto, o que ninguém faz)</text>
         </g>
       </svg>
       <div class="legenda">
         <span><i class="swatch" style="background:var(--glass);border-color:var(--pp)"></i> corpo PP</span>
         <span><i class="swatch" style="background:var(--verde);border-color:var(--verde)"></i> tampa PP</span>
-        <span><i class="swatch" style="background:transparent;border:1.6px solid var(--cota);border-radius:50%"></i> contato da vedação</span>
+        <span><i class="swatch" style="background:var(--tpe);border-color:var(--tpe)"></i> aro de TPE</span>
       </div>
     </div>
 
     <div class="tabela-wrap" style="margin-top:22px">
       <table>
-        <thead><tr><th>Por que não é aro nesta tampa</th><th>Força por mm</th><th>Força para fechar (389 mm de perímetro)</th></tr></thead>
+        <thead><tr><th>Vedação</th><th>O que segura</th><th>Força (389 mm de perímetro)</th></tr></thead>
         <tbody>
-          <tr><td>Aro maciço comprimido — o que a revisão 2 especificava</td><td class="num">0,5 a 1,2 N/mm</td><td class="num">20 a 49 kgf</td></tr>
-          <tr class="destaque"><td>Lábio flexível que raspa a parede</td><td class="num">0,05 a 0,15 N/mm</td><td class="num">2 a 6 kgf</td></tr>
+          <tr><td><strong>Axial</strong> — aro esmagado entre a tampa e a borda</td><td class="num">força permanente de fechamento</td><td class="num">32 kgf o tempo todo — precisa de trava</td></tr>
+          <tr class="destaque"><td><strong>Radial</strong> — aro do plug contra a parede</td><td class="num">interferência lateral de 0,20 mm</td><td class="num">zero em repouso · 1,0 kgf para abrir</td></tr>
         </tbody>
       </table>
     </div>
-    <p style="margin-top:12px;font-size:13.5px;color:var(--ink-2)">Ninguém fecha uma tampa com 30 kgf. É por isso que pote retangular hermético usa <strong>travas</strong> — a alavanca é que gera essa força. Aro maciço em tampa de encaixe simples não tem como funcionar, e foi o erro da revisão anterior.</p>
+    <p style="margin-top:12px;font-size:13.5px;color:var(--ink-2)">Era esse o erro das revisões 2 e 3: tratar a vedação como axial. Aro esmagado entre tampa e borda pede 32 kgf permanentes — daí a trava. <strong>No radial nada segura axialmente:</strong> quem veda é a interferência lateral, a força só aparece como atrito ao enfiar e ao tirar, e a tampa pode ser lisa. De quebra, vedação radial tolera a borda flexionar — o aro acompanha a parede em vez de perder contato.</p>
 
     <div class="notas" style="margin-top:26px">
       <div class="nota">
-        <h3>O orçamento de largura é o que fixa o pé em 113 mm</h3>
-        <p>Entre a face externa do corpo e a do pé sobram <strong>4,10 mm por lado</strong>: parede da borda 1,40 + folga do lábio de vedação 1,00 + parede da bandeja 1,20 + folga de encaixe 0,50. Na revisão 2 havia um aro de TPE nessa conta, com 2,00 mm reservados para uma canaleta que precisa de 4,00 — número errado, e o pé de 110 mm saiu dele.</p>
+        <h3>O orçamento de largura é o que fixa o pé em 112,4 mm</h3>
+        <p>Entre a face externa do corpo e a do pé sobram <strong>4,40 mm por lado</strong>: parede da borda 1,40 + folga do plug 1,00 (é onde o aro trabalha) + parede do plug 1,50 + folga de encaixe 0,50. A folga de 1,00 mm é a cota que define a compressão do aro.</p>
       </div>
       <div class="nota">
         <h3>De quebra, os potes travam entre si</h3>
@@ -366,20 +368,20 @@
 
     <div class="veredito">
       <span class="status s-ok">Recomendação</span>
-      <h3>PP randômico RP 141, com lábio de vedação moldado na tampa</h3>
-      <p>O custo por peça empata (R$ 0,25 contra R$ 0,29), então a decisão é técnica. E tecnicamente o PP ganha em tudo que importa nesta linha — principalmente porque <strong>a tampa aqui é peça estrutural</strong>, não fechamento.</p>
+      <h3>PP randômico RP 141, com plug e aro de TPE radial</h3>
+      <p>O custo por peça empata (R$ 0,22 + aro contra R$ 0,26), então a decisão é técnica. E tecnicamente o PP ganha em tudo que importa nesta linha — principalmente porque <strong>a tampa aqui é peça estrutural</strong>, não fechamento.</p>
     </div>
 
     <div class="tabela-wrap">
       <table>
         <thead><tr><th></th><th>Tampa PE</th><th>Tampa PP + aro TPE</th></tr></thead>
         <tbody>
-          <tr><td>Peso / resina</td><td class="num">26,3 g · R$ 0,29</td><td class="num">25,8 g · R$ 0,25, sem aro</td></tr>
-          <tr><td>Vedação</td><td class="num">lábio moldado, cede com o tempo</td><td class="num">lábio moldado, mantém a pressão</td></tr>
+          <tr><td>Peso / resina</td><td class="num">23,3 g · R$ 0,26</td><td class="num">22,8 g · R$ 0,22 + aro 1,8 g</td></tr>
+          <tr><td>Vedação</td><td class="num">plug em PE relaxa e solta o aro</td><td class="num">plug rígido mantém o aro comprimido</td></tr>
           <tr><td>Sob carga permanente</td><td class="num">PEBD flui a frio (creep)</td><td class="num">PP copolímero segura</td></tr>
           <tr><td>Cadeia de resina</td><td class="num">500 kg em 12 meses</td><td class="num">299 t/ano já em casa</td></tr>
           <tr><td>Reciclagem</td><td class="num">material misto</td><td class="num">mono-material</td></tr>
-          <tr><td>Aro de TPE</td><td class="num">só na teca</td><td class="num">só na teca</td></tr>
+          <tr><td>Aro de TPE</td><td class="num">não resolve: o plug relaxa</td><td class="num">o mesmo aro nas três tampas</td></tr>
           <tr><td>Moldes</td><td class="num">3</td><td class="num">3</td></tr>
         </tbody>
       </table>
@@ -400,9 +402,9 @@
       </div>
       <div class="card">
         <div class="faixa" style="background:var(--cota)"></div>
-        <div class="tipo">Argumento 3 · derrubado</div>
-        <h3>O aro serviria as três tampas</h3>
-        <p>Era o que eu tinha escrito na revisão 2. <strong>Não serve:</strong> a tampa de PP veda com lábio moldado, sem aro. O aro fica só na teca, com o volume de uma versão só. A escolha do PP não muda — muda o motivo.</p>
+        <div class="tipo">Argumento 3</div>
+        <h3>O aro se paga na linha toda</h3>
+        <p>Com a vedação radial, o <strong>mesmo aro serve as três tampas</strong> — padrão, dosadora e teca — e o molde amortiza em toda a linha. Eu tinha derrubado este argumento na revisão 3, quando a tampa vedava com lábio de PP; com o plug ele volta a valer.</p>
       </div>
       <div class="card">
         <div class="faixa" style="background:var(--cota)"></div>
@@ -415,7 +417,7 @@
     <div class="notas" style="margin-top:26px">
       <div class="nota">
         <h3>Ressalvas honestas</h3>
-        <p>A tampa PP é <strong>mais dura de abrir</strong> que a PE — precisa de aba de alavanca bem resolvida. E tem que ser <strong>randômico RP 141</strong>, não homopolímero — ver a tabela das três famílias abaixo. Se ainda assim quiserem PE, ele serve como versão econômica de entrada, sem promessa de hermeticidade e marcada como “não recebe pote carregado em cima”.</p>
+        <p>A tampa precisa de <strong>aba de alavanca bem resolvida</strong>, que é o que permite descascar em vez de puxar reto. E tem que ser <strong>randômico RP 141</strong>, não homopolímero — ver a tabela das três famílias abaixo. Se ainda assim quiserem PE, ele serve como versão econômica de entrada, sem promessa de hermeticidade e marcada como “não recebe pote carregado em cima”.</p>
       </div>
       <div class="nota">
         <h3>A teca continua sendo o diferencial</h3>
