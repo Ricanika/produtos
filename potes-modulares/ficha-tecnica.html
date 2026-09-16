@@ -1,0 +1,588 @@
+<title>Potes Modulares PP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#E7EAE5; --sheet:#F3F5F1; --ink:#161A17; --ink-2:#3D443E; --muted:#6E756E;
+    --line:#C5CAC1; --line-soft:#D8DCD4; --cota:#B4451D; --teca:#A2764A; --verde:#63755A;
+    --pp:#8FA7B2; --tpe:#C25E3A; --ok:#4C7A4F; --alerta:#9A6A12;
+    --glass:rgba(143,167,178,.20); --shadow:0 1px 0 rgba(22,26,23,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#14171A; --sheet:#1B1F21; --ink:#E7EAE4; --ink-2:#BEC5BC; --muted:#8C948B;
+      --line:#333A38; --line-soft:#272D2C; --cota:#E0703F; --teca:#C99A63; --verde:#8CA37F;
+      --pp:#9FBAC6; --tpe:#E8815A; --ok:#7BAE7C; --alerta:#CFA044;
+      --glass:rgba(159,186,198,.14); --shadow:0 1px 0 rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#14171A; --sheet:#1B1F21; --ink:#E7EAE4; --ink-2:#BEC5BC; --muted:#8C948B;
+    --line:#333A38; --line-soft:#272D2C; --cota:#E0703F; --teca:#C99A63; --verde:#8CA37F;
+    --pp:#9FBAC6; --tpe:#E8815A; --ok:#7BAE7C; --alerta:#CFA044;
+    --glass:rgba(159,186,198,.14); --shadow:0 1px 0 rgba(0,0,0,.4);
+  }
+
+  *{box-sizing:border-box;}
+  body{background:var(--paper);color:var(--ink);font-family:"Barlow","Helvetica Neue",Arial,sans-serif;
+       font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  .sheet{max-width:1120px;margin:0 auto;padding-inline:20px;padding-block:32px 72px;}
+  h1,h2,h3{font-family:"Barlow Condensed","Barlow",sans-serif;font-weight:700;text-wrap:balance;margin:0;line-height:1.05;}
+  h1{font-size:clamp(34px,6.4vw,58px);letter-spacing:-.01em;text-transform:uppercase;}
+  h2{font-size:clamp(21px,3.2vw,27px);text-transform:uppercase;letter-spacing:.02em;}
+  h3{font-size:18px;letter-spacing:.01em;}
+  p{margin:0;}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums;}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+
+  .cartucho{border:1px solid var(--line);background:var(--sheet);box-shadow:var(--shadow);}
+  .cartucho-top{padding:22px 22px 18px;border-bottom:1px solid var(--line);}
+  .cartucho-top .sub{color:var(--ink-2);margin-top:8px;max-width:64ch;}
+  .cartucho-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));}
+  .campo{padding:12px 18px;border-right:1px solid var(--line-soft);}
+  .campo:last-child{border-right:0;}
+  .campo .k{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+  .campo .v{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:19px;letter-spacing:.01em;margin-top:2px;}
+  .rev{margin-top:14px;padding:10px 14px;border:1px dashed var(--cota);font-size:13.5px;color:var(--ink-2);}
+  .rev b{color:var(--cota);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;}
+
+  section{margin-top:52px;}
+  .section-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-bottom:1.5px solid var(--ink);padding-bottom:7px;margin-bottom:22px;}
+  .section-head .n{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--cota);letter-spacing:.1em;}
+  .lede{max-width:68ch;color:var(--ink-2);margin-bottom:22px;}
+
+  .desenho{border:1px solid var(--line);background:var(--sheet);overflow-x:auto;padding:18px 16px 10px;}
+  .desenho svg{display:block;min-width:660px;width:100%;height:auto;}
+  .legenda{display:flex;gap:20px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);font-size:13px;color:var(--muted);}
+  .legenda span{display:inline-flex;align-items:center;gap:7px;}
+  .swatch{width:13px;height:13px;border:1px solid var(--line);}
+
+  .tabela-wrap{overflow-x:auto;border:1px solid var(--line);background:var(--sheet);}
+  table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px;}
+  th,td{text-align:right;padding:9px 13px;border-bottom:1px solid var(--line-soft);white-space:nowrap;}
+  th{font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);}
+  th:first-child,td:first-child{text-align:left;}
+  tbody tr:last-child td{border-bottom:0;}
+  td.num{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;}
+  td.tam{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:17px;letter-spacing:.01em;}
+  tr.destaque td{background:color-mix(in srgb,var(--sheet) 88%,var(--cota) 12%);}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);}
+  .card{background:var(--sheet);padding:18px 18px 20px;}
+  .card .tipo{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+  .card h3{margin:6px 0 10px;}
+  .card p{font-size:14px;color:var(--ink-2);}
+  .card dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:14px 0 0;font-size:13.5px;}
+  .card dt{color:var(--muted);}
+  .card dd{margin:0;font-family:"IBM Plex Mono",monospace;text-align:right;}
+  .faixa{height:4px;margin:-18px -18px 16px;}
+
+  .status{display:inline-flex;align-items:center;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;}
+  .status::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;}
+  .s-ok{color:var(--ok);} .s-alerta{color:var(--alerta);} .s-bloq{color:var(--cota);}
+
+  .maquinas{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);}
+  .maq{background:var(--sheet);display:grid;grid-template-columns:82px 96px 1fr;gap:16px;align-items:center;padding:14px 16px;}
+  .maq .cap{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:22px;}
+  .maq .classe{font-family:"IBM Plex Mono",monospace;font-size:15px;color:var(--cota);font-weight:600;}
+  .maq .lista{font-size:13.5px;color:var(--ink-2);}
+  .maq .lista b{font-weight:600;color:var(--ink);}
+  .maq .prova{display:block;font-size:12.5px;color:var(--muted);margin-top:2px;}
+  @media (max-width:560px){ .maq{grid-template-columns:70px 1fr;row-gap:4px;} .maq .lista{grid-column:1 / -1;} }
+
+  .regras{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);}
+  .regra{background:var(--sheet);display:grid;grid-template-columns:38px 1fr;gap:16px;padding:16px 18px;align-items:start;}
+  .regra .num{font-family:"IBM Plex Mono",monospace;font-size:20px;color:var(--cota);line-height:1.1;}
+  .regra h3{font-size:16px;margin-bottom:4px;}
+  .regra p{font-size:14px;color:var(--ink-2);}
+
+  .notas{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;}
+  .nota{border-left:2px solid var(--cota);padding-left:14px;}
+  .nota h3{font-size:16px;margin-bottom:5px;}
+  .nota p{font-size:14px;color:var(--ink-2);}
+
+  .veredito{border:1px solid var(--cota);background:color-mix(in srgb,var(--sheet) 90%,var(--cota) 10%);padding:20px 22px;margin-bottom:24px;}
+  .veredito h3{font-size:20px;margin-bottom:8px;}
+  .veredito p{color:var(--ink-2);max-width:70ch;}
+
+  .rodape{margin-top:56px;padding-top:16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);}
+  .rodape .mono{font-size:12px;}
+</style>
+
+<div class="sheet">
+
+  <header class="cartucho">
+    <div class="cartucho-top">
+      <p class="eyebrow">Nitron · Estudo de viabilidade · Projeto 115 · Revisão 3</p>
+      <h1>Potes retangulares modulares</h1>
+      <p class="sub">Parede reta com cantos arredondados, quatro litragens de mantimento, três tampas e um só bocal. Empilhados em qualquer combinação, chegam à altura do maior. Geometria, encaixe, alocação de injetora e custo conferidos contra produção, compras e cadastro no ERP.</p>
+      <div class="rev">
+        <b>Revisão 3 —</b> a vedação da revisão 2 não fechava e foi refeita: a tampa passa a vedar com <strong>lábio moldado nela mesma</strong>, que desce na boca; o aro de TPE fica só na tampa de teca. A borda ganha <strong>aba em U</strong>, que é o que dá rigidez ao lado reto. Pé de 110,0 para 113,0 mm e footprint na aba de 127,2 × 99,2 mm.
+      </div>
+    </div>
+    <div class="cartucho-grid">
+      <div class="campo"><div class="k">Material corpo</div><div class="v">PP transparente</div></div>
+      <div class="campo"><div class="k">Módulo</div><div class="v">60 mm</div></div>
+      <div class="campo"><div class="k">Footprint (aba)</div><div class="v">127,2 × 99,2 mm</div></div>
+      <div class="campo"><div class="k">Saída / canto</div><div class="v">0,5° · R18</div></div>
+      <div class="campo"><div class="k">Tampa</div><div class="v">PP RP 141</div></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="section-head"><span class="n">01</span><h2>A linha</h2></div>
+    <p class="lede">A parede reta fez a matemática trabalhar a favor: com a lateral quase vertical o volume fica proporcional à altura, e o conflito da revisão 1 — entre passo modular e capacidade redonda — desaparece. Sobra um resíduo pequeno, absorvido por uma elevação de fundo de 0 a 3,4 mm que ninguém vê.</p>
+
+    <div class="desenho">
+      <svg viewBox="0 0 700 340" role="img" aria-label="Elevação em escala dos quatro potes de parede reta sobre a malha modular de 60 milímetros, com vista de topo mostrando os cantos arredondados">
+        <defs>
+          <pattern id="hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="var(--pp)" stroke-width="1.1" opacity=".45"/>
+          </pattern>
+        </defs>
+
+        <g stroke="var(--line)" stroke-width=".8" stroke-dasharray="5 4">
+          <line x1="55" y1="240" x2="688" y2="240"/><line x1="55" y1="180" x2="688" y2="180"/>
+          <line x1="55" y1="120" x2="688" y2="120"/><line x1="55" y1="60"  x2="688" y2="60"/>
+        </g>
+        <line x1="55" y1="300" x2="688" y2="300" stroke="var(--ink)" stroke-width="1.4"/>
+        <g font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--cota)">
+          <text x="51" y="244" text-anchor="end">60</text><text x="51" y="184" text-anchor="end">120</text>
+          <text x="51" y="124" text-anchor="end">180</text><text x="51" y="64" text-anchor="end">240</text>
+          <text x="51" y="304" text-anchor="end">0</text>
+        </g>
+
+        <!-- vista de topo, no espaco livre acima do menor -->
+        <g>
+          <rect x="70" y="112" width="121.2" height="93.3" rx="18" ry="18" fill="url(#hatch)" stroke="var(--pp)" stroke-width="1.3"/>
+          <rect x="75.6" y="116.4" width="110" height="84.6" rx="13" ry="13" fill="none" stroke="var(--cota)" stroke-width=".9" stroke-dasharray="4 3"/>
+          <text x="130" y="104" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)">VISTA DE TOPO · R18 de canto</text>
+          <text x="130" y="221" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--cota)">tracejado: pé embutido 110,0 × 84,6</text>
+        </g>
+
+        <!-- 600 ml -->
+        <path d="M 70 238 L 70.5 294 L 75.6 294 L 75.6 300 L 185.6 300 L 185.6 294 L 190.7 294 L 191.2 238 Z" fill="url(#hatch)" stroke="var(--pp)" stroke-width="1.3"/>
+        <rect x="68" y="236.5" width="125.2" height="12.5" fill="var(--verde)"/>
+        <text x="130" y="320" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="15" fill="var(--ink)">600 ml</text>
+        <text x="130" y="332" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--muted)">1 M · 62,0 mm</text>
+
+        <!-- 1,2 L -->
+        <path d="M 215 178 L 216.05 294 L 220.6 294 L 220.6 300 L 330.6 300 L 330.6 294 L 335.15 294 L 336.2 178 Z" fill="url(#hatch)" stroke="var(--pp)" stroke-width="1.3"/>
+        <rect x="213" y="176.5" width="125.2" height="12.5" fill="var(--verde)"/>
+        <text x="275" y="320" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="15" fill="var(--ink)">1,2 L</text>
+        <text x="275" y="332" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--muted)">2 M · 122,0 mm</text>
+
+        <!-- 1,8 L -->
+        <path d="M 360 118 L 361.55 294 L 365.6 294 L 365.6 300 L 475.6 300 L 475.6 294 L 479.65 294 L 481.2 118 Z" fill="url(#hatch)" stroke="var(--pp)" stroke-width="1.3"/>
+        <rect x="358" y="116.5" width="125.2" height="12.5" fill="var(--verde)"/>
+        <text x="420" y="320" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="15" fill="var(--ink)">1,8 L</text>
+        <text x="420" y="332" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--muted)">3 M · 182,0 mm</text>
+
+        <!-- 2,4 L -->
+        <path d="M 505 58 L 507.1 294 L 510.6 294 L 510.6 300 L 620.6 300 L 620.6 294 L 624.1 294 L 626.2 58 Z" fill="url(#hatch)" stroke="var(--pp)" stroke-width="1.3"/>
+        <rect x="503" y="56.5" width="125.2" height="12.5" fill="var(--verde)"/>
+        <text x="565" y="320" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="15" fill="var(--ink)">2,4 L</text>
+        <text x="565" y="332" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--muted)">4 M · 242,0 mm</text>
+
+        <g stroke="var(--cota)" stroke-width="1">
+          <line x1="503" y1="42" x2="628.2" y2="42"/><line x1="503" y1="38" x2="503" y2="46"/><line x1="628.2" y1="38" x2="628.2" y2="46"/>
+        </g>
+        <text x="565" y="34" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--cota)">tampa 125,2 mm</text>
+      </svg>
+
+      <div class="legenda">
+        <span><i class="swatch" style="background:var(--glass);border-color:var(--pp)"></i> corpo PP transparente</span>
+        <span><i class="swatch" style="background:var(--verde);border-color:var(--verde)"></i> tampa</span>
+        <span><i class="swatch" style="background:transparent;border-style:dashed"></i> malha modular de 60 mm</span>
+        <span class="mono">escala 1:1 em mm · cotas reais</span>
+      </div>
+    </div>
+
+    <div class="tabela-wrap" style="margin-top:22px">
+      <table>
+        <thead><tr><th>Tamanho</th><th>Altura corpo</th><th>Passo</th><th>Bocal interno</th><th>Base externa</th><th>Degrau do pé</th><th>Elev. fundo</th><th>Parede</th><th>Peso</th><th>Resina</th></tr></thead>
+        <tbody>
+          <tr><td class="tam">600 ml</td><td class="num">62,0 mm</td><td class="num">60</td><td class="num">118,8 × 90,9</td><td class="num">120,1</td><td class="num">3,55 mm</td><td class="num">2,0 mm</td><td class="num">1,15 mm</td><td class="num">43,9 g</td><td class="num">R$ 0,49</td></tr>
+          <tr><td class="tam">1,2 L</td><td class="num">122,0 mm</td><td class="num">120</td><td class="num">118,7 × 90,8</td><td class="num">119,1</td><td class="num">3,03 mm</td><td class="num">3,4 mm</td><td class="num">1,20 mm</td><td class="num">70,0 g</td><td class="num">R$ 0,77</td></tr>
+          <tr><td class="tam">1,8 L</td><td class="num">182,0 mm</td><td class="num">180</td><td class="num">118,5 × 90,6</td><td class="num">118,0</td><td class="num">2,50 mm</td><td class="num">2,7 mm</td><td class="num">1,30 mm</td><td class="num">100,8 g</td><td class="num">R$ 1,11</td></tr>
+          <tr><td class="tam">2,4 L</td><td class="num">242,0 mm</td><td class="num">240</td><td class="num">118,3 × 90,4</td><td class="num">117,0</td><td class="num">1,98 mm</td><td class="num">0,0 mm</td><td class="num">1,40 mm</td><td class="num">135,3 g</td><td class="num">R$ 1,50</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:12px;font-size:13px;color:var(--muted)">Capacidades exatas: 600 · 1200 · 1800 · 2400 ml. Resina a R$ 11,06/kg — preço médio real de compra do PP H 105 com clarificante nos últimos 12 meses (925,9 t).</p>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="n">02</span><h2>O encaixe</h2></div>
+    <p class="lede">Esta é a parte que não se negocia no design: são três regras que, juntas, fazem o passo fechar em 60 mm exatos com uma tampa só. A tampa <strong>não se apoia em cima da borda</strong> — ela desce para dentro da boca, e é o piso dela que recebe o pote de cima.</p>
+
+    <div class="regras">
+      <div class="regra"><span class="num">1</span><div><h3>Fundo de 2,0 mm, igual nos quatro</h3><p>Se um pote tiver fundo mais grosso que o outro, o passo dele deixa de ser múltiplo do módulo.</p></div></div>
+      <div class="regra"><span class="num">2</span><div><h3>Piso da bandeja 2,0 mm abaixo da borda</h3><p>Exatamente a espessura do fundo. Esse piso é o plano modular: é onde o pote de cima pousa. As duas medidas têm que casar.</p></div></div>
+      <div class="regra"><span class="num">3</span><div><h3>Pé embutido de 113,0 × 85,0 mm</h3><p>Os últimos 6 mm da base recuam, com a mesma medida nos quatro tamanhos — o degrau varia de 2,0 a 3,6 mm para compensar a saída. Sem ele o pote de cima não caberia na bandeja: a boca tem 118,4 mm e o corpo, 121,2 mm.</p></div></div>
+    </div>
+
+    <div class="desenho" style="margin-top:22px">
+      <svg viewBox="0 0 700 360" role="img" aria-label="Corte ampliado do encaixe entre um pote, sua tampa e o pé do pote de cima, mostrando o plano modular dois milímetros abaixo da borda">
+        <defs>
+          <pattern id="hatch2" width="5" height="5" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="0" y2="5" stroke="var(--pp)" stroke-width="1" opacity=".5"/>
+          </pattern>
+          <marker id="seta" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+            <path d="M0,0 L7,3.5 L0,7 Z" fill="var(--cota)"/>
+          </marker>
+        </defs>
+
+        <!-- POTE DE CIMA: parede, ombro do degrau, pe e fundo -->
+        <path d="M 96 40 L 96 128 L 145 128 L 145 194 L 268 194 L 268 174 L 162 174 L 162 145 L 113 145 L 113 40 Z" fill="var(--sheet)"/>
+        <path d="M 96 40 L 96 128 L 145 128 L 145 194 L 268 194 L 268 174 L 162 174 L 162 145 L 113 145 L 113 40 Z"
+              fill="url(#hatch2)" stroke="var(--pp)" stroke-width="1.8"/>
+        <text x="176" y="112" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">POTE DE CIMA</text>
+
+        <!-- TAMPA: saia, apoio na aba, parede da bandeja, piso e labio de vedacao -->
+        <path d="M 38 152 L 139 152 L 139 194 L 268 194 L 268 212 L 139 212 L 134 216 L 122 255
+                 L 113 260 L 125 194 L 125 170 L 56 170 L 56 266 L 38 266 Z"
+              fill="var(--verde)" opacity=".6"/>
+        <path d="M 38 152 L 139 152 L 139 194 L 268 194 L 268 212 L 139 212 L 134 216 L 122 255
+                 L 113 260 L 125 194 L 125 170 L 56 170 L 56 266 L 38 266 Z"
+              fill="none" stroke="var(--verde)" stroke-width="1.5"/>
+
+        <!-- POTE DE BAIXO: parede com a aba em U na borda -->
+        <path d="M 60 170 L 113 170 L 113 330 L 96 330 L 96 189 L 74 189 L 74 231 L 60 231 Z" fill="var(--sheet)"/>
+        <path d="M 60 170 L 113 170 L 113 330 L 96 330 L 96 189 L 74 189 L 74 231 L 60 231 Z"
+              fill="url(#hatch2)" stroke="var(--pp)" stroke-width="1.8"/>
+        <text x="30" y="318" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">POTE</text>
+        <text x="30" y="331" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">DE BAIXO</text>
+
+        <!-- contato da vedacao -->
+        <circle cx="116" cy="252" r="9" fill="none" stroke="var(--cota)" stroke-width="1.8"/>
+
+        <!-- cotas -->
+        <line x1="24" y1="170" x2="400" y2="170" stroke="var(--cota)" stroke-width=".8" stroke-dasharray="4 3"/>
+        <line x1="24" y1="194" x2="560" y2="194" stroke="var(--cota)" stroke-width="1.1"/>
+        <g stroke="var(--cota)" stroke-width="1">
+          <line x1="300" y1="170" x2="300" y2="194"/>
+          <line x1="296" y1="170" x2="304" y2="170"/><line x1="296" y1="194" x2="304" y2="194"/>
+        </g>
+        <text x="310" y="187" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--cota)">2,0 mm</text>
+        <g font-family="IBM Plex Mono, monospace" font-size="11">
+          <text x="410" y="167" fill="var(--muted)">borda do pote de baixo</text>
+          <text x="570" y="191" fill="var(--cota)">PLANO MODULAR</text>
+          <text x="570" y="204" fill="var(--muted)" font-size="10">piso da bandeja</text>
+        </g>
+
+        <!-- chamadas -->
+        <g stroke="var(--cota)" stroke-width=".9" fill="none">
+          <path d="M 67 240 L 67 282 L 296 282"/>
+          <path d="M 122 264 L 122 312 L 296 312"/>
+          <path d="M 152 200 L 152 342 L 296 342"/>
+        </g>
+        <g fill="var(--cota)">
+          <circle cx="67" cy="240" r="2.8"/><circle cx="122" cy="264" r="2.8"/><circle cx="152" cy="200" r="2.8"/>
+        </g>
+        <g font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink-2)">
+          <text x="304" y="278">aba em U — 34x a inércia da parede simples.</text>
+          <text x="304" y="292" font-size="10.5" fill="var(--muted)">impede o lado reto de abrir; a saia encaixa nela</text>
+          <text x="304" y="308" fill="var(--cota)">LÁBIO DE VEDAÇÃO — 0,8 mm, moldado na tampa.</text>
+          <text x="304" y="322" font-size="10.5" fill="var(--muted)">desce na boca e raspa a parede interna. VEDA AQUI.</text>
+          <text x="304" y="346">pé do pote de cima apoia junto à parede da bandeja</text>
+        </g>
+
+        <g font-family="IBM Plex Mono, monospace" font-size="10.5">
+          <text x="360" y="42" fill="var(--muted)">CORTE NA BORDA · escala 12:1</text>
+          <text x="360" y="62" fill="var(--ink-2)">carga: pé → piso da bandeja → parede da bandeja →</text>
+          <text x="360" y="76" fill="var(--ink-2)">borda → parede do pote</text>
+          <text x="360" y="98" fill="var(--cota)">nesta tampa não há aro de TPE.</text>
+          <text x="360" y="112" fill="var(--cota)">ele fica só na tampa de teca, assentado na aba.</text>
+        </g>
+      </svg>
+      <div class="legenda">
+        <span><i class="swatch" style="background:var(--glass);border-color:var(--pp)"></i> corpo PP</span>
+        <span><i class="swatch" style="background:var(--verde);border-color:var(--verde)"></i> tampa PP</span>
+        <span><i class="swatch" style="background:transparent;border:1.6px solid var(--cota);border-radius:50%"></i> contato da vedação</span>
+      </div>
+    </div>
+
+    <div class="tabela-wrap" style="margin-top:22px">
+      <table>
+        <thead><tr><th>Por que não é aro nesta tampa</th><th>Força por mm</th><th>Força para fechar (389 mm de perímetro)</th></tr></thead>
+        <tbody>
+          <tr><td>Aro maciço comprimido — o que a revisão 2 especificava</td><td class="num">0,5 a 1,2 N/mm</td><td class="num">20 a 49 kgf</td></tr>
+          <tr class="destaque"><td>Lábio flexível que raspa a parede</td><td class="num">0,05 a 0,15 N/mm</td><td class="num">2 a 6 kgf</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:12px;font-size:13.5px;color:var(--ink-2)">Ninguém fecha uma tampa com 30 kgf. É por isso que pote retangular hermético usa <strong>travas</strong> — a alavanca é que gera essa força. Aro maciço em tampa de encaixe simples não tem como funcionar, e foi o erro da revisão anterior.</p>
+
+    <div class="notas" style="margin-top:26px">
+      <div class="nota">
+        <h3>O orçamento de largura é o que fixa o pé em 113 mm</h3>
+        <p>Entre a face externa do corpo e a do pé sobram <strong>4,10 mm por lado</strong>: parede da borda 1,40 + folga do lábio de vedação 1,00 + parede da bandeja 1,20 + folga de encaixe 0,50. Na revisão 2 havia um aro de TPE nessa conta, com 2,00 mm reservados para uma canaleta que precisa de 4,00 — número errado, e o pé de 110 mm saiu dele.</p>
+      </div>
+      <div class="nota">
+        <h3>De quebra, os potes travam entre si</h3>
+        <p>Como o pé desce dentro da bandeja, a pilha fica encaixada em vez de só apoiada. É o que permite empilhar 4 potes de 600 ml carregados sem que a torre ande.</p>
+      </div>
+      <div class="nota">
+        <h3>Detalhe que não pode escapar</h3>
+        <p>O pé tem que pousar no piso da bandeja <strong>junto à parede dela</strong>, não no meio do painel — por isso a nervura periférica. Se o apoio cair no centro, um 2,4 L com 2 kg de arroz em cima afunda a tampa.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="n">03</span><h2>Quanto de saída é “reto”</h2></div>
+    <p class="lede">Saída zero não extrai — a peça agarra o macho. O que se faz é a saída mínima. A conta tem um custo escondido do outro lado: quanto mais reto, menos o pote vazio aninha, e mais caro fica o frete do pote vazio.</p>
+    <div class="tabela-wrap">
+      <table>
+        <thead><tr><th>Saída por lado</th><th>Base mais estreita que o topo</th><th>Aninhamento de 6 potes de 2,4 L</th><th>Ganho de volume no frete</th></tr></thead>
+        <tbody>
+          <tr><td class="tam">0,25°</td><td class="num">2,1 mm (1,8%)</td><td class="num">1.452 mm — não aninha</td><td class="num">0%</td></tr>
+          <tr class="destaque"><td class="tam">0,50°</td><td class="num">4,2 mm (3,5%)</td><td class="num">1.044 mm</td><td class="num">−28%</td></tr>
+          <tr><td class="tam">0,75°</td><td class="num">6,3 mm (5,3%)</td><td class="num">777 mm</td><td class="num">−47%</td></tr>
+          <tr><td class="tam">1,00°</td><td class="num">8,4 mm (7,1%)</td><td class="num">643 mm</td><td class="num">−56%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="notas" style="margin-top:26px">
+      <div class="nota">
+        <h3>Recomendação: 0,5° por lado</h3>
+        <p>No maior pote a base fica 4,2 mm mais estreita que o topo em 121 mm de largura — 3,5%, imperceptível com canto R18 e parede polida. Abaixo disso o pote vazio deixa de aninhar.</p>
+      </div>
+      <div class="nota">
+        <h3>O que a parede reta exige do molde</h3>
+        <p>Acabamento polido A2 ou melhor nas laterais (textura pediria ~1° a cada 0,025 mm de profundidade e mataria o reto); extração por <strong>placa impulsora</strong>, não por pinos; e <strong>válvula de ar no topo do macho</strong> para quebrar o vácuo.</p>
+      </div>
+      <div class="nota">
+        <h3>Força de extração não é o gargalo</h3>
+        <p>Estimada em ~5 kN no 2,4 L (932 cm² de contato) contra ~62 kN disponíveis numa injetora de 380 t. O que aperta é <strong>curso de extração e vácuo</strong> — e é justamente o dado que falta no ERP.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="n">04</span><h2>PE ou PP?</h2></div>
+
+    <div class="veredito">
+      <span class="status s-ok">Recomendação</span>
+      <h3>PP randômico RP 141, com lábio de vedação moldado na tampa</h3>
+      <p>O custo por peça empata (R$ 0,25 contra R$ 0,29), então a decisão é técnica. E tecnicamente o PP ganha em tudo que importa nesta linha — principalmente porque <strong>a tampa aqui é peça estrutural</strong>, não fechamento.</p>
+    </div>
+
+    <div class="tabela-wrap">
+      <table>
+        <thead><tr><th></th><th>Tampa PE</th><th>Tampa PP + aro TPE</th></tr></thead>
+        <tbody>
+          <tr><td>Peso / resina</td><td class="num">26,3 g · R$ 0,29</td><td class="num">25,8 g · R$ 0,25, sem aro</td></tr>
+          <tr><td>Vedação</td><td class="num">lábio moldado, cede com o tempo</td><td class="num">lábio moldado, mantém a pressão</td></tr>
+          <tr><td>Sob carga permanente</td><td class="num">PEBD flui a frio (creep)</td><td class="num">PP copolímero segura</td></tr>
+          <tr><td>Cadeia de resina</td><td class="num">500 kg em 12 meses</td><td class="num">299 t/ano já em casa</td></tr>
+          <tr><td>Reciclagem</td><td class="num">material misto</td><td class="num">mono-material</td></tr>
+          <tr><td>Aro de TPE</td><td class="num">só na teca</td><td class="num">só na teca</td></tr>
+          <tr><td>Moldes</td><td class="num">3</td><td class="num">3</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cards" style="margin-top:26px">
+      <div class="card">
+        <div class="faixa" style="background:var(--cota)"></div>
+        <div class="tipo">Argumento 1</div>
+        <h3>Empilhamento é o produto</h3>
+        <p>A linha inteira existe para empilhar — a tampa carrega peso. PEBD tem fluência a frio muito maior que PP: sob um 2,4 L carregado, a tampa PE cede com o tempo.</p>
+      </div>
+      <div class="card">
+        <div class="faixa" style="background:var(--cota)"></div>
+        <div class="tipo">Argumento 2</div>
+        <h3>A parede reta tira a vantagem do PE</h3>
+        <p>A virtude da tampa PE é vedar esticando sobre a borda. Com parede reta a borda tem pouca geometria para agarrar — precisaria de ressalto de encaixe de qualquer jeito.</p>
+      </div>
+      <div class="card">
+        <div class="faixa" style="background:var(--cota)"></div>
+        <div class="tipo">Argumento 3 · derrubado</div>
+        <h3>O aro serviria as três tampas</h3>
+        <p>Era o que eu tinha escrito na revisão 2. <strong>Não serve:</strong> a tampa de PP veda com lábio moldado, sem aro. O aro fica só na teca, com o volume de uma versão só. A escolha do PP não muda — muda o motivo.</p>
+      </div>
+      <div class="card">
+        <div class="faixa" style="background:var(--cota)"></div>
+        <div class="tipo">Argumento 4</div>
+        <h3>Suprimentos</h3>
+        <p>PEBD é compra residual (500 kg/ano) e viraria contrato novo por causa de uma tampa. O PP randômico RP 141 já entra 299 t/ano — e é o mais barato dos três, a R$ 9,54/kg.</p>
+      </div>
+    </div>
+
+    <div class="notas" style="margin-top:26px">
+      <div class="nota">
+        <h3>Ressalvas honestas</h3>
+        <p>A tampa PP é <strong>mais dura de abrir</strong> que a PE — precisa de aba de alavanca bem resolvida. E tem que ser <strong>randômico RP 141</strong>, não homopolímero — ver a tabela das três famílias abaixo. Se ainda assim quiserem PE, ele serve como versão econômica de entrada, sem promessa de hermeticidade e marcada como “não recebe pote carregado em cima”.</p>
+      </div>
+      <div class="nota">
+        <h3>A teca continua sendo o diferencial</h3>
+        <p>Cadeia própria: teca em tora e ripa serrada, planta WOOD com CNC e moldureira, e a Teak Brazil. Tampa de madeira já é produto corrente com <strong>FSC 100%</strong>. Sem molde — programa de CNC. Usa o mesmo aro de TPE em canaleta usinada.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:38px;font-size:21px">As três famílias de PP — e qual vai na tampa</h3>
+    <p class="lede" style="margin-top:10px">“Copolímero” não é uma coisa só, e a diferença muda a tampa. A recomendação anterior de CP 141 estava imprecisa: ele é <strong>heterofásico</strong>, sai leitoso e não aceita dobradiça viva.</p>
+    <div class="tabela-wrap">
+      <table>
+        <thead><tr><th>Família</th><th>O que é</th><th>Comporta-se</th><th>Grades em casa</th><th>Compra 12 m</th></tr></thead>
+        <tbody>
+          <tr><td class="tam">Homopolímero</td><td>só propeno</td><td class="num">rígido e transparente, quebradiço no frio</td><td class="num">H 105 · H 103</td><td class="num">R$ 11,06 · R$ 9,90</td></tr>
+          <tr class="destaque"><td class="tam">Randômico</td><td>2–6% de eteno espalhado na cadeia</td><td class="num">transparente, brilhante, tolerante</td><td class="num">RP 141 (299 t) · RP 340 S</td><td class="num">R$ 9,54 · R$ 17,00</td></tr>
+          <tr><td class="tam">Heterofásico</td><td>fase de borracha dispersa dentro</td><td class="num">impacto altíssimo, porém opaco</td><td class="num">CP 141 (109 t)</td><td class="num">R$ 10,52</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:12px;font-size:13.5px;color:var(--ink-2)"><strong>Vai RP 141 randômico.</strong> Transparente como o corpo; aceita dobradiça viva (o heterofásico não aceita — a fase de borracha impede a orientação molecular que dá vida à dobradiça); e é o mais barato dos três, com 299 t/ano já entrando. O heterofásico continua servindo para tampa colorida sem dobradiça, como a de teca.</p>
+
+    <h3 style="margin-top:38px;font-size:21px">O bico: a bandeja é o vertedor</h3>
+    <p class="lede" style="margin-top:10px">Sem copinho, sem pump, sem bico saliente — nada pode passar do plano modular. A saída é reaproveitar a bandeja que a modularidade já obriga a tampa a ter: ela vira a bacia anti-gota. <strong>Zero peça adicional e nenhuma gaveta no molde.</strong></p>
+
+    <div class="desenho">
+      <svg viewBox="0 0 700 300" role="img" aria-label="Vista de topo da tampa mostrando a bandeja com furo de vazão no canto, entalhe na parede, caimento do piso e aba com dobradiça viva">
+        <defs>
+          <marker id="seta2" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--cota)"/></marker>
+        </defs>
+        <rect x="60" y="50" width="250" height="195" rx="40" ry="40" fill="var(--sheet)" stroke="var(--verde)" stroke-width="2"/>
+        <rect x="74" y="64" width="222" height="167" rx="30" ry="30" fill="var(--glass)" stroke="var(--verde)" stroke-width="1.4"/>
+        <path d="M 96 64 L 78 82" stroke="var(--sheet)" stroke-width="6"/>
+        <path d="M 96 64 L 78 82" stroke="var(--cota)" stroke-width="2"/>
+        <path d="M 99 57 L 66 90" stroke="var(--cota)" stroke-width="2" stroke-dasharray="4 3"/>
+        <rect x="92" y="80" width="54" height="34" rx="12" ry="12" fill="var(--paper)" stroke="var(--cota)" stroke-width="1.6"/>
+        <path d="M 146 84 L 186 84 L 186 110 L 146 110" fill="none" stroke="var(--cota)" stroke-width="1.2" stroke-dasharray="5 4"/>
+        <text x="166" y="101" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--cota)">aba</text>
+        <g stroke="var(--cota)" stroke-width="1.3" marker-end="url(#seta2)" opacity=".8">
+          <path d="M 230 180 L 150 112"/><path d="M 150 200 L 122 130"/><path d="M 255 105 L 165 92"/>
+        </g>
+        <text x="185" y="205" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)">caimento 2–3° para o furo</text>
+        <text x="185" y="262" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)">VISTA DE TOPO DA TAMPA · 130,7 × 102,8 mm</text>
+
+        <g font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink-2)">
+          <text x="380" y="70" fill="var(--cota)" font-size="12">1 · furo de vazão no canto</text>
+          <text x="380" y="88">≈ 25 × 15 mm, encostado na parede da bandeja</text>
+          <text x="380" y="116" fill="var(--cota)" font-size="12">2 · entalhe de 12–15 mm na parede</text>
+          <text x="380" y="134">o canto R18 já faz a curva — não se molda bico nenhum</text>
+          <text x="380" y="162" fill="var(--cota)" font-size="12">3 · lábio de corte de 0,4 mm</text>
+          <text x="380" y="180">quebra o filme: a gota se solta em vez de escorrer pelo pote</text>
+          <text x="380" y="208" fill="var(--cota)" font-size="12">4 · piso com caimento para o furo</text>
+          <text x="380" y="226">o que respinga volta para dentro do pote pelo mesmo furo</text>
+          <text x="380" y="254" fill="var(--cota)" font-size="12">5 · aba com dobradiça viva, rente ao piso</text>
+          <text x="380" y="272">não veda (quem veda é o lábio da tampa) — só barra poeira e cheiro</text>
+        </g>
+      </svg>
+      <div class="legenda">
+        <span><i class="swatch" style="background:var(--glass);border-color:var(--verde)"></i> bandeja (plano modular)</span>
+        <span><i class="swatch" style="background:var(--paper);border-color:var(--cota)"></i> furo de vazão</span>
+        <span class="mono">tudo sai no sentido de abertura do molde</span>
+      </div>
+    </div>
+
+    <div class="notas" style="margin-top:26px">
+      <div class="nota">
+        <h3>Por que não suja</h3>
+        <p>O lábio de corte solta a gota na saída e o caimento devolve o resto para dentro. O que respinga cai <strong>na bandeja</strong>, não na face do pote — e some pelo furo quando você apoia o pote de volta.</p>
+      </div>
+      <div class="nota">
+        <h3>Por que continua empilhando</h3>
+        <p>A aba fecha rente ao piso da bandeja, que é o plano modular. O entalhe tira um pedaço da parede num canto — justamente onde o pote de cima tem raio R18 e quase não apoia.</p>
+      </div>
+      <div class="nota">
+        <h3>Alternativas descartadas</h3>
+        <p><strong>Pump comprada:</strong> a casa já compra a válvula (CODPROD 10085) do porta-detergente 545/553 — serve para versão de pia, mas passa muito do plano modular e vira SKU “topo da pilha”. <strong>Copinho dosador</strong> (ref. 008): fora, a pedido. <strong>Bico moldado em poço fundo:</strong> encarece a ferramenta e não resolve a gota melhor que o lábio de corte.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="n">05</span><h2>Validação nas injetoras</h2></div>
+    <p class="lede">Os quatro corpos têm a mesma área projetada (139 cm², já com a aba da borda) e pedem 129 a 153 t com duas cavidades. <strong>O que decide a máquina não é tonelagem, é profundidade</strong>. A prova de que o parque aguenta não é catálogo: é peça de geometria equivalente rodando hoje.</p>
+
+    <div class="maquinas">
+      <div class="maq"><span class="cap">600 ml</span><span class="classe">200 t</span>
+        <span class="lista"><b>INJ 1–6, 19–22, 35, 37</b> · 129 t · curso 136 mm · molde 252 mm
+          <span class="prova">equivalente: pote hermético peq. 176-C, ciclo medido 16,7 s</span></span></div>
+      <div class="maq"><span class="cap">1,2 L</span><span class="classe">200 t</span>
+        <span class="lista"><b>INJ 1–6, 19–22, 35, 37</b> · 138 t · curso 268 mm · molde 312 mm
+          <span class="prova">equivalente: modular 450 ml (320-C) na INJ 37 · 2 L rosca (238-C) na INJ 1 e 22</span></span></div>
+      <div class="maq"><span class="cap">1,8 L</span><span class="classe">250 t</span>
+        <span class="lista"><b>INJ 23–28, 38, 39</b> · 147 t · curso 400 mm · molde 372 mm
+          <span class="prova">equivalente: modular 1,2 L (322-C) na INJ 25 · pote 3 L (239-C) na INJ 24 e 27</span></span></div>
+      <div class="maq"><span class="cap">2,4 L</span><span class="classe">380 t</span>
+        <span class="lista"><b>INJ 31, 32, 33</b> · 153 t · curso 532 mm · molde 432 mm
+          <span class="prova">equivalente: modular 2,4 L (323-C) na INJ 33 · pote alto 5,8 L (237-C) na INJ 31 e 33</span></span></div>
+    </div>
+
+    <div class="notas" style="margin-top:26px">
+      <div class="nota">
+        <span class="status s-ok">Sem máquina nova</span>
+        <h3>A peça mais funda cabe no que já temos</h3>
+        <p>Os 242 mm do 2,4 L são <em>menos</em> exigentes que o pote de 5,8 L que já roda nas 380 t. A INJ 32 está sem ciclo desde 15/09 — candidata natural ao try-out.</p>
+      </div>
+      <div class="nota">
+        <span class="status s-bloq">Bloqueio de dado</span>
+        <h3>A ficha das injetoras está vazia</h3>
+        <p><span class="mono">AD_INJETORAFICHA</span> tem um registro e os 29 campos de especificação nulos. Com parede reta isso ficou mais crítico: faltam <span class="mono">CURSOEXTR</span> e <span class="mono">FORCAEXTR</span>, e a extração virou o ponto de projeto.</p>
+      </div>
+      <div class="nota">
+        <span class="status s-alerta">Aproveitamento</span>
+        <h3>153 t numa máquina de 380 t</h3>
+        <p>O 2,4 L com 2 cavidades usa 40% do fechamento. Com 4 cavidades (~278 t, molde ~620 × 500 mm) dobra a produção na mesma hora de máquina.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="n">06</span><h2>Capacidade, ferramental e mantimento</h2></div>
+    <div class="tabela-wrap">
+      <table>
+        <thead><tr><th>Tamanho</th><th>Ciclo est.</th><th>pç/h (2 cav)</th><th>pç/mês</th><th>Injeção</th><th>L/t</th><th>Arroz</th><th>Feijão</th></tr></thead>
+        <tbody>
+          <tr><td class="tam">600 ml</td><td class="num">17 s</td><td class="num">424</td><td class="num">186 mil</td><td class="num">112 cm³</td><td class="num">107</td><td class="num">0,51 kg</td><td class="num">0,48 kg</td></tr>
+          <tr><td class="tam">1,2 L</td><td class="num">21 s</td><td class="num">343</td><td class="num">151 mil</td><td class="num">178 cm³</td><td class="num">152</td><td class="num">1,02 kg</td><td class="num">0,96 kg</td></tr>
+          <tr><td class="tam">1,8 L</td><td class="num">25 s</td><td class="num">288</td><td class="num">127 mil</td><td class="num">256 cm³</td><td class="num">187</td><td class="num">1,53 kg</td><td class="num">1,44 kg</td></tr>
+          <tr><td class="tam">2,4 L</td><td class="num">29 s</td><td class="num">248</td><td class="num">109 mil</td><td class="num">344 cm³</td><td class="num">216</td><td class="num">2,04 kg</td><td class="num">1,92 kg</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="notas" style="margin-top:26px">
+      <div class="nota">
+        <h3>A escala fecha com o pacote de mercado</h3>
+        <p>O 2,4 L recebe o pacote de <strong>2 kg de arroz</strong> e o 1,2 L o de <strong>1 kg de feijão</strong> — que era exatamente o que a escala anterior (500/1000/1500/2000) não fazia. E o 2,4 L é o tamanho que já gira: 35 mil un/ano só no cliente Natura.</p>
+      </div>
+      <div class="nota">
+        <h3>O 2,4 L é o gargalo do kit</h3>
+        <p>Se a linha for vendida em conjunto, ele dita o ritmo — o argumento técnico para as 4 cavidades. E com L/t de 216 está no limite de preenchimento: pede câmara quente com dois pontos de injeção, ou parede de 1,5 mm. Definir no Moldflow.</p>
+      </div>
+      <div class="nota">
+        <h3>7 ferramentas, âncora de USD 47.100</h3>
+        <p>Quatro moldes de corpo, dois de tampa (padrão e dosadora) e um de aro de TPE, que serve só à teca — a teca usa programa de CNC. O Projeto 115 já tem cotação aprovada de USD 47.100 com a MR Plastic Mould: ponto de partida da renegociação, não número novo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="n">07</span><h2>Próximos passos</h2></div>
+    <div class="tabela-wrap">
+      <table>
+        <thead><tr><th>Ação</th><th>Responsável</th><th>Trava</th></tr></thead>
+        <tbody>
+          <tr><td>Confirmar a saída de 0,5° com o design</td><td class="num">Produto + Engenharia</td><td class="num">aninhamento no frete</td></tr>
+          <tr><td>Fechar a decisão da tampa: PP + TPE</td><td class="num">Produto</td><td class="num">molde e suprimentos</td></tr>
+          <tr><td>Preencher a ficha das 46 injetoras</td><td class="num">Manutenção / PCP</td><td class="num">molde do 2,4 L</td></tr>
+          <tr><td>Reabrir o Projeto 115 e recotar</td><td class="num">Engenharia de Produto</td><td class="num">prazo do ferramental</td></tr>
+          <tr><td>Recotar o TPE Karinprene 45</td><td class="num">Suprimentos</td><td class="num">parado há 4 anos</td></tr>
+          <tr><td>Moldflow e estudo de extração do 2,4 L</td><td class="num">Engenharia de Processo</td><td class="num">L/t 216 · parede reta</td></tr>
+          <tr><td>Reservar INJ 32 para o try-out</td><td class="num">PCP</td><td class="num">após 1º tryout</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="rodape">
+    <p>Fontes no ERP: <span class="mono">TPRWCP</span> + <span class="mono">TPRCAP</span> (parque e tonelagem) · <span class="mono">TPRWCP.AD_CICLOATUAL</span> (ciclo ao vivo, 16/09/2026 12:11) · <span class="mono">TPRAPA→TPRIATV</span> (que peça roda em qual máquina, 24 meses) · <span class="mono">AD_FICHATECNICA</span> (ciclos de referência) · <span class="mono">AD_PROJETOS / AD_MOLDE / AD_ORCAMENTO</span> (Projeto 115 e benchmark de ferramental) · <span class="mono">TGFITE / TGFCAB</span> (preço real de resina e venda dos kits) · <span class="mono">TGFPRO</span> (linha modular atual, teca, TPE).</p>
+    <p style="margin-top:8px">Memória de cálculo da geometria, do encaixe e da capacidade: <span class="mono">potes-modulares/calculo-modular.py</span></p>
+  </footer>
+
+</div>
