@@ -57,7 +57,7 @@ H_PE      = 6.0           # pe
 Y_ABA_NARIZ = -(200.0 / 2) - 50.0    # nariz da aba -> 250 mm de profundidade total
 Y_ABA_FIM   = -(200.0 / 2) + 15.0    # onde o trilho termina e comeca a sela
 Y_ABA_RAIZ  = -(200.0 / 2) + 30.0    # onde a aba se funde na lateral
-T_ABA    = 5.0            # espessura da aba
+T_ABA    = 3.5            # espessura da aba
 Z_ABA_BASE = 45.0         # borda inferior da aba
 R_ABA    = 14.0           # raio das pontas da aba -- o pedido
 Y_SELA   = -30.0          # onde a sela tem o ponto baixo
@@ -175,17 +175,29 @@ def cesto():
     # Placa no plano YZ que avanca para a frente do corpo. Topo reto na altura
     # cheia (o trilho de apoio), borda inferior reta, e as quatro pontas
     # arredondadas em R_ABA -- que e o ajuste pedido no layout.
-    ys = list(np.linspace(Y_ABA_FIM, Y_ABA_RAIZ, 14))
-    perfil_aba = [(Y_ABA_NARIZ, Z_ABA_BASE), (Y_ABA_NARIZ, ALT)]
-    perfil_aba += [(float(y), float(z_aresta(y))) for y in ys]
-    perfil_aba += [(Y_ABA_RAIZ, Z_ABA_BASE)]
+    # Perfil em gancho: da raiz na lateral a borda inferior sobe para a frente,
+    # o nariz arredondado avanca, e o topo volta para o TRILHO reto na altura
+    # cheia -- que e a mesa de apoio do empilhamento.
+    y_raiz = -PROF / 2 + 15.0
+    perfil_aba = [
+        (y_raiz, Z_ABA_BASE),                       # raiz, embaixo
+        (Y_ABA_NARIZ + 14, Z_ABA_BASE + 41),        # borda inferior subindo
+        (Y_ABA_NARIZ, Z_ABA_BASE + 59),             # nariz
+        (Y_ABA_NARIZ + 26, ALT),                    # volta ao trilho
+        (y_raiz, ALT),                              # trilho reto ate a raiz
+    ]
     aba2d = make_face(Polyline(*perfil_aba, close=True))
     aba2d = fillet(aba2d.vertices().filter_by_position(
-        Axis.X, Y_ABA_NARIZ - 1, Y_ABA_FIM + 1), R_ABA)
+        Axis.X, Y_ABA_NARIZ - 1, Y_ABA_NARIZ + 30), R_ABA)
+    alivios = []
+    for i, (yy, zz) in enumerate([(Y_ABA_NARIZ + 30, 100), (Y_ABA_NARIZ + 52, 86),
+                                  (Y_ABA_NARIZ + 52, 110)]):
+        alivios.append(Pos(0, yy, zz) * Rot(0, 90, 0) * Cylinder(5.0, LARG + 60))
     for sx in (-1, 1):
         x_aba = secao((ALT + Z_ABA_BASE) / 2)[0] / 2
         p += Pos(sx * (x_aba - T_ABA / 2), 0, 0) * \
-            (Rot(0, 90, 0) * extrude(Plane.YZ * aba2d, T_ABA, both=True))
+            extrude(Plane.YZ * aba2d, T_ABA, both=True)
+    p -= alivios
 
     # --- pes de canto: bordos que alcancam a medida da boca ---
     # Assentam nos quatro topos cheios da peca de baixo: os dois pilares da
