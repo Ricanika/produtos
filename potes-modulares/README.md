@@ -1,15 +1,18 @@
 # Linha Potes Retangulares Modulares em PP
 
-**Status:** estudo de viabilidade técnica · **Data:** 16/09/2026
+**Status:** estudo de viabilidade técnica · **Revisão 2** · 16/09/2026
 **Origem:** evolução do Projeto 115 do ERP ("Conjunto Potes Modular") · **Planta:** Nitron – Fábrica (CODPLP 1)
 
-Documento de engenharia para o pedido: linha retangular em PP transparente, **3 tipos de tampa**
-(teca + vedação TPE, PE, PP para líquidos), **4 litragens** (500 ml, 1 L, 1,5 L, 2 L) e
-**modularidade de empilhamento** — qualquer combinação empilhada tem que chegar à altura do maior.
+Linha retangular em PP transparente, **parede reta com cantos arredondados**, quatro litragens
+(**600 ml · 1,2 L · 1,8 L · 2,4 L**), três tampas e modularidade de empilhamento — qualquer
+combinação empilhada chega à altura do maior.
 
-Todos os números de máquina, matéria-prima, custo e ferramental abaixo saíram do Sankhya
-(produção, compras, cadastro de centros de trabalho e projetos), não de estimativa de catálogo.
-As fontes estão citadas em cada seção.
+Todos os números de máquina, matéria-prima, custo e ferramental saíram do Sankhya, não de
+estimativa de catálogo. Fontes citadas em cada seção.
+
+> **Revisão 2 — o que mudou:** escala migrou de 500/1000/1500/2000 para 600/1200/1800/2400 ml
+> (pacote de mantimento); parede deixou de ser conada e passou a reta com R18 de canto; validado o
+> orçamento de altura da tampa; recomendação de tampa PP com canaleta de TPE no lugar da tampa PE.
 
 ---
 
@@ -17,320 +20,318 @@ As fontes estão citadas em cada seção.
 
 | Requisito | Situação |
 |---|---|
-| Modularidade de empilhamento | **Viável e resolvida** — passo único de 62 mm (seção 3) |
-| 4 litragens exatas 500/1000/1500/2000 ml | **Viável** com bocal comum + pé de 6 mm e saída variando 1,2°–2,1° |
-| Tampa única para os 4 tamanhos | **Viável** — já é prática da casa (ref. 321-T serve 800 ml, 1,2 L e 2,4 L) |
-| Tampa teca + TPE | **Viável e diferencial** — madeira é cadeia própria (Teak Brazil / planta WOOD, FSC) |
-| Tampa PE | Viável, **mas PEBD hoje é compra residual** (500 kg/12 meses) — precisa contrato |
-| Tampa PP para sabão/amaciante | Viável — exige bico dosador e definição de vedação |
-| Injeção dos 4 corpos no parque atual | **Cabe nas injetoras que já temos**, sem máquina nova (seção 5) |
-| Confirmação documental de curso/altura de molde | **Bloqueio de dado**: a ficha das injetoras está vazia no ERP (seção 5.4) |
-
-O ponto crítico da linha não é tonelagem — é **profundidade**. Os quatro corpos têm a mesma área
-projetada (≈106 cm²) e pedem os mesmos ~100–116 t com 2 cavidades, mas o 2 L tem 250 mm de
-profundidade e exige ~550 mm de curso de abertura. Isso empurra o 2 L para as injetoras de 380 t
-(31/32/33) — que hoje já rodam o pote alto de 5,8 L e o modular de 2,4 L.
+| Modularidade de empilhamento | **Viável** — passo único de 60 mm |
+| Litragens 600 / 1200 / 1800 / 2400 ml | **Viável e exatas** — a parede reta elimina o conflito com o passo |
+| Parede reta com cantos arredondados | **Viável** com 0,5°/lado e R18 — custa aninhamento no frete (seção 3.2) |
+| Tampa única para os 4 tamanhos | **Viável** — já é prática da casa (ref. 321-T serve três alturas) |
+| Altura da tampa dentro do passo | **Validada**: piso da bandeja 2,0 mm abaixo da borda (seção 5) |
+| Tampa PE **ou** PP com canaleta de TPE | **Recomendado PP + canaleta** (seção 6) |
+| Injeção dos 4 corpos no parque atual | **Cabe no que já temos**, sem máquina nova |
+| Confirmação documental de curso/extração | **Bloqueio de dado**: ficha das injetoras vazia (seção 4.4) |
 
 ---
 
-## 2. O que já existe na casa (e deve ser reaproveitado)
+## 2. O que já existe na casa
 
 | Achado | Fonte |
 |---|---|
-| **Projeto 115 – "Conjunto Potes Modular"**, status Aprovado, produto já modelado. Descrição: *"Fazer 2 formatos: retangular e quadrado / cada formato com 3 alturas para manter as tampas"* | `AD_PROJETOS` |
-| Molde 115/1 "potes modulares" — orçamento **aprovado de USD 47.100**, 2 cavidades, 75 dias, MR Plastic Mould, 04/2021 | `AD_MOLDE`, `AD_ORCAMENTO` |
-| Linha modular quadrada em catálogo: 319-C (250 ml), 320-C (450 ml), 321-C (800 ml), 322-C (1,2 L), 323-C (2,4 L) | `TGFPRO` |
-| **Tampa única já validada**: ref. 321-T = "TAMPA POTE QUADRADO MODULAR M. 800, 1,2, 2,4" — uma tampa para três alturas | `TGFPRO` |
-| Kit modular vende: 353.006.001 "Kit Potes Modulares 6 pçs transparente" — **19.078 kits / R$ 449 mil em 12 meses** (R$ 23,54 médio) | `TGFITE`/`TGFCAB` |
-| Tampa de madeira já é produto corrente, com FSC 100% (NEO-COC-191022): ref. 256-TFSC e cestos de juta com tampa de teca | `TGFPRO` |
+| **Projeto 115 – "Conjunto Potes Modular"**, status Aprovado, produto já modelado | `AD_PROJETOS` |
+| Molde 115/1 "potes modulares" — orçamento **aprovado de USD 47.100**, 2 cavidades, 75 dias, MR Plastic Mould | `AD_MOLDE`, `AD_ORCAMENTO` |
+| Linha modular quadrada em catálogo: 319-C a 323-C (250 ml a 2,4 L) | `TGFPRO` |
+| **Tampa única já validada**: ref. 321-T serve 800 ml, 1,2 L e 2,4 L | `TGFPRO` |
+| O 2,4 L é o tamanho que gira: 35 mil un/ano só no cliente Natura (ref. 323) | `TGFITE`/`TGFCAB` |
+| Kit modular vende: 19.078 kits / R$ 449 mil em 12 meses (ref. 353) | `TGFITE`/`TGFCAB` |
+| Tampa de madeira já é produto corrente com **FSC 100%** (NEO-COC-191022) | `TGFPRO` |
 
-**Recomendação:** reabrir o Projeto 115 em vez de criar projeto novo — o orçamento aprovado com a
-MR Plastic Mould é a base de negociação do ferramental desta linha.
-
----
-
-## 3. A regra modular
-
-A exigência "empilhou, chega na altura do maior" é uma regra de **passo**, não de volume:
-cada pote tem que somar um número inteiro de módulos.
-
-```
-módulo M = 62 mm
-500 ml = 1 M      1 L = 2 M      1,5 L = 3 M      2 L = 4 M
-```
-
-Combinações conferidas (todas dão 248 mm = altura do 2 L):
-
-```
-500+500+500+500 = 248 mm     1000+1000 = 248 mm
-500+500+1000    = 248 mm     500+1500  = 248 mm
-```
-
-### 3.1 Como o passo fecha exatamente
-
-Três decisões de projeto sustentam o passo:
-
-1. **Bocal único.** Os quatro corpos têm a mesma boca (110 × 84 mm interno) — daí uma tampa só
-   para a linha inteira.
-2. **Tampa rebaixada.** O topo da tampa fica abaixo da borda do pote, formando um berço que
-   recebe o pé do pote de cima. A profundidade desse berço é igual ao que a base + o assento da
-   tampa consomem, e é isso que faz o passo empilhado ser exatamente n × 62 mm, sem sobra.
-3. **Pé de 6 mm.** O fundo é elevado 6 mm (rebaixo/punt). Ele centra o pote empilhado, esconde o
-   ponto de injeção, dá rigidez ao fundo — e é o ajuste fino que faz a capacidade fechar redonda.
-
-### 3.2 Por que a saída varia de 1,2° a 2,1°
-
-Com bocal comum e passo constante, a parede inclinada faz o volume crescer mais rápido que a
-altura: o pote de 1 módulo "sobra" volume e o de 4 módulos "falta". O ajuste é a saída — mais
-saída nos baixos, menos nos altos. Os valores resultantes (1,19° a 2,09°) estão todos dentro da
-prática de moldagem para PP polido. **Não existe solução com saída idêntica nos quatro e as
-quatro capacidades redondas** — é geometricamente sobredeterminado; a saída é a variável livre.
+**Recomendação:** reabrir o Projeto 115 — o orçamento aprovado é a base de renegociação do ferramental.
 
 ---
 
-## 4. Especificação dimensional
+## 3. Geometria
 
-**Footprint externo (comum aos 4): 112,6 × 86,5 mm** · pé/rebaixo 6 mm · saída por lado conforme tabela
+**Footprint externo 121,2 × 93,3 mm** · canto **R18** externo · saída **0,5°/lado** · módulo **60 mm**
+Fundo de **2,0 mm igual nos quatro** · pé embutido de **110,0 × 84,6 mm igual nos quatro**
 
-| Tamanho | Altura ext. corpo | Passo empilhado | Bocal interno | Base interna | Saída/lado | Prof. útil | Parede | Peso corpo |
-|---|---|---|---|---|---|---|---|---|
-| 500 ml | 63,7 mm | 62 mm | 110,4 × 84,3 | 106,0 × 80,0 | 2,01° | 56,0 mm | 1,10 mm | 41,3 g |
-| 1 L | 125,8 mm | 124 mm | 110,3 × 84,2 | 101,3 × 75,2 | 2,09° | 118,0 mm | 1,15 mm | 64,9 g |
-| 1,5 L | 187,9 mm | 186 mm | 110,1 × 84,0 | 100,0 × 73,9 | 1,55° | 180,0 mm | 1,25 mm | 94,7 g |
-| 2 L | 250,0 mm | 248 mm | 109,9 × 83,8 | 99,5 × 73,5 | 1,19° | 242,0 mm | 1,35 mm | 128,9 g |
+| Tamanho | Altura corpo | Passo | Bocal interno | Base externa | Degrau do pé | Elev. fundo | Parede | Volume | Peso |
+|---|---|---|---|---|---|---|---|---|---|
+| 600 ml | 62,0 mm | 60 mm | 118,9 × 91,0 | 120,2 | 5,09 mm | 1,8 mm | 1,15 mm | 600 ml | 42,5 g |
+| 1,2 L | 122,0 mm | 120 mm | 118,8 × 90,9 | 119,1 | 4,57 mm | 3,4 mm | 1,20 mm | 1200 ml | 68,4 g |
+| 1,8 L | 182,0 mm | 180 mm | 118,6 × 90,7 | 118,1 | 4,04 mm | 2,7 mm | 1,30 mm | 1800 ml | 98,9 g |
+| 2,4 L | 242,0 mm | 240 mm | 118,4 × 90,5 | 117,0 | 3,52 mm | 0,0 mm | 1,40 mm | 2400 ml | 133,2 g |
 
-A parede engrossa com a altura por causa do comprimento de fluxo (seção 9.1). Peso calculado com
-PP a 0,905 g/cm³, incluindo reforço de borda e parede do pé.
+Empilhamento conferido — todas as combinações dão 240 mm:
+`600×4` · `1,2 L×2` · `600+600+1,2 L` · `600+1,8 L` · `2,4 L`.
 
----
+### 3.1 Por que a parede reta ajuda
 
-## 5. Validação nas injetoras
+Na revisão 1 (pote conado, 1,2° a 2,1°) havia um conflito estrutural: com bocal comum e passo
+constante, a parede inclinada faz o volume crescer mais rápido que a altura, e as capacidades
+redondas só fechavam variando muito a saída entre os tamanhos.
 
-### 5.1 O parque (46 injetoras, 45 monitoradas — `TPRWCP` + `TPRCAP`)
+**Com parede reta o volume fica praticamente proporcional à altura** e o conflito some. Sobra um
+resíduo pequeno (a seção ainda cresce 0,5° por lado até o bocal), absorvido por uma **elevação de
+fundo de 0 a 3,4 mm** — invisível por fora, sem efeito no empilhamento e sem custo de ferramenta.
 
-| Classe | Qtd | Máquinas |
+### 3.2 O encaixe: três regras que fazem o passo fechar exato
+
+Esta é a parte que não pode ser negociada no design, porque é ela que sustenta a modularidade:
+
+1. **Fundo de 2,0 mm, igual nos quatro potes.**
+2. **A tampa é uma bandeja cujo piso fica 2,0 mm abaixo da borda do pote** — recuado para dentro da
+   boca, não apoiado em cima dela. Esse piso é o plano modular: é nele que o pote de cima se apoia.
+3. **Os últimos 6 mm da base recuam para um pé embutido de 110,0 × 84,6 mm**, medida igual nos
+   quatro (o degrau varia de 3,5 a 5,1 mm para compensar a saída). Esse pé desce dentro da bandeja
+   da tampa de baixo.
+
+Com as três juntas: passo = 60n exato, capacidade = 600n exata, e **uma tampa só serve os quatro**.
+Sem a terceira, o pote de cima não caberia dentro da bandeja — a boca do pote tem 118,9 mm e o corpo
+tem 121,2 mm. O pé embutido é o que resolve, e de quebra os potes ficam **travados entre si** quando
+empilhados, em vez de só apoiados.
+
+**Orçamento de largura — é o que dimensiona o pé.** Entre a face externa do corpo e a face externa do
+pé sobram 5,55 mm por lado, e tudo tem que caber ali:
+
+| | por lado |
+|---|---|
+| borda reforçada do pote | 2,00 mm |
+| lábio com a canaleta do aro de TPE | 2,00 mm |
+| parede da bandeja da tampa | 1,00 mm |
+| folga de encaixe | 0,55 mm |
+| **soma** | **5,55 mm** |
+
+É esse orçamento que fixa o pé em 110,0 mm. Com pé de 113 mm não sobra espaço para o aro de TPE —
+foi a conta que definiu a medida.
+
+**Caminho de carga:** pé do pote de cima → piso da bandeja → parede da bandeja → borda do pote →
+parede do pote. O aro de TPE fica num lábio de vedação *para dentro* da borda, vedando radialmente
+contra a boca — fora do caminho de carga, para não ser comprimido pelo peso da pilha.
+
+### 3.3 Quanto de saída é "reto"
+
+Saída zero não extrai: a peça agarra o macho. O que se faz é a saída mínima de extração.
+
+| Saída/lado | Base mais estreita que o topo | Aninhamento de 6 potes de 2,4 L |
 |---|---|---|
-| 80 t | 1 | 18 |
-| 120 t | 7 | 13, 14, 15, 16, 17, 44, 45 |
-| 150 t | 2 | 42, 43 |
-| 160 t | 9 | 7, 8, 9, 10, 11, 12, 36, 40, 41 |
-| 200 t | 12 | 1–6, 19–22, 35, 37 |
-| 250 t | 9 | 23–28, 38, 39, 46 |
-| 280 t / 300 t | 2 | 29, 30 |
-| 380 t | 3 | 31, 32, 33 |
-| 600 t | 1 | 34 |
+| 0,25° | 2,1 mm (1,8%) | 1.452 mm — **não aninha** |
+| **0,50°** | **4,2 mm (3,5%)** | **1.044 mm (−28%)** |
+| 0,75° | 6,3 mm (5,3%) | 777 mm (−47%) |
+| 1,00° | 8,4 mm (7,1%) | 643 mm (−56%) |
 
-### 5.2 O que cada tamanho exige
+**Recomendação: 0,5°/lado.** No maior pote a base fica 4,2 mm mais estreita que o topo em 121 mm de
+largura — 3,5%, imperceptível com canto R18 e parede polida. Abaixo disso a peça deixa de aninhar a
+vazio e o frete do pote vazio sobe ~28%.
+
+Condições para a parede reta funcionar na extração:
+- **acabamento polido** (SPI A2 ou melhor) nas laterais — textura exige saída extra (~1° a cada
+  0,025 mm de profundidade de textura) e mataria o "reto";
+- **extração por placa impulsora** (não por pinos), com **válvula de ar no topo do macho** para
+  quebrar o vácuo;
+- força de extração estimada em ~5 kN no 2,4 L (932 cm² de contato) contra ~62 kN disponíveis numa
+  injetora de 380 t — **força não é o problema; curso de extração e vácuo são**;
+- o canto R18 é aliado: reduz o arrasto nos cantos, que é onde a peça reta costuma marcar.
+
+## 4. Validação nas injetoras
+
+### 4.1 O que cada tamanho exige
 
 | Tamanho | Área proj. | Fecham. 2 cav | Curso abert. mín. | Altura de molde | Injeção 2 cav | L/t |
 |---|---|---|---|---|---|---|
-| 500 ml | 106 cm² | 98 t | 140 mm | ~254 mm | ~105 cm³ | 109 |
-| 1 L | 106 cm² | 104 t | 277 mm | ~316 mm | ~165 cm³ | 158 |
-| 1,5 L | 106 cm² | 111 t | 413 mm | ~378 mm | ~241 cm³ | 195 |
-| 2 L | 106 cm² | 116 t | 550 mm | ~440 mm | ~327 cm³ | 227 |
+| 600 ml | 126 cm² | 117 t | 136 mm | ~252 mm | 108 cm³ | 107 |
+| 1,2 L | 126 cm² | 125 t | 268 mm | ~312 mm | 174 cm³ | 152 |
+| 1,8 L | 126 cm² | 133 t | 400 mm | ~372 mm | 251 cm³ | 187 |
+| 2,4 L | 126 cm² | 139 t | 532 mm | ~432 mm | 339 cm³ | 216 |
 
-Fechamento a 0,42–0,50 t/cm² (PP, parede fina, peça profunda), + 10% de canal. Curso mínimo =
-2,2 × profundidade da peça.
+Os quatro têm a **mesma área projetada**: quem decide a máquina não é tonelagem, é profundidade.
 
-### 5.3 Alocação proposta — e a evidência de que o parque aguenta
+### 4.2 Alocação — e a evidência de que o parque aguenta
 
-A prova não é catálogo: são peças com a mesma geometria rodando hoje (`TPRAPA`→`TPRIATV`, 24 meses).
-
-| Tamanho novo | Máquina proposta | Peça equivalente que já roda lá |
+| Tamanho | Máquina | Peça equivalente rodando hoje |
 |---|---|---|
-| 500 ml | 160 t — INJ 7–12, 36, 40, 41 | pote hermético peq. 176-C (INJ 13, ciclo 16,7 s) |
-| 1 L | 200 t — INJ 1–6, 19–22, 35, 37 | **modular 450 ml (320-C) na INJ 37**; 2 L rosca (238-C) na INJ 1/22 |
-| 1,5 L | 250 t — INJ 23–28, 38, 39 | **modular 1,2 L (322-C) na INJ 25**; 3 L (239-C) na INJ 24/27; 8 L (196-C) na INJ 39/24 |
-| 2 L | 380 t — INJ 31, 32, 33 | **modular 2,4 L (323-C) na INJ 33**; pote alto 5,8 L (237-C) na INJ 31 e 33 |
+| 600 ml | 160 t — INJ 7–12, 36, 40, 41 | pote hermético peq. 176-C (ciclo medido 16,7 s) |
+| 1,2 L | 200 t — INJ 1–6, 19–22, 35, 37 | modular 450 ml (320-C) na INJ 37; 2 L rosca (238-C) na INJ 1/22 |
+| 1,8 L | 250 t — INJ 23–28, 38, 39 | modular 1,2 L (322-C) na INJ 25; pote 3 L (239-C) na INJ 24/27 |
+| 2,4 L | 380 t — INJ 31, 32, 33 | modular 2,4 L (323-C) na INJ 33; pote alto 5,8 L (237-C) na INJ 31/33 |
 
-Ou seja: a peça mais profunda desta linha (250 mm) é **menos exigente** que o pote de 5,8 L que já
-roda nas 380 t. Não há necessidade de máquina nova.
+Parque (`TPRWCP` + `TPRCAP`): 46 injetoras — 80 t ×1, 120 t ×7, 150 t ×2, 160 t ×9, 200 t ×12,
+250 t ×9, 280 t ×1, 300 t ×1, 380 t ×3, 600 t ×1.
 
-**Máquinas sem ciclo recente na consulta de 16/09/2026 12:11** (`TPRWCP.AD_DHCICLO`):
-INJ 30 (300 t, parada desde 08/09), INJ 41 (160 t, desde 10/09), **INJ 32 (380 t, desde 15/09)** —
-a INJ 32 é a candidata natural para o try-out do 2 L.
+**Sem ciclo recente em 16/09/2026 12:11** (`TPRWCP.AD_DHCICLO`): INJ 30 (300 t), INJ 41 (160 t) e
+**INJ 32 (380 t, parada desde 15/09)** — candidata natural ao try-out do 2,4 L.
 
-### 5.4 Bloqueio de dado — ficha técnica das injetoras vazia
+### 4.3 Aproveitamento de máquina
 
-A tabela `AD_INJETORAFICHA` (ficha Haitian, 1:1 com `TPRWCP`) tem **1 registro e todos os 29
-campos de especificação nulos**. Isso significa que **curso de abertura, altura máx/mín de molde,
-distância entre colunas e capacidade de injeção não podem ser conferidos no sistema** — a
-alocação acima está ancorada em evidência de produção, não em especificação.
+O 2,4 L com 2 cavidades usa 139 t numa máquina de 380 t (37% do fechamento). Com **4 cavidades**
+(~278 t, molde ~620 × 500 mm, cabe entre as colunas de uma 380 t) dobra a produção na mesma hora
+de máquina. Mesma avaliação para o 1,8 L numa 250 t.
 
-Antes de liberar o projeto dos moldes, preencher para as 46 injetoras:
-`FORCAFECH`, `CURSOABERT`, `ALTMINMOLDE`, `ALTMAXMOLDE`, `COLUNASH`, `COLUNASV`, `CAPINJECAO`,
-`CURSOEXTR`, `DIAMFUSO`. Sem isso, o molde do 2 L (440 mm de altura, 550 mm de curso) é aposta.
+### 4.4 Bloqueio de dado
 
-### 5.5 Alerta de aproveitamento de máquina
-
-O 2 L com 2 cavidades usa **116 t numa máquina de 380 t (30% do fechamento)**: paga-se hora de
-máquina grande para usar pouco. Duas saídas:
-
-- **4 cavidades no 2 L** (≈232 t, molde ~600 × 500 mm — cabe entre as colunas de uma 380 t):
-  dobra a produção pela mesma hora-máquina;
-- 2 cavidades na INJ 34 (600 t) só se o curso das 380 t não fechar.
-
-Mesma lógica vale para o 1,5 L (111 t numa 250 t): avaliar 3–4 cavidades na segunda fase.
+`AD_INJETORAFICHA` tem **1 registro com os 29 campos de especificação nulos**. Com parede reta o
+dado que faltava ficou mais crítico, porque a extração passa a ser o ponto de projeto. Preencher
+para as 46 injetoras antes de liberar o molde: `CURSOABERT`, `CURSOEXTR`, `FORCAEXTR`,
+`ALTMINMOLDE`, `ALTMAXMOLDE`, `COLUNASH`, `COLUNASV`, `CAPINJECAO`, `FORCAFECH`.
 
 ---
 
-## 6. As três tampas
+## 5. Altura da tampa — validação
 
-Bocal único ⇒ **uma tampa por tipo atende os quatro tamanhos**. São 3 ferramentas de tampa, não 12.
+A modularidade define um orçamento de altura rígido, e ele **não é o que se esperaria**: a tampa não
+se apoia em cima da borda, ela desce para dentro da boca.
 
-### 6.1 Teca + vedação TPE
-- Madeira é cadeia própria: teca em tora e **ripa serrada** (CODPROD 6759), planta **WOOD** com
-  CNC RXK2513, moldureira, lixadeiras e prensa de alta frequência, e a empresa **Teak Brazil**.
-  Já se produz tampa de madeira em série (256-TFSC) com **FSC 100%** — argumento comercial forte.
-- A vedação: **TPE Karinprene dureza 45 (CODPROD 997) está cadastrado mas sem compra nem consumo
-  há mais de 4 anos**. É reintrodução de material, não item de rotina.
-- **Não há bi-injeção no parque**: o anel de TPE tem que ser peça injetada à parte e montada
-  (molde próprio), ou comprado pronto. Decisão de processo a tomar.
-- Peso estimado do anel: ~7 g.
+```
+borda do pote ................... 62,0 mm   (600 ml)
+piso da bandeja da tampa ........ 60,0 mm   = PLANO MODULAR, 2,0 mm abaixo da borda
+vão livre da bandeja ............ 111,1 × 85,7 mm  (recebe o pé de 110,0 × 84,6 do pote de cima)
+saia externa .................... livre, pendura 11 mm por fora do corpo — não entra no passo
+```
 
-### 6.2 Tampa PE
-- PEBD PB608 a R$ 11,10/kg, mas **só 500 kg comprados em 12 meses** — hoje é compra residual.
-  Volume desta linha muda a escala de compra; precisa de contrato antes do lançamento.
-- Peso estimado: ~17 g (1,6 mm).
-- Avaliar PP copolímero (CP 141, R$ 10,52/kg, 109 t/ano comprados) como alternativa de tampa
-  flexível, se o toque atender — evita abrir uma cadeia nova de resina.
+Traduzindo:
 
-### 6.3 Tampa PP para sabão líquido / amaciante
-- PP CP 141 (copolímero, R$ 10,52/kg) — resistência a detergente e a queda.
-- Exige **bico dosador com tampa basculante** e vedação por compressão (não serve o anel de TPE
-  da versão teca).
-- **Ponto de ergonomia:** 2 L de líquido ≈ 2 kg num corpo de 112 × 86 mm sem pega. Recomendo
-  rebaixo de pega nas laterais dos tamanhos 1,5 L e 2 L, definido junto com o design.
-- Peso estimado: ~16 g.
+- **O piso da bandeja fica 2,0 mm abaixo da borda do pote** e é exatamente igual à espessura do
+  fundo. Essas duas medidas têm que casar, senão o passo não fecha.
+- **A parede da bandeja sobe livremente acima do plano modular** — 3 a 6 mm dão um colar de
+  centragem bonito em volta da base do pote de cima. Isso é escolha de design, não restrição.
+- **A saia externa é livre.** Pode pendurar 11 mm ou 15 mm para fora do corpo: só conta para o passo
+  o que acontece entre o plano modular e a borda.
+- **Detalhe crítico:** o pé do pote de cima tem que pousar no piso da bandeja junto à parede dela,
+  não no meio do painel. Assim a carga desce pela parede da bandeja até a borda do pote. Se o apoio
+  cair no centro, um 2,4 L com 2 kg de arroz em cima afunda a tampa.
+- **Tampa dosadora:** um bico basculante comum tem 8 a 12 mm e não cabe acima do plano modular. Duas
+  saídas — um **poço rebaixado no centro da bandeja** para alojar o bico (o apoio do pote de cima
+  passa a ser o anel periférico do piso), ou assumir que a versão de líquidos é o topo da pilha.
+  A do poço é melhor: mantém a linha inteira empilhável.
+
+Tampa em números: **125,2 × 97,3 mm externos, 24,5 g em PP** (25,0 g em PEBD), saia de 11 mm.
+
+## 6. As três tampas — PE ou PP com canaleta de TPE?
+
+**Recomendação: PP com canaleta para o mesmo aro de TPE da tampa de teca.**
+
+| | Tampa PE | **Tampa PP + aro TPE** |
+|---|---|---|
+| Peso / resina | 25,0 g · R$ 0,28 | 24,5 g · R$ 0,26 + aro 2,6 g |
+| Vedação | por interferência na borda, sem garantia | **aro de TPE comprimido — vedação real** |
+| Empilhamento | PEBD **flui a frio** (creep): cede sob carga permanente | PP copolímero segura a carga |
+| Cadeia de resina | PEBD: **500 kg comprados em 12 meses** | PP CP 141: **109 t/ano já em casa** |
+| Reciclagem | pote PP + tampa PE = material misto | **mono-material**, o aro sai na mão |
+| Aro de TPE | continua necessário só para a teca | **o mesmo aro serve as três tampas** |
+| Moldes | 3 (PE + PP dosadora + aro) | 3 (PP hermética + PP dosadora + aro) |
+
+Os quatro argumentos que decidem:
+
+1. **Empilhamento é o produto.** A linha inteira existe para empilhar — a tampa é peça estrutural.
+   PEBD tem fluência a frio muito maior que PP: sob um 2,4 L carregado, a tampa PE cede com o tempo.
+2. **Parede reta tira a vantagem do PE.** A virtude da tampa PE é vedar esticando sobre a borda. Com
+   parede reta a borda tem pouca geometria para agarrar — precisaria de ressalto de encaixe de
+   qualquer jeito. O aro de TPE resolve melhor e com menos exigência de tolerância.
+3. **O aro de TPE passa a se pagar.** Hoje ele é um molde para servir só a versão de teca. Servindo
+   as três tampas, o mesmo molde amortiza em três vezes o volume — e o TPE Karinprene 45, parado há
+   4 anos, volta a ter escala para recotação.
+4. **Suprimentos.** PEBD é compra residual e viraria contrato novo por causa de uma tampa. O PP
+   copolímero já entra 109 t/ano.
+
+Ressalvas honestas: a tampa PP é **mais dura de abrir** que a PE — precisa de aba de alavanca bem
+resolvida no design; e tem que ser **copolímero** (CP 141), não homopolímero, por causa de impacto
+em baixa temperatura (freezer). O custo por peça fica praticamente empatado (R$ 0,26 + aro contra R$ 0,28),
+então a decisão é técnica, não de custo.
+
+**Se ainda assim quiserem PE**, ele funciona como versão econômica de linha de entrada — mas aí
+sem promessa de hermeticidade e com a tampa marcada como "não recebe pote carregado em cima".
+
+### 6.1 Tampa de teca
+Cadeia própria: teca em tora e ripa serrada (CODPROD 6759), planta **WOOD** (CNC RXK2513,
+moldureira, lixadeiras, prensa de alta frequência) e a empresa **Teak Brazil**. Tampa de madeira já
+é produto corrente com FSC 100%. Sem molde — programa de CNC e gabarito. Usa o mesmo aro de TPE,
+alojado em canaleta usinada.
+
+### 6.2 Processo do aro de TPE
+**Não há bi-injeção no parque**: o aro é peça injetada à parte e montada, ou comprada pronta. Peso
+2,6 g, seção 2,8 × 2,2 mm, perímetro 383 mm. Recotar o Karinprene 45 (dureza 45 shore), sem compra
+desde 2022.
 
 ---
 
 ## 7. Matéria-prima e custo de material
 
-Preços reais de compra dos últimos 12 meses (`TGFITE`/`TGFCAB`), não tabela:
+Preços reais de compra dos últimos 12 meses (`TGFITE`/`TGFCAB`):
 
-| Material | Preço médio | Volume comprado 12 m | Uso nesta linha |
+| Material | Preço médio | Volume 12 m | Uso |
 |---|---|---|---|
-| PP H 105 homopolímero **com clarificante** | **R$ 11,06/kg** | 925,9 t | **corpo transparente** (grade padrão da casa) |
-| PP RP 340 S randômico fluidez 45 | R$ 17,00/kg | 49,5 t | alternativa de maior transparência/fluidez p/ o 2 L |
-| PP CP 141 copolímero | R$ 10,52/kg | 108,9 t | tampa PP |
-| PEBD PB 608 | R$ 11,10/kg | 0,5 t | tampa PE |
-| TPE Karinprene 45 | sem compra | — | anel de vedação (reintroduzir) |
+| PP H 105 homopolímero com clarificante | **R$ 11,06/kg** | 925,9 t | corpo transparente |
+| PP RP 340 S randômico fluidez 45 | R$ 17,00/kg | 49,5 t | alternativa de fluidez para o 2,4 L |
+| PP CP 141 copolímero | R$ 10,52/kg | 108,9 t | tampas |
+| PEBD PB 608 | R$ 11,10/kg | 0,5 t | (descartado — ver seção 6) |
+| TPE Karinprene 45 | sem compra | — | aro de vedação, a recotar |
 
 | Item | Peso | Resina |
 |---|---|---|
-| Corpo 500 ml | 41,3 g | R$ 0,46 |
-| Corpo 1 L | 64,9 g | R$ 0,72 |
-| Corpo 1,5 L | 94,7 g | R$ 1,05 |
-| Corpo 2 L | 128,9 g | R$ 1,43 |
-| Tampa PE | ~17 g | R$ 0,19 |
-| Tampa PP | ~16 g | R$ 0,17 |
-| Anel TPE | ~7 g | a cotar |
+| Corpo 600 ml | 42,5 g | R$ 0,47 |
+| Corpo 1,2 L | 68,4 g | R$ 0,76 |
+| Corpo 1,8 L | 98,9 g | R$ 1,09 |
+| Corpo 2,4 L | 133,2 g | R$ 1,47 |
+| Tampa PP | 24,5 g | R$ 0,26 |
+| Aro TPE | 2,6 g | a cotar |
 
-Só matéria-prima. Transformação (hora-máquina, energia, mão de obra, refugo) e a tampa de teca
-entram pelo custo do PCP e da planta WOOD.
+Só matéria-prima. Transformação entra pelo custo do PCP; a tampa de teca, pelo custo da WOOD.
 
 ---
 
 ## 8. Ferramental
 
-Referências dos próprios orçamentos da casa com a MR Plastic Mould (`AD_ORCAMENTO`, em USD):
+Escopo: **4 moldes de corpo + 2 moldes de tampa (hermética e dosadora) + 1 molde de aro de TPE
+= 7 ferramentas.** A tampa de teca não usa molde.
 
-| Molde | Máquina | Valor |
-|---|---|---|
-| 283-C corpo lixeira 12 L | 380 t | USD 36.900 |
-| 284-U | 280 t | USD 20.100 |
-| 214-U | 250 t | USD 18.900 |
-| 026-C corpo | 120 t | USD 6.300 |
-| 026-T tampa | 90 t | USD 5.500 |
-| **115/1 "potes modulares" (aprovado, 2 cav)** | — | **USD 47.100** |
+Referências dos próprios orçamentos com a MR Plastic Mould (`AD_ORCAMENTO`, USD): corpo lixeira
+12 L / 380 t = 36.900 · 284-U / 280 t = 20.100 · 214-U / 250 t = 18.900 · corpo 026 / 120 t = 6.300 ·
+tampa 026-T / 90 t = 5.500 · **115/1 "potes modulares" 2 cav = 47.100 (aprovado)**.
 
-Escopo desta linha: **4 moldes de corpo + 3 moldes de tampa + 1 molde de anel TPE = 8 ferramentas**
-(a tampa de teca não usa molde — usa programa de CNC e gabarito na WOOD).
-
-Faixa de referência, a cotar: corpos 2 cav entre USD 25–45 mil cada (o de 2 L no topo, por
-profundidade e polimento), tampas USD 15–20 mil, anel TPE ~USD 8 mil. **Ordem de grandeza
-USD 150–200 mil** — a cotação de USD 47.100 já aprovada no Projeto 115 deve ser o ponto de partida
-da renegociação, não um número novo.
+Faixa a cotar: corpos 2 cav entre USD 25–45 mil cada (o 2,4 L no topo, por profundidade, polimento
+e placa impulsora), tampas USD 15–20 mil, aro de TPE ~USD 8 mil. **Ordem de grandeza USD 140–190 mil.**
 
 ---
 
 ## 9. Capacidade e ciclo
 
-Estimativa com 2 cavidades, 20 h úteis/dia, 22 dias. O ciclo medido hoje no parque para peças
-equivalentes fica entre 16,7 s (pote pequeno) e 30,5 s (tampa grande) — as estimativas abaixo
-estão dentro dessa faixa.
+2 cavidades, 20 h úteis/dia, 22 dias. Ciclos um pouco maiores que na revisão 1 por causa da
+extração da peça reta (mais tempo de resfriamento antes de arrancar do macho).
 
 | Tamanho | Ciclo est. | pç/h | pç/mês | Resina |
 |---|---|---|---|---|
-| 500 ml | 16 s | 450 | 198 mil | 18,6 kg/h |
-| 1 L | 20 s | 360 | 158 mil | 23,4 kg/h |
-| 1,5 L | 24 s | 300 | 132 mil | 28,4 kg/h |
-| 2 L | 28 s | 257 | 113 mil | 33,1 kg/h |
+| 600 ml | 17 s | 424 | 186 mil | 18,4 kg/h |
+| 1,2 L | 21 s | 343 | 151 mil | 23,8 kg/h |
+| 1,8 L | 25 s | 288 | 127 mil | 28,8 kg/h |
+| 2,4 L | 29 s | 248 | 109 mil | 33,3 kg/h |
 
-O 2 L é o gargalo do conjunto: se a linha for vendida em kit, ele dita o ritmo. É o argumento
-técnico para as 4 cavidades da seção 5.5.
-
-### 9.1 Risco de preenchimento no 2 L
-
-Com parede de 1,35 mm e 250 mm de profundidade, o **L/t chega a 227**. É viável com PP de alta
-fluidez (o H 105 e o RP 340 S fluidez 45 que já se compra) e injeção rápida, mas está no limite
-superior. Mitigações, em ordem de preferência:
-
-1. câmara quente com **2 pontos de injeção** no fundo;
-2. parede de 1,4–1,5 mm no 2 L (custa ~8 g/peça);
-3. RP 340 S (fluidez 45) no lugar do H 105 no 2 L — custa R$ 6/kg a mais.
-
-Decidir no estudo de fluxo (Moldflow) antes de fechar o molde.
+**Risco de preenchimento no 2,4 L:** L/t de 216 com parede de 1,40 mm. Viável com o PP de alta
+fluidez que já se compra, mas no limite. Mitigar com câmara quente de **2 pontos de injeção** no
+fundo, ou parede de 1,5 mm, ou RP 340 S. Definir no Moldflow antes de fechar o molde.
 
 ---
 
-## 10. Decisão comercial que precisa ser tomada antes do molde
+## 10. Mantimento — o que cabe
 
-A escala pedida (500 / 1000 / 1500 / 2000 ml) não casa com embalagem de mantimento:
-
-| Pote | Arroz | Feijão | Açúcar |
-|---|---|---|---|
-| 500 ml | 0,42 kg | 0,40 kg | 0,45 kg |
-| 1 L | 0,85 kg | 0,80 kg | 0,90 kg |
-| 1,5 L | 1,27 kg | 1,20 kg | 1,35 kg |
-| **2 L** | **1,70 kg** | 1,60 kg | 1,80 kg |
-
-Um pacote de 2 kg de arroz **não cabe** no 2 L; precisa de 2,4 L. A referência visual do projeto
-rotula os potes por mantimento ("ARROZ 2 kg", "FEIJÃO 1 kg") — com esta escala isso não se sustenta.
-
-**Alternativa B — módulo de 600 ml**, mesmas alturas e mesma modularidade, só com o footprint
-9% maior (122,6 × 94,2 mm):
-
-| Pote | Altura | Peso | Fecham. 2 cav | Cabe |
+| Pote | Arroz | Feijão | Açúcar | Macarrão |
 |---|---|---|---|---|
-| 600 ml | 63,8 mm | 49,1 g | 115 t | açúcar 540 g |
-| 1,2 L | 125,9 mm | 75,9 g | 123 t | **feijão 1 kg** |
-| 1,8 L | 188,0 mm | 109,7 g | 131 t | arroz 1,5 kg |
-| 2,4 L | 250,1 mm | 148,3 g | 140 t | **arroz 2 kg** |
+| 600 ml | 0,51 kg | 0,48 kg | 0,54 kg | 0,21 kg |
+| 1,2 L | 1,02 kg | **0,96 kg (pacote de 1 kg)** | 1,08 kg | 0,42 kg |
+| 1,8 L | 1,53 kg | 1,44 kg | 1,62 kg | 0,63 kg |
+| 2,4 L | **2,04 kg (pacote de 2 kg)** | 1,92 kg | 2,16 kg | 0,84 kg |
 
-A alternativa B mantém a mesma alocação de máquinas (as alturas não mudam), fica ~15% mais pesada
-por peça e **alinha com a linha modular quadrada que já vendemos** (o 2,4 L / ref. 323 é justamente
-o tamanho que gira: 35 mil un/ano no cliente Natura).
-
-Esta é uma decisão de posicionamento — grão embalado (B) versus capacidade redonda (A) — e ela
-tem que sair antes do desenho do molde, porque muda o footprint.
+A escala fecha com embalagem de mercado: o 2,4 L recebe o pacote de 2 kg de arroz e o 1,2 L recebe
+o de 1 kg de feijão — que era justamente o que a escala anterior (500/1000/1500/2000) não fazia.
 
 ---
 
 ## 11. Próximos passos
 
-1. **Decidir a escala**: 500/1000/1500/2000 (A) ou 600/1200/1800/2400 (B). Muda o footprint.
-2. **Preencher `AD_INJETORAFICHA`** para as 46 injetoras (curso, altura de molde, colunas,
-   capacidade de injeção) — sem isso o molde do 2 L não tem conferência documental.
+1. **Confirmar a saída de 0,5°** com o design — é o que separa "reto" de "aninha no frete".
+2. **Preencher `AD_INJETORAFICHA`** (curso de abertura, curso e força de extração) para as 46 injetoras.
 3. **Reabrir o Projeto 115** e renegociar com a MR Plastic Mould a partir da cotação aprovada.
-4. **Definir a vedação de TPE**: injetar em molde próprio ou comprar pronto — e recotar o
-   Karinprene 45, parado há 4 anos.
-5. **Contratar PEBD** em escala, ou decidir pela tampa em PP copolímero.
-6. **Moldflow do 2 L** antes de fechar o molde (L/t 227).
-7. **Design**: rebaixo de pega no 1,5 L e 2 L para a versão de líquidos; berço da tampa com a
-   profundidade exata do pé de 6 mm (é o que garante o passo modular).
-8. **Try-out**: reservar INJ 32 (380 t) para o 2 L e INJ 25/24 (250 t) para o 1,5 L.
+4. **Recotar o TPE Karinprene 45** — agora com volume das três tampas.
+5. **Design da tampa**: bandeja com piso 2,0 mm abaixo da borda, pé do pote alinhado com a parede
+   da bandeja, aba de alavanca para abrir, e poço rebaixado para o bico da dosadora.
+6. **Moldflow do 2,4 L** (L/t 216) e estudo de extração da peça reta.
+7. **Try-out**: reservar INJ 32 (380 t) para o 2,4 L e INJ 25/24 (250 t) para o 1,8 L.
 
 ---
 
@@ -339,7 +340,7 @@ tem que sair antes do desenho do molde, porque muda o footprint.
 `TPRWCP` + `TPRCAP` (parque e tonelagem) · `TPRWCP.AD_CICLOATUAL/AD_DHCICLO` (ciclo e estado ao
 vivo) · `TPRAPA`→`TPRAPO`→`TPRIATV` (que peça roda em qual máquina, 24 meses) ·
 `AD_FICHATECNICA` (ciclos de referência) · `AD_PROJETOS`/`AD_MOLDE`/`AD_ORCAMENTO` (projeto 115 e
-benchmark de ferramental) · `TGFITE`/`TGFCAB` (preço real de resina e venda dos kits modulares) ·
+benchmark de ferramental) · `TGFITE`/`TGFCAB` (preço real de resina e venda dos kits) ·
 `TGFPRO` (linha modular atual, tampas, teca, TPE).
 
-Memória de cálculo da geometria: `calculo-modular.py`.
+Memória de cálculo: `calculo-modular.py`.
