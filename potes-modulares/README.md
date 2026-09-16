@@ -25,7 +25,7 @@ estimativa de catálogo. Fontes citadas em cada seção.
 | Parede reta com cantos arredondados | **Viável** com 0,5°/lado e R18 — custa aninhamento no frete (seção 3.2) |
 | Tampa única para os 4 tamanhos | **Viável** — já é prática da casa (ref. 321-T serve três alturas) |
 | Altura da tampa dentro do passo | **Validada**: piso da bandeja 2,0 mm abaixo da borda (seção 5) |
-| Tampa PE **ou** PP com canaleta de TPE | **Recomendado PP + canaleta** (seção 6) |
+| Tampa PE **ou** PP com canaleta de TPE | **Recomendado PP randômico RP 141 + canaleta** (seção 6) |
 | Injeção dos 4 corpos no parque atual | **Cabe no que já temos**, sem máquina nova |
 | Confirmação documental de curso/extração | **Bloqueio de dado**: ficha das injetoras vazia (seção 4.4) |
 
@@ -196,10 +196,9 @@ Traduzindo:
 - **Detalhe crítico:** o pé do pote de cima tem que pousar no piso da bandeja junto à parede dela,
   não no meio do painel. Assim a carga desce pela parede da bandeja até a borda do pote. Se o apoio
   cair no centro, um 2,4 L com 2 kg de arroz em cima afunda a tampa.
-- **Tampa dosadora:** um bico basculante comum tem 8 a 12 mm e não cabe acima do plano modular. Duas
-  saídas — um **poço rebaixado no centro da bandeja** para alojar o bico (o apoio do pote de cima
-  passa a ser o anel periférico do piso), ou assumir que a versão de líquidos é o topo da pilha.
-  A do poço é melhor: mantém a linha inteira empilhável.
+- **Tampa dosadora:** um bico basculante comum tem 8 a 12 mm e não cabe acima do plano modular. A
+  saída é não ter bico saliente nenhum — a própria bandeja vira o vertedor, com furo, entalhe no
+  canto e aba rente ao piso. Detalhado em 6.3.
 
 Tampa em números: **125,2 × 97,3 mm externos, 24,5 g em PP** (25,0 g em PEBD), saia de 11 mm.
 
@@ -209,10 +208,10 @@ Tampa em números: **125,2 × 97,3 mm externos, 24,5 g em PP** (25,0 g em PEBD),
 
 | | Tampa PE | **Tampa PP + aro TPE** |
 |---|---|---|
-| Peso / resina | 25,0 g · R$ 0,28 | 24,5 g · R$ 0,26 + aro 2,6 g |
+| Peso / resina | 25,0 g · R$ 0,28 | 24,5 g · R$ 0,23 + aro 2,6 g |
 | Vedação | por interferência na borda, sem garantia | **aro de TPE comprimido — vedação real** |
 | Empilhamento | PEBD **flui a frio** (creep): cede sob carga permanente | PP copolímero segura a carga |
-| Cadeia de resina | PEBD: **500 kg comprados em 12 meses** | PP CP 141: **109 t/ano já em casa** |
+| Cadeia de resina | PEBD: **500 kg comprados em 12 meses** | PP RP 141: **299 t/ano já em casa** |
 | Reciclagem | pote PP + tampa PE = material misto | **mono-material**, o aro sai na mão |
 | Aro de TPE | continua necessário só para a teca | **o mesmo aro serve as três tampas** |
 | Moldes | 3 (PE + PP dosadora + aro) | 3 (PP hermética + PP dosadora + aro) |
@@ -228,12 +227,12 @@ Os quatro argumentos que decidem:
    as três tampas, o mesmo molde amortiza em três vezes o volume — e o TPE Karinprene 45, parado há
    4 anos, volta a ter escala para recotação.
 4. **Suprimentos.** PEBD é compra residual e viraria contrato novo por causa de uma tampa. O PP
-   copolímero já entra 109 t/ano.
+   randômico RP 141 já entra 299 t/ano e é mais barato (R$ 9,54/kg).
 
 Ressalvas honestas: a tampa PP é **mais dura de abrir** que a PE — precisa de aba de alavanca bem
 resolvida no design; e tem que ser **copolímero** (CP 141), não homopolímero, por causa de impacto
-em baixa temperatura (freezer). O custo por peça fica praticamente empatado (R$ 0,26 + aro contra R$ 0,28),
-então a decisão é técnica, não de custo.
+em baixa temperatura — e é aí que o randômico RP 141 resolve melhor que o homopolímero (ver 6.2).
+O custo por peça fica empatado (R$ 0,23 + aro contra R$ 0,28), então a decisão é técnica, não de custo.
 
 **Se ainda assim quiserem PE**, ele funciona como versão econômica de linha de entrada — mas aí
 sem promessa de hermeticidade e com a tampa marcada como "não recebe pote carregado em cima".
@@ -244,7 +243,66 @@ moldureira, lixadeiras, prensa de alta frequência) e a empresa **Teak Brazil**.
 é produto corrente com FSC 100%. Sem molde — programa de CNC e gabarito. Usa o mesmo aro de TPE,
 alojado em canaleta usinada.
 
-### 6.2 Processo do aro de TPE
+### 6.2 Qual PP na tampa — as três famílias
+
+"Copolímero" não é uma coisa só, e a diferença muda a tampa. As três famílias que a casa já compra:
+
+| Família | O que é | Comporta-se | Grades em casa | Preço (compra 12 m) |
+|---|---|---|---|---|
+| **Homopolímero** | só propeno | o mais rígido e o mais transparente com clarificante, mas **quebradiço no frio** | H 105 (925,9 t), H 103 (473,4 t) | R$ 11,06 / R$ 9,90 |
+| **Copolímero randômico** | 2–6% de eteno espalhado na cadeia, atrapalhando a cristalização | **transparente e brilhante**, menos rígido, bem menos quebradiço | **RP 141 (299,1 t)**, RP 340 S (49,5 t) | **R$ 9,54** / R$ 17,00 |
+| **Copolímero heterofásico (de impacto)** | tem uma fase de borracha dispersa dentro | **impacto altíssimo, inclusive a frio**, mas **opaco/leitoso** | CP 141 (108,9 t) | R$ 10,52 |
+
+**Correção da revisão anterior:** a recomendação genérica de "CP 141 copolímero" para a tampa estava
+imprecisa. O certo é **PP RP 141 randômico**, por três motivos:
+
+1. **Transparência.** O CP 141 é heterofásico — sai leitoso. Se a tampa for transparente como o corpo,
+   heterofásico não serve.
+2. **Dobradiça viva.** A aba do bico dosador precisa de dobradiça viva, e dobradiça viva **não funciona
+   em copolímero heterofásico**: a fase de borracha impede a orientação molecular que dá vida à
+   dobradiça. Homopolímero e randômico funcionam; randômico é o mais tolerante.
+3. **Preço e escala.** R$ 9,54/kg com 299 t/ano já comprados — é o mais barato dos três e o de maior
+   volume depois do H 105.
+
+O heterofásico continua fazendo sentido **se a tampa for colorida e sem dobradiça** (a versão de teca,
+por exemplo, não tem aba nenhuma). Para a linha toda, RP 141.
+
+Tampa em RP 141: 24,5 g → **R$ 0,23**.
+
+### 6.3 O bico da tampa de líquidos
+
+Requisito: prático, que não suje, sem copinho dosador e sem peça cara. E ainda tem que respeitar o
+plano modular — nada pode passar acima dele, senão o pote de cima não assenta.
+
+**Conceito recomendado: a bandeja é o vertedor.** A modularidade já obriga a tampa a ter uma bandeja
+rebaixada de 2,0 mm. Ela é reaproveitada como bacia anti-gota, sem peça nova:
+
+1. **Um furo de vazão no canto** da bandeja (≈ 25 × 15 mm), encostado na parede.
+2. **Um entalhe de 12 a 15 mm na parede da bandeja**, no mesmo canto, por onde o líquido sai quando o
+   pote inclina. O canto R18 já faz a curva do vertedor — não precisa moldar bico nenhum.
+3. **Lábio de corte de 0,4 mm** na aresta externa do entalhe: quebra o filme de líquido e faz a gota
+   se soltar em vez de escorrer pela face do pote. É o detalhe que resolve o "não vai sujar".
+4. **Piso da bandeja com caimento de 2 a 3° para o furo.** O que respinga ou volta cai na bandeja e
+   escorre de volta para dentro do pote pelo mesmo furo. Nada fica na parte de fora.
+5. **Aba com dobradiça viva** fechando o furo, rente ao piso. Ela não veda — quem veda é o aro de TPE
+   da borda. A aba só barra poeira e cheiro, e abre com o polegar.
+
+Por que é barato: **zero peça adicional**, zero componente comprado, tudo na mesma ferramenta da tampa,
+e sem gaveta no molde — o furo, o entalhe e a aba saem todos no sentido de abertura.
+
+Por que empilha: a aba fecha rente ao piso da bandeja, que é o plano modular. O entalhe tira um pedaço
+da parede da bandeja num canto, onde o pote de cima tem raio e quase não apoia.
+
+**Alternativas consideradas:**
+
+- **Bico moldado dentro do poço** — mais "desenhado", mas precisa de poço mais fundo, encarece a
+  ferramenta e não resolve melhor a gota que o lábio de corte.
+- **Pump comprada** — a casa já compra a válvula pump (CODPROD 10085) para o porta-detergente 545/553.
+  Faz sentido para a versão de pia, de uso com uma mão só, mas a pump passa muito do plano modular:
+  vira SKU "topo da pilha", não versão modular. E é peça comprada, contra zero peça da bandeja-vertedor.
+- **Copinho dosador** (o do porta-sabão em pó ref. 008) — descartado a pedido.
+
+### 6.4 Processo do aro de TPE
 **Não há bi-injeção no parque**: o aro é peça injetada à parte e montada, ou comprada pronta. Peso
 2,6 g, seção 2,8 × 2,2 mm, perímetro 383 mm. Recotar o Karinprene 45 (dureza 45 shore), sem compra
 desde 2022.
@@ -259,7 +317,8 @@ Preços reais de compra dos últimos 12 meses (`TGFITE`/`TGFCAB`):
 |---|---|---|---|
 | PP H 105 homopolímero com clarificante | **R$ 11,06/kg** | 925,9 t | corpo transparente |
 | PP RP 340 S randômico fluidez 45 | R$ 17,00/kg | 49,5 t | alternativa de fluidez para o 2,4 L |
-| PP CP 141 copolímero | R$ 10,52/kg | 108,9 t | tampas |
+| PP RP 141 randômico fluidez 40 | **R$ 9,54/kg** | 299,1 t | **tampas** |
+| PP CP 141 copolímero heterofásico | R$ 10,52/kg | 108,9 t | tampa colorida sem dobradiça |
 | PEBD PB 608 | R$ 11,10/kg | 0,5 t | (descartado — ver seção 6) |
 | TPE Karinprene 45 | sem compra | — | aro de vedação, a recotar |
 
@@ -269,7 +328,7 @@ Preços reais de compra dos últimos 12 meses (`TGFITE`/`TGFCAB`):
 | Corpo 1,2 L | 68,4 g | R$ 0,76 |
 | Corpo 1,8 L | 98,9 g | R$ 1,09 |
 | Corpo 2,4 L | 133,2 g | R$ 1,47 |
-| Tampa PP | 24,5 g | R$ 0,26 |
+| Tampa PP RP 141 | 24,5 g | R$ 0,23 |
 | Aro TPE | 2,6 g | a cotar |
 
 Só matéria-prima. Transformação entra pelo custo do PCP; a tampa de teca, pelo custo da WOOD.
@@ -329,7 +388,7 @@ o de 1 kg de feijão — que era justamente o que a escala anterior (500/1000/15
 3. **Reabrir o Projeto 115** e renegociar com a MR Plastic Mould a partir da cotação aprovada.
 4. **Recotar o TPE Karinprene 45** — agora com volume das três tampas.
 5. **Design da tampa**: bandeja com piso 2,0 mm abaixo da borda, pé do pote alinhado com a parede
-   da bandeja, aba de alavanca para abrir, e poço rebaixado para o bico da dosadora.
+   da bandeja, aba de alavanca para abrir, e bandeja-vertedor na versão de líquidos (6.3).
 6. **Moldflow do 2,4 L** (L/t 216) e estudo de extração da peça reta.
 7. **Try-out**: reservar INJ 32 (380 t) para o 2,4 L e INJ 25/24 (250 t) para o 1,8 L.
 
