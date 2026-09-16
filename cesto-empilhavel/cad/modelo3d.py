@@ -28,15 +28,16 @@ Uso:  python3 modelo3d.py
 """
 import os
 import numpy as np
-from build123d import (Align, Box, Cylinder, Plane, Polyline, Pos, Rot,
-                       RectangleRounded, export_step, export_stl, extrude,
-                       make_face, Line)
+from build123d import (Align, Axis, Box, Cylinder, Plane, Polyline, Pos,
+                       RectangleRounded, Rot, export_step, export_stl,
+                       extrude, fillet, make_face)
 
 RHO = 0.905e-3            # g/mm3 - PP copolimero
 
 # --- envelope (cotas da referencia) -----------------------------------------
 LARG      = 215.0         # X - largura frontal
-PROF      = 200.0         # Y - profundidade
+PROF      = 200.0         # Y - profundidade do CORPO
+PROJ_ABA  = 50.0          # avanco das abas para a frente -> 250 mm no total
 ALT       = 130.0         # Z - altura no fundo
 ALT_FRENTE = 40.0         # altura da parede frontal rebaixada
 RAIO      = 14.0          # raio de canto em planta
@@ -50,11 +51,17 @@ H_PE      = 6.0           # pe
 # --- sela da aresta superior da lateral --------------------------------------
 # Sai da altura cheia no pilar frontal, desce ate um ponto baixo e volta a
 # subir ate a parede do fundo. E o que da o acesso frontal e a pega lateral.
-POST_Y   = 20.0           # profundidade do pilar de canto, em Y
-POST_P   = 6.0            # projecao do pilar para fora da lateral
-POST_T   = 5.0            # espessura do pilar
-Y_SELA   = -55.0          # onde a sela tem o ponto baixo
-Z_SELA   = 72.0           # cota do ponto baixo
+# A aba dianteira e uma placa em gancho que avanca PROJ_ABA para a frente. Seu
+# topo e um trilho RETO na altura cheia -- e nele que o pe da peca de cima
+# assenta, junto com os dois cantos de tras. As pontas sao arredondadas (R_ABA).
+Y_ABA_NARIZ = -(200.0 / 2) - 50.0    # nariz da aba -> 250 mm de profundidade total
+Y_ABA_FIM   = -(200.0 / 2) + 15.0    # onde o trilho termina e comeca a sela
+Y_ABA_RAIZ  = -(200.0 / 2) + 30.0    # onde a aba se funde na lateral
+T_ABA    = 5.0            # espessura da aba
+Z_ABA_BASE = 45.0         # borda inferior da aba
+R_ABA    = 14.0           # raio das pontas da aba -- o pedido
+Y_SELA   = -30.0          # onde a sela tem o ponto baixo
+Z_SELA   = 68.0           # cota do ponto baixo
 EXP_SUBIDA = 1.3          # forma da subida da sela ate o fundo
 
 # --- rebordo da base: o apoio do empilhamento -------------------------------
@@ -89,18 +96,17 @@ def secao(z, folga=0.0):
 
 
 def z_aresta(y):
-    """Cota da aresta superior da lateral em y -- perfil em SELA.
+    """Cota da aresta superior da lateral em y.
 
-    Do pilar frontal (altura cheia) desce num cosseno ate o ponto baixo da
-    sela, e sobe numa curva longa ate a parede do fundo, tambem na altura
-    cheia. Os dois topos cheios -- pilar da frente e canto de tras -- sao os
-    quatro apoios em que a peca de cima assenta.
+    Tres trechos: o TRILHO reto na altura cheia sobre a aba dianteira, a SELA
+    descendo num cosseno ate o ponto baixo (que e a pega lateral e o vao do
+    encaixe), e a subida longa ate a parede do fundo, tambem na altura cheia.
+    Trilho da frente e canto de tras sao os quatro apoios do empilhamento.
     """
-    y_post = -PROF / 2 + POST_Y
-    if y <= y_post:
+    if y <= Y_ABA_FIM:
         return ALT
     if y <= Y_SELA:
-        t = (y - y_post) / (Y_SELA - y_post)
+        t = (y - Y_ABA_FIM) / (Y_SELA - Y_ABA_FIM)
         return ALT + (Z_SELA - ALT) * (0.5 - 0.5 * np.cos(np.pi * t))
     t = (y - Y_SELA) / (PROF / 2 - Y_SELA)
     return Z_SELA + (ALT - Z_SELA) * t ** EXP_SUBIDA
@@ -165,16 +171,21 @@ def cesto():
             n += 2
     p -= furos
 
-    # --- pilares de canto da frente: o apoio dianteiro do empilhamento ---
-    # Sobem da borda frontal ate a altura cheia e projetam para fora da
-    # lateral. O topo deles e a mesa em que o pe da peca de cima assenta.
+    # --- abas dianteiras em gancho, com as pontas arredondadas ---
+    # Placa no plano YZ que avanca para a frente do corpo. Topo reto na altura
+    # cheia (o trilho de apoio), borda inferior reta, e as quatro pontas
+    # arredondadas em R_ABA -- que e o ajuste pedido no layout.
+    ys = list(np.linspace(Y_ABA_FIM, Y_ABA_RAIZ, 14))
+    perfil_aba = [(Y_ABA_NARIZ, Z_ABA_BASE), (Y_ABA_NARIZ, ALT)]
+    perfil_aba += [(float(y), float(z_aresta(y))) for y in ys]
+    perfil_aba += [(Y_ABA_RAIZ, Z_ABA_BASE)]
+    aba2d = make_face(Polyline(*perfil_aba, close=True))
+    aba2d = fillet(aba2d.vertices().filter_by_position(
+        Axis.X, Y_ABA_NARIZ - 1, Y_ABA_FIM + 1), R_ABA)
     for sx in (-1, 1):
-        z_mid = (ALT_FRENTE + ALT) / 2
-        x_mid = secao(z_mid)[0] / 2
-        h = ALT - ALT_FRENTE
-        p += Pos(sx * (x_mid + POST_P / 2 - POST_T / 2),
-                 -PROF / 2 + POST_Y / 2, ALT_FRENTE + h / 2) * \
-            Box(POST_P + POST_T, POST_Y, h)
+        x_aba = secao((ALT + Z_ABA_BASE) / 2)[0] / 2
+        p += Pos(sx * (x_aba - T_ABA / 2), 0, 0) * \
+            (Rot(0, 90, 0) * extrude(Plane.YZ * aba2d, T_ABA, both=True))
 
     # --- pes de canto: bordos que alcancam a medida da boca ---
     # Assentam nos quatro topos cheios da peca de baixo: os dois pilares da
