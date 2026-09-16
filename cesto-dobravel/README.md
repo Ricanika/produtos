@@ -12,6 +12,15 @@ Todo número de máquina, resina, custo, ferramental e venda abaixo saiu do Sank
 compras, cadastro de centros de trabalho, custos, projetos e faturamento), não de estimativa de
 catálogo. As fontes estão citadas em cada seção. A memória de cálculo é `calculo-dobravel.py`.
 
+
+> **Correção de 16/09/2026 — leia antes das seções 4, 6, 7, 9 e 10.**
+> O modelo 3D (`cad/modelo3d.py`) mostrou que este estudo contava a saia do
+> fundo duas vezes: calculava o painel com a altura externa cheia, quando o
+> painel começa no topo da saia. Peso, tonelagem, ferramental e payback abaixo
+> foram corrigidos com o volume do sólido real; **a conclusão da seção 7.2
+> mudou de sinal** e está refeita. O detalhamento e a lista completa de
+> correções estão em [`P-especificacao.md`](P-especificacao.md), seção 1.
+
 ---
 
 ## 1. Veredito
@@ -19,21 +28,21 @@ catálogo. As fontes estão citadas em cada seção. A memória de cálculo é `
 | Requisito | Situação |
 |---|---|
 | Cesto vazado dobrável empilhável | **Viável** — a casa já fabrica caixa dobrável (ref. 213) desde antes de 2019 |
-| 3 tamanhos com empilhamento coerente | **Viável e resolvido** — passo único de 54 mm, duas P = uma G (seção 4) |
+| 3 tamanhos com empilhamento coerente | **Viável e resolvido** — passo único de 58 mm, duas P = uma G (seção 4) |
 | Dobrar plano | **Viável, e é a restrição que dimensiona o produto** — obriga largura interna ≥ altura do painel traseiro (seção 4.2) |
 | Cantos arredondados | **Viável com uma regra rígida**: o raio mora no fundo e nas colunas de canto; **os painéis têm que ficar planos** (seção 5) |
 | Injeção no parque atual | **Cabe sem máquina nova**, mas o fundo monopoliza a INJ 34 (600 t) em campanha (seção 7) |
 | Resina | **Já é compra de rotina** — PP CP 141 copolímero, 109 t em 12 meses (seção 8) |
-| Ferramental | **USD 86,2 mil FOB** para a família inteira: 4 moldes + 4 jogos de inserto (seção 9) |
-| Payback | **≈ 11 meses** ao ritmo de venda do organizador 16 L de hoje (seção 10) |
-| Ganho de e-commerce | **Frete cobrado cai 4,5× no tamanho G** (6,37 → 1,42 kg cubados) — é a tese do produto (seção 6) |
+| Ferramental | **USD 114,6 mil FOB** para a família inteira: 4 moldes + 6 jogos de inserto (seção 9) |
+| Payback | **≈ 17,8 meses** a 21.500 un/ano por tamanho (seção 10) |
+| Ganho de e-commerce | **Frete cobrado cai 6,3× no tamanho G** (6,84 → 1,09 kg cubados) — é a tese do produto (seção 6) |
 | Ficha das injetoras | **Bloqueio de dado, herdado** — `AD_INJETORAFICHA` segue vazia (seção 7.3) |
 
 O ponto crítico desta linha não é tonelagem nem custo: é **geometria de dobra**. Um painel
 articulado numa aresta tomba sobre a dimensão oposta, então a altura do painel traseiro não pode
-passar da largura interna do fundo. Isso amarra volume, footprint e altura num só nó — e é o que
-define o footprint de 345 × 285 mm. Encolher o fundo para caber numa injetora de 380 t faz o
-tamanho de 20 L deixar de dobrar (seção 7.2).
+passar da largura interna do fundo. Com os painéis embutidos, os quatro tombam **para dentro da
+bandeja** — e por isso os três tamanhos fecham na mesma altura dobrada de 37 mm, o que dá uma
+caixa master única para a família.
 
 ---
 
@@ -89,41 +98,45 @@ o 100, que já está aprovado. Abrir projeto novo é recomeçar uma aprovação 
 ### 4.1 Passo de empilhamento
 
 ```
-módulo M = 54 mm
-P = 2 M = 108 mm      M = 3 M = 162 mm      G = 4 M = 216 mm
+módulo M = 58 mm
+P = 2 M = 116 mm      M = 3 M = 174 mm      G = 4 M = 232 mm
 ```
 
 O passo empilhado é a altura externa exata, porque o pé de cada peça assenta no berço do rim da
-peça de baixo — sem sobra. Toda combinação fecha em múltiplo de 54 mm, e **duas P somam exatamente
-uma G** (216 mm), que é a regra que o cliente percebe na prateleira.
+peça de baixo — sem sobra. Toda combinação fecha em múltiplo de 58 mm, e **duas P somam exatamente
+uma G** (232 mm), que é a regra que o cliente percebe na prateleira.
 
 | Combinação | Altura | |
 |---|---|---|
-| P + P | 216 mm | = G |
-| P + M | 270 mm | 5 M |
-| M + M / P + P + P | 324 mm | 6 M |
-| G + G | 432 mm | 8 M |
+| P + P | 232 mm | = G |
+| P + M | 290 mm | 5 M |
+| M + M / P + P + P | 348 mm | 6 M |
+| G + G | 464 mm | 8 M |
 
 ### 4.2 A regra da dobra — a restrição que manda no projeto
 
 Um painel articulado numa aresta de comprimento E **tomba sobre a dimensão oposta**:
 
-- os dois **laterais** (285 mm, articulados nas arestas curtas) tombam sobre o **comprimento
-  interno**, 336 mm → altura ≤ 330 mm, folgado;
-- o **traseiro** (345 mm, articulado na aresta longa) tomba sobre a **largura interna**, 276 mm →
-  **altura ≤ 270 mm**. Esta é a restritiva.
+- os dois **laterais** (277 mm, articulados nas arestas curtas) tombam sobre o **comprimento
+  interno**, 331 mm → altura ≤ 325 mm, folgado;
+- o **traseiro** (337 mm, articulado na aresta longa) tomba sobre a **largura interna**, 271 mm →
+  **altura ≤ 265 mm**. Esta é a restritiva.
 
-Com o G a 216 mm, a margem é de 54 mm — um módulo inteiro de folga, o que deixa espaço para um
-quarto tamanho (5 M = 270 mm, ~25 L) no futuro sem tocar no fundo.
+Com o G a 205 mm de painel, a margem é de 60 mm — sobra para um quarto tamanho (5 M = 290 mm,
+~25 L) no futuro sem tocar no fundo.
 
-**Ordem de dobra:** laterais → traseiro → frontal. Os dois laterais de 216 mm tombando de arestas
-opostas sobre 336 mm **se sobrepõem em 96 mm**, então os eixos de dobradiça são **escalonados em
-~5 mm por camada**, para cada painel assentar sobre o anterior. Isso é o que faz a altura dobrada
-fechar em 48 mm com quatro camadas.
+Os painéis são **embutidos** (337 e 277 mm contra uma boca de 340 × 280 mm), então tombam **para
+dentro da bandeja** e não sobre o rim. Acima de 37 mm quem manda é a saia do fundo, não os
+painéis — e por isso **os três tamanhos fecham na mesma altura dobrada**.
+
+**Ordem de dobra:** laterais → traseiro → frontal. No P os quatro tombam lado a lado sem se
+sobrepor; no M e no G os laterais se sobrepõem, e aí os eixos de dobradiça precisam ser
+**escalonados em ~3,8 mm por camada**. Como o fundo é comum aos três, **as orelhas já têm que sair
+escalonadas no molde do fundo** — se isso não entrar na cotação, o M e o G não dobram.
 
 ### 4.3 Por que os dois painéis repetidos são os menores
 
-Os painéis que existem em par são os de 285 mm (esquerdo e direito); o de 345 mm é único (traseiro).
+Os painéis que existem em par são os de 277 mm (esquerdo e direito); o de 337 mm é único (traseiro).
 Isso não é detalhe de nomenclatura: o molde de 2 cavidades é o do painel **menor**, o que derruba a
 tonelagem de 341 t para 282 t e leva a lateral do G das 600 t para as 380 t (seção 7.1).
 
@@ -167,29 +180,32 @@ citado no projeto 116 para "elevar o nível do produto".
 
 ## 6. Especificação dimensional e o ganho de e-commerce
 
-**Footprint externo comum aos 3: 345 × 285 mm** · interno 336 × 276 mm (927 cm²) · frontal rebaixado
-comum de 70 mm · parede de painel 1,8 mm, fundo 2,2 mm, moldura de painel 3,0 mm.
+**Footprint externo comum aos 3: 345 × 285 mm** · cavidade interna 331 × 271 mm · saia de 30 mm com
+R15 e pé de 5 mm · frontal rebaixado a 55% do painel (50 / 80 / 115 mm) · parede de painel 1,8 mm,
+fundo 2,2 mm, moldura de painel 3,0 mm.
 
 | Tamanho | Altura ext. | Passo | Volume | Peso | Altura dobrada | Compactação |
 |---|---|---|---|---|---|---|
-| P | 108 mm | 2 M | **9,81 L** | 563 g | 48 mm | 2,2× |
-| M | 162 mm | 3 M | **14,82 L** | 626 g | 48 mm | 3,4× |
-| G | 216 mm | 4 M | **19,83 L** | 689 g | 48 mm | 4,5× |
+| P | 116 mm | 2 M | **9,76 L** | 436,7 g | 37 mm | 3,1× |
+| M | 174 mm | 3 M | **14,96 L** | 514,8 g | 37 mm | 4,7× |
+| G | 232 mm | 4 M | **20,16 L** | 588,8 g | 37 mm | 6,3× |
 
-Comercializar como **10 L / 15 L / 20 L**. O G reencontra os 20 L do ref. 213 — e com **689 g contra
-800 g, é 14% mais leve que a caixa dobrável que a casa faz hoje**, o que responde à pergunta aberta
-no projeto 73.
+Módulo de 58 mm (e não 54: com os painéis embutidos o volume interno caiu, e 58 mm devolve as
+litragens redondas). Pesos medidos no volume do sólido, não estimados por área.
+
+Comercializar como **10 L / 15 L / 20 L**. O G reencontra os 20 L do ref. 213 — e com **588,8 g
+contra 800 g, é 26% mais leve que a caixa dobrável que a casa faz hoje**, o que responde à pergunta
+aberta no projeto 73.
 
 ### Decomposição de peso (g)
 
 | | fundo | lateral | × 2 | traseira | frontal | total |
 |---|---|---|---|---|---|---|
-| P | 316 | 58 | 116 | 69 | 62 | 563 |
-| M | 316 | 78 | 156 | 92 | 62 | 626 |
-| G | 316 | 98 | 196 | 115 | 62 | 689 |
+| P | 280,9 | 38,3 | 76,6 | 45,8 | 33,4 | **436,7** |
+| M | 280,9 | 58,0 | 116,0 | 69,0 | 48,8 | **514,8** |
+| G | 280,9 | 75,0 | 150,1 | 88,9 | 68,9 | **588,8** |
 
-O fundo é 46% do peso do G e **56% do peso do P** — é daí que sai o problema comercial do tamanho
-pequeno (seção 10.2).
+O fundo é 48% do peso do G e **64% do peso do P**.
 
 ### O ganho de frete
 
@@ -198,19 +214,20 @@ peso cubado:
 
 | Tamanho | Montado | Peso cubado | Dobrado | Peso cubado | Frete cobrado |
 |---|---|---|---|---|---|
-| P | 10,6 dm³ | 3,19 kg | 4,7 dm³ | 1,42 kg | **2,2× menor** |
-| M | 15,9 dm³ | 4,78 kg | 4,7 dm³ | 1,42 kg | **3,4× menor** |
-| G | 21,2 dm³ | 6,37 kg | 4,7 dm³ | 1,42 kg | **4,5× menor** |
+| P | 11,41 dm³ | 3,42 kg | 3,64 dm³ | 1,09 kg | **3,1× menor** |
+| M | 17,11 dm³ | 5,13 kg | 3,64 dm³ | 1,09 kg | **4,7× menor** |
+| G | 22,81 dm³ | 6,84 kg | 3,64 dm³ | 1,09 kg | **6,3× menor** |
 
 **É isso que justifica o produto no canal.** O que o histórico da Amazon mostra é justamente a
 ausência do volumoso: nos R$ 292,6 mil de 12 meses, o que vende são frasqueiras e gaveteiros densos
 (137 a R$ 11,13; 142 a R$ 21,19; 004/4P a R$ 21,65), enquanto o organizador flat 10,35 L fez **222
 peças** e o cesto transporta-tudo **336**. Organizador vazado é oco: paga frete de ar. Dobrado, o G
-sai de 6,37 para 1,42 kg cobrados — a categoria inteira muda de patamar no e-commerce.
+sai de 6,84 para 1,09 kg cobrados — a categoria inteira muda de patamar no e-commerce.
 
 Efeito no armazém, pela mesma conta: num pallet PBR (1.200 × 1.000 mm) com 1,80 m de empilhamento
-útil cabem **9 peças por camada**; montado o G dá 8 camadas (**72 peças**), dobrado dá 37 camadas
-(**333 peças**) — **4,6× mais por pallet**.
+útil cabem **9 peças por camada**; montado o G dá 7 camadas (**63 peças**), dobrado dá 48 camadas
+(**432 peças**) — **6,9× mais por pallet**. E como os três tamanhos dobram na mesma altura, o
+pallet leva 432 peças de qualquer litragem.
 
 ---
 
@@ -224,41 +241,49 @@ limitado a 80% da capacidade da máquina. Área projetada do painel desconta o v
 | Peça | Cav. | Fechamento | Máquina | Uso | Injetoras |
 |---|---|---|---|---|---|
 | Fundo (comum aos 3) | 1 | 346 t | 600 t | 58% | **INJ 34** |
-| Lateral P (× 2) | 2 | 141 t | 200 t | 70% | INJ 1–6, 19–22, 35, 37 |
-| Lateral M (× 2) | 2 | 211 t | 280 t | 75% | INJ 29 |
-| Lateral G (× 2) | 2 | 282 t | 380 t | 74% | INJ 31, 32, 33 |
-| Traseira P | 2 | 171 t | 250 t | 68% | INJ 23–28, 38, 39, 46 |
-| Traseira M | 2 | 256 t | 380 t | 67% | INJ 31, 32, 33 |
-| Traseira G | **1** | 171 t | 250 t | 68% | INJ 23–28, 38, 39, 46 |
-| Frontal (comum aos 3) | 4 | 272 t | 380 t | 72% | INJ 31, 32, 33 |
+| Lateral P | 2 | 126 t | 160 t | 79% | INJ 7–12, 36, 40, 41 |
+| Traseira P | 2 | 151 t | 200 t | 75% | INJ 1–6, 19–22, 35, 37 |
+| Frontal P | 2 | 119 t | 150 t | 79% | INJ 42, 43 |
+| Lateral M | 2 | 205 t | 280 t | 73% | INJ 29 |
+| Traseira M | 2 | 245 t | 380 t | 64% | INJ 31, 32, 33 |
+| Frontal M | 2 | 190 t | 250 t | 76% | INJ 23–28, 38, 39, 46 |
+| Lateral G | 2 | 272 t | 380 t | 72% | INJ 31, 32, 33 |
+| Traseira G | 2 | 324 t | 600 t | 54% | INJ 34 |
+| Frontal G | 2 | 273 t | 380 t | 72% | INJ 31, 32, 33 |
 
-A traseira do G roda em **1 cavidade nas 250 t** de propósito: com 2 cavidades dá 341 t e cairia na
-INJ 34, disputando a única 600 t com o fundo. Uma cavidade nas 250 t resolve sem molde a mais.
+Só o fundo precisa de máquina grande, e ocupa pouco: a 21.500 unidades/ano com ciclo estimado de
+28 s e 1 cavidade, são **~170 h/ano da INJ 34**, 2% de um turno único. Fundo e traseira do G
+rodam na mesma máquina em campanhas separadas (40 min de setup, `TPRWCP.TEMPOSETUP`).
 
-Fundo e traseira G são peças diferentes do mesmo produto, então a produção é **por campanha** com
-troca de molde — 40 min de setup por `TPRWCP.TEMPOSETUP`. Com ciclo de ~42 s, um turno duplo de 22
-dias na INJ 34 entrega ~30 mil fundos/mês, contra uma demanda projetada de 8–10 mil conjuntos/mês.
-Sobra folga.
+### 7.2 Encolher o fundo: viável, e a decisão é de risco, não de geometria
 
-### 7.2 O nó: encolher o fundo quebra o tamanho de 20 L
+**Esta seção dizia o contrário e estava errada** (ver o aviso no topo). Com a altura de painel
+correta — painel = altura externa − 27 mm, e não a altura externa cheia — o footprint menor
+**cabe**:
 
-Tentador fazer o fundo caber nas 380 t e liberar a INJ 34. A conta fecha e o produto quebra:
+| | 345 × 285 (recomendado) | 340 × 254 (alternativa) |
+|---|---|---|
+| Fechamento do fundo | 346 t | 303 t |
+| Máquina do fundo | 600 t (INJ 34), 58% | **380 t (INJ 31/32/33), 80%** |
+| Painel do G | 205 mm | 205 mm |
+| Limite de dobra | 265 mm | 239 mm — **passa** |
+| Volume do G | 20,16 L | ~19,9 L |
 
-- 80% de 380 t com valvulado ⇒ área do fundo ≤ 864 cm² ⇒ footprint ~340 × 254 mm;
-- interno cai para 331 × 245 mm; para manter 20 L, a altura interna vai a **247 mm**;
-- a regra da dobra (4.2) limita o painel traseiro a 245 − 6 = **239 mm**.
+A alternativa libera a única 600 t da casa e espalha o fundo em três máquinas. O preço é rodar a
+**80% do fechamento, sem folga**, sobre um coeficiente de pressão (0,32 t/cm²) que é premissa e só
+se confirma no try-out — no molde mais caro da família.
 
-**Falha por 8 mm.** As saídas são: (a) manter 345 × 285 e o fundo na INJ 34 — recomendada; (b) topar
-a família em 15 L e usar as 380 t; (c) partir o painel traseiro em duas metades (bi-fold), somando
-peça, molde e custo de montagem. O 20 L é o tamanho com mandato no ERP (projeto 100, ref. 213) e a
-INJ 34 tem folga: fica (a).
+**Recomendação: manter 345 × 285.** Não por geometria, mas por risco: a INJ 34 tem folga
+documentada e descobrir no try-out que o fundo não fecha na 380 t custa mais que o ganho. Vale
+levar a pergunta à ferramentaria: se a MR Plastic Mould garantir 0,30 t/cm² com valvulado
+sequencial, a alternativa passa a ter folga e muda a recomendação.
 
 ### 7.3 Bloqueio de dado — herdado do estudo dos potes
 
 `AD_INJETORAFICHA` (ficha Haitian, 1:1 com `TPRWCP`) continua com **1 registro e todos os campos de
 especificação nulos**. Curso de abertura, altura máx/mín de molde e distância entre colunas seguem
 **não conferíveis no sistema**. Para esta linha o risco é menor que no dos potes — a peça mais
-profunda tem 216 mm contra os 250 mm do pote de 2 L — mas o molde do fundo tem 620 × 540 mm de
+profunda tem 232 mm contra os 250 mm do pote de 2 L — mas o molde do fundo tem 620 × 540 mm de
 bloco e **a distância entre colunas da INJ 34 precisa ser medida em campo antes do pedido**.
 
 ### 7.4 Centros de trabalho "NITRON" — capacidade não confirmada
@@ -303,10 +328,18 @@ em altura — resolvida por **inserto de altura**, não por molde novo.
 | Molde | Cav. | Bloco | Aço | FOB USD | Observação |
 |---|---|---|---|---|---|
 | Fundo | 1 | 620 × 540 × 520 | 1.367 kg | **30.133** | câmara quente 4 bicos valvulados |
-| Lateral | 2 | 700 × 460 × 420 | 1.062 kg | **22.863** | + 2 jogos de inserto (M e P) |
-| Traseira | 2 | 700 × 460 × 420 | 1.062 kg | **22.863** | + 2 jogos de inserto (M e P) |
-| Frontal | 4 | 620 × 420 × 360 | 736 kg | **10.302** | comum aos 3 tamanhos |
-| | | | | **86.161** | |
+| Lateral | 2 | 700 × 460 × 460 | 1.163 kg | **29.278** | + 2 jogos de inserto (M e G) |
+| Traseira | 2 | 700 × 460 × 460 | 1.163 kg | **29.278** | + 2 jogos de inserto (M e G) |
+| Frontal | 2 | 700 × 420 × 400 | 923 kg | **25.924** | + 2 jogos de inserto (M e G) |
+| | | | | **114.614** | |
+
+Subiu dos USD 86,2 mil estimados por dois motivos legítimos: o frontal deixou de ser comum aos
+três (70 mm fecharia o acesso do P e deixaria o G aberto demais — a altura passou a ser 55% do
+painel), e os insertos de altura carregam as próprias filas de pinos de furo, então custam
+USD 6,5 mil e não USD 4 mil o jogo.
+
+**Rodar o P primeiro é barato:** os 4 moldes base (USD 75,6 mil) são do P e o M e o G os herdam;
+cada litragem seguinte entra por **3 jogos de inserto, ~USD 19,5 mil**, sem molde novo.
 
 Preço calculado a **14 USD/kg de bloco**, que é a média dos três moldes comparáveis da casa
 (`AD_MOLDE` + `AD_ORCAMENTO`, todos com a **MR Plastic Mould**):
@@ -318,7 +351,7 @@ Preço calculado a **14 USD/kg de bloco**, que é a média dos três moldes comp
 | 214-U organizador duplo | 450 × 550 × 580 | 1.128 kg | 250 t | 18.900 | 16,8 |
 
 Para calibrar a ordem de grandeza: o molde único do projeto 115 (potes modulares, 2 cavidades) foi
-aprovado a **USD 47.100**. USD 86,2 mil por uma família de 3 tamanhos, com 4 moldes e 4 jogos de
+aprovado a **USD 47.100**. USD 114,6 mil por uma família de 3 tamanhos, com 4 moldes e 6 jogos de
 inserto, está dentro da escala de compra da casa.
 
 **A nacionalização não está calculada aqui.** O valor é FOB; frete, II, IPI e ICMS sobre molde
@@ -355,40 +388,41 @@ desatualizado e não usei na faixa.)
 
 | Tamanho | Peso | Custo | Preço | Margem | R$/L |
 |---|---|---|---|---|---|
-| P 10 L | 563 g | R$ 10,99 | R$ 20,29 | 45,8% | 2,07 |
-| M 15 L | 626 g | R$ 12,21 | R$ 22,55 | 45,8% | 1,52 |
-| G 20 L | 689 g | R$ 13,44 | R$ 24,81 | 45,8% | 1,25 |
-| **Kit P+M+G** | 1.878 g | **R$ 36,64** | **R$ 67,65** | 45,8% | — |
+| P 10 L | 436,7 g | R$ 8,52 | R$ 15,72 | 45,8% | 1,61 |
+| M 15 L | 514,8 g | R$ 10,04 | R$ 18,53 | 45,8% | 1,24 |
+| G 20 L | 588,8 g | R$ 11,48 | R$ 21,20 | 45,8% | 1,05 |
+| **Kit P+M+G** | 1.540 g | **R$ 30,04** | **R$ 55,45** | 45,8% | — |
 
-O G a R$ 1,25/L entrega **melhor valor por litro que a organizadora 16 L de hoje** (R$ 1,40/L), com
-dobra e empilhamento de bônus. A conta ainda não tem o custo de montagem das 5 peças, que roda nos
+O G a R$ 1,05/L entrega **valor por litro bem melhor que a organizadora 16 L de hoje** (R$ 1,40/L),
+com dobra e empilhamento de bônus. A conta ainda não tem o custo de montagem das 5 peças, que roda nos
 centros MONTAGEM (CODWCP 78, 79) e precisa de cronoanálise — **por isso trate a margem de 45,8%
 como teto**, não como previsão.
 
-### 10.2 O tamanho P não se vende sozinho — e isso tem solução conhecida
+### 10.2 O tamanho P: o problema encolheu, mas não desapareceu
 
-Com fundo comum, o P carrega os mesmos 316 g de fundo do G. Resultado: custa 82% do G para entregar
-metade do volume, e sai a **R$ 2,07/L** contra R$ 1,25/L do G. Sozinho na gôndola, perde para a
-organizadora 16 L.
+O estudo estimava o P em 563 g e R$ 2,07/L, e concluía que ele não se venderia sozinho. Com o peso
+real de 436,7 g, o P sai a **R$ 1,61/L** — contra R$ 1,40/L da organizadora rattan 16 L e R$ 1,21/L
+da flat 10,35 L. Continua sendo o pior valor por litro da família (o fundo comum é 64% do seu
+peso), mas agora está **dentro da faixa da categoria**, não fora dela.
 
-A saída já é prática da casa: **vender em kit**. O Kit Potes Modulares 6 peças fez **19.078 kits e
-R$ 449 mil em 12 meses** a R$ 23,54 médio (levantado no estudo dos potes modulares, `TGFITE`/`TGFCAB`). O P existe para ser o andar de cima da pilha — bandeja
-rasa de itens pequenos — e o kit dos três a R$ 67,65 é o SKU principal do lançamento. Vender o P
-avulso é decisão comercial, não necessidade.
+Isso muda a estratégia de lançamento: o P pode ir sozinho à gôndola. O kit dos três a R$ 55,45
+continua sendo o SKU mais interessante — e a casa já tem a prática (o Kit Potes Modulares 6 peças
+fez 19.078 kits e R$ 449 mil em 12 meses) — mas deixou de ser necessidade.
 
 ### 10.3 Payback
 
 | | |
 |---|---|
-| Investimento nacionalizado (premissa: R$ 5,45/USD, +30%) | R$ 610.453 |
-| Margem de contribuição por kit P+M+G | R$ 31,01 |
+| Investimento nacionalizado (premissa: R$ 5,45/USD, +30%) | R$ 812.041 |
+| Margem de contribuição por kit P+M+G | R$ 25,41 |
 | Volume assumido | 21.500 un/ano por tamanho |
-| Contribuição anual | R$ 666.615 |
-| **Payback** | **≈ 11 meses** |
+| Contribuição anual | R$ 546.407 |
+| **Payback** | **≈ 17,8 meses** |
 
 O volume de 21.500/ano por tamanho é um terço do que a organizadora 16 L (069) vendeu em 12 meses
-(64.606 peças) — quer dizer, o payback fecha se a família nova apenas empatar com **um** produto da
-categoria, numa categoria que fatura R$ 20,2 milhões/ano.
+(64.606 peças) — quer dizer, o payback de 17,8 meses fecha se a família nova apenas empatar com
+**um** produto da categoria, numa categoria que fatura R$ 20,2 milhões/ano. Se a família chegar ao
+ritmo do 069 em cada litragem, cai para ~6 meses.
 
 ---
 
@@ -413,8 +447,9 @@ categoria, numa categoria que fatura R$ 20,2 milhões/ano.
 2. **Medir a INJ 34** (distância entre colunas, altura de molde) e preencher `AD_INJETORAFICHA` para
    as 46 injetoras. É o único bloqueio que impede fechar o pedido do molde do fundo.
 3. **Perguntar à produção sobre os centros NITRON 47–59**, em especial a 1.100 t.
-4. **Cotar com a MR Plastic Mould** os 4 moldes + 4 jogos de inserto, pedindo separado o preço da
-   câmara quente valvulada do fundo — é o item que decide entre 380 t e 600 t.
+4. **Cotar com a MR Plastic Mould** os 4 moldes + 6 jogos de inserto, pedindo separado o preço da
+   câmara quente valvulada do fundo e exigindo **pinos de furo postiços** (539 shut-offs no G) e
+   **orelhas de dobradiça escalonadas** no molde do fundo.
 5. **Fechar o desenho** com o design: raio R15 no fundo e nas colunas de canto, painéis planos,
    ripado vertical ou textura da linha, chumbo + branco.
 6. **Try-out do fundo primeiro**, isolado: é a peça que carrega dobradiça, berço de empilhamento,

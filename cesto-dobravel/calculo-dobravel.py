@@ -1,236 +1,171 @@
 #!/usr/bin/env python3
 """
-Memoria de calculo da linha de cestos organizadores dobraveis empilhaveis em PP.
+Memoria de calculo da linha de cestos organizadores dobraveis empilhaveis.
 
-Arquitetura: fundo unico (comum aos 3 tamanhos) + 4 paineis planos articulados
-(2 laterais, 1 traseiro, 1 frontal rebaixado comum). Os paineis dobram sobre o
-fundo, o conjunto achata, e a peca empilha pelo pe que assenta no berco do rim.
+Fonte unica: importa a geometria de cad/modelo3d.py e le PESO e AREA do solido
+real, em vez de reestimar por area de parede. A versao anterior deste arquivo
+mantinha sua propria estimativa em paralelo ao 3D -- e foi exatamente essa
+duplicacao que produziu o erro de contar a saia do fundo duas vezes.
 
-Regra de empilhamento: a altura externa de cada tamanho e multiplo inteiro do
-modulo M, entao qualquer combinacao empilhada fecha em altura redonda e duas
-P somam exatamente uma G.
-
-Regra da dobra (a que restringe o projeto): um painel articulado na aresta de
-comprimento E tomba sobre a dimensao oposta. Os laterais (articulados nas
-arestas longas) tombam sobre a LARGURA interna -- logo a altura do painel nao
-pode passar da largura interna, ou a peca nao achata.
-
-Uso:  python3 calculo-dobravel.py [--largura 285]
+Uso:  python3 calculo-dobravel.py
 """
+import math
+import os
 import sys
 
-RHO       = 0.905e-3    # g/mm3 - PP
-EXT_C     = 345.0       # comprimento externo do fundo (mm)
-EXT_L     = 285.0       # largura externa do fundo (mm)
-T_FUNDO   = 2.2         # parede do fundo (mm)
-T_PAINEL  = 1.8         # parede de campo do painel (mm)
-T_MOLDURA = 3.0         # moldura perimetral do painel (mm)
-H_MOLDURA = 12.0        # altura da moldura perimetral (mm)
-T_RIM     = 4.5         # recuo do conjunto rim+coluna de canto por lado (mm)
-T_SAIA    = 2.5         # parede da saia do fundo (mm)
-H_RIM     = 30.0        # altura do rim/saia do fundo (mm)
-VAZADO    = 0.35        # fracao de area aberta no painel
-MODULO    = 54.0        # passo de empilhamento (mm)
-NMOD      = {"P": 2, "M": 3, "G": 4}
-H_FRONTAL = 70.0        # painel frontal rebaixado, comum aos 3 (mm)
-T_FRONTAL = 2.0
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "cad"))
+import modelo3d as M                                            # noqa: E402
 
-PRES_PLANO  = 0.40      # t/cm2 - canal frio, peca plana de parede fina
-PRES_VALVUL = 0.32      # t/cm2 - camara quente com bico valvulado sequencial
-CANAL       = 1.10      # acrescimo de canal/galho no fechamento
+# --- premissas de processo --------------------------------------------------
+PRES_FRIO   = 0.40        # t/cm2 - canal frio, peca plana de parede fina
+PRES_VALVUL = 0.32        # t/cm2 - camara quente com bico valvulado sequencial
+CANAL       = 1.10        # acrescimo de canal no fechamento
+USO_MAX     = 0.80        # fracao maxima do fechamento da maquina
 
-CUSTO_KG  = 19.50       # R$/kg de peca acabada - media dos organizadores (TGFCUS)
-PRECO_KG  = 36.00       # R$/kg - preco medio de venda da linha (TGFITE 12 meses)
-CUBAGEM   = 300.0       # kg/m3 - fator de cubagem rodoviaria
+# parque confirmado (TPRWCP + TPRCAP, 16/09/2026)
+PARQUE = [(120, "13-17, 44, 45"), (150, "42, 43"), (160, "7-12, 36, 40, 41"),
+          (200, "1-6, 19-22, 35, 37"), (250, "23-28, 38, 39, 46"), (280, "29"),
+          (300, "30"), (380, "31, 32, 33"), (600, "34")]
 
+# --- premissas comerciais ---------------------------------------------------
+CUSTO_KG = 19.50          # R$/kg de peca acabada (TGFCUS x TGFPRO, faixa 14,0-21,7)
+PRECO_KG = 36.00          # R$/kg de preco de venda (TGFITE 12 m, faixa 31,7-45,0)
+RESINA_KG = 10.52         # R$/kg - PP CP 141 copolimero (CODPROD 994)
+CUBAGEM = 300.0           # kg/m3 - fator de cubagem rodoviaria
+PALLET = (1200.0, 1000.0, 1800.0)
 
-def interno():
-    return EXT_C - 2 * T_RIM, EXT_L - 2 * T_RIM
-
-
-def peso_fundo():
-    """Fundo: chapa + saia perimetral + pes/berco de empilhamento e dobradicas."""
-    chapa = EXT_C * EXT_L * T_FUNDO
-    saia = 2 * (EXT_C + EXT_L) * H_RIM * T_SAIA
-    # colunas de canto (o raio externo do produto) + pes + bercos de dobradica
-    colunas = 4 * (T_RIM * T_RIM * 2.2) * H_RIM / T_RIM
-    extras = 0.12 * (chapa + saia)           # pes, berco de empilhamento, bossas
-    return (chapa + saia + colunas + extras) * RHO
+# --- ferramental ------------------------------------------------------------
+ACO_KG_DM3 = 7.85
+USD_KG     = 14.00        # media dos 3 moldes comparaveis (AD_MOLDE/AD_ORCAMENTO)
+CAMARA     = 11000.0      # camara quente 4 bicos valvulados, no fundo
+INSERTO    = 6500.0       # jogo de inserto de altura -- carrega as proprias
+                          # filas de pinos de furo, nao e so bloco de shut-off
+MOLDES = [("fundo 1 cav",    (620, 540, 520), True,  0),
+          ("lateral 2 cav",  (700, 460, 460), False, 2),
+          ("traseira 2 cav", (700, 460, 460), False, 2),
+          ("frontal 2 cav",  (700, 420, 400), False, 2)]
 
 
-def peso_painel(larg, alt, t_campo=T_PAINEL, vazado=VAZADO, t_mold=T_MOLDURA):
-    campo = larg * alt * (1 - vazado) * t_campo
-    moldura = 2 * (larg + alt) * H_MOLDURA * t_mold
-    return (campo + moldura) * RHO
+def area_furos(larg, alt):
+    """Area total dos furos de um painel, em cm2."""
+    n_col = len(M.colunas(larg))
+    return sum(n_col * math.pi / 4 * d ** 2 for _, d in M.filas(alt)) / 100.0
 
 
-def area_efetiva(larg, alt, vazado):
-    """Area projetada que conta no fechamento (o vazado nao conta)."""
-    return larg * alt * (1 - vazado) / 100.0     # cm2
+def dados(tam):
+    pecas, _, h_ext, alt, h_front = M.modelo(tam)
+    _, _, vol, vol_util = M.cavidade(h_ext, h_front)
+    peso = sum(n * m.volume * M.RHO for m, n, _ in pecas.values())
+    furos = sum(n * nf for _, n, nf in pecas.values())
+    pesos = {k: v[0].volume * M.RHO for k, v in pecas.items()}
+    return dict(tam=tam, h_ext=h_ext, alt=alt, h_front=h_front, vol=vol,
+                vol_util=vol_util, peso=peso, furos=furos, pesos=pesos)
 
 
-def linha():
-    ic, il = interno()
-    out = []
-    for nome, n in NMOD.items():
-        h_ext = n * MODULO
-        h_int = h_ext - T_FUNDO
-        vol = ic * il * h_int / 1e6                      # litros
-        p_lat = peso_painel(EXT_L, h_ext)
-        p_tras = peso_painel(EXT_C, h_ext)
-        p_front = peso_painel(EXT_C, H_FRONTAL, T_FRONTAL, 0.20, T_MOLDURA)
-        p_fundo = peso_fundo()
-        peso = p_fundo + 2 * p_lat + p_tras + p_front
-        dobra_ok = h_ext <= il - 6.0        # traseira sobre a largura: restritiva
-        h_dobrado = H_RIM + 4 * T_RIM
-        out.append(dict(nome=nome, n=n, h_ext=h_ext, vol=vol, peso=peso,
-                        p_fundo=p_fundo, p_lat=p_lat, p_tras=p_tras,
-                        p_front=p_front, dobra_ok=dobra_ok,
-                        h_dobrado=h_dobrado))
-    return out
+def aloca(rot, area_cm2, cavs, pres=PRES_VALVUL):
+    for cav in cavs:
+        t = area_cm2 * pres * CANAL * cav
+        for ton, maqs in PARQUE:
+            if t <= USO_MAX * ton:
+                return (f"{rot:16} {cav} cav {t:6.0f} t -> {ton:4.0f} t "
+                        f"({t/ton*100:2.0f}%)  INJ {maqs}")
+    return f"{rot:16} nao cabe no parque"
 
 
 def main():
-    global EXT_L
-    if "--largura" in sys.argv:
-        EXT_L = float(sys.argv[sys.argv.index("--largura") + 1])
+    L = [dados(t) for t in ("P", "M", "G")]
 
-    ic, il = interno()
-    print(f"Footprint externo   : {EXT_C:.0f} x {EXT_L:.0f} mm")
-    print(f"Footprint interno   : {ic:.0f} x {il:.0f} mm  ({ic*il/100:.0f} cm2)")
-    print(f"Modulo empilhamento : {MODULO:.0f} mm  (P={NMOD['P']}M, M={NMOD['M']}M, G={NMOD['G']}M)")
-    print(f"Limite da dobra     : painel lateral <= {il-6:.0f} mm (largura interna - folga)\n")
-
-    L = linha()
-
-    print("TAMANHOS")
-    print(f"{'':4} {'alt.ext':>8} {'volume':>8} {'peso':>8} {'dobra':>7} {'dobrado':>8} {'compact':>8}")
+    print("GEOMETRIA  (footprint comum %.0f x %.0f mm, modulo %.0f mm, "
+          "dobrado %.0f mm)" % (M.EXT_C, M.EXT_L, M.MODULO, M.H_PE + M.H_SAIA + 2))
+    print(f"{'':4} {'alt.ext':>8} {'painel':>8} {'frontal':>8} {'nominal':>9} "
+          f"{'util':>8} {'peso':>8} {'furos':>7}")
     for r in L:
-        print(f"{r['nome']:4} {r['h_ext']:7.0f}mm {r['vol']:6.2f} L {r['peso']:6.0f} g "
-              f"{'ok' if r['dobra_ok'] else 'FALHA':>7} {r['h_dobrado']:6.0f}mm "
-              f"{r['h_ext']/r['h_dobrado']:6.1f}x")
+        print(f"{r['tam']:4} {r['h_ext']:7.0f}mm {r['alt']:7.0f}mm {r['h_front']:7.0f}mm "
+              f"{r['vol']:7.2f} L {r['vol_util']:6.2f} L {r['peso']:6.1f} g {r['furos']:7}")
 
-    print("\nDECOMPOSICAO DE PESO (g)")
-    print(f"{'':4} {'fundo':>7} {'lateral':>8} {'x2':>7} {'traseira':>9} {'frontal':>8} {'total':>7}")
+    print("\nPESO POR PECA (g)")
+    print(f"{'':4} {'fundo':>8} {'lateral':>8} {'x2':>8} {'traseira':>9} "
+          f"{'frontal':>8} {'total':>8}")
     for r in L:
-        print(f"{r['nome']:4} {r['p_fundo']:7.0f} {r['p_lat']:8.0f} {2*r['p_lat']:7.0f} "
-              f"{r['p_tras']:9.0f} {r['p_front']:8.0f} {r['peso']:7.0f}")
+        p = r['pesos']
+        print(f"{r['tam']:4} {p['fundo']:8.1f} {p['lateral']:8.1f} "
+              f"{2*p['lateral']:8.1f} {p['traseira']:9.1f} {p['frontal']:8.1f} "
+              f"{r['peso']:8.1f}")
 
-    print("\nFECHAMENTO POR PECA (t)")
-    a_fundo = EXT_C * EXT_L / 100.0
-    def linha_fech(rot, area, cavs):
-        cel = "  ".join(f"{n}cav {area*PRES_PLANO*CANAL*n:4.0f}/{area*PRES_VALVUL*CANAL*n:4.0f} t"
-                        for n in cavs)
-        print(f"{rot:12} area {area:5.0f} cm2   {cel}")
-
-    print("  (frio/valvulado)")
-    linha_fech("fundo", a_fundo, [1])
-    for r in L:
-        linha_fech(f"lateral {r['nome']} x2", area_efetiva(EXT_L, r['h_ext'], VAZADO), [1, 2])
-        linha_fech(f"traseira {r['nome']}", area_efetiva(EXT_C, r['h_ext'], VAZADO), [1, 2])
-    linha_fech("frontal", area_efetiva(EXT_C, H_FRONTAL, 0.20), [1, 2, 4])
-
-    print("\nCUBAGEM E FRETE (fator {:.0f} kg/m3)".format(CUBAGEM))
-    print(f"{'':4} {'montado':>10} {'p.cubado':>9} {'dobrado':>10} {'p.cubado':>9} {'ganho':>7}")
-    for r in L:
-        v_m = EXT_C * EXT_L * r['h_ext'] / 1e9           # m3
-        v_d = EXT_C * EXT_L * r['h_dobrado'] / 1e9
-        pc_m = max(v_m * CUBAGEM, r['peso'] / 1000)
-        pc_d = max(v_d * CUBAGEM, r['peso'] / 1000)
-        print(f"{r['nome']:4} {v_m*1000:7.1f} dm3 {pc_m:7.2f}kg {v_d*1000:7.1f} dm3 "
-              f"{pc_d:7.2f}kg {pc_m/pc_d:6.1f}x")
-
-    print("\nCUSTO E PRECO (R$/kg de peca: custo {:.2f} / preco {:.2f})".format(CUSTO_KG, PRECO_KG))
-    print(f"{'':4} {'custo':>8} {'preco':>8} {'margem':>8} {'R$/L':>7}")
-    tot_c = tot_p = 0
-    for r in L:
-        c = r['peso'] / 1000 * CUSTO_KG
-        p = r['peso'] / 1000 * PRECO_KG
-        tot_c += c
-        tot_p += p
-        print(f"{r['nome']:4} {c:7.2f}  {p:7.2f}  {(p-c)/p*100:6.1f}% {p/r['vol']:6.2f}")
-    print(f"kit  {tot_c:7.2f}  {tot_p:7.2f}  {(tot_p-tot_c)/tot_p*100:6.1f}%")
-
-    print("\nALOCACAO DE MAQUINA (valvulado, limite de 80% do fechamento)")
-    PARQUE = [(120, "13-17, 44, 45"), (150, "42, 43"), (160, "7-12, 36, 40, 41"),
-              (200, "1-6, 19-22, 35, 37"), (250, "23-28, 38, 39, 46"), (280, "29"),
-              (300, "30"), (380, "31, 32, 33"), (600, "34")]
-
-    def aloca(rot, area, cav_pref):
-        for cav in cav_pref:
-            t = area * PRES_VALVUL * CANAL * cav
-            for ton, maqs in PARQUE:
-                if t <= 0.80 * ton:
-                    print(f"{rot:14} {cav} cav  {t:5.0f} t -> {ton:4.0f} t "
-                          f"({t/ton*100:2.0f}%)  INJ {maqs}")
-                    return
-        print(f"{rot:14} nao cabe no parque")
-
-    aloca("fundo", a_fundo, [1])
-    for r in L:
-        aloca(f"lateral {r['nome']} x2", area_efetiva(EXT_L, r['h_ext'], VAZADO), [2, 1])
-        aloca(f"traseira {r['nome']}", area_efetiva(EXT_C, r['h_ext'], VAZADO), [2, 1])
-    aloca("frontal", area_efetiva(EXT_C, H_FRONTAL, 0.20), [4, 2, 1])
-
-    print("\nCOMBINACOES EMPILHADAS (passo {:.0f} mm)".format(MODULO))
-    h = {r['nome']: r['h_ext'] for r in L}
-    for combo in (("P", "P"), ("P", "M"), ("M", "M"), ("P", "P", "P"),
-                  ("P", "M", "G"), ("G", "G")):
+    print("\nCOMBINACOES EMPILHADAS (passo = altura externa, multiplo de "
+          f"{M.MODULO:.0f} mm)")
+    h = {r['tam']: r['h_ext'] for r in L}
+    for combo in (("P", "P"), ("P", "M"), ("M", "M"), ("P", "P", "P"), ("G", "G")):
         tot = sum(h[c] for c in combo)
         igual = [k for k, v in h.items() if v == tot]
-        nota = f"= {igual[0]}" if igual else ""
-        print(f"  {'+'.join(combo):12} {tot:5.0f} mm   {tot/MODULO:.0f} M  {nota}")
+        print(f"  {'+'.join(combo):10} {tot:5.0f} mm = {tot/M.MODULO:.0f} modulos"
+              f"{'  = ' + igual[0] if igual else ''}")
 
+    print("\nALOCACAO DE MAQUINA (valvulado, limite de %.0f%% do fechamento)"
+          % (USO_MAX * 100))
+    a_fundo = M.EXT_C * M.EXT_L / 100.0
+    print(" ", aloca("fundo (comum)", a_fundo, [1]))
+    for r in L:
+        for rot, larg in (("lateral", M.LARG_CURTO), ("traseira", M.LARG_LONGO)):
+            bruta = larg * r['alt'] / 100.0
+            print(" ", aloca(f"{rot} {r['tam']}", bruta - area_furos(larg, r['alt']),
+                             [2, 1]))
+        print(" ", aloca(f"frontal {r['tam']}",
+                         M.LARG_LONGO * r['h_front'] / 100.0, [2, 1]))
 
-# --- ferramental -------------------------------------------------------------
-# Benchmark do proprio parque de moldes (AD_MOLDE + AD_ORCAMENTO, valores FOB USD):
-#   283-C corpo lixeira 12 L : 720x770x690 mm, 3.000 kg, 380 t -> USD 36.900 (12,3 USD/kg)
-#   284-U organizador limpeza: 600x550x600 mm, 1.556 kg, 280 t -> USD 20.100 (12,9 USD/kg)
-#   214-U organizador duplo  : 450x550x580 mm, 1.128 kg, 250 t -> USD 18.900 (16,8 USD/kg)
-ACO_KG_DM3 = 7.85          # kg/dm3 do bloco de aco
-USD_KG     = 14.00         # USD/kg - media dos 3 moldes acima
-CAMARA     = 11000.0       # USD - camara quente 4 bicos valvulados (fundo)
-INSERTO    = 4000.0        # USD - jogo de inserto de altura por tamanho
+    print(f"\nCUBAGEM E FRETE (fator {CUBAGEM:.0f} kg/m3, pallet PBR "
+          f"{PALLET[0]:.0f}x{PALLET[1]:.0f} com {PALLET[2]:.0f} mm uteis)")
+    h_dob = M.H_PE + M.H_SAIA + 2
+    por_camada = int(PALLET[0] // M.EXT_C) * int(PALLET[1] // M.EXT_L)
+    print(f"{'':4} {'montado':>10} {'cubado':>8} {'dobrado':>10} {'cubado':>8} "
+          f"{'frete':>7} {'pallet mont':>12} {'pallet dob':>11} {'ganho':>7}")
+    for r in L:
+        v_m = M.EXT_C * M.EXT_L * r['h_ext'] / 1e9
+        v_d = M.EXT_C * M.EXT_L * h_dob / 1e9
+        pc_m = max(v_m * CUBAGEM, r['peso'] / 1000)
+        pc_d = max(v_d * CUBAGEM, r['peso'] / 1000)
+        n_m = por_camada * int(PALLET[2] // r['h_ext'])
+        n_d = por_camada * int(PALLET[2] // h_dob)
+        print(f"{r['tam']:4} {v_m*1000:7.2f} dm3 {pc_m:6.2f}kg {v_d*1000:7.2f} dm3 "
+              f"{pc_d:6.2f}kg {pc_m/pc_d:6.1f}x {n_m:12} {n_d:11} {n_d/n_m:6.1f}x")
 
-MOLDES = [  # rotulo, bloco CxLxA (mm), camara quente?, jogos de inserto
-    ("fundo 1 cav",     (620, 540, 520), True,  0),
-    ("lateral 2 cav",   (700, 460, 420), False, 2),
-    ("traseira 2 cav",  (700, 460, 420), False, 2),
-    ("frontal 4 cav",   (620, 420, 360), False, 0),
-]
+    print(f"\nCUSTO E PRECO (custo R$ {CUSTO_KG:.2f}/kg, preco R$ {PRECO_KG:.2f}/kg, "
+          f"resina R$ {RESINA_KG:.2f}/kg)")
+    print(f"{'':4} {'resina':>8} {'custo':>8} {'preco':>8} {'margem':>8} "
+          f"{'R$/L':>7} {'contrib':>8}")
+    tc = tp = 0.0
+    for r in L:
+        kg = r['peso'] / 1000
+        c, p = kg * CUSTO_KG, kg * PRECO_KG
+        tc += c
+        tp += p
+        print(f"{r['tam']:4} {kg*RESINA_KG:7.2f} {c:8.2f} {p:8.2f} "
+              f"{(p-c)/p*100:7.1f}% {p/r['vol']:6.2f} {p-c:8.2f}")
+    print(f"kit  {'':8} {tc:8.2f} {tp:8.2f} {(tp-tc)/tp*100:7.1f}% "
+          f"{'':7} {tp-tc:8.2f}")
 
-
-def ferramental():
-    print("\nFERRAMENTAL (FOB USD, a %.0f USD/kg de bloco)" % USD_KG)
-    total = 0
-    for rot, (c, l, a), camara, insertos in MOLDES:
+    print(f"\nFERRAMENTAL (FOB USD, a {USD_KG:.0f} USD/kg de bloco)")
+    total = 0.0
+    for rot, (c, l, a), camara, ins in MOLDES:
         kg = c * l * a / 1e6 * ACO_KG_DM3
-        v = kg * USD_KG + (CAMARA if camara else 0) + insertos * INSERTO
+        v = kg * USD_KG + (CAMARA if camara else 0) + ins * INSERTO
         total += v
-        extra = []
-        if camara:
-            extra.append("camara quente")
-        if insertos:
-            extra.append(f"{insertos} jogos de inserto")
-        print(f"  {rot:16} bloco {c}x{l}x{a}  {kg:5.0f} kg  USD {v:8,.0f}"
+        extra = [x for x in ("camara quente valvulada" if camara else "",
+                             f"{ins} jogos de inserto" if ins else "") if x]
+        print(f"  {rot:16} bloco {c}x{l}x{a} {kg:6.0f} kg  USD {v:9,.0f}"
               f"   {', '.join(extra)}")
-    print(f"  {'TOTAL FOB':16} {'':34} USD {total:8,.0f}")
-    return total
+    print(f"  {'TOTAL FOB':16} {'':34} USD {total:9,.0f}")
 
-
-def payback(total_usd, cambio=5.45, landed=1.30, un_ano_por_tam=21500):
-    L = linha()
+    cambio, landed, un_ano = 5.45, 1.30, 21500
     contrib = sum((r['peso'] / 1000) * (PRECO_KG - CUSTO_KG) for r in L)
-    receita = un_ano_por_tam * contrib
-    invest = total_usd * cambio * landed
-    print(f"\nPAYBACK (cambio R$ {cambio:.2f}/USD, nacionalizacao +{(landed-1)*100:.0f}%)")
-    print(f"  investimento nacionalizado   R$ {invest:12,.0f}")
-    print(f"  margem de contribuicao/kit   R$ {contrib:12,.2f}")
-    print(f"  volume assumido              {un_ano_por_tam:,} un/ano por tamanho")
-    print(f"  contribuicao anual           R$ {receita:12,.0f}")
-    print(f"  payback                      {invest/receita*12:12.1f} meses")
+    invest = total * cambio * landed
+    print(f"\nPAYBACK (premissa: R$ {cambio:.2f}/USD, nacionalizacao "
+          f"+{(landed-1)*100:.0f}%, {un_ano:,} un/ano por tamanho)")
+    print(f"  investimento nacionalizado  R$ {invest:12,.0f}")
+    print(f"  contribuicao por kit        R$ {contrib:12,.2f}")
+    print(f"  contribuicao anual          R$ {un_ano*contrib:12,.0f}")
+    print(f"  payback                     {invest/(un_ano*contrib)*12:12.1f} meses")
 
 
 if __name__ == "__main__":
     main()
-    payback(ferramental())
