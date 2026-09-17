@@ -273,14 +273,47 @@ faixa do rim de 3,2 mm e apoio b:
 E a saída de molde é a única alavanca real: a 5° o passo encaixado cairia para
 91,9 mm e a 7° para 84,1 mm — ao custo de a base ir de 199 para 183 mm.
 
+#### Encaixar na mesma orientação — e a regra que decide
+
+O cliente pediu que na versão **encaixada** as peças entrem uma na outra
+**todas no mesmo sentido**, sem inverter. Isso é atendido invertendo a
+atribuição do mecanismo: as **nervuras** ficam em `NERV_Y` e as **paredes** em
+`PAR_Y = −NERV_Y`, com os intervalos de |y| disjuntos. Medido:
+
+| | mesma orientação | girada 180° |
+|---|---|---|
+| Antes (Q) | empilha 130,0 mm | encaixa 102,7 mm |
+| **Agora (Q′)** | **encaixa 102,7 mm** | empilha 129,9 mm |
+
+As cotas são as mesmas — só troca qual dos dois modos é o girado. E isso é uma
+regra, não uma limitação do desenho: **trocar entre encaixar e empilhar exige
+duas posições, e numa peça injetada de uma só vez a única segunda posição é
+girar 180°.** Um dos dois modos vai ser o girado.
+
+O preço da Q′ é que a **pilha** passa a ser a girada, e aí o chanfro alterna
+frente/trás a cada nível — perde o acesso frontal em metade dos níveis. Duas
+saídas, se isso não servir:
+
+1. **Silhueta simétrica frente/trás** (chanfro nas duas pontas): girar deixa de
+   se ver. Custa ~0,4 L de capacidade e aperta o rim, que já divide espaço com a
+   canaleta. O acoplamento então tem de virar **hermafrodita** (macho na metade
+   da frente e fêmea na de trás, espelhado) — esse arranjo é invariante a 180°,
+   o atual não é.
+2. **Abrir mão da pilha de 130 mm** e ficar na N: encaixa a 55,5 mm na mesma
+   orientação, 630 mm para 10 peças, nada no caminho.
+
+Na Q′ a canaleta de acoplamento também encurta de 80 para **36 mm** (y 48…84):
+a estrutura de empilhamento ocupa o rim da lateral.
+
 #### As três versões, medidas
 
-| | N · só pezinhos | P · soquete interno | **Q · estrutura na borda** |
+| | N · só pezinhos | P · soquete interno | **Q′ · estrutura na borda** |
 |---|---|---|---|
-| Empilha | 55,5 mm | **130,0 mm** | **130,0 mm** |
-| Encaixa | **55,5 mm** | não | 102,7 mm |
+| Empilha | 55,5 mm | **130,0 mm** | **129,9 mm** (girada) |
+| Encaixa | **55,5 mm** (mesma orient.) | não | 102,7 mm (mesma orient.) |
 | 10 peças na caixa | **630 mm** | 1.300 mm | 1.054 mm |
-| Peso | **162,6 g** | 172,5 g | 175,7 g |
+| Peso | **162,6 g** | 172,5 g | 172,8 g |
+| Canaleta de acoplamento | 80 mm | 80 mm | 36 mm |
 | Fundo / molde | sólido / sem gaveta | sólido / sem gaveta | sólido / sem gaveta |
 
 A Q é a única que faz as duas coisas. A escolha real é entre **Q** (os dois

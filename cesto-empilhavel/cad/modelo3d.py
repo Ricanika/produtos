@@ -69,7 +69,11 @@ SOQ_H, SOQ_T, SOQ_F = 2.5, 2.0, 0.6       # soquete: altura, parede, folga
 # ("pe na diagonal") que desce pela parede e apoia em cima dela. O ponto e que
 # do lado de fora do rim ninguem passa durante o encaixe: a parede da peca de
 # cima nunca chega a 107,5 mm. Por isso da empilhar E encaixar.
-EMP_Y = ((-46.0, -24.0), (60.0, 82.0))    # 2 por lado, assimetricas em y
+# As nervuras e as paredes ficam em posicoes ESPELHADAS em y (PAR_Y = -NERV_Y)
+# e os intervalos nao se cruzam. Assim, na MESMA orientacao a nervura cai onde
+# nao ha parede -> ENCAIXA; girada 180 ela encontra a parede -> EMPILHA.
+NERV_Y = ((-46.0, -24.0), (8.0, 20.0))
+PAR_Y = tuple((-b, -a) for a, b in NERV_Y)   # (24..46) e (-20..-8)
 # Cotas resolvidas do sistema de restricoes (ver README 4.5): com a parede da
 # borda de altura h = z0 o passo empilhado da ALT, e o encaixe fica limitado a
 # d <= 29,9 mm. Escolhido d = 26 -> passo encaixado de 104 mm.
@@ -411,7 +415,7 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False):
     p -= furos
 
     # --- acoplamento lateral -------------------------------------------------
-    yc0, yc1 = (-22.0, 58.0) if estrutura else Y_CAN
+    yc0, yc1 = (48.0, 84.0) if estrutura else Y_CAN
     if acopl == "A":
         # trilho corrido de ponta a ponta + rim rebaixado do outro lado
         p += _macho(env, yc0, yc1, yc1 - 9)
@@ -455,8 +459,9 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False):
         p += _soquetes(fora)
     if estrutura:
         for sx in (-1, 1):
-            for y0, y1 in EMP_Y:
+            for y0, y1 in NERV_Y:
                 p += _nervura(env, sx, y0, y1)
+            for y0, y1 in PAR_Y:
                 p += _parede_borda(sx, y0, y1)
     return p, n
 

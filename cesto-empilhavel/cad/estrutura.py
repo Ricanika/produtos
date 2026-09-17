@@ -56,7 +56,7 @@ def main():
     render.salvar(render.render([(m, COR)], direcao=(-0.85, -1.15, -0.62),
                                 largura=1000),
                   os.path.join(DEST, "fin-peca.png"))
-    y0, y1 = M.EMP_Y[1]
+    y0, y1 = M.PAR_Y[0]
     bloco = Pos(100.0, (y0 + y1) / 2, 132.0) * Box(46.0, y1 - y0 + 40.0, 56.0)
     sa, sb = p & bloco, (Pos(0, 0, pe) * p) & bloco
     export_stl(sa, os.path.join(DEST, "fin-sa.stl"))
