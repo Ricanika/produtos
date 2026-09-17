@@ -10,14 +10,15 @@ O MECANISMO
   A tampa nao e empurrada para baixo e nao rosqueia. Ela pousa deslocada uns
   14 mm, o usuario empurra no sentido do comprimento, e nesse curso:
 
-    1. seis GANCHOS rigidos da tampa (macho) entram nos rasgos do labio da aba
-       do corpo (femea) e passam a correr por baixo dele;
+    1. seis GANCHOS rigidos em L da tampa (macho) descem pelas janelas abertas
+       no labio da aba do corpo (femea) e passam a correr por baixo dele;
     2. a aresta inferior do labio e uma RAMPA - ela desce no sentido do
-       fechamento, entao o gancho e PUXADO PARA BAIXO enquanto avanca;
-    3. nos ultimos milimetros a rampa sobe de novo (SOBRE-CENTRO): a junta
-       chega a ser comprimida alem do ponto de trabalho e depois relaxa, o que
-       cria uma barreira de energia para voltar;
-    4. duas LINGUETAS flexiveis caem num rebaixo e dao o "clique".
+       fechamento, entao o gancho e PUXADO PARA BAIXO enquanto avanca, 2,00 mm
+       em 10 mm;
+    3. os ultimos 3 mm do labio sao um PATAMAR PLANO: e ali que o gancho
+       assenta de face inteira, 33,6 mm2, em vez de apoiar numa linha;
+    4. quatro LINGUETAS flexiveis caem num rebaixo e dao o "clique". E o
+       DETENTE que segura o fecho - nao o atrito da rampa.
 
   Quem veda e um LABIO de TPE na face inferior da tampa, apoiado na face
   superior da aba - vedacao AXIAL, mas com labio flexivel, nao com aro
@@ -80,7 +81,10 @@ GANCHO_N  = 6       # 3 por lado longo
 GANCHO_W  = 14.0    # largura do gancho
 GANCHO_P  = 2.20    # espessura do poste do gancho
 GANCHO_O  = 2.00    # quanto cada asa do pe do gancho avanca sob a nervura da came
-CAME_T    = 1.20    # espessura da nervura da came (sao DUAS, uma de cada lado)
+CAME_T    = 2.40    # espessura do labio descendente da aba NA ZONA DA CAME.
+                    # O labio ja existia para dar rigidez a borda (secao em U);
+                    # engrossado de 1,20 para 2,40 ele vira a propria came, e a
+                    # aresta de baixo dele e a rampa. Uma peca, duas funcoes.
 
 LING_N, LING_L, LING_W, LING_T = 4, 9.0, 16.0, 1.40   # linguetas do detente (2 por lado)
 LING_DEF, LING_ANG = 0.60, 35.0
@@ -264,7 +268,7 @@ def main():
           f"{LAB_DEF:.2f} = {RAMPA_DZ:.2f} mm")
     print(f"  {RAMPA_DZ:.2f} mm em {RAMPA_L:.0f} mm -> rampa de {ang_r:.1f}°")
     print(f"  patamar dos ultimos {PATAMAR_L:.0f} mm e PLANO: e ali que o gancho assenta de")
-    print(f"  face inteira ({2*GANCHO_W*CAME_T:.1f} mm2) e onde o detente clica.")
+    print(f"  face inteira ({GANCHO_W*CAME_T:.1f} mm2) e onde o detente clica.")
     print(f"\nPor que o patamar tem de ser plano - e onde eu errei primeiro:")
     print(f"  A ideia inicial era um SOBRE-CENTRO na propria nervura: uma depressao de")
     print(f"  0,8 mm que a tampa teria de re-descer para voltar. Nao fecha. O gancho tem")
@@ -312,16 +316,18 @@ def main():
 
     # ---------------- 6. ganchos e queda ----------------
     sep("6. GANCHOS: DIMENSIONADOS PELA QUEDA, NAO PELA VEDACAO")
-    # O contato e a NERVURA da came, nao a asa inteira: a asa avanca 2,0 mm mas
-    # so encosta na largura da nervura (1,2 mm), e sao duas nervuras por gancho.
-    A_apoio = 2 * GANCHO_W * CAME_T
+    # O contato e a face de baixo do LABIO, na largura engrossada de 2,40 mm.
+    A_apoio = GANCHO_W * CAME_T
     A_poste = GANCHO_W * GANCHO_P
-    print(f"{GANCHO_N} ganchos em T ({GANCHO_N//2} por lado longo), {GANCHO_W:.0f} mm de "
-          f"comprimento, poste {GANCHO_P:.2f} mm, cada asa avanca {GANCHO_O:.2f} mm")
-    print(f"A came sao DUAS nervuras de {CAME_T:.2f} mm penduradas na face de baixo da aba,")
-    print(f"uma de cada lado do poste. NAO se engrossa a aba para fazer a rampa: a aba e a")
-    print(f"face que veda, e variar espessura nela daria rechupe bem em cima da junta.")
-    print(f"  area de apoio por gancho {A_apoio:.1f} mm2 (2 x {GANCHO_W:.0f} x {CAME_T:.2f}) | "
+    print(f"{GANCHO_N} ganchos em L ({GANCHO_N//2} por lado longo), {GANCHO_W:.0f} mm de "
+          f"comprimento, poste {GANCHO_P:.2f} mm, asa avanca {GANCHO_O:.2f} mm para dentro")
+    print(f"A came e a aresta de baixo do LABIO DESCENDENTE da aba, engrossado de 1,20 para")
+    print(f"{CAME_T:.2f} mm na zona de trabalho. O labio ja existia para dar rigidez a borda.")
+    print(f"NAO se engrossa a ABA: ela e a face que veda, e variar espessura nela daria")
+    print(f"rechupe bem em cima da junta. No labio, que e saia escondida, rechupe nao importa.")
+    print(f"O poste desce por FORA do labio e a asa volta para dentro, por baixo dele - assim")
+    print(f"o gancho inteiro aparece num corte transversal so.")
+    print(f"  area de apoio por gancho {A_apoio:.1f} mm2 ({GANCHO_W:.0f} x {CAME_T:.2f}) | "
           f"secao do poste {A_poste:.1f} mm2")
     print(f"\nEm repouso, so a junta carrega: {F_ved/GANCHO_N:.1f} N por gancho -> "
           f"{F_ved/GANCHO_N/A_apoio:.3f} MPa de esmagamento.")

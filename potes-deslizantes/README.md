@@ -40,12 +40,13 @@ no sentido do comprimento**. Nesse curso acontecem quatro coisas, nesta ordem:
     │  pote  │                                │     pote      │
 ```
 
-1. **Entram os ganchos.** Seis ganchos em T na face de baixo da tampa (3 por lado longo)
-   descem pelas janelas do canal da aba. É o macho; o canal é a fêmea.
-2. **A came puxa a tampa para baixo.** O teto do canal tem duas nervuras rampadas por gancho.
+1. **Entram os ganchos.** Seis ganchos em L na face de baixo da tampa (3 por lado longo)
+   descem pelas janelas abertas no lábio da aba. É o macho; o lábio rampado é a fêmea.
+2. **A came puxa a tampa para baixo.** A came é a **aresta de baixo do lábio descendente da
+   aba**, rampada.
    Conforme o gancho avança, a rampa desce e **arrasta a tampa junto** — 2,00 mm em 10 mm
    (11,3°). Esses 2,00 mm não são número livre: são 1,00 mm de folga de pouso + 1,00 mm de
-   compressão da junta. A junta só encosta nos últimos 5 mm do curso — durante o deslizamento
+   compressão da junta. A junta só encosta nos últimos 8 mm do curso — durante o deslizamento
    ela não raspa em nada.
 3. **Patamar.** Os últimos 3 mm da nervura são planos. É ali que o gancho assenta de face
    inteira (33,6 mm²) em vez de apoiar numa linha.
@@ -157,7 +158,7 @@ Contra a linha 1: footprint +2,2 mm, corpo 4,0 mm mais baixo, peso do corpo gran
 prato ............ 2,00 mm, com 3 nervuras de 1,2 × 5,0 mm no piso da bandeja
 murete ........... 3,5 mm de altura, 1,5 mm de parede, vão 114,4 × 85,9
 saia ............. 7,0 mm × 1,6 mm, por fora do corpo (esconde o mecanismo)
-ganchos .......... 6 em T, 14 mm, poste 2,2 mm, asa 2,0 mm de cada lado
+ganchos .......... 6 em L, 14 mm, poste 2,2 mm, asa avança 2,0 mm para dentro
 linguetas ........ 4 (2 por lado), 9 × 16 × 1,4 mm, deflexão 0,60 mm, face de saída 35°
 lábio de TPE ..... 1,30 mm de espessura, 4,0 mm de balanço, 2,6 g, perímetro 412 mm
 curso ............ 14 mm = 1 de aproximação + 10 de rampa (desce 2,00) + 3 de patamar plano
@@ -181,13 +182,19 @@ O lábio **abre para dentro do pote**: pressão interna empurra o lábio contra 
 (auto-energizado). Pressão de contato 67 kPa contra 2,4 kPa de coluna de sabão no 2,4 L
 invertido — **de cabeça para baixo a vedação melhora, não piora**.
 
-### A came é nervura, não aba engrossada
+### A came é o lábio da borda, não a aba
 
-A rampa são **duas nervuras de 1,2 mm penduradas na face de baixo da aba**, uma de cada lado
-do poste do gancho. Engrossar a aba para fazer a rampa daria rechupe **exatamente na face que
-veda**. Assim a aba fica com 1,6 mm uniformes e a rampa mora embaixo dela.
+A linha 1 já tinha um **lábio descendente de 3,5 mm** na ponta da aba — ele é o que fecha a
+seção em U e dá à borda 235× a inércia da parede simples. Aqui ele ganha uma segunda função:
+engrossado de 1,2 para **2,4 mm na zona de trabalho, a aresta de baixo dele é a rampa**.
 
-Apoio por gancho: 33,6 mm² (2 × 14 × 1,2).
+Engrossar a **aba** para fazer a rampa daria rechupe **exatamente na face que veda**. O lábio
+é saia escondida — rechupe nele não importa. A aba fica com 1,6 mm uniformes.
+
+O poste do gancho desce **por fora** do lábio e a asa volta para dentro, por baixo dele. Com
+isso o gancho inteiro cabe num corte transversal só, e a saia de 7 mm da tampa esconde tudo.
+
+Apoio por gancho: **33,6 mm² (14 × 2,4)**.
 
 ---
 
