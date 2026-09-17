@@ -4,7 +4,9 @@ Memoria de calculo da linha de potes retangulares modulares em PP.
 
 GEOMETRIA
   Parede RETA (saida de 0,5 graus por lado, so o necessario para extrair) com
-  cantos arredondados de R18. Nao e pote conado.
+  cantos arredondados de R10 - canto quase reto, como na referencia. Nao e pote
+  conado. Footprint esbelto (ASP 1,75): frente estreita e pote fundo, para o
+  conjunto ler como coluna e nao como caixa.
 
 REGRA MODULAR
   O passo empilhado e um multiplo inteiro do modulo de 60 mm:
@@ -18,9 +20,11 @@ O ENCAIXE (o que faz o passo fechar exato)
   1. O fundo tem a MESMA espessura nos quatro potes (2,0 mm).
   2. A tampa e uma bandeja cujo piso fica exatamente 2,0 mm abaixo da borda do
      pote - ou seja, recuado para dentro da boca. Esse piso e o plano modular.
-  3. Os ultimos 6 mm da base recuam para um PE EMBUTIDO de 113,0 x 86,9 mm,
-     medida IGUAL nos quatro tamanhos (o degrau varia de 2,0 a 3,6 mm para
-     compensar a saida). Esse pe desce dentro da bandeja da tampa de baixo.
+  3. Os ultimos 6 mm da base recuam para um PE EMBUTIDO de medida IGUAL nos
+     quatro tamanhos (o degrau varia para compensar a saida). Esse pe desce
+     dentro da bandeja da tampa de baixo. A medida do pe NAO e escolhida: ela
+     sai da bandeja da tampa, que sai da boca (ver pe_l()). Fixar esse numero a
+     mao foi o que quebrou quando o footprint mudou.
   Resultado: passo = 60n exato, capacidade = 600n exata, uma tampa so.
 
 Uso:  python3 calculo-modular.py
@@ -28,13 +32,17 @@ Uso:  python3 calculo-modular.py
 import math
 
 RHO_PP, RHO_TPE = 0.905e-3, 1.10e-3
-ASP     = 1.30      # footprint: comprimento / largura
-R_EXT   = 18.0      # raio de canto externo (mm)
+ASP     = 1.75      # footprint: comprimento / largura (frente estreita, pote fundo)
+R_EXT   = 10.0      # raio de canto externo (mm)
 M       = 60.0      # modulo: 600 ml por modulo
 SAIDA   = 0.50      # saida por lado (graus)
 BASE_T  = 2.00      # espessura do fundo - IGUAL nos quatro, trava o passo
 PE_H    = 6.00      # altura do pe embutido
-PE_L    = 112.4     # medida externa do pe - IGUAL nos quatro
+# --- tampa plug com vedacao radial (usado tambem para derivar o pe) ---
+PLUG_FOLGA = 1.00   # folga nominal entre a face do plug e a parede do pote
+PLUG_PAR   = 1.50   # espessura da saia do plug
+CAN_PROF   = 0.60   # profundidade da canaleta do aro
+ARO_SOBRA  = 1.20   # quanto o aro sobra da canaleta -> compressao = SOBRA - FOLGA
 W_BORDA = 1.40      # parede nos 10 mm abaixo da borda - IGUAL nos quatro, para o
                     # labio de vedacao da tampa achar sempre a mesma medida
 ABA_W   = 3.00      # aba da borda, virada para fora, por lado
@@ -45,6 +53,18 @@ PRES    = {1: 0.42, 2: 0.45, 3: 0.48, 4: 0.50}   # t/cm2 de fechamento
 CICLO   = {1: 17, 2: 21, 3: 25, 4: 29}           # s
 OVERLAP = 2.0       # quanto a tampa passa do corpo, por lado
 ESP_TAMPA = 1.5
+
+
+def pe_l(ext_l):
+    """Medida externa do pe embutido. NAO e um numero escolhido: o pe tem de
+    descer dentro da bandeja da tampa, e a bandeja sai da boca do pote:
+        boca    = ext_l - 2*W_BORDA
+        plug    = boca - 2*PLUG_FOLGA
+        bandeja = plug - 2*PLUG_PAR
+        pe      = bandeja - 1,0  (folga de 0,5 mm por lado no empilhamento)
+    Derivar em vez de fixar e o que faz a linha sobreviver a uma troca de
+    footprint sem o pe virar um degrau de 13 mm."""
+    return ext_l - 2 * (W_BORDA + PLUG_FOLGA + PLUG_PAR) - 1.0
 
 
 def area(a, b, r):
@@ -73,6 +93,7 @@ def linha(ext_l):
         at, bt, r = ext_l - 2 * w, ext_w - 2 * w, R_EXT - w
         a0, b0 = at - 2 * H * t, bt - 2 * H * t    # secao interna no nivel do piso
         ext_base = ext_l - 2 * H * t               # base externa do corpo
+        PE_L = pe_l(ext_l)                         # derivado da bandeja da tampa
         degrau = (ext_base - PE_L) / 2             # recuo do pe, por lado
         pa, pb = a0 - 2 * degrau, b0 - 2 * degrau  # secao interna dentro do pe
 
@@ -98,7 +119,7 @@ def linha(ext_l):
 
 def footprint():
     """Footprint em que o maior pote fecha 2400 ml com o fundo no nivel."""
-    lo, hi = 95.0, 150.0
+    lo, hi = 90.0, 190.0
     for _ in range(50):
         mid = (lo + hi) / 2
         lo, hi = (lo, mid) if linha(mid)[3]['elev'] > 0.0 else (mid, hi)
@@ -110,6 +131,7 @@ def main():
     p0 = potes[0]
     print(f"Footprint {p0['ext_l']:.1f} x {p0['ext_w']:.1f} mm | canto R{R_EXT:.0f} | "
           f"saida {SAIDA}°/lado | modulo {M:.0f} mm | fundo {BASE_T:.1f} mm nos quatro")
+    PE_L = pe_l(p0['ext_l'])
     print(f"Pe embutido {PE_H:.0f} mm de altura, {PE_L:.1f} x {(PE_L - (p0['ext_l'] - p0['ext_w'])):.1f} mm — "
           f"mesma medida nos quatro\n")
     print(f"{'':>8} {'H corpo':>8} {'passo':>6} {'bocal int':>13} {'base ext':>9} "
@@ -144,7 +166,6 @@ def main():
     # externa. O aro trabalha contra a PAREDE do pote. Vedacao radial nao precisa
     # de forca permanente de fechamento - por isso dispensa trava e a tampa pode
     # ser lisa por fora. O que aparece e atrito, so na hora de enfiar e de tirar.
-    PLUG_FOLGA, PLUG_PAR, CAN_PROF, ARO_SOBRA = 1.00, 1.50, 0.60, 1.20
     aba_out = p0['ext_l'] + 2 * ABA_W
     boca = p0['ext_l'] - 2 * W_BORDA
     boca_w = boca - (p0['ext_l'] - p0['ext_w'])
@@ -193,6 +214,38 @@ def main():
         pilha = 5 * z + potes[3]['H']
         print(f"  saida {s:4.2f}° -> sobe {z:5.0f} mm | pilha {pilha:6.0f} mm "
               f"(-{100 * (1 - pilha / (6 * potes[3]['H'])):2.0f}% vs soltos)")
+
+    # ---- rigidez dos paineis planos (o preco de reduzir o raio) ----
+    # Placa retangular engastada nas 4 bordas: flecha ~ alfa * q * b^4 / (E t^3),
+    # b = MENOR vao do painel. alfa cresce de 0,0138 (quadrado) a 0,0284 (faixa
+    # infinita); interpolo em a/b.
+    def alfa(ab):
+        tab = [(1.0, .0138), (1.2, .0188), (1.4, .0226), (1.6, .0251),
+               (1.8, .0267), (2.0, .0277), (3.0, .0284), (99., .0284)]
+        for (x0, y0), (x1, y1) in zip(tab, tab[1:]):
+            if ab <= x1:
+                return y0 + (y1 - y0) * (ab - x0) / (x1 - x0)
+        return .0284
+
+    def flecha(largura, altura, t):
+        b, a = min(largura, altura), max(largura, altura)
+        return alfa(a / b) * b ** 4 / t ** 3
+
+    print("\nRigidez dos paineis planos (flecha relativa; 1,00 = mesma face do R18 de 121,2x93,2):")
+    print("  a face comprida e a que paga a conta: o painel plano cresceu de "
+          f"{121.2 - 2 * 18:.1f} para {p0['ext_l'] - 2 * R_EXT:.1f} mm")
+    for p in potes:
+        pl_l, pl_w = p['ext_l'] - 2 * R_EXT, p['ext_w'] - 2 * R_EXT
+        alt = p['H'] - BASE_T
+        ref_l, ref_w = 121.2 - 36, 93.2 - 36         # painel do projeto anterior
+        t_ref = p['w']
+        rl = flecha(pl_l, alt, p['w']) / flecha(ref_l, alt, t_ref)
+        rw = flecha(pl_w, alt, p['w']) / flecha(ref_w, alt, t_ref)
+        # espessura que devolveria a rigidez anterior na face comprida
+        t_ok = p['w'] * rl ** (1 / 3)
+        print(f"  {p['cap']:>5} ml | face comprida {pl_l:.1f}x{alt:.0f} -> {rl:4.2f}x  | "
+              f"face curta {pl_w:.1f}x{alt:.0f} -> {rw:4.2f}x  | "
+              f"parede p/ igualar a face comprida {t_ok:.2f} mm (hoje {p['w']:.2f})")
 
     print("\nMantimento:")
     for p in potes:

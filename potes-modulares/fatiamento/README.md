@@ -2,7 +2,9 @@
 
 Agente instalado a partir de `AGENTE-Kobra3Max-PETG.md` (runbook recebido pronto e
 testado). Este diretório é o ambiente de trabalho que o runbook descreve, já
-alimentado com as peças deste projeto.
+alimentado com as peças deste projeto. **As cotas seguem a revisão 5** (footprint
+139,7 × 79,8, canto R10): rodar `gerar.sh` depois de mexer na geometria já refaz tudo,
+porque os STL saem de `gera-3d-impressao.py`, não de arquivo parado.
 
 ```
 ./gerar.sh          # STL -> prep -> gcode -> miniatura -> validação -> desenho de camada
@@ -15,33 +17,35 @@ Leva ~23 s. Precisa de `prusa-slicer` 2.7.2 e `pip install trimesh numpy pillow`
 
 | Arquivo | Peça | Camada | Massa | Tempo |
 |---|---|---|---|---|
-| `1_tampa_q010.gcode`   | tampa      | 0,10 mm | 45,1 g | 8 h 38 |
-| `2_pote600_q010.gcode` | corpo 600 ml | 0,10 mm | 86,5 g | 19 h 58 |
-| `3_tampa_r020.gcode`   | tampa      | 0,20 mm | 43,7 g | 5 h 14 |
-| `4_pote600_r020.gcode` | corpo 600 ml | 0,20 mm | 85,7 g | 11 h 25 |
+| `1_tampa_q010.gcode`   | tampa      | 0,10 mm | 45,8 g | 8 h 54 |
+| `2_pote600_q010.gcode` | corpo 600 ml | 0,10 mm | 89,3 g | 20 h 17 |
+| `3_tampa_r020.gcode`   | tampa      | 0,20 mm | 44,4 g | 5 h 21 |
+| `4_pote600_r020.gcode` | corpo 600 ml | 0,20 mm | 93,2 g | 12 h 00 |
 
 **Para o primeiro protótipo, imprima o par 0,20 mm (3 e 4).** Ele resolve a mesma
-pergunta — se o plugue da tampa entra e atrita na parede do pote — em 16 h em vez de
-28 h, e é o dobro de camadas a menos para dar errado. O par 0,10 mm é para a amostra
+pergunta — se o plugue da tampa entra e atrita na parede do pote — em 17 h em vez de
+29 h, e é metade das camadas para dar errado. Note que o corpo em 0,20 mm sai
+**mais pesado** (93,2 contra 89,3 g): numa parede de 1,15 mm a camada grossa
+superextrude. Gasta mais filamento e ainda assim vale pelo tempo. O par 0,10 mm é para a amostra
 de apresentação, depois que o encaixe já estiver aprovado.
 
 ## Três decisões que não são preferência
 
 **O corpo impresso é o `pote-600-fundoplano.stl`, não o `pote-600-real.stl`.**
-A geometria real tem pé rebaixado de 6 mm: ela toca a mesa em **421 mm²** para 62 mm
+A geometria real tem pé rebaixado de 6 mm: ela toca a mesa em **448 mm²** para 62 mm
 de altura, e o fundo elevado vira uma ponte de **82 mm sem apoio**. Isso não é ajuste
 de parâmetro, é a peça errada para FDM — pé rebaixado existe para a injeção, onde o
-molde é que forma o vão. A variante de fundo plano tem **9.315 mm² de contato
-(22×)**, custa +19 ml de volume interno, e tem parede e boca idênticas à real — ou
+molde é que forma o vão. A variante de fundo plano tem **9.244 mm² de contato
+(21×)**, custa +19 ml de volume interno, e tem parede e boca idênticas à real — ou
 seja, serve inteira para validar o encaixe da tampa.
 
 **A tampa vai de cabeça para baixo** (`"flip": true` em `pecas.json`). Na posição de
-uso ela apoia em 565 mm²; invertida, apoia pelo topo em **2.725 mm²**.
+uso ela apoia em 601 mm²; invertida, apoia pelo topo em **2.888 mm²**.
 
 **A tampa precisa de `--dont-support-bridges=0`.** Invertida, o rebaixo de
-empilhamento (113 × 86 mm, 3,5 mm de profundidade) vira um teto. O perfil traz
+empilhamento (131,9 × 72,0 mm, 3,5 mm de profundidade) vira um teto. O perfil traz
 `dont_support_bridges = 1`, que faz o PrusaSlicer **recusar suporte** ali: o
-fatiamento sai sem erro nenhum e a camada z=3,60 vira **253 fios de 85,9 mm de vão
+fatiamento sai sem erro nenhum e a camada z=3,60 vira **295 fios de 72,4 mm de vão
 livre**. Com a flag, entra uma coluna de suporte de 11 camadas da mesa até z=3,10,
 dentro de uma cavidade aberta para baixo — sai com a mão. Não ponha essa flag nos
 potes: lá a única ponte é a aba da boca, com 3 mm de vão, que é overhang normal, e
@@ -57,7 +61,7 @@ Era área de contato e parâmetro:
   meio da impressão);
 - bico **245/240 °C**;
 - **aba de 8–10 mm** com `brim_separation = 0`;
-- e a área de contato do corpo, que subiu de 421 para 9.315 mm² trocando a geometria.
+- e a área de contato do corpo, que subiu de 448 para 9.244 mm² trocando a geometria.
 
 Detergente com hidratante/glicerina piora a adesão. Lave com detergente neutro, enxágue
 bem e passe álcool isopropílico. Não use cola: em PETG cola é desmoldante.

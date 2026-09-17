@@ -1,6 +1,6 @@
 # Linha Potes Retangulares Modulares em PP
 
-**Status:** estudo de viabilidade técnica · **Revisão 4** · 16/09/2026
+**Status:** estudo de viabilidade técnica · **Revisão 5** · 17/09/2026
 **Origem:** evolução do Projeto 115 do ERP ("Conjunto Potes Modular") · **Planta:** Nitron – Fábrica (CODPLP 1)
 
 Linha retangular em PP transparente, **parede reta com cantos arredondados**, quatro litragens
@@ -10,7 +10,23 @@ combinação empilhada chega à altura do maior.
 Todos os números de máquina, matéria-prima, custo e ferramental saíram do Sankhya, não de
 estimativa de catálogo. Fontes citadas em cada seção.
 
-> **Revisão 4 — o que mudou:** a vedação passa a ser **radial**, do jeito certo: a tampa tem um
+> **Revisão 5 — o que mudou:** o desenho voltou para a proporção da referência conceitual. O pote
+> estava **largo e muito arredondado** (121,2 × 93,2 com canto R18); agora é **frente estreita e
+> pote fundo** (139,7 × 79,8) com **canto R10**. Altura, módulo, passo, curso de abertura e altura
+> de molde não mudam — foi escolhido de propósito o caminho que não mexe na injetora.
+>
+> Três coisas vieram junto, duas delas correções de erro meu:
+>
+> 1. **A área projetada era 125 cm², não 139.** O número da revisão 4 não saía do cálculo. Com
+>    125 cm² o 600 ml usa 72% de uma injetora de 160 t e **volta para a classe de 160 t** em vez de
+>    disputar as 200 t com o 1,2 L (seção 4.1).
+> 2. **O pé embutido estava fixo no código em 112,4 mm** e foi o único número que quebrou com a
+>    troca de footprint — virou um degrau de 13 mm. Ele nunca foi uma escolha: sai da bandeja da
+>    tampa, que sai da boca. Agora é derivado (`pe_l()` em `calculo-modular.py`).
+> 3. **Custa 17,6 g de resina e rigidez na face comprida** — a única conta em que a revisão 5 é
+>    pior que a 4. Está medida na seção 3.3, e é a decisão que sobrou em aberto.
+>
+> **Revisão 4:** a vedação passa a ser **radial**, do jeito certo: a tampa tem um
 > *plug* que desce dentro do pote e leva o aro de TPE numa canaleta, trabalhando contra a **parede**.
 > Sem trava e sem saia externa — a tampa fica lisa. Some a força permanente de fechamento; o que
 > resta é 1,0 kgf para abrir descascando um canto. Pé de 113,0 para 112,4 mm.
@@ -30,12 +46,13 @@ estimativa de catálogo. Fontes citadas em cada seção.
 |---|---|
 | Modularidade de empilhamento | **Viável** — passo único de 60 mm |
 | Litragens 600 / 1200 / 1800 / 2400 ml | **Viável e exatas** — a parede reta elimina o conflito com o passo |
-| Parede reta com cantos arredondados | **Viável** com 0,5°/lado e R18 — custa aninhamento no frete (seção 3.2) |
+| Parede reta com cantos arredondados | **Viável** com 0,5°/lado e R10 — custa aninhamento no frete (seção 3.2) |
 | Tampa única para os 4 tamanhos | **Viável** — já é prática da casa (ref. 321-T serve três alturas) |
 | Vedação da tampa | **Refeita na revisão 4**: plug com aro de TPE radial contra a parede, sem trava (seção 5) |
 | Tampa PE **ou** PP com canaleta de TPE | **Recomendado PP randômico RP 141 + canaleta** (seção 6) |
 | Injeção dos 4 corpos no parque atual | **Cabe no que já temos**, sem máquina nova |
 | Confirmação documental de curso/extração | **Bloqueio de dado**: ficha das injetoras vazia (seção 4.4) |
+| Rigidez da face comprida com R10 | **Decisão aberta**: face do 2,4 L ficou 3,8× mais flexível (seção 3.3) |
 
 ---
 
@@ -57,15 +74,15 @@ estimativa de catálogo. Fontes citadas em cada seção.
 
 ## 3. Geometria
 
-**Corpo 121,2 × 93,3 mm** · **127,2 × 99,2 mm na aba da borda** · canto **R18** · saída **0,5°/lado** · módulo **60 mm**
-Fundo de **2,0 mm igual nos quatro** · parede da borda **1,40 mm igual nos quatro** · pé embutido de **112,4 × 84,4 mm igual nos quatro**
+**Corpo 139,7 × 79,8 mm** · **145,7 × 85,8 mm na aba da borda** · canto **R10** · saída **0,5°/lado** · módulo **60 mm**
+Fundo de **2,0 mm igual nos quatro** · parede da borda **1,40 mm igual nos quatro** · pé embutido de **130,9 × 71,0 mm igual nos quatro** (medida derivada, não escolhida)
 
 | Tamanho | Altura corpo | Passo | Bocal interno | Base externa | Degrau do pé | Elev. fundo | Parede | Volume | Peso |
 |---|---|---|---|---|---|---|---|---|---|
-| 600 ml | 62,0 mm | 60 mm | 118,9 × 90,9 | 120,1 | 3,86 mm | 2,0 mm | 1,15 mm | 600 ml | 43,7 g |
-| 1,2 L | 122,0 mm | 120 mm | 118,8 × 90,8 | 119,1 | 3,34 mm | 3,4 mm | 1,20 mm | 1200 ml | 69,8 g |
-| 1,8 L | 182,0 mm | 180 mm | 118,6 × 90,6 | 118,0 | 2,81 mm | 2,7 mm | 1,30 mm | 1800 ml | 100,6 g |
-| 2,4 L | 242,0 mm | 240 mm | 118,4 × 90,4 | 117,0 | 2,29 mm | 0,0 mm | 1,40 mm | 2400 ml | 135,1 g |
+| 600 ml | 62,0 mm | 60 mm | 137,4 × 77,5 | 138,6 | 3,88 mm | 2,0 mm | 1,15 mm | 600 ml | 45,4 g |
+| 1,2 L | 122,0 mm | 120 mm | 137,3 × 77,4 | 137,6 | 3,35 mm | 3,5 mm | 1,20 mm | 1200 ml | 73,0 g |
+| 1,8 L | 182,0 mm | 180 mm | 137,1 × 77,2 | 136,5 | 2,83 mm | 2,8 mm | 1,30 mm | 1800 ml | 105,8 g |
+| 2,4 L | 242,0 mm | 240 mm | 136,9 × 77,0 | 135,5 | 2,31 mm | 0,0 mm | 1,40 mm | 2400 ml | 142,5 g |
 
 Empilhamento conferido — todas as combinações dão 240 mm:
 `600×4` · `1,2 L×2` · `600+600+1,2 L` · `600+1,8 L` · `2,4 L`.
@@ -78,7 +95,7 @@ redondas só fechavam variando muito a saída entre os tamanhos.
 
 **Com parede reta o volume fica praticamente proporcional à altura** e o conflito some. Sobra um
 resíduo pequeno (a seção ainda cresce 0,5° por lado até o bocal), absorvido por uma **elevação de
-fundo de 0 a 3,4 mm** — invisível por fora, sem efeito no empilhamento e sem custo de ferramenta.
+fundo de 0 a 3,5 mm** — invisível por fora, sem efeito no empilhamento e sem custo de ferramenta.
 
 ### 3.2 O encaixe: três regras que fazem o passo fechar exato
 
@@ -87,13 +104,13 @@ Esta é a parte que não pode ser negociada no design, porque é ela que sustent
 1. **Fundo de 2,0 mm, igual nos quatro potes.**
 2. **A tampa é uma bandeja cujo piso fica 2,0 mm abaixo da borda do pote** — recuado para dentro da
    boca, não apoiado em cima dela. Esse piso é o plano modular: é nele que o pote de cima se apoia.
-3. **Os últimos 6 mm da base recuam para um pé embutido de 112,4 × 84,4 mm**, medida igual nos
+3. **Os últimos 6 mm da base recuam para um pé embutido de 130,9 × 71,0 mm**, medida igual nos
    quatro (o degrau varia de 2,3 a 3,9 mm para compensar a saída). Esse pé desce dentro da bandeja
    da tampa de baixo.
 
 Com as três juntas: passo = 60n exato, capacidade = 600n exata, e **uma tampa só serve os quatro**.
 Sem a terceira, o pote de cima não caberia dentro da bandeja — a boca do pote tem 118,9 mm e o corpo
-tem 121,2 mm. O pé embutido é o que resolve, e de quebra os potes ficam **travados entre si** quando
+tem 139,7 mm. O pé embutido é o que resolve, e de quebra os potes ficam **travados entre si** quando
 empilhados, em vez de só apoiados.
 
 **Orçamento de largura — é o que dimensiona o pé.** Entre a face externa do corpo e a face externa
@@ -107,7 +124,7 @@ do pé sobram 4,1 mm por lado, e tudo tem que caber ali:
 | folga de encaixe do pé | 0,50 mm |
 | **soma** | **4,40 mm** |
 
-É esse orçamento que fixa o pé em 112,4 mm. Na revisão 2 havia um aro de TPE dentro dessa conta,
+É esse orçamento que fixa o pé em 130,9 mm. Na revisão 2 havia um aro de TPE dentro dessa conta,
 com 2,00 mm reservados para uma canaleta que precisa de 4,00 — era o número errado, e o pé de
 110,0 mm saiu dele. Tirando o aro da tampa de PP, a conta fecha e o pé cresce.
 
@@ -115,19 +132,63 @@ com 2,00 mm reservados para uma canaleta que precisa de 4,00 — era o número e
 parede do pote. O aro de TPE fica na canaleta do plug, mais abaixo, vedando radialmente contra a
 parede — fora do caminho de carga, para não ser comprimido pelo peso da pilha.
 
-### 3.3 Quanto de saída é "reto"
+### 3.3 O preço do canto R10: a face comprida
+
+Reduzir o raio e afinar a frente ao mesmo tempo tem efeitos opostos, e não se cancelam igual nas
+duas faces. O painel plano é o trecho de parede entre os dois cantos:
+
+| | R18 de 121,2 × 93,2 | R10 de 139,7 × 79,8 |
+|---|---|---|
+| Painel plano da face **curta** | 57,2 mm | **59,8 mm** |
+| Painel plano da face **comprida** | 85,2 mm | **119,7 mm** |
+
+A face curta praticamente não mudou — afinar a frente devolveu o que o raio menor tirou. A face
+comprida é que paga: 119,7 mm de parede plana sem nada que a segure no meio.
+
+Flecha relativa (placa engastada nas quatro bordas, mesma carga, `flecha ~ α·b⁴/t³`, `b` = menor
+vão do painel; 1,00 = a mesma face no desenho R18):
+
+| Tamanho | Face comprida | Face curta | Parede que igualaria a face comprida |
+|---|---|---|---|
+| 600 ml | 1,21× | 1,10× | 1,23 mm (hoje 1,15) |
+| 1,2 L | 2,38× | 1,19× | 1,60 mm (hoje 1,20) |
+| 1,8 L | 3,35× | 1,20× | 1,94 mm (hoje 1,30) |
+| **2,4 L** | **3,81×** | 1,20× | 2,19 mm (hoje 1,40) |
+
+No 600 ml não é problema: a face comprida tem 119,7 × 60 mm, e quem manda na flecha é o vão menor,
+que é a altura — a mesma de antes. O problema aparece à medida que o pote sobe, porque aí o vão
+menor passa a ser a largura de 119,7 mm. No 2,4 L a face comprida fica **3,8× mais flexível**.
+
+**Igualar com parede está fora de questão:** 2,19 mm no 2,4 L é +56% de resina. As saídas reais são
+três, e nenhuma é minha para escolher:
+
+1. **Aceitar.** Pote de mantimento é pego pelas faces curtas, que não mudaram. A vedação é radial e
+   mora no bocal, que é a parte mais rígida da peça (aba em U de 3,0 mm com lábio de 3,5 mm). O que
+   precisa ser testado no protótipo é se a face comprida cede o bastante para **ovalizar o bocal** e
+   soltar o aro — é o único caminho por onde essa flexão vira defeito funcional.
+2. **Bombê de 1,0 a 1,5 mm na face comprida.** Lê como reta a olho nu e transforma o painel num arco
+   raso, que é como todo pote de linha resolve isso. Não é parede conada — a saída de extração
+   continua 0,5°, o molde continua de extração simples, sem gaveta. É a opção que eu levaria.
+3. **Voltar o ASP de 1,75 para ~1,55.** A face comprida cai para ~105 mm e a flecha do 2,4 L para
+   ~2,3×, ao custo de uma frente 5 mm mais larga.
+
+O número honesto sobre esses 3,8×: a razão é confiável, porque só a geometria mudou entre as duas
+colunas. A **flecha absoluta** não é — depende de carga de aperto e de engastamento real, e pedia
+elemento finito ou protótipo. Nenhuma das duas revisões foi prototipada.
+
+### 3.4 Quanto de saída é "reto"
 
 Saída zero não extrai: a peça agarra o macho. O que se faz é a saída mínima de extração.
 
 | Saída/lado | Base mais estreita que o topo | Aninhamento de 6 potes de 2,4 L |
 |---|---|---|
-| 0,25° | 2,1 mm (1,8%) | 1.452 mm — **não aninha** |
-| **0,50°** | **4,2 mm (3,5%)** | **1.044 mm (−28%)** |
-| 0,75° | 6,3 mm (5,3%) | 777 mm (−47%) |
-| 1,00° | 8,4 mm (7,1%) | 643 mm (−56%) |
+| 0,25° | 2,1 mm (1,5%) | 1.452 mm — **não aninha** |
+| **0,50°** | **4,2 mm (3,0%)** | **1.044 mm (−28%)** |
+| 0,75° | 6,3 mm (4,5%) | 777 mm (−47%) |
+| 1,00° | 8,4 mm (6,0%) | 643 mm (−56%) |
 
-**Recomendação: 0,5°/lado.** No maior pote a base fica 4,2 mm mais estreita que o topo em 121 mm de
-largura — 3,5%, imperceptível com canto R18 e parede polida. Abaixo disso a peça deixa de aninhar a
+**Recomendação: 0,5°/lado.** No maior pote a base fica 4,2 mm mais estreita que o topo em 139,7 mm de
+largura — 3,0%, imperceptível com canto R10 e parede polida. Abaixo disso a peça deixa de aninhar a
 vazio e o frete do pote vazio sobe ~28%.
 
 Condições para a parede reta funcionar na extração:
@@ -137,7 +198,7 @@ Condições para a parede reta funcionar na extração:
   quebrar o vácuo;
 - força de extração estimada em ~5 kN no 2,4 L (932 cm² de contato) contra ~62 kN disponíveis numa
   injetora de 380 t — **força não é o problema; curso de extração e vácuo são**;
-- o canto R18 é aliado: reduz o arrasto nos cantos, que é onde a peça reta costuma marcar.
+- o canto R10 ainda é aliado, mas menos que o R18: reduz o arrasto nos cantos, que é onde a peça reta costuma marcar.
 
 ## 4. Validação nas injetoras
 
@@ -145,14 +206,16 @@ Condições para a parede reta funcionar na extração:
 
 | Tamanho | Área proj. | Fecham. 2 cav | Curso abert. mín. | Altura de molde | Injeção 2 cav | L/t |
 |---|---|---|---|---|---|---|
-| 600 ml | 139 cm² | 129 t | 136 mm | ~252 mm | 112 cm³ | 107 |
-| 1,2 L | 139 cm² | 138 t | 268 mm | ~312 mm | 178 cm³ | 152 |
-| 1,8 L | 139 cm² | 147 t | 400 mm | ~372 mm | 256 cm³ | 187 |
-| 2,4 L | 139 cm² | 153 t | 532 mm | ~432 mm | 344 cm³ | 216 |
+| 600 ml | 125 cm² | 115 t | 136 mm | ~252 mm | 115 cm³ | 115 |
+| 1,2 L | 125 cm² | 124 t | 268 mm | ~312 mm | 186 cm³ | 160 |
+| 1,8 L | 125 cm² | 132 t | 400 mm | ~372 mm | 269 cm³ | 194 |
+| 2,4 L | 125 cm² | 137 t | 532 mm | ~432 mm | 362 cm³ | 223 |
 
-A aba da borda aumentou a área projetada de 126 para 139 cm², e com ela o fechamento. O 600 ml a
-129 t numa injetora de 160 t usa 81% do fechamento — **passa a ser alocado na classe de 200 t**
-junto com o 1,2 L.
+A área projetada é a silhueta da aba da borda: 145,7 × 85,8 mm = **125 cm²**. A revisão 4 trazia
+139 cm² e 129–153 t; esse número não saía do cálculo e foi corrigido aqui. A diferença muda
+alocação: o 600 ml a **115 t numa injetora de 160 t usa 72%** do fechamento, abaixo do limite
+prático de 80% — **volta para a classe de 160 t** em vez de disputar as 200 t com o 1,2 L. São
+9 máquinas de 160 t no parque contra 12 de 200 t, e libera hora das 200 t para o 1,2 L.
 
 Os quatro têm a **mesma área projetada**: quem decide a máquina não é tonelagem, é profundidade.
 
@@ -194,7 +257,7 @@ Duas revisões erradas antes de chegar aqui, e vale registrar as duas.
 nem de onde viria a força. **Revisão 3** trocou por um lábio de PP moldado na tampa. Ambas partiam
 do mesmo engano: tratar a vedação como **axial** — aro ou lábio esmagado entre a tampa e a borda.
 Vedação axial num retângulo sem trava não funciona, e o número é implacável: 32 kgf de força
-permanente ao longo dos 389 mm de perímetro.
+permanente ao longo dos 413 mm de perímetro.
 
 **A vedação certa é radial.** Uma saia da tampa — o *plug* — desce dentro do pote e leva o aro de
 TPE numa canaleta na sua face externa. **O aro trabalha contra a parede do pote, não contra a
@@ -213,7 +276,7 @@ Com o aro comprimindo 0,20 mm contra a parede:
 | Compressão | Arrancar reto | Descascando um canto |
 |---|---|---|
 | 0,15 mm | 3,8 kgf | 0,6 kgf |
-| **0,20 mm** | **5,8 kgf** | **1,0 kgf** |
+| **0,20 mm** | **6,1 kgf** | **1,0 kgf** |
 | 0,30 mm | 10,6 kgf | 1,8 kgf |
 | 0,40 mm | 16,4 kgf | 2,7 kgf |
 
@@ -228,14 +291,14 @@ que a compressão de 0,20 mm, não para segurar a tampa.
 ### 5.2 Cotas
 
 ```
-boca do pote ......... 118,4 mm (parede de 1,40 mm nos quatro tamanhos)
-face do plug ......... 116,4 mm — folga de 1,00 mm por lado
+boca do pote ......... 136,9 mm (parede de 1,40 mm nos quatro tamanhos)
+face do plug ......... 134,9 mm — folga de 1,00 mm por lado
 parede do plug ....... 1,50 mm
 canaleta ............. 0,60 mm de profundidade, entre 5,0 e 7,4 mm abaixo da borda
 aro de TPE ........... seção 2,4 × 1,8 mm, sobra 1,20 mm da face do plug
                        -> 0,20 mm de compressão contra a parede
 plug desce ........... 12 mm dentro do pote
-vão da bandeja ....... 113,4 mm, recebe o pé de 112,4 mm
+vão da bandeja ....... 131,9 mm, recebe o pé de 130,9 mm
 ```
 
 O plug faz três coisas de uma vez: **veda**, **forma a parede da bandeja** onde o pote de cima
@@ -284,7 +347,7 @@ planilha. Primeiro tryout com água colorida, pote deitado e de cabeça para bai
 ```
 borda do pote ................... 62,0 mm   (600 ml)
 piso da bandeja da tampa ........ 60,0 mm   = PLANO MODULAR, 2,0 mm abaixo da borda
-vão livre da bandeja ............ 113,4 × 84,4 mm  (recebe o pé de 112,4 × 84,4)
+vão livre da bandeja ............ 131,9 × 72,0 mm  (recebe o pé de 130,9 × 71,0)
 plug .......................... desce até 12 mm abaixo da borda, dentro do pote
 ```
 
@@ -297,7 +360,7 @@ plug. A carga desce plug → borda → parede do pote.
 
 | | Tampa PE | **Tampa PP + aro TPE** |
 |---|---|---|
-| Peso / resina | 23,3 g · R$ 0,26 | **22,8 g · R$ 0,22 + aro 1,8 g** |
+| Peso / resina | 23,1 g · R$ 0,26 | **23,4 g · R$ 0,22 + aro 2,0 g** |
 | Vedação | plug em PE relaxa e perde a interferência | **plug rígido mantém o aro comprimido** |
 | Empilhamento | PEBD **flui a frio** (creep): cede sob carga permanente | PP copolímero segura a carga |
 | Cadeia de resina | PEBD: **500 kg comprados em 12 meses** | PP RP 141: **299 t/ano já em casa** |
@@ -367,7 +430,7 @@ rebaixada de 2,0 mm. Ela é reaproveitada como bacia anti-gota, sem peça nova:
 
 1. **Um furo de vazão no canto** da bandeja (≈ 25 × 15 mm), encostado na parede.
 2. **Um entalhe de 12 a 15 mm na parede da bandeja**, no mesmo canto, por onde o líquido sai quando o
-   pote inclina. O canto R18 já faz a curva do vertedor — não precisa moldar bico nenhum.
+   pote inclina. O canto R10 já faz a curva do vertedor — não precisa moldar bico nenhum.
 3. **Lábio de corte de 0,4 mm** na aresta externa do entalhe: quebra o filme de líquido e faz a gota
    se soltar em vez de escorrer pela face do pote. É o detalhe que resolve o "não vai sujar".
 4. **Piso da bandeja com caimento de 2 a 3° para o furo.** O que respinga ou volta cai na bandeja e
@@ -412,15 +475,19 @@ Preços reais de compra dos últimos 12 meses (`TGFITE`/`TGFCAB`):
 
 | Item | Peso | Resina |
 |---|---|---|
-| Corpo 600 ml | 43,9 g | R$ 0,49 |
-| Corpo 1,2 L | 70,0 g | R$ 0,77 |
-| Corpo 1,8 L | 100,8 g | R$ 1,11 |
-| Corpo 2,4 L | 135,3 g | R$ 1,50 |
-| Tampa PP RP 141 | 22,8 g | R$ 0,22 |
-| Aro de TPE | 1,8 g | a cotar |
-| Aro TPE | 2,6 g | a cotar |
+| Corpo 600 ml | 45,4 g | R$ 0,50 |
+| Corpo 1,2 L | 73,0 g | R$ 0,81 |
+| Corpo 1,8 L | 105,8 g | R$ 1,17 |
+| Corpo 2,4 L | 142,5 g | R$ 1,58 |
+| Tampa PP RP 141 | 23,4 g | R$ 0,22 |
+| Aro de TPE | 2,0 g | a cotar |
 
 Só matéria-prima. Transformação entra pelo custo do PCP; a tampa de teca, pelo custo da WOOD.
+
+**O que a revisão 5 custou em resina.** Os quatro corpos somam **366,7 g** contra 349,1 g no
+desenho R18 de 121,2 × 93,2 — **+17,6 g, +5,0%**, ou R$ 0,19 por jogo de quatro. Os dois efeitos
+empurram para o mesmo lado: mesma área com frente estreita tem mais perímetro, e canto menos
+arredondado também. Metade vem do ASP, metade do raio.
 
 ---
 

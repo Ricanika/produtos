@@ -114,28 +114,28 @@
 
   <header class="cartucho">
     <div class="cartucho-top">
-      <p class="eyebrow">Nitron · Estudo de viabilidade · Projeto 115 · Revisão 4</p>
+      <p class="eyebrow">Nitron · Estudo de viabilidade · Projeto 115 · Revisão 5</p>
       <h1>Potes retangulares modulares</h1>
       <p class="sub">Parede reta com cantos arredondados, quatro litragens de mantimento, três tampas e um só bocal. Empilhados em qualquer combinação, chegam à altura do maior. Geometria, encaixe, alocação de injetora e custo conferidos contra produção, compras e cadastro no ERP.</p>
       <div class="rev">
-        <b>Revisão 4 —</b> a vedação passa a ser <strong>radial</strong>: a tampa tem um <strong>plug</strong> que desce dentro do pote e leva o aro de TPE numa canaleta, trabalhando contra a <strong>parede</strong>. Some a força permanente de fechamento — resta 1,0 kgf para abrir descascando um canto. Sem trava e sem saia externa: a tampa fica lisa. Pé de 113,0 para 112,4 mm.
+        <b>Revisão 5 —</b> o desenho voltou para a proporção da referência: <strong>frente estreita e pote fundo</strong> (139,7 × 79,8 em vez de 121,2 × 93,2) e <strong>canto R10 em vez de R18</strong>. Altura, módulo, curso de abertura e classe de injetora não mudam. Veio com duas correções de erro meu: a área projetada era <strong>125 cm², não 139</strong> — o que devolve o 600 ml para a classe de 160 t; e o pé embutido estava <strong>fixo no código</strong>, sendo uma medida derivada da bandeja da tampa. E um custo: a face comprida do 2,4 L ficou <strong>3,8× mais flexível</strong> (seção 03).
       </div>
     </div>
     <div class="cartucho-grid">
       <div class="campo"><div class="k">Material corpo</div><div class="v">PP transparente</div></div>
       <div class="campo"><div class="k">Módulo</div><div class="v">60 mm</div></div>
-      <div class="campo"><div class="k">Footprint (aba)</div><div class="v">127,2 × 99,2 mm</div></div>
-      <div class="campo"><div class="k">Saída / canto</div><div class="v">0,5° · R18</div></div>
+      <div class="campo"><div class="k">Footprint (aba)</div><div class="v">145,7 × 85,8 mm</div></div>
+      <div class="campo"><div class="k">Saída / canto</div><div class="v">0,5° · R10</div></div>
       <div class="campo"><div class="k">Tampa</div><div class="v">PP RP 141</div></div>
     </div>
   </header>
 
   <section>
     <div class="section-head"><span class="n">01</span><h2>A linha</h2></div>
-    <p class="lede">A parede reta fez a matemática trabalhar a favor: com a lateral quase vertical o volume fica proporcional à altura, e o conflito da revisão 1 — entre passo modular e capacidade redonda — desaparece. Sobra um resíduo pequeno, absorvido por uma elevação de fundo de 0 a 3,4 mm que ninguém vê.</p>
+    <p class="lede">A parede reta fez a matemática trabalhar a favor: com a lateral quase vertical o volume fica proporcional à altura, e o conflito da revisão 1 — entre passo modular e capacidade redonda — desaparece. Sobra um resíduo pequeno, absorvido por uma elevação de fundo de 0 a 3,5 mm que ninguém vê.</p>
 
     <div class="desenho">
-      <svg viewBox="0 0 700 340" role="img" aria-label="Elevação em escala dos quatro potes de parede reta sobre a malha modular de 60 milímetros, com vista de topo mostrando os cantos arredondados">
+      <svg viewBox="0 0 700 340" role="img" aria-label="Elevacao em escala dos quatro potes de parede reta sobre a malha modular de 60 milimetros, com vista de topo mostrando os cantos arredondados de R10">
         <defs>
           <pattern id="hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
             <line x1="0" y1="0" x2="0" y2="6" stroke="var(--pp)" stroke-width="1.1" opacity=".45"/>
@@ -155,40 +155,40 @@
 
         <!-- vista de topo, no espaco livre acima do menor -->
         <g>
-          <rect x="70" y="112" width="121.2" height="93.3" rx="18" ry="18" fill="url(#hatch)" stroke="var(--pp)" stroke-width="1.3"/>
-          <rect x="75.6" y="116.4" width="110" height="84.6" rx="13" ry="13" fill="none" stroke="var(--cota)" stroke-width=".9" stroke-dasharray="4 3"/>
-          <text x="130" y="104" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)">VISTA DE TOPO · R18 de canto</text>
-          <text x="130" y="221" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--cota)">tracejado: pé embutido 110,0 × 84,6</text>
+          <rect x="62.0" y="96.0" width="139.7" height="79.8" rx="10.0" ry="10.0" fill="url(#hatch)" stroke="var(--pp)" stroke-width="1.3"/>
+          <rect x="66.4" y="100.4" width="130.9" height="71.0" rx="5.6" ry="5.6" fill="none" stroke="var(--cota)" stroke-width=".9" stroke-dasharray="4 3"/>
+          <text x="131.8" y="88.0" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)">VISTA DE TOPO · R10 de canto</text>
+          <text x="131.8" y="190.8" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--cota)">pé embutido 130,9 × 71,0</text>
         </g>
 
         <!-- 600 ml -->
-        <path d="M 70 238 L 70.5 294 L 75.6 294 L 75.6 300 L 185.6 300 L 185.6 294 L 190.7 294 L 191.2 238 Z" fill="url(#hatch)" stroke="var(--pp)" stroke-width="1.3"/>
-        <rect x="68" y="236.5" width="125.2" height="12.5" fill="var(--verde)"/>
-        <text x="130" y="320" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="15" fill="var(--ink)">600 ml</text>
-        <text x="130" y="332" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--muted)">1 M · 62,0 mm</text>
+        <path d="M 62.0 238.0 L 62.5 294.0 L 66.4 294.0 L 66.4 300.0 L 197.3 300.0 L 197.3 294.0 L 201.1 294.0 L 201.7 238.0 Z" fill="url(#hatch)" stroke="var(--pp)" stroke-width="1.3"/>
+        <rect x="59.0" y="224.0" width="145.7" height="12.5" fill="var(--verde)"/>
+        <text x="131.8" y="320" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="15" fill="var(--ink)">600 ml</text>
+        <text x="131.8" y="332" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--muted)">1 M · 62,0 mm</text>
 
         <!-- 1,2 L -->
-        <path d="M 215 178 L 216.05 294 L 220.6 294 L 220.6 300 L 330.6 300 L 330.6 294 L 335.15 294 L 336.2 178 Z" fill="url(#hatch)" stroke="var(--pp)" stroke-width="1.3"/>
-        <rect x="213" y="176.5" width="125.2" height="12.5" fill="var(--verde)"/>
-        <text x="275" y="320" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="15" fill="var(--ink)">1,2 L</text>
-        <text x="275" y="332" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--muted)">2 M · 122,0 mm</text>
+        <path d="M 212.0 178.0 L 213.0 294.0 L 216.4 294.0 L 216.4 300.0 L 347.3 300.0 L 347.3 294.0 L 350.6 294.0 L 351.7 178.0 Z" fill="url(#hatch)" stroke="var(--pp)" stroke-width="1.3"/>
+        <rect x="209.0" y="164.0" width="145.7" height="12.5" fill="var(--verde)"/>
+        <text x="281.8" y="320" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="15" fill="var(--ink)">1,2 L</text>
+        <text x="281.8" y="332" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--muted)">2 M · 122,0 mm</text>
 
         <!-- 1,8 L -->
-        <path d="M 360 118 L 361.55 294 L 365.6 294 L 365.6 300 L 475.6 300 L 475.6 294 L 479.65 294 L 481.2 118 Z" fill="url(#hatch)" stroke="var(--pp)" stroke-width="1.3"/>
-        <rect x="358" y="116.5" width="125.2" height="12.5" fill="var(--verde)"/>
-        <text x="420" y="320" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="15" fill="var(--ink)">1,8 L</text>
-        <text x="420" y="332" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--muted)">3 M · 182,0 mm</text>
+        <path d="M 362.0 118.0 L 363.6 294.0 L 366.4 294.0 L 366.4 300.0 L 497.3 300.0 L 497.3 294.0 L 500.1 294.0 L 501.7 118.0 Z" fill="url(#hatch)" stroke="var(--pp)" stroke-width="1.3"/>
+        <rect x="359.0" y="104.0" width="145.7" height="12.5" fill="var(--verde)"/>
+        <text x="431.8" y="320" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="15" fill="var(--ink)">1,8 L</text>
+        <text x="431.8" y="332" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--muted)">3 M · 182,0 mm</text>
 
         <!-- 2,4 L -->
-        <path d="M 505 58 L 507.1 294 L 510.6 294 L 510.6 300 L 620.6 300 L 620.6 294 L 624.1 294 L 626.2 58 Z" fill="url(#hatch)" stroke="var(--pp)" stroke-width="1.3"/>
-        <rect x="503" y="56.5" width="125.2" height="12.5" fill="var(--verde)"/>
-        <text x="565" y="320" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="15" fill="var(--ink)">2,4 L</text>
-        <text x="565" y="332" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--muted)">4 M · 242,0 mm</text>
+        <path d="M 512.0 58.0 L 514.1 294.0 L 516.4 294.0 L 516.4 300.0 L 647.3 300.0 L 647.3 294.0 L 649.6 294.0 L 651.7 58.0 Z" fill="url(#hatch)" stroke="var(--pp)" stroke-width="1.3"/>
+        <rect x="509.0" y="44.0" width="145.7" height="12.5" fill="var(--verde)"/>
+        <text x="581.8" y="320" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="15" fill="var(--ink)">2,4 L</text>
+        <text x="581.8" y="332" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--muted)">4 M · 242,0 mm</text>
 
         <g stroke="var(--cota)" stroke-width="1">
-          <line x1="503" y1="42" x2="628.2" y2="42"/><line x1="503" y1="38" x2="503" y2="46"/><line x1="628.2" y1="38" x2="628.2" y2="46"/>
+          <line x1="509.0" y1="42" x2="654.7" y2="42"/><line x1="509.0" y1="38" x2="509.0" y2="46"/><line x1="654.7" y1="38" x2="654.7" y2="46"/>
         </g>
-        <text x="565" y="34" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--cota)">tampa 125,2 mm</text>
+        <text x="581.8" y="34" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--cota)">tampa 145,7 mm</text>
       </svg>
 
       <div class="legenda">
@@ -203,10 +203,10 @@
       <table>
         <thead><tr><th>Tamanho</th><th>Altura corpo</th><th>Passo</th><th>Bocal interno</th><th>Base externa</th><th>Degrau do pé</th><th>Elev. fundo</th><th>Parede</th><th>Peso</th><th>Resina</th></tr></thead>
         <tbody>
-          <tr><td class="tam">600 ml</td><td class="num">62,0 mm</td><td class="num">60</td><td class="num">118,8 × 90,9</td><td class="num">120,1</td><td class="num">3,55 mm</td><td class="num">2,0 mm</td><td class="num">1,15 mm</td><td class="num">43,9 g</td><td class="num">R$ 0,49</td></tr>
-          <tr><td class="tam">1,2 L</td><td class="num">122,0 mm</td><td class="num">120</td><td class="num">118,7 × 90,8</td><td class="num">119,1</td><td class="num">3,03 mm</td><td class="num">3,4 mm</td><td class="num">1,20 mm</td><td class="num">70,0 g</td><td class="num">R$ 0,77</td></tr>
-          <tr><td class="tam">1,8 L</td><td class="num">182,0 mm</td><td class="num">180</td><td class="num">118,5 × 90,6</td><td class="num">118,0</td><td class="num">2,50 mm</td><td class="num">2,7 mm</td><td class="num">1,30 mm</td><td class="num">100,8 g</td><td class="num">R$ 1,11</td></tr>
-          <tr><td class="tam">2,4 L</td><td class="num">242,0 mm</td><td class="num">240</td><td class="num">118,3 × 90,4</td><td class="num">117,0</td><td class="num">1,98 mm</td><td class="num">0,0 mm</td><td class="num">1,40 mm</td><td class="num">135,3 g</td><td class="num">R$ 1,50</td></tr>
+          <tr><td class="tam">600 ml</td><td class="num">62,0 mm</td><td class="num">60</td><td class="num">137,4 × 77,5</td><td class="num">138,6</td><td class="num">3,88 mm</td><td class="num">2,0 mm</td><td class="num">1,15 mm</td><td class="num">45,4 g</td><td class="num">R$ 0,50</td></tr>
+          <tr><td class="tam">1,2 L</td><td class="num">122,0 mm</td><td class="num">120</td><td class="num">137,3 × 77,4</td><td class="num">137,6</td><td class="num">3,35 mm</td><td class="num">3,5 mm</td><td class="num">1,20 mm</td><td class="num">73,0 g</td><td class="num">R$ 0,81</td></tr>
+          <tr><td class="tam">1,8 L</td><td class="num">182,0 mm</td><td class="num">180</td><td class="num">137,1 × 77,2</td><td class="num">136,5</td><td class="num">2,83 mm</td><td class="num">2,8 mm</td><td class="num">1,30 mm</td><td class="num">105,8 g</td><td class="num">R$ 1,17</td></tr>
+          <tr><td class="tam">2,4 L</td><td class="num">242,0 mm</td><td class="num">240</td><td class="num">136,9 × 77,0</td><td class="num">135,5</td><td class="num">2,31 mm</td><td class="num">0,0 mm</td><td class="num">1,40 mm</td><td class="num">142,5 g</td><td class="num">R$ 1,58</td></tr>
         </tbody>
       </table>
     </div>
@@ -220,7 +220,7 @@
     <div class="regras">
       <div class="regra"><span class="num">1</span><div><h3>Fundo de 2,0 mm, igual nos quatro</h3><p>Se um pote tiver fundo mais grosso que o outro, o passo dele deixa de ser múltiplo do módulo.</p></div></div>
       <div class="regra"><span class="num">2</span><div><h3>Piso da bandeja 2,0 mm abaixo da borda</h3><p>Exatamente a espessura do fundo. Esse piso é o plano modular: é onde o pote de cima pousa. As duas medidas têm que casar.</p></div></div>
-      <div class="regra"><span class="num">3</span><div><h3>Pé embutido de 112,4 × 84,4 mm</h3><p>Os últimos 6 mm da base recuam, com a mesma medida nos quatro tamanhos — o degrau varia de 2,3 a 3,9 mm para compensar a saída. Sem ele o pote de cima não caberia na bandeja: a boca tem 118,4 mm e o corpo, 121,2 mm.</p></div></div>
+      <div class="regra"><span class="num">3</span><div><h3>Pé embutido de 130,9 × 71,0 mm</h3><p>Os últimos 6 mm da base recuam, com a mesma medida nos quatro tamanhos — o degrau varia de 2,3 a 3,9 mm para compensar a saída. Sem ele o pote de cima não caberia na bandeja: a boca tem 136,9 mm e o corpo, 139,7 mm. Essa medida <strong>não é escolhida</strong>: sai da bandeja da tampa, que sai da boca. Na revisão 5 ela mudou sozinha — estava fixa no código e foi o único número que quebrou com a troca de footprint.</p></div></div>
     </div>
 
     <div class="desenho" style="margin-top:22px">
@@ -296,7 +296,7 @@
           <text x="360" y="62" fill="var(--ink-2)">carga: pé → piso da bandeja → parede do plug →</text>
           <text x="360" y="76" fill="var(--ink-2)">borda → parede do pote</text>
           <text x="360" y="98" fill="var(--cota)">abrir: 1,0 kgf descascando um canto</text>
-          <text x="360" y="112" fill="var(--muted)">(5,8 kgf se puxar reto, o que ninguém faz)</text>
+          <text x="360" y="112" fill="var(--muted)">(6,1 kgf se puxar reto, o que ninguém faz)</text>
         </g>
       </svg>
       <div class="legenda">
@@ -308,7 +308,7 @@
 
     <div class="tabela-wrap" style="margin-top:22px">
       <table>
-        <thead><tr><th>Vedação</th><th>O que segura</th><th>Força (389 mm de perímetro)</th></tr></thead>
+        <thead><tr><th>Vedação</th><th>O que segura</th><th>Força (413 mm de perímetro)</th></tr></thead>
         <tbody>
           <tr><td><strong>Axial</strong> — aro esmagado entre a tampa e a borda</td><td class="num">força permanente de fechamento</td><td class="num">32 kgf o tempo todo — precisa de trava</td></tr>
           <tr class="destaque"><td><strong>Radial</strong> — aro do plug contra a parede</td><td class="num">interferência lateral de 0,20 mm</td><td class="num">zero em repouso · 1,0 kgf para abrir</td></tr>
@@ -319,7 +319,7 @@
 
     <div class="notas" style="margin-top:26px">
       <div class="nota">
-        <h3>O orçamento de largura é o que fixa o pé em 112,4 mm</h3>
+        <h3>O orçamento de largura é o que fixa o pé em 130,9 mm</h3>
         <p>Entre a face externa do corpo e a do pé sobram <strong>4,40 mm por lado</strong>: parede da borda 1,40 + folga do plug 1,00 (é onde o aro trabalha) + parede do plug 1,50 + folga de encaixe 0,50. A folga de 1,00 mm é a cota que define a compressão do aro.</p>
       </div>
       <div class="nota">
@@ -340,17 +340,17 @@
       <table>
         <thead><tr><th>Saída por lado</th><th>Base mais estreita que o topo</th><th>Aninhamento de 6 potes de 2,4 L</th><th>Ganho de volume no frete</th></tr></thead>
         <tbody>
-          <tr><td class="tam">0,25°</td><td class="num">2,1 mm (1,8%)</td><td class="num">1.452 mm — não aninha</td><td class="num">0%</td></tr>
-          <tr class="destaque"><td class="tam">0,50°</td><td class="num">4,2 mm (3,5%)</td><td class="num">1.044 mm</td><td class="num">−28%</td></tr>
-          <tr><td class="tam">0,75°</td><td class="num">6,3 mm (5,3%)</td><td class="num">777 mm</td><td class="num">−47%</td></tr>
-          <tr><td class="tam">1,00°</td><td class="num">8,4 mm (7,1%)</td><td class="num">643 mm</td><td class="num">−56%</td></tr>
+          <tr><td class="tam">0,25°</td><td class="num">2,1 mm (1,5%)</td><td class="num">1.452 mm — não aninha</td><td class="num">0%</td></tr>
+          <tr class="destaque"><td class="tam">0,50°</td><td class="num">4,2 mm (3,0%)</td><td class="num">1.044 mm</td><td class="num">−28%</td></tr>
+          <tr><td class="tam">0,75°</td><td class="num">6,3 mm (4,5%)</td><td class="num">777 mm</td><td class="num">−47%</td></tr>
+          <tr><td class="tam">1,00°</td><td class="num">8,4 mm (6,0%)</td><td class="num">643 mm</td><td class="num">−56%</td></tr>
         </tbody>
       </table>
     </div>
     <div class="notas" style="margin-top:26px">
       <div class="nota">
         <h3>Recomendação: 0,5° por lado</h3>
-        <p>No maior pote a base fica 4,2 mm mais estreita que o topo em 121 mm de largura — 3,5%, imperceptível com canto R18 e parede polida. Abaixo disso o pote vazio deixa de aninhar.</p>
+        <p>No maior pote a base fica 4,2 mm mais estreita que o topo em 139,7 mm de largura — 3,0%, imperceptível com canto R10 e parede polida. Abaixo disso o pote vazio deixa de aninhar.</p>
       </div>
       <div class="nota">
         <h3>O que a parede reta exige do molde</h3>
@@ -359,6 +359,49 @@
       <div class="nota">
         <h3>Força de extração não é o gargalo</h3>
         <p>Estimada em ~5 kN no 2,4 L (932 cm² de contato) contra ~62 kN disponíveis numa injetora de 380 t. O que aperta é <strong>curso de extração e vácuo</strong> — e é justamente o dado que falta no ERP.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:34px">O preço do canto R10: a face comprida</h3>
+    <p>Reduzir o raio e afinar a frente têm efeitos opostos, e não se cancelam igual nas duas faces. O <em>painel plano</em> é o trecho de parede entre dois cantos — o que não tem nada segurando no meio.</p>
+    <div class="tabela-wrap">
+      <table>
+        <thead><tr><th>Painel plano</th><th>R18 de 121,2 × 93,2</th><th>R10 de 139,7 × 79,8</th></tr></thead>
+        <tbody>
+          <tr><td class="tam">Face curta</td><td class="num">57,2 mm</td><td class="num">59,8 mm</td></tr>
+          <tr class="destaque"><td class="tam">Face comprida</td><td class="num">85,2 mm</td><td class="num">119,7 mm</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:14px">A face curta praticamente não mudou — afinar a frente devolveu o que o raio menor tirou. A comprida é que paga. Flecha relativa de placa engastada nas quatro bordas, mesma carga, <span class="mono">flecha ~ α·b⁴/t³</span> com <span class="mono">b</span> = menor vão do painel; 1,00 = a mesma face no desenho R18:</p>
+    <div class="tabela-wrap">
+      <table>
+        <thead><tr><th>Tamanho</th><th>Face comprida</th><th>Face curta</th><th>Parede que igualaria a face comprida</th></tr></thead>
+        <tbody>
+          <tr><td class="tam">600 ml</td><td class="num">1,21×</td><td class="num">1,10×</td><td class="num">1,23 mm (hoje 1,15)</td></tr>
+          <tr><td class="tam">1,2 L</td><td class="num">2,38×</td><td class="num">1,19×</td><td class="num">1,60 mm (hoje 1,20)</td></tr>
+          <tr><td class="tam">1,8 L</td><td class="num">3,35×</td><td class="num">1,20×</td><td class="num">1,94 mm (hoje 1,30)</td></tr>
+          <tr class="destaque"><td class="tam">2,4 L</td><td class="num">3,81×</td><td class="num">1,20×</td><td class="num">2,19 mm (hoje 1,40)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:14px">No 600 ml não há problema: a face comprida mede 119,7 × 60 mm e quem manda na flecha é o vão menor, que é a altura — a mesma de antes. O problema cresce conforme o pote sobe, porque aí o vão menor passa a ser a largura de 119,7 mm.</p>
+    <div class="notas" style="margin-top:22px">
+      <div class="nota">
+        <h3>1. Aceitar e testar</h3>
+        <p>Pote de mantimento é pego pelas faces curtas, que não mudaram, e a vedação mora no bocal — a parte mais rígida da peça. O que o protótipo tem de responder é se a face comprida cede o bastante para <strong>ovalizar o bocal</strong> e soltar o aro. É o único caminho por onde essa flexão vira defeito funcional.</p>
+      </div>
+      <div class="nota">
+        <h3>2. Bombê de 1,0 a 1,5 mm</h3>
+        <p>Só na face comprida. Lê como reta a olho nu e transforma o painel num arco raso — é como todo pote de linha resolve isso. <strong>Não é parede conada:</strong> a saída de extração continua 0,5°, o molde continua de extração simples, sem gaveta. É a opção que eu levaria.</p>
+      </div>
+      <div class="nota">
+        <h3>3. ASP de 1,75 para ~1,55</h3>
+        <p>A face comprida cai para ~105 mm e a flecha do 2,4 L para ~2,3×, ao custo de uma frente 5 mm mais larga — ou seja, devolvendo parte do que a revisão 5 foi buscar.</p>
+      </div>
+      <div class="nota">
+        <h3>O que esse número é e o que não é</h3>
+        <p>A <strong>razão</strong> é confiável: só a geometria mudou entre as duas colunas. A <strong>flecha absoluta</strong> não é — depende de carga de aperto e engastamento real, e pedia elemento finito ou protótipo. Nenhuma das duas revisões foi prototipada.</p>
       </div>
     </div>
   </section>
@@ -376,7 +419,7 @@
       <table>
         <thead><tr><th></th><th>Tampa PE</th><th>Tampa PP + aro TPE</th></tr></thead>
         <tbody>
-          <tr><td>Peso / resina</td><td class="num">23,3 g · R$ 0,26</td><td class="num">22,8 g · R$ 0,22 + aro 1,8 g</td></tr>
+          <tr><td>Peso / resina</td><td class="num">23,1 g · R$ 0,26</td><td class="num">23,4 g · R$ 0,22 + aro 2,0 g</td></tr>
           <tr><td>Vedação</td><td class="num">plug em PE relaxa e solta o aro</td><td class="num">plug rígido mantém o aro comprimido</td></tr>
           <tr><td>Sob carga permanente</td><td class="num">PEBD flui a frio (creep)</td><td class="num">PP copolímero segura</td></tr>
           <tr><td>Cadeia de resina</td><td class="num">500 kg em 12 meses</td><td class="num">299 t/ano já em casa</td></tr>
@@ -465,7 +508,7 @@
           <text x="380" y="70" fill="var(--cota)" font-size="12">1 · furo de vazão no canto</text>
           <text x="380" y="88">≈ 25 × 15 mm, encostado na parede da bandeja</text>
           <text x="380" y="116" fill="var(--cota)" font-size="12">2 · entalhe de 12–15 mm na parede</text>
-          <text x="380" y="134">o canto R18 já faz a curva — não se molda bico nenhum</text>
+          <text x="380" y="134">o canto R10 já faz a curva — não se molda bico nenhum</text>
           <text x="380" y="162" fill="var(--cota)" font-size="12">3 · lábio de corte de 0,4 mm</text>
           <text x="380" y="180">quebra o filme: a gota se solta em vez de escorrer pelo pote</text>
           <text x="380" y="208" fill="var(--cota)" font-size="12">4 · piso com caimento para o furo</text>
@@ -488,7 +531,7 @@
       </div>
       <div class="nota">
         <h3>Por que continua empilhando</h3>
-        <p>A aba fecha rente ao piso da bandeja, que é o plano modular. O entalhe tira um pedaço da parede num canto — justamente onde o pote de cima tem raio R18 e quase não apoia.</p>
+        <p>A aba fecha rente ao piso da bandeja, que é o plano modular. O entalhe tira um pedaço da parede num canto — justamente onde o pote de cima tem raio R10 e quase não apoia.</p>
       </div>
       <div class="nota">
         <h3>Alternativas descartadas</h3>
@@ -499,20 +542,20 @@
 
   <section>
     <div class="section-head"><span class="n">05</span><h2>Validação nas injetoras</h2></div>
-    <p class="lede">Os quatro corpos têm a mesma área projetada (139 cm², já com a aba da borda) e pedem 129 a 153 t com duas cavidades. <strong>O que decide a máquina não é tonelagem, é profundidade</strong>. A prova de que o parque aguenta não é catálogo: é peça de geometria equivalente rodando hoje.</p>
+    <p class="lede">Os quatro corpos têm a mesma área projetada (125 cm², já com a aba da borda) e pedem 115 a 137 t com duas cavidades. <strong>Correção da revisão 4:</strong> ali estava 139 cm² e 129–153 t, número que não saía do cálculo. <strong>O que decide a máquina não é tonelagem, é profundidade</strong>. A prova de que o parque aguenta não é catálogo: é peça de geometria equivalente rodando hoje.</p>
 
     <div class="maquinas">
       <div class="maq"><span class="cap">600 ml</span><span class="classe">200 t</span>
-        <span class="lista"><b>INJ 1–6, 19–22, 35, 37</b> · 129 t · curso 136 mm · molde 252 mm
+        <span class="lista"><b>INJ 41, 43–46 (160 t)</b> · 115 t · curso 136 mm · molde 252 mm
           <span class="prova">equivalente: pote hermético peq. 176-C, ciclo medido 16,7 s</span></span></div>
       <div class="maq"><span class="cap">1,2 L</span><span class="classe">200 t</span>
-        <span class="lista"><b>INJ 1–6, 19–22, 35, 37</b> · 138 t · curso 268 mm · molde 312 mm
+        <span class="lista"><b>INJ 1–6, 19–22, 35, 37</b> · 124 t · curso 268 mm · molde 312 mm
           <span class="prova">equivalente: modular 450 ml (320-C) na INJ 37 · 2 L rosca (238-C) na INJ 1 e 22</span></span></div>
       <div class="maq"><span class="cap">1,8 L</span><span class="classe">250 t</span>
-        <span class="lista"><b>INJ 23–28, 38, 39</b> · 147 t · curso 400 mm · molde 372 mm
+        <span class="lista"><b>INJ 23–28, 38, 39</b> · 132 t · curso 400 mm · molde 372 mm
           <span class="prova">equivalente: modular 1,2 L (322-C) na INJ 25 · pote 3 L (239-C) na INJ 24 e 27</span></span></div>
       <div class="maq"><span class="cap">2,4 L</span><span class="classe">380 t</span>
-        <span class="lista"><b>INJ 31, 32, 33</b> · 153 t · curso 532 mm · molde 432 mm
+        <span class="lista"><b>INJ 31, 32, 33</b> · 137 t · curso 532 mm · molde 432 mm
           <span class="prova">equivalente: modular 2,4 L (323-C) na INJ 33 · pote alto 5,8 L (237-C) na INJ 31 e 33</span></span></div>
     </div>
 
@@ -529,8 +572,8 @@
       </div>
       <div class="nota">
         <span class="status s-alerta">Aproveitamento</span>
-        <h3>153 t numa máquina de 380 t</h3>
-        <p>O 2,4 L com 2 cavidades usa 40% do fechamento. Com 4 cavidades (~278 t, molde ~620 × 500 mm) dobra a produção na mesma hora de máquina.</p>
+        <h3>137 t numa máquina de 380 t</h3>
+        <p>O 2,4 L com 2 cavidades usa 36% do fechamento de uma 380 t. Com 4 cavidades (~275 t, bloco de cavidades ~510 × 390 mm) dobra a produção na mesma hora de máquina, e ainda sobra vão entre as colunas.</p>
       </div>
     </div>
   </section>

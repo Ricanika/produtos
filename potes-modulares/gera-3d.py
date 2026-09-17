@@ -27,20 +27,21 @@ Uso:  python3 gera-3d.py [--seg 12]      (--seg = pontos por canto)
 import json, math, struct, sys, os
 
 # ---- cotas da linha (iguais as de calculo-modular.py) ----
-EXT_L, EXT_W = 121.2, 93.3     # footprint externo no bocal
-R_EXT   = 18.0                 # raio de canto externo
+EXT_L, EXT_W = 139.7, 79.8     # footprint externo no bocal (ASP 1,75: frente estreita)
+R_EXT   = 10.0                 # raio de canto externo (canto quase reto)
 M       = 60.0                 # modulo
 SAIDA   = 0.50                 # graus por lado
 BASE_T  = 2.00                 # espessura do fundo (igual nos quatro)
 PE_H    = 6.00                 # altura do pe embutido
-PE_L    = 112.4                # pe embutido, igual nos quatro
+# PE_L nao e escolhido: sai da bandeja da tampa, que sai da boca do pote.
+# Ver pe_l() em calculo-modular.py. Fixar a mao quebra quando o footprint muda.
 W_BORDA = 1.40                 # parede nos 10 mm abaixo da borda, igual nos quatro
 ABA_W   = 3.00                 # aba da borda virada para fora, por lado
 ABA_T   = 1.60                 # espessura da aba
 LIP_H   = 3.50                 # labio descendente na ponta da aba
 LIP_T   = 1.20                 # espessura do labio
 WALL    = {1: 1.15, 2: 1.20, 3: 1.30, 4: 1.40}
-ELEV    = {1: 1.8,  2: 3.4,  3: 2.7,  4: 0.0}   # elevacao do fundo
+ELEV    = {1: 2.0,  2: 3.5,  3: 2.8,  4: 0.0}   # elevacao do fundo
 # tampa tipo PLUG (z = 0 no plano da borda do pote)
 TP_TOPO, TP_PISO, TP_FUNDO = 1.5, -2.0, -3.5
 PLUG_FIM   = -12.0             # ate onde o plug desce dentro do pote
@@ -52,6 +53,11 @@ ARO_SOBRA  = 1.20              # quanto o aro sobra da face do plug -> 0,2 mm de
                                # compressao contra a parede do pote
 # aro de TPE
 ARO_SEC = (2.8, 2.2)
+
+# Pe embutido: DERIVADO da bandeja da tampa, nunca digitado.
+#   boca = EXT_L - 2*W_BORDA | plug = boca - 2*PLUG_FOLGA
+#   bandeja = plug - 2*PLUG_PAR | pe = bandeja - 1,0
+PE_L = EXT_L - 2 * (W_BORDA + PLUG_FOLGA + PLUG_PAR) - 1.0
 
 T = math.tan(math.radians(SAIDA))
 

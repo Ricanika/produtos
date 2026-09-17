@@ -1,6 +1,6 @@
 # Potes retangulares modulares em PP — resumo para retomar em outro chat
 
-**Projeto 115 do ERP (Nitron) · Revisão 4 · 17/09/2026**
+**Projeto 115 do ERP (Nitron) · Revisão 5 · 17/09/2026**
 Branch: `claude/serene-johnson-ja8az8` · pasta `potes-modulares/`
 
 Este arquivo é auto-contido: cole ele num chat novo e o contexto está todo aqui.
@@ -20,21 +20,26 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
 4. **Parede reta**, não conada, com cantos arredondados.
 5. **Sem trava**, acabamento liso.
 6. Validar tudo contra o parque de injetoras real (via MCP Sankhya / Nitron).
+7. **(revisão 5)** O pote tinha ficado largo e muito arredondado em relação ao render de
+   referência. Corrigido para **frente estreita e pote fundo, canto R10** — escolhido de propósito
+   o caminho que mantém altura, módulo, curso de abertura e classe de injetora. Custou **+17,6 g**
+   de resina nos quatro corpos e deixou a face comprida do 2,4 L **3,8× mais flexível** (única
+   decisão ainda aberta: aceitar, pôr bombê de 1,0–1,5 mm, ou reduzir o ASP de 1,75 para ~1,55).
 
 ---
 
 ## 2. A linha, como está fechada
 
-**Corpo 121,2 × 93,3 mm · 127,2 × 99,2 mm na aba da borda · canto R18 · saída 0,5°/lado ·
+**Corpo 139,7 × 79,8 mm · 145,7 × 85,8 mm na aba da borda · canto R10 · saída 0,5°/lado ·
 módulo 60 mm · fundo 2,0 mm igual nos quatro · parede da borda 1,40 mm igual nos quatro ·
-pé embutido 112,4 × 84,4 mm igual nos quatro**
+pé embutido 130,9 × 71,0 mm igual nos quatro (derivado da bandeja da tampa, não escolhido)**
 
 | Tamanho | Altura corpo | Passo | Parede | Peso corpo | Resina (PP a R$ 11,06/kg) |
 |---|---|---|---|---|---|
-| 600 ml | 62,0 mm | 60 | 1,15 mm | 43,7 g | R$ 0,48 |
-| 1,2 L | 122,0 mm | 120 | 1,20 mm | 69,8 g | R$ 0,77 |
-| 1,8 L | 182,0 mm | 180 | 1,30 mm | 100,6 g | R$ 1,11 |
-| 2,4 L | 242,0 mm | 240 | 1,40 mm | 135,1 g | R$ 1,49 |
+| 600 ml | 62,0 mm | 60 | 1,15 mm | 45,4 g | R$ 0,50 |
+| 1,2 L | 122,0 mm | 120 | 1,20 mm | 73,0 g | R$ 0,81 |
+| 1,8 L | 182,0 mm | 180 | 1,30 mm | 105,8 g | R$ 1,17 |
+| 2,4 L | 242,0 mm | 240 | 1,40 mm | 142,5 g | R$ 1,58 |
 
 Empilhamento confere: `600×4` = `1,2 L×2` = `600+600+1,2 L` = `600+1,8 L` = `2,4 L` = 240 mm.
 
@@ -74,7 +79,7 @@ Exige polido A2 nas laterais (textura pediria saída extra), extração por **pl
   que precisa de 4,00) e **sem definir de onde viria a força de fechamento**.
 - **Revisão 3:** troquei por lábio de PP moldado na tampa. Melhor, mas ainda **vedação axial**.
 - **O erro comum às duas:** vedação axial num retângulo pede **32 kgf permanentes** ao longo dos
-  389 mm de perímetro. É por isso que pote retangular hermético usa trava. Como o Ricardo não quer
+  413 mm de perímetro. É por isso que pote retangular hermético usa trava. Como o Ricardo não quer
   trava, axial estava morto desde o começo.
 
 ### A solução (dele, e está certa): vedação RADIAL
@@ -83,11 +88,11 @@ Um **plug** da tampa desce 12 mm dentro do pote e leva o aro de TPE numa canalet
 **O aro trabalha contra a PAREDE do pote, não contra a borda.**
 
 ```
-boca do pote ..... 118,4 mm      face do plug ..... 116,4 mm (folga 1,00 por lado)
+boca do pote ..... 136,9 mm      face do plug ..... 134,9 mm (folga 1,00 por lado)
 parede do plug ... 1,50 mm       canaleta ......... 0,60 mm, a 5,0-7,4 mm da borda
 aro de TPE ....... seção 2,4 × 1,8 mm, sobra 1,20 -> comprime 0,20 contra a parede
-plug desce ....... 12 mm         vão da bandeja ... 113,4, recebe o pé de 112,4
-tampa ............ 127,2 × 99,2 mm, rente à aba, SEM saia externa. 22,8 g. R$ 0,22 + aro 1,8 g
+plug desce ....... 12 mm         vão da bandeja ... 131,9, recebe o pé de 130,9
+tampa ............ 145,7 × 85,8 mm, rente à aba, SEM saia externa. 23,4 g. R$ 0,22 + aro 2,0 g
 ```
 
 | | O que segura | Força |
@@ -144,7 +149,7 @@ projetada, o que moveu o 600 ml da classe de 160 t para a de 200 t.
 Sem copinho, sem pump, nada acima do plano modular. Aproveita a bandeja que a modularidade já obriga:
 
 1. Furo de vazão no canto (≈25 × 15 mm), encostado na parede da bandeja.
-2. Entalhe de 12-15 mm na parede da bandeja — o canto R18 já faz a curva, não se molda bico.
+2. Entalhe de 12-15 mm na parede da bandeja — o canto R10 já faz a curva, não se molda bico.
 3. **Lábio de corte de 0,4 mm** na aresta: quebra o filme, a gota se solta em vez de escorrer.
 4. Piso com caimento de 2-3° para o furo: o que respinga volta para dentro pelo mesmo furo.
 5. Aba com dobradiça viva rente ao piso — não veda (quem veda é o aro), só barra poeira e cheiro.
@@ -161,15 +166,15 @@ Parque: **46 injetoras** (45 monitoradas). 80 t ×1 · 120 t ×7 · 150 t ×2 ·
 A tonelagem real está em `TPRCAP.DESCRICAO` (via `TPRWCP.CODCAP`) — **não** em `QTDCAPACIDADEPAD`,
 que mistura kN e ton.
 
-Os quatro corpos têm a **mesma área projetada (139 cm²)**: quem decide a máquina é profundidade,
-não tonelagem.
+Os quatro corpos têm a **mesma área projetada (125 cm²)**: quem decide a máquina é profundidade,
+não tonelagem. (A revisão 4 dizia 139 cm² e 129–153 t; o número não saía do cálculo.)
 
 | Tamanho | Máquina | Fecham. 2 cav | Curso | Molde | Peça equivalente que já roda lá |
 |---|---|---|---|---|---|
-| 600 ml | 200 t — INJ 1–6, 19–22, 35, 37 | 129 t | 136 mm | 252 mm | pote 176-C, ciclo medido 16,7 s |
-| 1,2 L | 200 t | 138 t | 268 mm | 312 mm | modular 450 ml (320-C) na INJ 37 |
-| 1,8 L | 250 t — INJ 23–28, 38, 39 | 147 t | 400 mm | 372 mm | modular 1,2 L (322-C) na INJ 25 |
-| 2,4 L | 380 t — INJ 31, 32, 33 | 153 t | 532 mm | 432 mm | modular 2,4 L (323-C) na INJ 33 · pote 5,8 L (237-C) na INJ 31/33 |
+| 600 ml | 160 t — INJ 41, 43–46 | 115 t | 136 mm | 252 mm | pote 176-C, ciclo medido 16,7 s |
+| 1,2 L | 200 t — INJ 1–6, 19–22, 35, 37 | 124 t | 268 mm | 312 mm | modular 450 ml (320-C) na INJ 37 |
+| 1,8 L | 250 t — INJ 23–28, 38, 39 | 132 t | 400 mm | 372 mm | modular 1,2 L (322-C) na INJ 25 |
+| 2,4 L | 380 t — INJ 31, 32, 33 | 137 t | 532 mm | 432 mm | modular 2,4 L (323-C) na INJ 33 · pote 5,8 L (237-C) na INJ 31/33 |
 
 **Sem máquina nova.** A peça mais funda desta linha é menos exigente que o pote de 5,8 L que já roda
 nas 380 t. A **INJ 32 estava parada** — candidata ao try-out.
