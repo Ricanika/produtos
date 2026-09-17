@@ -68,23 +68,25 @@ FOLGA_PE  = 1.00    # folga do pe dentro do murete, por lado
 SAIA_H    = 7.00    # saia da tampa, por fora do corpo
 SAIA_T    = 1.60
 
-CURSO     = 18.0    # curso horizontal do fechamento
-RAMPA_L   = 8.0     # trecho de rampa. Limitado por: CURSO - GANCHO_W >= RAMPA_L,
+CURSO     = 16.0    # curso horizontal do fechamento
+RAMPA_L   = 6.0     # trecho de rampa. Limitado por: CURSO - GANCHO_W >= RAMPA_L,
                     # senao o gancho nao chega inteiro ao patamar no fim do curso.
 HOVER     = 1.00    # folga da tampa acima do 1o contato da junta, no pouso
-PATAMAR_L = 9.0     # patamar PLANO no fim da rampa: e onde o gancho assenta
+PATAMAR_L = 10.0    # patamar PLANO no fim da rampa: e onde o gancho assenta
 
 LAB_T, LAB_L, LAB_DEF = 1.30, 4.00, 1.00   # labio de TPE: espessura, balanco, deflexao
+RAMPA_DZ  = HOVER + LAB_DEF   # queda da rampa. NAO e numero livre: e a folga de
+                              # pouso mais a compressao da junta.
 E_TPE     = 3.5     # MPa, TPE ~55 Shore A
 E_PP      = 900.0   # MPa, PP RP 141 randomico (tampa)
 
-GANCHO_N  = 8       # 4 por lado longo
+GANCHO_N  = 6       # 3 por lado longo
 GANCHO_W  = 10.0    # comprimento do gancho, no sentido do curso
-GANCHO_P  = 2.60    # espessura do poste do gancho
+GANCHO_P  = 3.20    # espessura do poste do gancho
 GANCHO_O  = 2.00    # quanto cada asa do pe do gancho avanca sob a nervura da came
-CAME_T    = 3.00    # espessura do labio descendente da aba NA ZONA DA CAME.
+CAME_T    = 3.40    # espessura do labio descendente da aba NA ZONA DA CAME.
                     # O labio ja existia para dar rigidez a borda (secao em U);
-                    # engrossado de 1,20 para 3,00 ele vira a propria came, e a
+                    # engrossado de 1,20 para 3,40 ele vira a propria came, e a
                     # aresta de baixo dele e a rampa. Uma peca, duas funcoes.
 
 LING_N, LING_L, LING_W, LING_T = 4, 9.0, 16.0, 1.40   # linguetas do detente (2 por lado)
@@ -260,7 +262,6 @@ def main():
 
     # ---------------- 4. a came ----------------
     sep("4. A CAME: RAMPA E PATAMAR")
-    RAMPA_DZ = HOVER + LAB_DEF          # nao e numero livre: e o percurso vertical
     ang_r = math.degrees(math.atan(RAMPA_DZ / RAMPA_L))
     k_ved = F_ved / LAB_DEF
     print(f"Curso total {CURSO:.0f} mm = aproximacao {CURSO-RAMPA_L-PATAMAR_L:.0f} + rampa "
@@ -278,19 +279,33 @@ def main():
     print(f"      GANCHO_W + RAMPA_L <= CURSO")
     print(f"  Com gancho de 14 mm e rampa de 10 isso nao fecha (24 > 14): no fim do curso o")
     print(f"  gancho fica montado meio na rampa, meio no patamar, e o apoio de FACE INTEIRA")
-    print(f"  - que e o que a conta de queda usa - simplesmente nao existe. Dai {GANCHO_N} ganchos")
-    print(f"  de {GANCHO_W:.0f} mm em vez de 6 de 14: {GANCHO_W:.0f} + {RAMPA_L:.0f} = "
-          f"{GANCHO_W+RAMPA_L:.0f} <= {CURSO:.0f}. Ganchos menores e em")
-    print(f"  maior numero tambem encurtam o vao da borda entre eles, o que ajuda a vedacao.")
+    print(f"  - que e o que a conta de queda usa - simplesmente nao existe. Dai ganchos")
+    print(f"  de {GANCHO_W:.0f} mm com rampa de {RAMPA_L:.0f}: {GANCHO_W:.0f} + {RAMPA_L:.0f} = "
+          f"{GANCHO_W+RAMPA_L:.0f} <= {CURSO:.0f}, e o gancho chega inteiro ao patamar.")
     print(f"  Uma funcao por peca: a RAMPA puxa, o DETENTE segura.")
+    reto = (ABA_L := ext_l + 2 * ABA_W) - 2 * (R_EXT + ABA_W)
+    cel = reto / (GANCHO_N // 2)
+    jan = GANCHO_W + 1.0
+    print(f"\nE O TRILHO SO CABE NO TRECHO RETO DO LADO LONGO")
+    print(f"  O canto e R{R_EXT:.0f}. A aba so alcanca a linha do trilho enquanto |x| <= "
+          f"{(ABA_L - 2*(R_EXT+ABA_W))/2:.1f} mm -")
+    print(f"  fora disso ela ja curvou para dentro e nao ha material sobre o gancho. Logo o")
+    print(f"  trilho tem {reto:.1f} mm por lado, nao {ABA_L:.1f}. Com {GANCHO_N//2} celulas:")
+    print(f"    celula {cel:.2f} = janela {jan:.1f} + trilho {cel-jan:.2f}")
+    print(f"    o trilho precisa de >= CURSO ({CURSO:.0f}) para o gancho chegar em casa: "
+          f"{cel-jan:.2f} >= {CURSO:.0f} {'OK' if cel-jan >= CURSO else 'FALHA'}")
+    print(f"  Foi isso que baixou o curso de 18 para {CURSO:.0f} e a rampa de 8 para "
+          f"{RAMPA_L:.0f} ({ang_r:.1f}°).")
     print(f"\nARMADILHA: sabao e lubrificante. mu do PP cai de ~{MU_SECO:.2f} seco para "
           f"~{MU_SABAO:.2f} ensaboado.")
     for mu in (MU_SECO, 0.15, MU_SABAO, 0.0):
         ang_at = math.degrees(math.atan(mu))
         trava = "trava" if ang_at > ang_r else "NAO TRAVA"
         print(f"  mu={mu:.2f} -> angulo de atrito {ang_at:4.1f}° vs rampa {ang_r:.1f}°: {trava}")
-    print("Mesmo travando seco, nao se pode contar com isso: o produto E um pote de sabao.")
-    print("Quem segura e o DETENTE, que e geometrico e funciona com mu = 0.")
+    print("Com a rampa a 18,4° nao trava nem seco. Isso NAO e um problema - e a ordem certa:")
+    print("rampa livre significa que fechar e abrir custam pouco, e a retencao fica inteira")
+    print("com o DETENTE, que e geometrico e funciona com mu = 0. Amarrar travamento a atrito")
+    print("num pote de SABAO seria projetar para a bancada, nao para a pia.")
 
     # ---------------- 5. detente ----------------
     sep("5. DETENTE: E ELE QUE SEGURA, E E A COTA QUE SE AJUSTA NO TRY-OUT")
@@ -329,6 +344,10 @@ def main():
           f"comprimento, poste {GANCHO_P:.2f} mm, asa avanca {GANCHO_O:.2f} mm para dentro")
     print(f"A came e a aresta de baixo do LABIO DESCENDENTE da aba, engrossado de 1,20 para")
     print(f"{CAME_T:.2f} mm na zona de trabalho. O labio ja existia para dar rigidez a borda.")
+    print(f"Com {GANCHO_N} ganchos (3 por lado) em vez de 8, cada um pega 1/{GANCHO_N} da carga de")
+    print(f"queda em vez de 1/8. Foi o que obrigou o labio a ir de 3,00 para {CAME_T:.2f} mm e o")
+    print(f"poste de 2,60 para {GANCHO_P:.2f} mm. A {GANCHO_P:.2f} mm o poste ja pede alma vazada")
+    print(f"ou nervura no molde, senao rechupa na saia.")
     print(f"NAO se engrossa a ABA: ela e a face que veda, e variar espessura nela daria")
     print(f"rechupe bem em cima da junta. No labio, que e saia escondida, rechupe nao importa.")
     print(f"O poste desce por FORA do labio e a asa volta para dentro, por baixo dele - assim")
@@ -355,7 +374,7 @@ def main():
 
     # ---------------- 7. borda entre ganchos ----------------
     sep("7. A BORDA ENTRE GANCHOS (se ela levantar, a vedacao vaza ali)")
-    vao = ext_l / (GANCHO_N // 2)
+    vao = (ext_l + 2*ABA_W - 2*(R_EXT+ABA_W)) / (GANCHO_N // 2)  # so o trecho reto
     b_h = 5.5
     I_u = (ABA_W * ABA_T**3 / 12 + ABA_W * ABA_T * (b_h/2)**2
            + 1.2 * b_h**3 / 12)

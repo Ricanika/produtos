@@ -27,7 +27,7 @@ macho na tampa e fêmea no corpo, e que a tampa **deslize** para fechar.
 
 ## 2. O mecanismo
 
-A tampa não é empurrada para baixo e não rosqueia. Ela pousa deslocada 14 mm e é **empurrada
+A tampa não é empurrada para baixo e não rosqueia. Ela pousa deslocada 16 mm e é **empurrada
 no sentido do comprimento**. Nesse curso acontecem quatro coisas, nesta ordem:
 
 ```
@@ -40,16 +40,16 @@ no sentido do comprimento**. Nesse curso acontecem quatro coisas, nesta ordem:
     │  pote  │                                │     pote      │
 ```
 
-1. **Entram os ganchos.** Oito ganchos em L na face de baixo da tampa (4 por lado longo)
+1. **Entram os ganchos.** Seis ganchos em L na face de baixo da tampa (3 por lado longo)
    descem pelas janelas abertas no lábio da aba. É o macho; o lábio rampado é a fêmea.
 2. **A came puxa a tampa para baixo.** A came é a **aresta de baixo do lábio descendente da
    aba**, rampada.
-   Conforme o gancho avança, a rampa desce e **arrasta a tampa junto** — 2,00 mm em 8 mm
-   (14,0°). Esses 2,00 mm não são número livre: são 1,00 mm de folga de pouso + 1,00 mm de
+   Conforme o gancho avança, a rampa desce e **arrasta a tampa junto** — 2,00 mm em 6 mm
+   (18,4°). Esses 2,00 mm não são número livre: são 1,00 mm de folga de pouso + 1,00 mm de
    compressão da junta. A junta só encosta nos últimos 8 mm do curso — durante o deslizamento
    ela não raspa em nada.
-3. **Patamar.** Os últimos 9 mm do lábio são planos. É ali que o gancho assenta de face
-   inteira (30,0 mm²) em vez de apoiar numa linha.
+3. **Patamar.** Os últimos 10 mm do lábio são planos. É ali que o gancho assenta de face
+   inteira (34,0 mm²) em vez de apoiar numa linha.
 4. **Clique.** Quatro linguetas flexíveis caem num rebaixo no fim do patamar. **É o detente
    que segura o fecho** — não o atrito da rampa.
 
@@ -111,9 +111,22 @@ Com os 6 ganchos de 14 mm e rampa de 10 que eu tinha, dá 24 contra 14 de curso:
 o gancho ficaria montado **meio na rampa, meio no patamar**, apoiado numa linha em vez de numa
 face — e toda a conta de queda da seção 6 cairia junto.
 
-Virou **8 ganchos de 10 mm, rampa de 8, curso de 18**: 10 + 8 = 18. De quebra, ganchos menores
-e em maior número encurtaram o vão da borda entre eles de 41 para 31 mm, e o levantamento
-máximo da borda caiu de 16 para **5 µm**.
+Virou **gancho de 10 mm com rampa de 6, curso 16**.
+
+### c-bis) O trilho só cabe no trecho reto do lado longo
+
+Essa apareceu ao escrever o fatiador de G-code, e é a mais dura das três. Com canto **R18**, a
+aba só alcança a linha do trilho (y = ±50,45) enquanto **|x| ≤ 43,7 mm**. Fora disso ela já
+curvou para dentro e **não existe material sobre o gancho**.
+
+Ou seja: o trilho tem **87,4 mm por lado, não 129,4**. Com 3 células:
+
+```
+célula 29,13 = janela 11,0 + trilho 18,13     e o trilho precisa de >= curso (16)
+```
+
+É isso que fixa o curso em 16 e a rampa em 6. Antes disso eu estava distribuindo as células
+sobre os 129,4 mm inteiros — os dois ganchos das pontas simplesmente não teriam trilho.
 
 ### d) O sobre-centro na nervura não fecha — e foi onde eu errei primeiro
 
@@ -131,15 +144,18 @@ linha, e toda a conta de queda da seção 6 cairia.
 
 ### e) Sabão é lubrificante — não dá para contar com atrito
 
-Essa quase passou. A rampa de 14,0° é auto-travante com µ = 0,30 (ângulo de atrito 16,7°), e a
-conta fecha bonito na bancada. Só que **µ do PP com filme de sabão cai para ~0,08**, ângulo de
-atrito 4,6° — e aí a rampa **não trava mais**. A tampa voltaria sozinha. O produto *é* um pote
-de sabão: projetar o travamento em cima de um coeficiente que o próprio conteúdo derruba 4×
-seria projetar para a bancada, não para a pia.
+Numa versão anterior a rampa era de 11,3° e era auto-travante a seco — a conta fechava bonito
+na bancada. Só que **µ do PP com filme de sabão cai para ~0,08**, e aí a rampa não trava mais.
+O produto *é* um pote de sabão: amarrar o travamento a um coeficiente que o próprio conteúdo
+derruba 4× seria projetar para a bancada, não para a pia.
 
-| µ | ângulo de atrito | vs. rampa de 14,0° |
+Hoje a rampa é de 18,4° e **não trava nem seca**. Isso deixou de ser problema e virou a ordem
+certa: rampa livre significa que fechar e abrir custam pouco, e a retenção fica inteira com o
+detente, que é geométrico e funciona com µ = 0.
+
+| µ | ângulo de atrito | vs. rampa de 18,4° |
 |---|---|---|
-| 0,30 (seco) | 16,7° | trava |
+| 0,30 (seco) | 16,7° | **NÃO TRAVA** |
 | 0,15 | 8,5° | **NÃO TRAVA** |
 | **0,08 (ensaboado)** | **4,6°** | **NÃO TRAVA** |
 
@@ -175,11 +191,12 @@ Contra a linha 1: footprint +2,2 mm, corpo 4,0 mm mais baixo, peso do corpo gran
 prato ............ 2,00 mm, com 3 nervuras de 1,2 × 5,0 mm no piso da bandeja
 murete ........... 3,5 mm de altura, 1,5 mm de parede, vão 114,4 × 85,9
 saia ............. 7,0 mm × 1,6 mm, por fora do corpo (esconde o mecanismo)
-ganchos .......... 8 em L, 10 mm, poste 2,6 mm, asa 3,0 mm sob o lábio
+ganchos .......... 6 em L, 10 mm, poste 3,2 mm, asa 3,4 mm sob o lábio
 linguetas ........ 4 (2 por lado), 9 × 16 × 1,4 mm, deflexão 0,60 mm, face de saída 35°
 lábio de TPE ..... 1,30 mm de espessura, 4,0 mm de balanço, 2,6 g, perímetro 412 mm
-curso ............ 18 mm = 1 de aproximação + 8 de rampa (desce 2,00) + 9 de patamar plano
-célula ........... 32,35 mm por gancho = janela 12 + trilho 20,35
+curso ............ 16 mm = 6 de rampa (desce 2,00) + 10 de patamar plano
+célula ........... 29,13 mm por gancho = janela 11,0 + trilho 18,13,
+                   distribuídas nos 87,4 mm de TRECHO RETO do lado longo
 ```
 
 ### A vedação: lábio flexível, não aro esmagado
@@ -212,7 +229,7 @@ Engrossar a **aba** para fazer a rampa daria rechupe **exatamente na face que ve
 O poste do gancho desce **por fora** do lábio e a asa volta para dentro, por baixo dele. Com
 isso o gancho inteiro cabe num corte transversal só, e a saia de 7 mm da tampa esconde tudo.
 
-Apoio por gancho: **30,0 mm² (10 × 3,0)**.
+Apoio por gancho: **34,0 mm² (10 × 3,4)**.
 
 ### O batente que fecha o passo
 
@@ -247,13 +264,14 @@ de uma vez.
 
 | Altura | Parada | Força | Por gancho | Apoio | Poste | |
 |---|---|---|---|---|---|---|
-| 0,50 m | 8 mm | 1.602 N | 200 N | 6,7 MPa | 7,7 MPa | OK |
-| 0,75 m | 8 mm | 2.402 N | 300 N | 10,0 MPa | 11,6 MPa | OK |
-| 1,00 m | 8 mm | 3.203 N | 400 N | 13,3 MPa | 15,4 MPa | OK |
-| 1,00 m | 5 mm | 5.125 N | 641 N | 21,4 MPa | 24,6 MPa | OK |
+| 0,50 m | 8 mm | 1.602 N | 267 N | 7,9 MPa | 8,3 MPa | OK |
+| 0,75 m | 8 mm | 2.402 N | 400 N | 11,8 MPa | 12,5 MPa | OK |
+| 1,00 m | 8 mm | 3.203 N | 534 N | 15,7 MPa | 16,7 MPa | OK |
+| 1,00 m | 5 mm | 5.125 N | 854 N | 25,1 MPa | 26,7 MPa | OK |
 
-Limite do PP: 30 MPa. Oito ganchos repartem melhor que seis: mesmo o caso de 1,00 m com parada
-em 5 mm agora tem 18% de margem. Ainda assim é caso a **medir**, não a confiar na conta.
+Limite do PP: 30 MPa. Passar de 8 para 6 dentes tirou 25% dos apoios: foi o que obrigou o
+lábio a engrossar de 3,0 para 3,4 mm e o poste de 2,6 para 3,2 mm. A 3,2 mm o poste já pede
+alma vazada ou nervura no molde, senão rechupa na saia. Ainda assim é caso a **medir**.
 
 ### Fluência, que é o que mata vedação de PP a longo prazo
 
@@ -263,8 +281,8 @@ poucos meses. **Foi por isso que o lábio flexível teve de vir antes da came.**
 
 ### A borda entre ganchos
 
-Ganchos a cada 31 mm. A seção em U da aba dá I = 54 mm⁴/mm (parede simples de 1,40 mm daria
-0,23 — **235×**). Levantamento máximo no meio do vão: **5 µm** contra 1.000 µm de deflexão do
+Ganchos a cada 29 mm. A seção em U da aba dá I = 54 mm⁴/mm (parede simples de 1,40 mm daria
+0,23 — **235×**). Levantamento máximo no meio do vão: **4 µm** contra 1.000 µm de deflexão do
 lábio. A junta acompanha de sobra; não há por onde vazar entre ganchos.
 
 ---
@@ -377,6 +395,9 @@ Uma a menos que a linha 1, porque o aro moldado virou perfil extrudado.
 | `calculo-deslizante.py` | memória de cálculo: linha, vedação, came, detente, ganchos, queda, injeção |
 | `mecanismo-came.html` | cópia da página publicada: dois cortes interativos do curso de fechamento |
 | `modelo-3d.html` | cópia da página publicada: modelo 3D orbitável, com corte e a sequência animada |
+| `gera-gcode.py` | fatiador paramétrico → G-code de FDM, direto da geometria (não de STL) |
+| `gcode/corpo-600.gcode` | corpo de 600 ml, 289 camadas, ~88 g, ~7,8 h |
+| `gcode/tampa.gcode` | tampa, 62 camadas, ~60 g, ~5,4 h |
 
 Páginas publicadas:
 - Modelo 3D: https://claude.ai/artifact/26MfzdTdy4EnPUfbYnEejP

@@ -117,12 +117,12 @@ projetista.</p>
   <p class="eyebrow">O que você está vendo</p>
   <h2>Quatro movimentos</h2>
   <ol class="steps">
-    <li><strong>A tampa pousa deslocada 18 mm.</strong> Os 8 ganchos caem pelas
+    <li><strong>A tampa pousa deslocada 16 mm.</strong> Os 6 ganchos caem pelas
     <em>janelas</em> — os trechos onde o trilho azul não existe. Nessa posição a tampa está
     2,0 mm alta e a junta nem encostou.</li>
     <li><strong>Você empurra.</strong> Cada gancho entra por baixo do seu trilho. A aresta de
-    baixo do trilho é uma <strong>rampa de 14°</strong>: ela desce no sentido do fechamento,
-    então o gancho — e a tampa inteira — é <strong>puxado para baixo</strong> 2,00 mm em 8 mm
+    baixo do trilho é uma <strong>rampa de 18,4°</strong>: ela desce no sentido do fechamento,
+    então o gancho — e a tampa inteira — é <strong>puxado para baixo</strong> 2,00 mm em 6 mm
     de curso.</li>
     <li><strong>A junta comprime e o prato bate na aba.</strong> O lábio de TPE mora numa
     canaleta na face de baixo do prato e desce num rebaixo da aba; quando o prato <em>encosta</em>
@@ -131,7 +131,7 @@ projetista.</p>
     exatos. O lábio abre para dentro do pote, então pressão interna o empurra contra a sede:
     invertido, veda melhor.</li>
     <li><strong>Os últimos 10 mm são patamar plano.</strong> O gancho assenta de face inteira,
-    30 mm² cada, e as linguetas do detente caem no rebaixo. Clique.</li>
+    34 mm² cada, e as linguetas do detente caem no rebaixo. Clique.</li>
   </ol>
   <p>Para abrir, o caminho inverso: a came <em>levanta</em> a tampa enquanto ela sai. Isso
   quebra a sucção sozinho — não existe o "briga com o pote para tirar a tampa".</p>
@@ -149,18 +149,19 @@ projetista.</p>
   <div class="tw"><table>
     <thead><tr><th>Queda, 2,4 L cheio (2,61 kg)</th><th>Por gancho</th><th>Apoio</th><th>Poste</th></tr></thead>
     <tbody>
-      <tr><td>0,75 m, parada em 8 mm</td><td class="n">300 N</td><td class="n">10,0</td><td class="n">11,6 MPa</td></tr>
-      <tr><td>1,00 m, parada em 8 mm</td><td class="n">400 N</td><td class="n">13,3</td><td class="n">15,4 MPa</td></tr>
-      <tr><td>1,00 m, parada em 5 mm</td><td class="n">641 N</td><td class="n">21,4</td><td class="n">24,6 MPa</td></tr>
+      <tr><td>0,75 m, parada em 8 mm</td><td class="n">400 N</td><td class="n">11,8</td><td class="n">12,5 MPa</td></tr>
+      <tr><td>1,00 m, parada em 8 mm</td><td class="n">534 N</td><td class="n">15,7</td><td class="n">16,7 MPa</td></tr>
+      <tr><td>1,00 m, parada em 5 mm</td><td class="n">854 N</td><td class="n">25,1</td><td class="n">26,7 MPa</td></tr>
     </tbody>
   </table></div>
-  <p class="note">Limite do PP: 30 MPa. Oito ganchos de 10 mm com 30 mm² de apoio cada. Ainda
-  assim é caso de <strong>medir</strong>, não de confiar na conta.</p>
+  <p class="note">Limite do PP: 30 MPa. Seis ganchos de 10 mm com 34 mm² de apoio cada. Passar de 8 para 6
+  dentes tirou 25% dos apoios — foi o que obrigou o lábio a engrossar de 3,0 para 3,4 mm e o
+  poste de 2,6 para 3,2 mm. Ainda assim é caso de <strong>medir</strong>, não de confiar na conta.</p>
 </section>
 
 <section class="col">
   <p class="eyebrow">O que o 3D me obrigou a corrigir</p>
-  <h2>Gancho não cabia no patamar</h2>
+  <h2>Duas regras que o sólido impôs</h2>
   <p>Montar o sólido expôs uma regra que os cortes escondiam. Para o gancho assentar
   <em>inteiro</em> no patamar no fim do curso:</p>
   <p style="font-family:var(--mono);font-size:15px;background:var(--surface);border:1px solid var(--rule);
@@ -169,10 +170,16 @@ projetista.</p>
   <p>Com os 6 ganchos de 14 mm e rampa de 10 que eu tinha, dá 24 contra 14 de curso — no fim do
   curso o gancho ficaria montado <strong>meio na rampa, meio no patamar</strong>, apoiado numa
   linha em vez de numa face. Toda a conta de queda cairia junto.</p>
-  <p>Virou <strong>8 ganchos de 10 mm</strong>, rampa de 8, curso de 18: 10 + 8 = 18. De quebra,
-  ganchos menores e em maior número encurtam o vão da borda entre eles de 41 para 31 mm, o que
-  ajuda a vedação — o levantamento máximo da borda entre ganchos caiu para 5 µm contra 1.000 µm
-  de deflexão do lábio.</p>
+  <p>Virou <strong>gancho de 10 mm com rampa de 6</strong>: 10 + 6 = 16 = curso.</p>
+  <p>E montar o G-code expôs uma segunda regra, mais dura: <strong>o trilho só existe no trecho
+  reto do lado longo</strong>. Com canto R18, a aba só alcança a linha do trilho enquanto
+  |x| ≤ 43,7 mm — fora disso ela já curvou para dentro e não há material sobre o gancho. Sobram
+  <strong>87,4 mm por lado, não 129,4</strong>. Com 3 células: 29,13 = janela 11,0 + trilho
+  18,13, e o trilho precisa de ≥ 16 para o gancho chegar em casa. Foi isso que baixou o curso
+  de 18 para 16 e a rampa de 8 para 6.</p>
+  <p class="note">A 18,4° a rampa não é auto-travante nem seca. Isso não é problema: rampa livre
+  significa que fechar e abrir custam pouco, e a retenção fica inteira com o detente, que é
+  geométrico. Amarrar travamento a atrito num pote de sabão seria projetar para a bancada.</p>
 </section>
 </div>
 
@@ -186,8 +193,11 @@ projetista.</p>
   var POT_L=123.4, POT_W=94.9, R=18, POT_H=58, WALL=1.15, FUNDO=1.6;
   var MO_L=POT_L-2*WALL, MO_W=POT_W-2*WALL, MO_R=R-WALL;
   var ABA=3.0, ABA_L=POT_L+2*ABA, ABA_W=POT_W+2*ABA, ABA_R=R+ABA, ABA_T=1.6;
-  var CAME_T=3.0, SKIRT=1.2, SK_BOT=-5.1, RAMP_TOP=-3.1, RAMP_L=8.0;
-  var CURSO=18.0, NH=4, CELL=ABA_L/NH, WIN=12.0, HOOK=10.0, HOOK_P=2.6, WING_T=1.8;
+  var CAME_T=3.4, SKIRT=1.2, SK_BOT=-5.1, RAMP_TOP=-3.1, RAMP_L=6.0;
+  // O trilho so cabe no trecho RETO do lado longo: fora dele o canto R18 ja
+  // curvou a aba para dentro e nao ha material sobre o gancho.
+  var RETO=ABA_L-2*ABA_R;
+  var CURSO=16.0, NH=3, CELL=RETO/NH, WIN=11.0, HOOK=10.0, HOOK_P=3.2, WING_T=1.8;
   var PRATO=2.0, HOME_GAP=0.0, MUR_H=3.5, MUR_T=1.5, MUR_I=114.4, SAIA=2.6, SAIA_H=7.0;
   var LID_L=ABA_L+2*SAIA, LID_W=ABA_W+2*SAIA, LID_R=ABA_R+SAIA;
   var SEAL=125.4, HOVER=2.0, MODULO=60;
@@ -266,7 +276,7 @@ projetista.</p>
     for(var k=0;k<NH;k++){
       var m=new THREE.Mesh(rg,mTrilho);
       m.rotation.x=-Math.PI/2;
-      m.position.x = -ABA_L/2 + k*CELL + WIN;
+      m.position.x = RAIL0(k);
       m.position.y = sy>0 ? (ABA_W/2-CAME_T) : (-ABA_W/2);
       m.position.z = 0;
       corpo.add(m); rails.push(m);
@@ -290,8 +300,7 @@ projetista.</p>
   var WING_TOP=SK_BOT;
   [-1,1].forEach(function(sy){
     for(var k=0;k<NH;k++){
-      var xc = -ABA_L/2 + k*CELL + WIN + (CURSO-RAMP_L) + RAMP_L + HOOK/2 - CURSO + CURSO;
-      xc = -ABA_L/2 + k*CELL + WIN + CURSO - HOOK/2;
+      var xc = RAIL0(k) + CURSO - HOOK/2;
       var wing=new THREE.Mesh(new THREE.BoxGeometry(HOOK,CAME_T,WING_T),mGan);
       wing.position.set(xc, sy*(ABA_W/2-CAME_T/2), WING_TOP-WING_T/2);
       tampa.add(wing);
@@ -305,7 +314,7 @@ projetista.</p>
   [-1,1].forEach(function(sy){
     [-1,1].forEach(function(sx){
       var t=new THREE.Mesh(new THREE.BoxGeometry(16,1.4,5.0),mGan);
-      t.position.set(sx*CELL*0.62, sy*(ABA_W/2+HOOK_P/2), HOME_GAP-2.6);
+      t.position.set(sx*RETO*0.30, sy*(ABA_W/2+HOOK_P/2), HOME_GAP-2.6);
       tampa.add(t);
     });
   });
