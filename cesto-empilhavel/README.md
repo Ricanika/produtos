@@ -33,7 +33,7 @@ injetada: sem dobradiça, sem painel, sem montagem.
 | Furos redondos em gradiente | **Resolvido** — 4 bandas, Ø 15 → 6 mm, passo 21 mm, 68 furos, faixa cega de 40 mm |
 | Fundo sólido | **Atendido** — chapa de 2,0 mm sem furo |
 | Pé discreto | **Resolvido** — 4 pezinhos ocos sob a chapa, recuados 2 mm da borda; a chapa faz aba (seção 4.1) |
-| Empilhar com acesso frontal | **Escolha a fazer** — 130 mm com soquete no pé traseiro, ou 55,5 mm encaixando. Não dá os dois (seção 4.2) |
+| Empilhar **e** encaixar | **Resolvido pela estrutura na borda** — empilha a 130,0 mm e encaixa a 102,7 mm, medido no sólido (seção 4.2.1) |
 | Acoplar lateralmente | **5 opções em 3D, todas com interferência zero.** A recomendada é a **D**: trilho de 1,8 mm, rim inteiro nos dois lados, 167,6 g — custa 2 gavetas no molde (seções 4.3 e 4.4) |
 | Encaixar para reduzir volume | **Medido no sólido: passo de 55,5 mm**, 630 mm para 10 peças. Exclusivo do empilhamento a 130 mm — ver seção 4.2 |
 | Injeção no parque atual | **1 cavidade numa 200 t (76%)** — a casa tem **12 máquinas** dessa classe |
@@ -214,6 +214,77 @@ abrindo a frente de cada nível. O que ela não faz é empilhar a 130 mm.
 Se os 130 mm forem obrigatórios, há um caminho com peça a mais: rim só com berço
 raso e **4 espaçadores** de encaixar, que vão na embalagem e só entram quando o
 cliente quer torre. Custa um 2º molde pequeno.
+
+### 4.2.1 A solução: estrutura na borda (ideia do cliente)
+
+O cliente mandou fotos de um cesto laranja em produção e a leitura dele estava
+certa: **uma parede que sai da borda superior, por fora do rim, e uma nervura
+externa com o pé na diagonal** que desce pela parede e apoia em cima dessa
+parede.
+
+Isso derruba o meu argumento da seção 4.2, e por um motivo que eu havia
+invertido: eu tinha posto os berços **por dentro** do rim, no caminho da peça de
+cima. Medindo onde a peça de cima realmente passa no encaixe mais profundo, a
+parede dela nunca chega a 107,5 mm — na cota do rim ela está em x 102,7…104,1.
+**Da borda para fora ninguém passa.** É lá que a estrutura tem de morar.
+
+O mecanismo é de duas posições, e a assimetria é de propósito:
+
+- as nervuras e as paredes ficam nas **mesmas posições em y** (−46…−24 e
+  60…82, duas por lateral), e essas posições são assimétricas em relação a
+  y = 0;
+- **mesma orientação** → nervura encontra parede → **empilha a 130 mm**, com o
+  chanfro sempre na frente;
+- **girada 180°** → a nervura cai onde não há parede → **encaixa**.
+
+Cotas resolvidas do sistema de restrições (parede de altura h = z0 = 10 mm para
+o passo dar exatamente ALT):
+
+| | |
+|---|---|
+| Face interna da parede da borda | 101,70 mm (folga de 0,4 da peça de cima) |
+| Face externa da nervura no seu pé | 103,30 mm — **apoio de 1,6 mm** |
+| Inclinação dessa face | 0,015 (0,86°) |
+| Pé da nervura / altura da parede | 10 / 10 mm |
+| Diagonal de entrada | 16 mm |
+
+A nervura **nunca passa dos 107,5 mm** da boca: ela é um reforço que preenche
+parte do vazio da conicidade, invisível em planta. O envelope só cresce por
+causa da parede da borda: 216,8 mm.
+
+**Medido no sólido:** empilhado **130,0 mm**, encaixado **102,7 mm**.
+
+#### O preço, e ele é exato
+
+O encaixe cai de 55,5 para 102,7 mm. A razão é uma conta de uma linha: cada
+milímetro que qualquer coisa avança para fora na peça de cima custa
+**1/tan 3,5° = 16,3 mm** de profundidade de encaixe, e o apoio precisa de
+~4 mm (folga + apoio + a espessura da própria parede). Generalizando, com a
+faixa do rim de 3,2 mm e apoio b:
+
+> 2 · tan θ · d ≤ 130 · tan θ − 3,2 − b  →  **d ≤ 65 − (3,2 + b) / (2 tan θ)**
+
+| apoio b | passo encaixado | 10 peças |
+|---|---|---|
+| 1,0 mm | 99,3 mm | 1.024 mm |
+| **1,6 mm** | **102,7 mm (medido)** | **1.054 mm** |
+| 2,5 mm | 111,6 mm | 1.134 mm |
+
+E a saída de molde é a única alavanca real: a 5° o passo encaixado cairia para
+91,9 mm e a 7° para 84,1 mm — ao custo de a base ir de 199 para 183 mm.
+
+#### As três versões, medidas
+
+| | N · só pezinhos | P · soquete interno | **Q · estrutura na borda** |
+|---|---|---|---|
+| Empilha | 55,5 mm | **130,0 mm** | **130,0 mm** |
+| Encaixa | **55,5 mm** | não | 102,7 mm |
+| 10 peças na caixa | **630 mm** | 1.300 mm | 1.054 mm |
+| Peso | **162,6 g** | 172,5 g | 175,7 g |
+| Fundo / molde | sólido / sem gaveta | sólido / sem gaveta | sólido / sem gaveta |
+
+A Q é a única que faz as duas coisas. A escolha real é entre **Q** (os dois
+modos, caixa de 1.054 mm) e **N** (só encaixe, caixa de 630 mm).
 
 ### 4.3 Acoplado — as três canaletas
 
@@ -465,4 +536,6 @@ cad/camufladas.py  monta as opcoes D e E, normaliza a escala das vistas
                    ortogonais e compoe camufladas.png / camufladas-frente.png
 cad/empilha.py     mede no solido o passo de empilhamento e de encaixe
 cad/pe.py          pezinhos, soquete do pe traseiro e a folha pezinho.png
+cad/estrutura.py   a estrutura de empilhamento na borda e a folha estrutura.png
+cad/cesto-final.step/.stl  a peca com tudo: pe, estrutura e canaleta D
 ```

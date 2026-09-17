@@ -63,6 +63,23 @@ H_PE     = 5.0            # a chapa do fundo flutua 5 mm acima do piso
 PE_X, PE_W, PE_T = 97.5, 13.0, 1.4
 PE_Y = ((-40.0, -20.0), (52.0, 78.0))     # frente e TRASEIRO
 SOQ_H, SOQ_T, SOQ_F = 2.5, 2.0, 0.6       # soquete: altura, parede, folga
+
+# --- ESTRUTURA DE EMPILHAMENTO (ideia do cliente, das fotos do cesto laranja)
+# Uma parede que sai da BORDA SUPERIOR, por fora do rim, e uma nervura externa
+# ("pe na diagonal") que desce pela parede e apoia em cima dela. O ponto e que
+# do lado de fora do rim ninguem passa durante o encaixe: a parede da peca de
+# cima nunca chega a 107,5 mm. Por isso da empilhar E encaixar.
+EMP_Y = ((-46.0, -24.0), (60.0, 82.0))    # 2 por lado, assimetricas em y
+# Cotas resolvidas do sistema de restricoes (ver README 4.5): com a parede da
+# borda de altura h = z0 o passo empilhado da ALT, e o encaixe fica limitado a
+# d <= 29,9 mm. Escolhido d = 26 -> passo encaixado de 104 mm.
+EMP_Z0 = 10.0                 # pe da nervura (= altura da parede, para dar ALT)
+EMP_H = 10.0
+EMP_X0 = 103.30               # face externa da nervura no seu pe
+EMP_S = 0.015                 # inclinacao dessa face (0,86 deg de saida)
+EMP_XI = 101.70               # face interna da parede da borda (apoio de 1,6)
+EMP_DIAG = 16.0               # a diagonal de entrada da nervura
+EMP_APOIO = 2.5               # trecho reto do pe da nervura, que e o apoio
 BERCO_L, BERCO_P, BERCO_H = 18.0, 10.0, 5.0   # orelhas de apoio no rim
 BERCO_Y = (-38.0, 75.0)   # centros, nos cantos -- fora das travas
 
@@ -199,6 +216,27 @@ def _canaleta_D(y0, y1):
     return c
 
 
+def _nervura(env, sx, y0, y1):
+    """Nervura externa com o pe na diagonal (o 'pe' das fotos 03 e 04)."""
+    xo0 = EMP_X0
+    xo1 = EMP_X0 + EMP_S * (ALT - EMP_Z0)
+    pts = [(sx * xo0, EMP_Z0), (sx * xo1, ALT), (sx * 90.0, ALT),
+           (sx * 90.0, EMP_Z0 + EMP_DIAG), (sx * (xo0 - EMP_APOIO), EMP_Z0)]
+    sk = make_face(Polyline(*pts, close=True))
+    s = Pos(0, (y0 + y1) / 2, 0) * extrude(Plane.XZ * sk, (y1 - y0) / 2,
+                                          both=True)
+    return s - env
+
+
+def _parede_borda(sx, y0, y1):
+    """A parede que sai da borda superior e recebe a nervura de cima."""
+    p = _caixa(sx, EMP_XI, LARG / 2, y0, y1, ALT, ALT + EMP_H)
+    # chanfro de entrada no topo interno, para guiar a descida
+    p -= _caixa(sx, EMP_XI - 2, EMP_XI + 1.4, y0 - 1, y1 + 1,
+                ALT + EMP_H - 1.4, ALT + EMP_H + 1)
+    return p
+
+
 def _pezinhos():
     """4 pezinhos ocos sob a chapa, abertos embaixo (pino da cavidade)."""
     out = None
@@ -311,11 +349,13 @@ def _risco(sx, faixas):
     return out
 
 
-def cesto(acopl=None, h_rim=None, empilha=False):
+def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False):
     """acopl: None, 'A' (trilho corrido), 'B' (trilho embutido), 'C' (travas).
 
     h_rim permite medir o custo da faixa de 18 mm sem nenhuma feicao.
     empilha=True poe os bercos/soquetes no rim -- o que fecha o encaixe.
+    estrutura=True poe a estrutura de empilhamento POR FORA do rim, que
+    empilha a 130 mm sem fechar o encaixe.
     """
     if h_rim is None:
         h_rim = (H_FAIXA2 if acopl in ("D", "E")
@@ -371,7 +411,7 @@ def cesto(acopl=None, h_rim=None, empilha=False):
     p -= furos
 
     # --- acoplamento lateral -------------------------------------------------
-    yc0, yc1 = Y_CAN
+    yc0, yc1 = (-22.0, 58.0) if estrutura else Y_CAN
     if acopl == "A":
         # trilho corrido de ponta a ponta + rim rebaixado do outro lado
         p += _macho(env, yc0, yc1, yc1 - 9)
@@ -413,6 +453,11 @@ def cesto(acopl=None, h_rim=None, empilha=False):
     p += _pezinhos()
     if empilha:
         p += _soquetes(fora)
+    if estrutura:
+        for sx in (-1, 1):
+            for y0, y1 in EMP_Y:
+                p += _nervura(env, sx, y0, y1)
+                p += _parede_borda(sx, y0, y1)
     return p, n
 
 
