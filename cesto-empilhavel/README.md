@@ -34,6 +34,7 @@ injetada: sem dobradiça, sem painel, sem montagem.
 | Fundo sólido | **Atendido** — chapa de 2,0 mm sem furo |
 | Pé discreto | **Resolvido** — não há pé aparente: a parede desce 6 mm abaixo da chapa do fundo (seção 4.1) |
 | Empilhar com acesso frontal | **Resolvido** — a saia de 6 mm assenta em 4 berços internos do rim; chanfro de topo de 52 mm dá o acesso |
+| Acoplar lateralmente | **3 opções em 3D, todas com interferência zero** — a canaleta é horizontal e mora no rim; a vertical mataria o encaixe (seção 4.3) |
 | Encaixar para reduzir volume | **Geometria confirmada** — saída de 3,5°/lado; **passo do encaixe a medir na amostra** (seção 4.2) |
 | Injeção no parque atual | **1 cavidade numa 200 t (76%)** — a casa tem **12 máquinas** dessa classe |
 | Ferramental | **USD 19,5 mil FOB**, 1 molde — por analogia direta com dois moldes da casa |
@@ -191,6 +192,60 @@ como o encaixe acontece na prática.
 entrada. É o número que sustenta a promessa de embalagem do pacote de 10, e sai de uma medição na
 amostra ou num protótipo impresso.
 
+### 4.3 Acoplado — as três canaletas
+
+O pedido foi uma **canaleta de ponta a ponta na lateral, macho de um lado e
+fêmea do outro**. A direção dela não é livre: a saída de 3,5° abre a lateral de
+**0 mm no rim a 15,9 mm na base**, então uma canaleta *vertical* de ponta a
+ponta teria de ser uma cunha de 7,95 mm por lado no pé — o que leva a peça a
+215 mm de largura já na base contra 208,6 mm de boca livre, e **mata o
+encaixe** (as 10 peças sairiam de 601 para 1.300 mm de caixa). No rim a fresta
+vale zero e em z=113 vale 2,08 mm: a canaleta é **horizontal e mora na faixa de
+18 mm sob o rim**.
+
+Dentro dessa faixa há um segundo limite, e é ele que gera as três opções: **um
+macho corrido exige uma fêmea corrida**, e rebaixo horizontal na lateral é
+contra-saída. A fêmea só sai de graça se for **passante** (shut-off, igual aos
+68 furos) — e uma fêmea passante corrida significa rim interrompido.
+
+| | A · trilho corrido | B · trilho embutido | C · canaleta aparente |
+|---|---|---|---|
+| Macho | trilho corrido de 132 mm, 7,5 mm saliente, gancho corrido | lingueta corrida: pescoço de 6 mm + cabeça de 10 mm | 2 abas de 40 × 18, 7,5 mm salientes, gancho de 2,5 × 6 |
+| Fêmea | rim rebaixado 18 mm nos 132 mm | canaleta corrida: boca de 4 mm + bolso de 3,9 mm | 2 janelas de 42 × 18, abertas no topo do rim |
+| Trava | extensão toda, em X | extensão toda, em X e em Z | 2 × 40 mm, em X |
+| Montagem | desce | desliza pela frente | desce |
+| Junta entre as peças | rims encostados | **8,7 mm** | rims encostados |
+| Molde | sem gaveta | **2 gavetas laterais** (~USD 3 mil) | sem gaveta |
+| Peso | 183,0 g | 187,8 g | **177,4 g** |
+| Interferência medida | 0 mm³ | 0 mm³ | 0 mm³ |
+
+A interferência é medida por booleano entre as duas peças acopladas, no sólido.
+Zero nas três — e não era assim na primeira rodada: A e C devolviam 1 mm de
+parede dentro da janela que acabavam de abrir, e o B era erro de concepção
+(os dois lados avançavam um contra o outro, sem nada que recebesse a lingueta).
+
+**As três custam a faixa.** Com acoplamento o rim engrossado sobe de 10 para
+18 mm de altura, o que sozinho leva a peça de 163,7 para **168,6 g** e desce a
+fila de furos de cima de z=111 para z=103. O acoplamento em si custa +14,5 g
+(A), +19,2 g (B) e +8,8 g (C) sobre esses 168,6.
+
+**Nenhuma mantém o encaixe por acidente:** todas as feições vivem no rim, e o
+rim da peça de cima fica 52 mm acima do rim da de baixo quando encaixadas —
+nunca se cruzam. O passo empilhado segue 130 mm nas três.
+
+#### O que o 3D mostrou que o desenho 2D não mostrava
+
+A fêmea passante da opção C aparece como **duas janelas com um dente de 9 mm
+entre elas**: de fora, o rim daquele lado lê como ameia. A opção A troca isso
+por **um rebaixo contínuo** — uma face mais baixa em vez de rim quebrado, o que
+é mais limpo, ainda trava na extensão toda e custa só +5,6 g sobre a C. A opção
+B é a mais bem resolvida vista peça a peça (o bloco lê como reforço de rim,
+simétrico nos dois lados), e a pior vista acoplada: a junta de 8,7 mm fica
+aparente.
+
+Se a assimetria da A incomodar, ela encolhe: a faixa pode cair de 18 para 12 mm
+(aba de 12 + gancho de 6), e o rebaixo da fêmea cai de 18 para 12 mm junto.
+
 ## 5. Injeção
 
 Fechamento a 0,32 t/cm² (valvulado) + 10% de canal, limitado a 80% da máquina. Os furos estão nas
@@ -328,4 +383,7 @@ cad/01-cesto.png   02-frente.png   03-empilhado.png   04-encaixado.png
 cad/modelo3d.py    parametrico -- muda cota, furo, saida e rebordo num lugar
 cad/render.py      rasterizador das vistas
 economia.py        comparaveis, resina, fechamento, cenarios e payback
+cad/variantes.py   monta as 3 opcoes de canaleta, mede a interferencia entre
+                   duas pecas acopladas e compoe variantes.png / variantes-iso.png
+cad/proposta-canaleta.py  o desenho 2D que motivou as 3 opcoes
 ```

@@ -70,6 +70,14 @@ TRAVA_L  = 40.0            # opcao C: duas abas de 40
 JANELA_L = 42.0
 Y_TRAVAS = (-26.0, 24.0)   # inicio de cada aba / janela
 RISCO_D  = 0.9             # profundidade do risco decorativo da canaleta
+# Opcao B, medida a partir do PLANO DA JUNTA (u=0 na face do rim do macho,
+# crescendo para dentro da peca femea). A boca e estreita e o bolso e largo:
+# e o bolso atras da boca que trava a cabeca da lingueta em X.
+B_BOCA   = 4.0             # profundidade da boca (onde passa o pescoco)
+B_BOLSO  = 3.9             # profundidade do bolso (onde mora a cabeca)
+B_COSTAS = 0.8             # costas do bloco, atras do bolso
+B_PESC   = (118.0, 124.0)  # z do pescoco
+B_CAB    = (116.0, 126.0)  # z da cabeca
 
 # --- vazado -----------------------------------------------------------------
 PASSO   = 21.0            # >= D_TOPO + 6 mm de web, senao os furos se fundem
@@ -132,8 +140,14 @@ def grade(extensao, passo):
     return [(-(n - 1) * passo / 2) + i * passo for i in range(n)]
 
 
-X_OUT = LARG / 2 + SALTO      # plano externo do macho
+X_OUT = LARG / 2 + SALTO      # plano externo do macho (opcoes A e C)
 Z_B0 = ALT - H_BANDA          # base da faixa da canaleta
+X_B = LARG / 2 + B_BOCA + B_BOLSO + B_COSTAS   # plano externo do bloco femea
+
+
+def passo_acoplado(acopl):
+    """Distancia entre os eixos de duas pecas acopladas."""
+    return LARG + (X_B - LARG / 2) if acopl == "B" else LARG
 
 
 def _caixa(sx, x0, x1, y0, y1, z0, z1):
@@ -142,31 +156,42 @@ def _caixa(sx, x0, x1, y0, y1, z0, z1):
         Box(x1 - x0, y1 - y0, z1 - z0)
 
 
-def _macho(env, y0, y1):
+def _macho(env, y0, y1, yg1=None):
     """Aba saliente no lado +X, com gancho para baixo na ponta (opcoes A e C).
 
     Nasce na propria superficie da parede: a caixa entra no solido e o que
-    sobra depois de subtrair o envelope e exatamente a saliencia.
+    sobra depois de subtrair o envelope e exatamente a saliencia. O gancho pode
+    parar antes de y1: no raio do canto a parede da peca vizinha gira e entra
+    no espaco dele.
     """
     s = _caixa(1, LARG / 2 - 6, X_OUT, y0, y1, Z_B0, ALT) - env
-    s += _caixa(1, X_OUT - GANCHO_D, X_OUT, y0, y1, Z_B0 - GANCHO_H, Z_B0) - env
+    s += _caixa(1, X_OUT - GANCHO_D, X_OUT, y0, yg1 or y1,
+                Z_B0 - GANCHO_H, Z_B0) - env
     return s
 
 
 def _lingueta_T(env, y0, y1):
-    """Opcao B: lingueta em T -- pescoco de 12, cabeca de 16, corrida."""
-    s = _caixa(1, LARG / 2 - 6, X_OUT - 2.5, y0, y1, Z_B0 + 3, ALT - 3) - env
-    s += _caixa(1, X_OUT - 2.5, X_OUT, y0, y1, Z_B0 + 1, ALT - 1) - env
+    """Opcao B: lingueta corrida -- pescoco estreito e cabeca larga."""
+    u0 = LARG / 2
+    s = _caixa(1, u0 - 6, u0 + B_BOCA, y0, y1, *B_PESC) - env
+    s += _caixa(1, u0 + B_BOCA, u0 + B_BOCA + B_BOLSO, y0, y1, *B_CAB) - env
     return s
 
 
 def _canaleta_T(env, y0, y1):
-    """Opcao B: bloco na esquerda com a canaleta em T, aberta na frente."""
-    bloco = _caixa(-1, LARG / 2 - 6, X_OUT, y0, y1, Z_B0, ALT) - env
-    cav = _caixa(-1, LARG / 2 - 9, X_OUT - 2.5, y0 - 6, y1 + 6,
-                 Z_B0 + 2.6, ALT - 2.6)
-    cav += _caixa(-1, X_OUT - 2.5, X_OUT + 2, y0 - 6, y1 + 6,
-                  Z_B0 + 0.6, ALT - 0.6)
+    """Opcao B: bloco corrido na esquerda com a canaleta, aberta na frente.
+
+    t = X_B - u, onde u e medido do plano da junta para dentro da femea.
+    """
+    def t(u):
+        return X_B - u
+    bloco = _caixa(-1, LARG / 2 - 6, X_B, y0, y1, Z_B0, ALT) - env
+    # boca: de u=-2 (aberta para fora) ate u=B_BOCA
+    cav = _caixa(-1, t(B_BOCA), t(-2.0), y0 - 8, y1 + 8,
+                 B_PESC[0] - 0.4, B_PESC[1] + 0.4)
+    # bolso: de u=B_BOCA ate u=B_BOCA+B_BOLSO+0.3
+    cav += _caixa(-1, t(B_BOCA + B_BOLSO + 0.3), t(B_BOCA), y0 - 8, y1 + 8,
+                  B_CAB[0] - 0.4, B_CAB[1] + 0.4)
     return bloco - cav
 
 
@@ -187,9 +212,13 @@ def _risco(sx, faixas):
     return out
 
 
-def cesto(acopl=None):
-    """acopl: None, 'A' (trilho corrido), 'B' (trilho embutido), 'C' (travas)."""
-    h_rim = H_BANDA if acopl else H_RIM
+def cesto(acopl=None, h_rim=None):
+    """acopl: None, 'A' (trilho corrido), 'B' (trilho embutido), 'C' (travas).
+
+    h_rim permite medir o custo da faixa de 18 mm sem nenhuma feicao.
+    """
+    if h_rim is None:
+        h_rim = H_BANDA if acopl else H_RIM
     z_topo = ALT - h_rim - 9.0
 
     # casca tronco-piramidal
@@ -240,10 +269,10 @@ def cesto(acopl=None):
     yc0, yc1 = Y_CAN
     if acopl == "A":
         # trilho corrido de ponta a ponta + rim rebaixado do outro lado
-        p += _macho(env, yc0, yc1)
-        p -= _abre_rim(yc0, yc1)
+        p += _macho(env, yc0, yc1, yc1 - 9)
+        p -= _abre_rim(yc0 - 1.5, yc1 + 1.5)
         p += cheio & _caixa(-1, 60, X_OUT, yc0 - 3, yc1 + 3,
-                            Z_B0 - GANCHO_H - 3, Z_B0 + 1)
+                            Z_B0 - GANCHO_H - 3, Z_B0)
     elif acopl == "B":
         # lingueta em T de um lado, canaleta em T do outro -- exige gaveta
         p += _lingueta_T(env, yc0, yc1)
@@ -256,7 +285,7 @@ def cesto(acopl=None):
             jf0, jf1 = ya - 1, ya - 1 + JANELA_L
             p -= _abre_rim(jf0, jf1)
             p += cheio & _caixa(-1, 60, X_OUT, jf0 - 3, jf1 + 3,
-                                Z_B0 - GANCHO_H - 3, Z_B0 + 1)
+                                Z_B0 - GANCHO_H - 3, Z_B0)
             vaos_m.append((y_ant_m, ya)); y_ant_m = ya + TRAVA_L
             vaos_f.append((y_ant_f, jf0)); y_ant_f = jf1
         vaos_m.append((y_ant_m, yc1)); vaos_f.append((y_ant_f, yc1))
