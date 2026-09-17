@@ -45,8 +45,9 @@ ALT    = 130.0            # Z - altura
 DRAFT  = 3.5              # graus por lado: saida de molde e folga de encaixe
 
 # --- silhueta lateral, na proporcao do STL de referencia --------------------
-CHANFRO   = 52.0          # 40% da altura, a 45 graus
-FRENTE_H  = ALT - 2 * CHANFRO      # 26 mm - face frontal, na meia-altura
+CHANFRO    = 52.0         # chanfro de TOPO: 40% da altura, a 45 graus
+CHANFRO_PE = 36.0         # chanfro do PE: reduzido de 52 para devolver volume
+FRENTE_H   = ALT - CHANFRO - CHANFRO_PE   # face frontal resultante
 R_CANTO   = 20.0          # raio nas duas pontas dos chanfros (o pedido)
 R_FRENTE  = 12.0          # raio nas duas quinas da face frontal
 
@@ -55,7 +56,8 @@ T_PAREDE = 1.4
 T_FUNDO  = 2.0
 T_RIM    = 3.2            # parede engrossada na faixa do rim
 H_RIM    = 10.0
-H_PE     = 6.0
+H_PE     = 6.0            # saia: a parede desce 6 mm abaixo da chapa
+BERCO_L, BERCO_P, BERCO_H = 30.0, 10.0, 5.0   # orelhas de apoio no rim
 
 # --- vazado -----------------------------------------------------------------
 PASSO   = 21.0            # >= D_TOPO + 6 mm de web, senao os furos se fundem
@@ -84,13 +86,13 @@ def silhueta():
         (yb, ALT),                       # costas, no alto
         (yf + CHANFRO, ALT),             # topo corre ate o inicio do chanfro
         (yf, ALT - CHANFRO),             # chanfro de topo, 45 graus
-        (yf, CHANFRO),                   # face frontal
-        (yf + CHANFRO, 0.0),             # chanfro do pe, 45 graus
+        (yf, CHANFRO_PE),                # face frontal
+        (yf + CHANFRO_PE, 0.0),          # chanfro do pe, 45 graus
     ]
     sk = make_face(Polyline(*pts, close=True))
-    # pontas dos chanfros
-    sk = fillet(sk.vertices().filter_by_position(Axis.X, yf + CHANFRO - 1,
-                                                 yf + CHANFRO + 1), R_CANTO)
+    # pontas dos dois chanfros
+    sk = fillet(sk.vertices().filter_by_position(
+        Axis.X, yf + CHANFRO_PE - 1, yf + CHANFRO + 1), R_CANTO)
     # quinas da face frontal
     sk = fillet(sk.vertices().filter_by_position(Axis.X, yf - 1, yf + 1), R_FRENTE)
     return sk
@@ -120,9 +122,16 @@ def grade(extensao, passo):
 def cesto():
     # casca tronco-piramidal
     fora = extrude(RectangleRounded(BASE_X, BASE_Y, 14.0), ALT, taper=-DRAFT)
-    p = fora - Pos(0, 0, T_FUNDO) * extrude(
-        RectangleRounded(BASE_X - 2 * T_PAREDE, BASE_Y - 2 * T_PAREDE, 12.0),
-        ALT, taper=-DRAFT)
+    interno = RectangleRounded(BASE_X - 2 * T_PAREDE, BASE_Y - 2 * T_PAREDE, 12.0)
+    # Tubo aberto: a cavidade sai do MESMO plano z=0 e com a MESMA saida da
+    # casca, entao a parede fica em T_PAREDE constante em toda a altura. (Se a
+    # cavidade fosse deslocada para cima mantendo a planta da base, a parede
+    # engrossaria em H_PE*tan(DRAFT) -- 0,5 mm, ou +35% de peso.)
+    p = fora - extrude(interno, ALT + 10, taper=-DRAFT)
+    # chapa do fundo assentada H_PE acima do piso: a parede desce abaixo dela
+    # como SAIA. De fora nao ha pe aparente -- so a parede encontrando o chao.
+    p += fora & Pos(0, 0, H_PE) * extrude(
+        RectangleRounded(LARG + 40, PROF + 40, 0.1), T_FUNDO)
 
     # faixa do rim: parede engrossada no alto
     cheio = fora - Pos(0, 0, T_FUNDO) * extrude(
@@ -153,20 +162,21 @@ def cesto():
             n += 2
     p -= furos
 
-    # --- pes de canto: alcancam a medida da boca e assentam no rim de baixo ---
-    y_pe_f = -PROF / 2 + CHANFRO + 16
+    # --- bercos de apoio: 4 orelhas na face INTERNA do rim -------------------
+    # A saia da peca de cima assenta nelas. Ficam dentro da peca, invisiveis de
+    # fora, e o passo empilhado fica exatamente a altura: 130 mm.
     for sx in (-1, 1):
-        for y_pe in (y_pe_f, PROF / 2 - 16):
-            c = Pos(sx * (LARG / 2 - 16), y_pe, H_PE / 2)
-            p += c * Box(32, 32, H_PE)
-            p -= c * Pos(0, 0, -1.6) * Box(28, 28, H_PE)
+        for sy, y_b in ((-1, -PROF / 2 + CHANFRO + 24), (1, PROF / 2 - 22)):
+            x_i = secao(ALT, T_RIM)[0] / 2
+            p += Pos(sx * (x_i - BERCO_P / 2), y_b, ALT - BERCO_H / 2) * \
+                Box(BERCO_P, BERCO_L, BERCO_H)
     return p, n
 
 
 def capacidade():
-    cav = Pos(0, 0, T_FUNDO) * extrude(
-        RectangleRounded(BASE_X - 2 * T_PAREDE, BASE_Y - 2 * T_PAREDE, 12.0),
-        ALT - T_FUNDO, taper=-DRAFT)
+    cav = extrude(RectangleRounded(BASE_X - 2 * T_PAREDE, BASE_Y - 2 * T_PAREDE,
+                                   12.0), ALT, taper=-DRAFT)
+    cav -= extrude(RectangleRounded(LARG + 40, PROF + 40, 0.1), H_PE + T_FUNDO)
     cav = cav & extrude(Plane.YZ * silhueta(), LARG / 2 + 30, both=True)
     return cav.volume / 1e6
 
@@ -178,8 +188,10 @@ def main():
     print("CESTO ORGANIZAVEL EMPILHAVEL - forma adaptada do STL de referencia")
     print(f"Boca {LARG:.0f} x {PROF:.0f} mm | base {BASE_X:.1f} x {BASE_Y:.1f} mm "
           f"| altura {ALT:.0f} mm | saida {DRAFT:.1f} deg/lado")
-    print(f"Silhueta: chanfros de {CHANFRO:.0f} mm a 45 deg, face frontal de "
-          f"{FRENTE_H:.0f} mm | pontas R{R_CANTO:.0f} e R{R_FRENTE:.0f}")
+    print(f"Silhueta: chanfro topo {CHANFRO:.0f} / pe {CHANFRO_PE:.0f} mm a 45 deg"
+          f" | face frontal {FRENTE_H:.0f} mm | pontas R{R_CANTO:.0f} e R{R_FRENTE:.0f}")
+    print(f"Pe: saia de {H_PE:.0f} mm (a parede desce abaixo da chapa) + 4 bercos"
+          f" internos no rim de {BERCO_L:.0f} x {BERCO_P:.0f} x {BERCO_H:.0f}")
     print(f"Envelope {bb.size.X:.1f} x {bb.size.Y:.1f} x {bb.size.Z:.1f} mm")
     print(f"Capacidade {capacidade():.2f} L | peso {p.volume*RHO:.1f} g "
           f"(volume {p.volume/1000:.1f} cm3)")

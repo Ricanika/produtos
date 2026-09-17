@@ -29,10 +29,11 @@ injetada: sem dobradiça, sem painel, sem montagem.
 | Requisito | Situação |
 |---|---|
 | Peça única empilhável e encaixável | **Viável** — é a arquitetura mais simples possível: 1 peça, 1 molde, zero montagem |
-| Forma da referência | **Medida no STL, não interpretada** — chanfros de 52 mm a 45° e face frontal de 26 mm (seção 2.2) |
+| Forma da referência | **Medida no STL, não interpretada** — chanfros a 45°: 52 mm no topo, 36 mm no pé, face frontal de 42 mm (seção 2.2) |
 | Furos redondos em gradiente | **Resolvido** — 4 bandas, Ø 15 → 6 mm, passo 21 mm, 68 furos, faixa cega de 40 mm |
 | Fundo sólido | **Atendido** — chapa de 2,0 mm sem furo |
-| Empilhar com acesso frontal | **Resolvido** — 4 pés de canto assentam no trilho do rim; chanfro de topo de 52 mm dá o acesso |
+| Pé discreto | **Resolvido** — não há pé aparente: a parede desce 6 mm abaixo da chapa do fundo (seção 4.1) |
+| Empilhar com acesso frontal | **Resolvido** — a saia de 6 mm assenta em 4 berços internos do rim; chanfro de topo de 52 mm dá o acesso |
 | Encaixar para reduzir volume | **Geometria confirmada** — saída de 3,5°/lado; **passo do encaixe a medir na amostra** (seção 4.2) |
 | Injeção no parque atual | **1 cavidade numa 200 t (76%)** — a casa tem **12 máquinas** dessa classe |
 | Ferramental | **USD 19,5 mil FOB**, 1 molde — por analogia direta com dois moldes da casa |
@@ -54,13 +55,14 @@ que custaria a família dobrável) e **o risco é o volume de venda**.
 | Base | 199,1 × 184,1 mm |
 | Altura | **130 mm** |
 | Envelope real | **215 × 197 × 130 mm** |
-| Chanfros da frente | **52 mm a 45°**, no topo e no pé |
-| Face frontal | **26 mm**, centrada na meia-altura |
+| Chanfros da frente | **52 mm no topo · 36 mm no pé**, ambos a 45° |
+| Face frontal | **42 mm** (o chanfro do pé foi reduzido para devolver volume) |
 | Raios trabalhados | **R20** nas duas pontas dos chanfros · **R12** nas duas quinas da face frontal |
 | Saída de molde | **3,5° por lado** — é ela que permite o encaixe |
 | Parede / fundo / rim | 1,4 / 2,0 / 3,2 mm |
-| Capacidade | **4,50 L** |
-| Peso | **155,4 g** (171,7 cm³ de PP) |
+| Pé | **saia de 6 mm** — a parede desce abaixo da chapa; nenhum pé aparente |
+| Capacidade | **4,43 L** |
+| Peso | **163,7 g** (180,9 cm³ de PP) |
 | Área projetada | 430 cm² |
 
 ### 2.2 A silhueta, medida no STL de referência
@@ -142,18 +144,48 @@ Duas consequências para a cotação:
 
 ### 4.1 Empilhado
 
-Os **quatro pés de canto** (32 × 32 mm, ocos, 6 mm de altura) alcançam a medida da boca e assentam
-no **trilho do rim** da peça de baixo — a faixa engrossada de 3,2 mm que corre no alto da parede.
-Passo empilhado: **130 mm**. O chanfro de topo de 52 mm dá o acesso frontal sem desempilhar.
+#### O pé: não existe pé
 
-Os pés dianteiros ficam a 16 mm do fim do chanfro do pé, que é onde o fundo da peça realmente
-começa (o chanfro corta o fundo de 200 para 148 mm de profundidade).
+Os quatro pés de canto foram removidos. No lugar deles, a **chapa do fundo sobe 6 mm** e a parede
+continua descendo abaixo dela — o que apoia no chão é a própria parede, em todo o perímetro. É uma
+**saia**, não um pé: de fora não há nada para ver, a base da peça está por cima e o apoio embaixo.
+
+Três consequências:
+
+- **Apoio contínuo.** 6 mm de aba em todo o contorno, contra 4 blocos de 32 × 32 mm. Não balança
+  e não marca a bancada.
+- **A chapa do fundo não toca o chão.** Fica 6 mm acima — água e poeira não chegam nela.
+- **Sem sacrifício de desmoldagem.** A saia sai na direção de abertura, com a mesma saída de 3,5°.
+  Nenhum movimento novo no molde.
+
+O que o empilhamento perdeu com isso foi o batente: sem pé de canto, a peça de cima afundaria na de
+baixo até encostar na parede. Voltou como **4 berços internos no rim** (30 × 10 × 5 mm, faces
+superiores rasantes a z = 130), na face de dentro da parede engrossada. A saia da peça de cima
+assenta neles. Ficam **dentro** da peça, invisíveis de fora, e mantêm o passo empilhado em
+**exatamente 130 mm**. O chanfro de topo de 52 mm dá o acesso frontal sem desempilhar.
+
+#### O que o pé custou em peso e em volume
+
+| | Antes (4 pés de canto) | Agora (saia + berços) |
+|---|---|---|
+| Peso | 155,4 g | **163,7 g** |
+| Capacidade | 4,50 L | **4,43 L** |
+
+São **+8,3 g (+5,3%)**: a saia corrida pesa mais que 4 blocos de canto, e os berços somam ~4,9 g.
+A R$ 9,54/kg de PP virgem isso é **R$ 0,08 por peça** — R$ 12 mil/ano a 150 mil peças. É o preço
+de não ter pé aparente, e é um preço que eu pagaria.
+
+O volume caiu porque a chapa do fundo subiu 6 mm. Para compensar, o **chanfro do pé foi reduzido de
+52 para 36 mm**: o fundo passou de 148 para 164 mm de profundidade. Sem isso a capacidade cairia
+para 4,29 L. O chanfro de topo ficou intacto nos 52 mm — é ele que dá o acesso frontal, e nele não
+se mexe.
 
 ### 4.2 Encaixado
 
 A saída de **3,5° por lado** faz o corpo ser menor que a boca: a peça afunda na de baixo. O que
-limita o afundamento são os pés de canto, que ficariam sobre o trilho — por isso o encaixe é
-**deslocado ou inclinado**, com os pés passando ao lado.
+limita o afundamento são os **berços do rim**, e eles estão agora na face interna da parede — a
+saia da peça de cima passa por dentro deles se a peça entrar **deslocada ou inclinada**, que é
+como o encaixe acontece na prática.
 
 **O passo do encaixe não está calculado**, e não vou fingir precisão: depende da cinemática da
 entrada. É o número que sustenta a promessa de embalagem do pacote de 10, e sai de uma medição na
@@ -206,7 +238,7 @@ resina virgem**, o que só fecha rodando moído.
 | Virgem RP 141 (R$ 15/kg custo) | R$ 2,33 | R$ 4,58 | 49% | R$ 2,25 | R$ 45,80 |
 | Moído + pigmento (R$ 11,50/kg custo) | R$ 1,79 | R$ 4,58 | 61% | R$ 2,79 | R$ 45,80 |
 
-Resina no cenário virgem: 0,1554 kg × R$ 9,54 = **R$ 1,48** por peça.
+Resina no cenário virgem: 0,1637 kg × R$ 9,54 = **R$ 1,56** por peça.
 
 **Sobre o preço adotado.** Nas versões anteriores eu precifiquei por R$/kg, o mesmo critério do
 custo. Está errado como critério de preço: **a regra por kg penaliza a redução de peso**. O
@@ -242,7 +274,7 @@ Os dois moldes comparáveis da casa, ambos **peça única aberta** e ambos da **
 | **214-U** Organizador Rattan 6 div. | 160 × 178 × 191 mm | 235 g | 250 t | 450 × 550 × 580 | 1.128 kg | **18.900** |
 | **284-U** Cesto Transporta Tudo | 182 × 263 × 313 mm | 313 g | 280 t | 600 × 550 × 600 | 1.556 kg | **20.100** |
 
-Nossa peça (215 × 197 × 130 mm, 155 g) fica **entre as duas** em envelope e **abaixo das duas** em
+Nossa peça (215 × 197 × 130 mm, 164 g) fica **entre as duas** em envelope e **abaixo das duas** em
 peso e em complexidade. Daí **USD 19,5 mil FOB para 1 cavidade** — estimativa por analogia direta
 com compras reais da casa, não por fórmula de USD/kg de bloco.
 
@@ -274,8 +306,8 @@ novo chegar à metade disso, o payback é de 4,8 meses.
 
 | Item | Gravidade | Por quê |
 |---|---|---|
-| **Capacidade de 4,50 L é suficiente?** | **Alta** | Os dois chanfros custam volume: o do pé corta o fundo de 200 para 148 mm. Reduzi-lo de 52 para 30 mm devolve ~0,4 L sem tocar no acesso frontal (seção 2.2) |
-| **Amostra física** | **Alta** | O passo do encaixe e o engate exato dos pés no trilho |
+| **Capacidade de 4,43 L é suficiente?** | **Alta** | O chanfro do pé já caiu de 52 para 36 mm para devolver volume. Levá-lo a 24 mm devolve ~0,2 L a mais, sem tocar no acesso frontal |
+| **Amostra física** | **Alta** | O passo do encaixe e o engate exato da saia nos berços do rim |
 | **Passo do encaixe** | **Alta** | É a promessa de embalagem do pacote de 10. Medir na amostra ou em protótipo impresso (seção 4.2) |
 | Preço do anúncio de referência | Alta | **Não consegui abrir** — o proxy da sessão bloqueia o Mercado Livre. Precisa do preço do pacote de 10 para validar o cenário de preço |
 | Volume-alvo de venda | Alta | É o que decide 1 ou 2 cavidades e o payback. A conta é de volume, não de margem |
