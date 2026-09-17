@@ -1,0 +1,326 @@
+# Linha 2 — potes modulares com tampa deslizante de came
+
+**Derivado do Projeto 115 (linha 1, pasta `potes-modulares/`).**
+Muda o topo do corpo e a tampa. Corpo, footprint, modularidade e parque de injeção seguem.
+
+Memória de cálculo: `calculo-deslizante.py` (roda sozinho, sem dependência).
+
+---
+
+## 1. O problema que motivou o projeto
+
+A linha 1 fechou com tampa *plug* de vedação radial: um aro de TPE trabalhando contra a
+parede interna do pote. Funciona, é lisa, dispensa trava — e serve para mantimento.
+
+Não serve para **sabão líquido**. A tampa com bico precisa de duas coisas que a plug não dá:
+
+1. **Não pode sair se o pote virar.** Vedação radial segura por atrito (5,8 kgf para arrancar
+   reto). Isso segura o líquido, mas não segura a tampa contra um tombo com 2,4 L dentro.
+2. **Não pode depender do usuário apertar.** É por isso que todo pote retangular hermético do
+   mercado tem trava de orelha: vedação axial num retângulo pede força permanente, e alguém
+   tem que fazer essa força.
+
+O pedido foi: hermético, que não saia de cabeça para baixo, **sem as travas do mercado**, com
+macho na tampa e fêmea no corpo, e que a tampa **deslize** para fechar.
+
+---
+
+## 2. O mecanismo
+
+A tampa não é empurrada para baixo e não rosqueia. Ela pousa deslocada 14 mm e é **empurrada
+no sentido do comprimento**. Nesse curso acontecem quatro coisas, nesta ordem:
+
+```
+    posição de pouso                        posição travada
+    (tampa 14 mm para fora, 2,0 mm alta)    (rente à aba, junta comprimida)
+
+         ┌───────────────┐                    ┌───────────────┐
+    ═════╪═══════════════╡  ← folga          ═╪═══════════════╪═  ← junta encostada
+    ┌────┴───┐                                ┌───────────────┐
+    │  pote  │                                │     pote      │
+```
+
+1. **Entram os ganchos.** Seis ganchos em T na face de baixo da tampa (3 por lado longo)
+   descem pelas janelas do canal da aba. É o macho; o canal é a fêmea.
+2. **A came puxa a tampa para baixo.** O teto do canal tem duas nervuras rampadas por gancho.
+   Conforme o gancho avança, a rampa desce e **arrasta a tampa junto** — 1,2 mm em 10 mm (6,8°).
+   A junta só encosta no fim: durante o deslizamento ela não raspa em nada.
+3. **Sobre-centro.** Nos últimos 3 mm a rampa **sobe** 0,8 mm. A junta é comprimida 1,80 mm no
+   fundo do sobre-centro e relaxa para 1,00 mm na posição de casa. Para voltar, a tampa tem
+   que recomprimir a junta — é uma barreira de energia, não um atrito.
+4. **Clique.** Duas linguetas flexíveis caem num rebaixo e param o curso.
+
+Abrir é o mesmo caminho ao contrário: empurra, e **a came levanta a tampa enquanto ela sai**.
+Isso quebra a sucção sozinho — não existe o "briga com o pote para tirar a tampa".
+
+### Por que isso resolve o que a trava do mercado não resolve
+
+| | Trava de orelha | Came deslizante |
+|---|---|---|
+| O que segura na queda | a trava, em **flexão** | o gancho, em **esmagamento/cisalhamento** |
+| Como falha | a carga gira a trava e ela **desarma sozinha** (camagem) | não tem como: a fuga do gancho é **perpendicular** à carga |
+| Se a peça cansar | abre | continua fechada, só perde vedação |
+| Estética | orelha saliente, dois pontos de quebra | nada aparece: o mecanismo mora embaixo da aba |
+| Sinal de "está fechado" | visual da orelha | a tampa fica **rente**; 14 mm para fora = aberta |
+
+O último ponto é de graça e é o melhor deles: **o estado do fecho é a própria posição da
+tampa**. Não tem o que interpretar.
+
+---
+
+## 3. As três decisões difíceis (e onde eu quase errei)
+
+### a) Nada pode entrar na boca do pote
+
+Primeira tentativa: manter a bandeja da linha 1 (piso 2,0 mm **abaixo** da borda, formado por
+um plug que desce na boca). Não funciona — **qualquer coisa que entre na boca trava o curso
+horizontal**. A tampa não teria por onde deslizar.
+
+A bandeja virou um **murete acima do prato**: vão interno 114,4 × 85,9 mm, altura 3,5 mm.
+Nada da tampa entra na boca, e o curso de 14 mm fica livre.
+
+Isso custou altura: o passo agora é `altura externa do corpo = 60n − 2,0` em vez de
+`60n + 2,0`. **O corpo ficou 4,0 mm mais baixo em cada tamanho**, e a perda pesa mais no pote
+pequeno (6,9% da altura do 600 ml contra 1,7% da do 2,4 L).
+
+Foi o que mudou quem manda no footprint: na linha 1 era o 2,4 L; **aqui é o 600 ml**.
+
+### b) Como o passo virou cota externa, o fundo ficou livre
+
+Na linha 1 o fundo tinha que ser 2,0 mm igual nos quatro — era ele que travava o passo.
+Aqui o passo é travado pela **altura externa do corpo**, que é uma cota direta e muito mais
+fácil de segurar na ferramenta. O fundo saiu da equação.
+
+Então o fundo virou a variável que fecha as quatro capacidades num footprint só: 1,60 mm no
+600 ml, 2,50 mm nos outros três — que é exatamente onde o pote grande quer rigidez de qualquer
+jeito. Sem fundo falso em nenhum deles.
+
+### c) Sabão é lubrificante — não dá para contar com atrito
+
+Essa quase passou. A rampa de 6,8° é auto-travante com µ = 0,30 (ângulo de atrito 16,7°), e a
+conta fecha bonito. Só que **µ do PP com filme de sabão cai para ~0,08**, ângulo de atrito
+4,6° — e aí a rampa **não trava mais**. A tampa voltaria sozinha.
+
+| µ | ângulo de atrito | vs. rampa de 6,8° |
+|---|---|---|
+| 0,30 (seco) | 16,7° | trava |
+| 0,15 | 8,5° | trava |
+| **0,08 (ensaboado)** | **4,6°** | **NÃO TRAVA** |
+
+Por isso quem segura o fecho é o **sobre-centro + o detente**, que são geométricos e funcionam
+com µ = 0. O atrito virou coadjuvante — entra na conta do esforço do polegar, não na do
+travamento. É a diferença entre um projeto que funciona na bancada e um que funciona na pia.
+
+---
+
+## 4. A linha
+
+Footprint **123,4 × 94,9 mm** · canto R18 · saída 0,5°/lado · módulo 60 mm ·
+pé embutido 112,4 × 83,9 × 6 mm igual nos quatro
+
+| | Altura ext. | Passo | Fundo | Elev. piso | Parede | Peso corpo | Resina (H 105) |
+|---|---|---|---|---|---|---|---|
+| 600 ml | 58,0 mm | 60 | 1,60 mm | 0,0 mm | 1,15 mm | 40,7 g | R$ 0,45 |
+| 1,2 L | 118,0 mm | 120 | 2,50 mm | 3,2 mm | 1,20 mm | 73,9 g | R$ 0,82 |
+| 1,8 L | 178,0 mm | 180 | 2,50 mm | 5,3 mm | 1,30 mm | 105,2 g | R$ 1,16 |
+| 2,4 L | 238,0 mm | 240 | 2,50 mm | 5,4 mm | 1,40 mm | 140,3 g | R$ 1,55 |
+
+Empilhamento confere: `600×4` = `1,2 L×2` = `600+600+1,2 L` = `600+1,8 L` = `2,4 L` = 240 mm.
+
+Contra a linha 1: footprint +2,2 mm, corpo 4,0 mm mais baixo, peso do corpo grande +5 g.
+É o preço do mecanismo, e é barato.
+
+---
+
+## 5. A tampa
+
+**129,4 × 100,9 mm, rente à aba. 32,4 g em PP RP 141. R$ 0,31 de resina.**
+
+```
+prato ............ 2,00 mm, com 3 nervuras de 1,2 × 5,0 mm no piso da bandeja
+murete ........... 3,5 mm de altura, 1,5 mm de parede, vão 114,4 × 85,9
+saia ............. 7,0 mm × 1,6 mm, por fora do corpo (esconde o mecanismo)
+ganchos .......... 6 em T, 14 mm, poste 2,2 mm, asa 2,0 mm de cada lado
+linguetas ........ 2, de 9 × 16 × 1,4 mm, deflexão 0,60 mm
+lábio de TPE ..... 1,30 mm de espessura, 4,0 mm de balanço, 2,6 g, perímetro 412 mm
+curso ............ 14 mm = 1 de aproximação + 10 de rampa + 3 de sobre-centro
+```
+
+### A vedação: lábio flexível, não aro esmagado
+
+O que veda é um **lábio de TPE na face de baixo da tampa**, apoiado na face de cima da aba.
+É vedação **axial** — a mesma que eu tinha descartado na linha 1. A diferença é que lá o aro
+era esmagado entre duas faces rígidas; aqui é um lábio que **flexiona**.
+
+| | Força de fechamento | Consequência |
+|---|---|---|
+| Aro esmagado axial (linha 1, rev. 2) | **32 kgf permanentes** | precisa de trava; o PP flui embaixo dela |
+| **Lábio flexível (aqui)** | **1,26 kgf** | a came segura sem esforço, o PP não flui |
+
+**25× menos força.** É isso que torna a came viável — e é a ordem certa de projetar: primeiro
+baixar a força, depois inventar quem a segura. Ao contrário não fecha.
+
+O lábio **abre para dentro do pote**: pressão interna empurra o lábio contra a sede
+(auto-energizado). Pressão de contato 67 kPa contra 2,4 kPa de coluna de sabão no 2,4 L
+invertido — **de cabeça para baixo a vedação melhora, não piora**.
+
+### A came é nervura, não aba engrossada
+
+A rampa são **duas nervuras de 1,2 mm penduradas na face de baixo da aba**, uma de cada lado
+do poste do gancho. Engrossar a aba para fazer a rampa daria rechupe **exatamente na face que
+veda**. Assim a aba fica com 1,6 mm uniformes e a rampa mora embaixo dela.
+
+Apoio por gancho: 33,6 mm² (2 × 14 × 1,2).
+
+---
+
+## 6. As contas que decidem o produto
+
+### Esforço do polegar
+
+| µ | Detente | Sobre-centro | Total |
+|---|---|---|---|
+| 0,08 (ensaboado) | 19,1 N | 7,9 N | **2,8 kgf** |
+| 0,15 | 22,0 N | 9,7 N | **3,2 kgf** |
+| 0,30 (seco) | 30,2 N | 13,7 N | **4,5 kgf** |
+
+Janela alvo 2 a 4 kgf. Abaixo disso abre na bolsa; acima, o usuário acha que quebrou.
+**A interferência da lingueta é a cota que se tira aço no try-out** até o toque ficar certo —
+e nenhuma outra cota do conjunto se mexe junto. Deformação na raiz da lingueta: 1,56%
+(PP aguenta ~2% em ciclagem).
+
+### Queda com o 2,4 L cheio de sabão (2,61 kg), em cima da tampa
+
+| Altura | Parada | Força | Por gancho | Apoio | Poste | |
+|---|---|---|---|---|---|---|
+| 0,50 m | 8 mm | 1.602 N | 267 N | 7,9 MPa | 8,7 MPa | OK |
+| 0,75 m | 8 mm | 2.402 N | 400 N | 11,9 MPa | 13,0 MPa | OK |
+| 1,00 m | 8 mm | 3.203 N | 534 N | 15,9 MPa | 17,3 MPa | OK |
+| 1,00 m | 5 mm | 5.125 N | 854 N | 25,4 MPa | 27,7 MPa | OK, no limite |
+
+Limite do PP: 30 MPa. O caso de 1,00 m com parada em 5 mm passa raspando — é o caso a
+**medir**, não a confiar na conta.
+
+### Fluência, que é o que mata vedação de PP a longo prazo
+
+Em repouso cada gancho carrega 2,1 N → **0,061 MPa** de esmagamento. A essa tensão o PP não
+flui. Com os 32 kgf da vedação axial rígida seriam ~1,6 MPa e a junta perderia contato em
+poucos meses. **Foi por isso que o lábio flexível teve de vir antes da came.**
+
+### A borda entre ganchos
+
+Ganchos a cada 41 mm. A seção em U da aba dá I = 54 mm⁴/mm (parede simples de 1,40 mm daria
+0,23 — **235×**). Levantamento máximo no meio do vão: **16 µm** contra 1.000 µm de deflexão do
+lábio. A junta acompanha de sobra; não há por onde vazar entre ganchos.
+
+---
+
+## 7. Molde — onde a complexidade foi parar, e por quê
+
+**Corpo: extração 100% reta, zero gaveta, nos quatro tamanhos.**
+O canal da aba abre para baixo, as nervuras da came penduram para baixo, as janelas de entrada
+são interrupções nessas nervuras. Toda superfície é vista de cima ou de fora/baixo.
+
+**Tampa: 2 gavetas laterais** (uma por lado longo), que formam as asas dos 6 ganchos.
+
+Essa alocação é deliberada. São **quatro moldes de corpo** — fundos, caros, USD 25–40 mil cada
+— e **um molde de tampa** raso e barato. Pôr as gavetas na tampa custa ~USD 3–4 mil uma vez;
+pôr no corpo custaria oito gavetas espalhadas por quatro ferramentas.
+
+A alternativa sem gaveta nenhuma seria fazer os ganchos em lingueta flexível, que desmoldam
+por arranque. Descartada: lingueta que flexiona para desmoldar também flexiona em serviço, e
+o gancho é justamente o que não pode ceder. **Gancho rígido, gaveta na tampa.**
+
+### Injeção — o parque não muda
+
+| | A proj. | Fecham. 2 cav | Máquina | Curso | L/t |
+|---|---|---|---|---|---|
+| 600 ml | 135 cm² | 125 t | 200 t | 128 mm | 104 |
+| 1,2 L | 135 cm² | 134 t | 200 t | 260 mm | 150 |
+| 1,8 L | 135 cm² | 143 t | 250 t | 392 mm | 184 |
+| 2,4 L | 135 cm² | 149 t | 380 t | 524 mm | 214 |
+| tampa | 135 cm² | 238 t (4 cav) | 250/280 t | — | — |
+
+Mesmas máquinas da linha 1. O **L/t 214 do 2,4 L** continua no limite: câmara quente com 2
+pontos ou parede de 1,5 mm — decidir no Moldflow, igual à linha 1. **INJ 32 (380 t)**, que
+estava parada, segue como candidata ao try-out.
+
+---
+
+## 8. A tampa dosadora — a que motivou tudo
+
+Mesmo casco, mesma came, mesmos ganchos, mesmo lábio. Muda só o miolo do prato:
+
+1. Furo de vazão **26 × 16 mm** no canto, encostado no murete.
+2. Entalhe de 14 mm no murete — o canto R18 já faz a curva, não se molda bico.
+3. **Lábio de corte de 0,4 mm** na aresta de saída: quebra o filme de sabão, a gota se solta
+   em vez de escorrer pela parede.
+4. Caimento de 3° no piso para o furo: o que respinga volta para dentro pelo mesmo furo.
+5. Tampinha com dobradiça viva e **bujão cônico** (6° de conicidade, 0,15 mm de interferência
+   em 3 mm de engate).
+
+De cabeça para baixo, quem veda o furo é o bujão, e a carga nele é ridícula — **1,00 N
+(0,10 kgf) no 2,4 L**. Um bujão cônico de PP segura isso com folga.
+
+**Respiro:** 2,4 L saindo por um furo de 26 × 16 vai gluglejar. Avaliar respiro de 6 mm no
+canto oposto sob a mesma dobradiça. **Medir no protótipo antes de decidir** — sabão líquido é
+viscoso e pode não precisar.
+
+---
+
+## 9. Patente — fazer a busca antes de mostrar para alguém
+
+Tampa deslizante existe (caixa de pão, estojo, alguns bentôs). Fecho por came existe. Junta de
+lábio existe. **O que parece não existir é a combinação**: retangular, rente, sem saliência,
+com a came gerando a carga de vedação no próprio curso de fechamento e o sobre-centro
+segurando sem depender de atrito.
+
+Isso **não é uma afirmação de que é inédito** — é uma hipótese que precisa de busca:
+
+- **INPI** e **Espacenet**, classificações **B65D 43/20** (tampas deslizantes),
+  **B65D 45/16** (fechos por came) e **B65D 53/02** (juntas).
+- O perfil é de **Modelo de Utilidade** (15 anos, mais barato, exige disposição nova com
+  melhoria funcional) mais do que de patente de invenção.
+- **Fazer a busca antes de qualquer divulgação, feira ou catálogo.** Divulgação prévia derruba
+  a novidade — no Brasil há período de graça de 12 meses, na Europa não há.
+
+---
+
+## 10. O que fica aberto
+
+1. **Busca de anterioridade** (item 9), antes de divulgar.
+2. **Atrito real PP/PP com filme de sabão** — medir, não estimar. Toda a janela do detente
+   depende disso.
+3. **Retenção do lábio de TPE** na canaleta da tampa: 500 aberturas, ver se migra.
+4. **Estanqueidade**: água colorida, 24 h, deitado e invertido, com e sem ciclagem térmica
+   (geladeira → bancada). Só depois disso se fala em promessa de vedação na embalagem.
+5. **Queda de 0,75 m** com o 2,4 L cheio, sobre a tampa e sobre o canto.
+6. **Fluência**: 90 dias fechado a 40 °C, medir a deflexão residual do lábio.
+7. **Protótipo impresso** do 600 ml + tampa: o curso da came e o clique só se avaliam na mão.
+8. Recotar o **TPE Karinprene 45** (CODPROD 997, sem compra há 4 anos) — agora como perfil
+   extrudado, não como aro moldado.
+
+---
+
+## 11. Herdado da linha 1, sem repetir aqui
+
+Material (PP H 105 no corpo, RP 141 na tampa, e por que PE foi descartado), parque de 46
+injetoras e a armadilha do `TPRCAP.DESCRICAO`, Projeto 115 no ERP com molde 115/1 já orçado em
+USD 47.100, ordem de grandeza de USD 140–190 mil de ferramental, histórico de vendas da linha
+modular. Está tudo em `../potes-modulares/README.md` e vale igual.
+
+**Ferramental desta linha:** 4 moldes de corpo + 2 de tampa (padrão e dosadora, com 2 gavetas
+cada) + o perfil extrudado de TPE = **6 ferramentas de injeção + 1 matriz de extrusão**.
+Uma a menos que a linha 1, porque o aro moldado virou perfil extrudado.
+
+---
+
+## 12. Arquivos
+
+| Arquivo | O que é |
+|---|---|
+| `README.md` | este estudo |
+| `calculo-deslizante.py` | memória de cálculo: linha, vedação, came, detente, ganchos, queda, injeção |
+
+O cálculo roda sozinho: `python3 calculo-deslizante.py`. A integração de volume usa Simpson de
+3 pontos, que é **exata** aqui (a seção é quadrática em z), não aproximação numérica.
