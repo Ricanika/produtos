@@ -49,6 +49,11 @@ K = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(K)
 
 # ---------------------------------------------------------------- impressao
 MAT = 'petg' if '--material' in sys.argv and 'petg' in sys.argv else 'pla'
+def _arg(nome, padrao):
+    if nome in sys.argv:
+        try: return float(sys.argv[sys.argv.index(nome) + 1])
+        except (IndexError, ValueError): pass
+    return padrao
 TEMP, BED = (240, 80) if MAT == 'petg' else (210, 60)
 FILA_A  = math.pi * (1.75 / 2) ** 2      # mm2 de secao do filamento
 NOZZLE, LAYER, LAYER1 = 0.40, 0.20, 0.28
@@ -56,8 +61,16 @@ EW      = 0.42                            # largura de extrusao padrao
 EW_MAX  = 0.75                            # largura maxima num passe so
 V_L1, V_PER, V_FILL, V_SUP, V_TRAV = 20, 35, 45, 50, 120
 RETRACT, V_RET = 1.0, 35
+D_RETRACT = 3.0     # so retrai em viagem maior que isto. A 1,5 mm ele retraia
+                    # ate entre linhas de preenchimento: 65 retracoes por camada,
+                    # que encorda a peca e cozinha o filamento no bico.
+ZHOP = 0.4          # o suporte da aba e um tubo de parede unica de 50 mm;
+                    # um encontrao do bico em viagem derruba a torre inteira
 BED_X, BED_Y = 220, 220
-FIT = 0.22
+FIT = 0.22          # folga radial (saia x aba)
+FIT_Z = 0.15        # folga vertical (asa x trilho). Menor que a radial de
+                    # proposito: e ela que deixa a asa ROCAR na rampa, que e a
+                    # unica forma de sentir a came puxando num prototipo sem junta.
 SUP_GAP, SUP_W, SUP_PITCH = 0.25, 0.42, 1.6
 
 # ---------------------------------------------------------------- cotas
@@ -236,11 +249,16 @@ class GC:
             return
         h = LAYER1 if self.nlayer <= 1 else LAYER
         v = V_L1 if self.nlayer <= 1 else v
-        if math.dist(self.pos, pts[0]) > 1.5 and not self.ret:
+        salto = math.dist(self.pos, pts[0]) > D_RETRACT
+        if salto and not self.ret:
             self.L.append(f"G1 E{self.e - RETRACT:.5f} F{V_RET*60:.0f}")
             self.ret = True
+        if salto and self.z is not None:
+            self.L.append(f"G1 Z{self.z + ZHOP:.3f} F{V_TRAV*60:.0f}")
         self.L.append(f"G1 X{pts[0][0]+BED_X/2:.3f} Y{pts[0][1]+BED_Y/2:.3f} "
                       f"F{V_TRAV*60:.0f}")
+        if salto and self.z is not None:
+            self.L.append(f"G1 Z{self.z:.3f} F{V_TRAV*60:.0f}")
         self.pos = pts[0]
         if self.ret:
             self.L.append(f"G1 E{self.e:.5f} F{V_RET*60:.0f}")
@@ -263,6 +281,38 @@ class GC:
         for i in range(n):
             d = (i + 0.5) * w
             self.path(rr(L - 2 * d, W - 2 * d, max(0.6, rad - d)), w, v)
+
+    def anel_conc(self, oL, oW, oR, iL, iW, iR, v=V_PER):
+        """Anel fino preenchido com VOLTAS CONCENTRICAS, nao com linhas a 45°.
+        Preenchimento reto num anel atravessa o furo a cada linha: dava 602
+        retracoes por camada so na aba. Concentrico e um caminho continuo."""
+        t = (oL - iL) / 2
+        n = max(1, math.ceil(t / EW_MAX))
+        w = t / n
+        for i in range(n):
+            d = (i + 0.5) * w
+            self.path(rr(oL - 2 * d, oW - 2 * d, max(0.6, oR - d)), w, v)
+
+    def caixa_zig(self, x0, x1, y0, y1, v=V_PER):
+        """Caixa fina preenchida em serpentina ao longo do lado MAIOR: um
+        caminho so, sem viagem nenhuma no meio."""
+        if x1 - x0 < 0.35 or y1 - y0 < 0.35:
+            return
+        if (x1 - x0) >= (y1 - y0):
+            t, a0, a1 = y1 - y0, x0, x1
+        else:
+            t, a0, a1 = x1 - x0, y0, y1
+        n = max(1, math.ceil(t / EW_MAX))
+        w = t / n
+        pts = []
+        for i in range(n):
+            c = (y0 if (x1 - x0) >= (y1 - y0) else x0) + (i + 0.5) * w
+            p, q = (a0, a1) if i % 2 == 0 else (a1, a0)
+            if (x1 - x0) >= (y1 - y0):
+                pts += [(p, c), (q, c)]
+            else:
+                pts += [(c, p), (c, q)]
+        self.path(pts, w, v)
 
     def solid(self, outer, holes, ang):
         self.path(outer, EW, V_PER)
@@ -326,17 +376,16 @@ def corpo(g):
         elif zm < PE_H:
             g.ring_rr(PE_L, PE_W, R_PE, WALL)
         if PE_H <= zm < PE_H + WALL:
-            g.solid(rr(L0, W0, R),
-                    [rr(PE_L - 2 * WALL, PE_W - 2 * WALL, max(0.6, R_PE - WALL))], ang(n))
+            g.anel_conc(L0, W0, R, PE_L - 2 * WALL, PE_W - 2 * WALL, max(0.6, R_PE - WALL))
         elif PE_H + WALL <= zm < Z_ABA_B:
             g.ring_rr(L0, W0, R, WALL)
         if Z_ABA_B <= zm < POT_H:
-            g.solid(rr(ABA_L, ABA_W2, ABA_R), [rr(MO_L, MO_W, MO_R)], ang(n))
+            g.anel_conc(ABA_L, ABA_W2, ABA_R, MO_L, MO_W, MO_R)
         if Z_SK_B <= zm < Z_ABA_B:
             ylim = ABA_W2 / 2 - ABA_R
             for sx in (-1, 1):
                 a, b = sx * ABA_L / 2, sx * (ABA_L / 2 - SKIRT_T)
-                g.box(min(a, b), max(a, b), -ylim, ylim, ang(n))
+                g.caixa_zig(min(a, b), max(a, b), -ylim, ylim)
             slope = K.RAMPA_DZ / RAMPA_L
             for sy in (-1, 1):
                 for k in range(NH):
@@ -345,11 +394,11 @@ def corpo(g):
                         x0 = rail_start(k) + umin
                         x1 = rail_start(k) + (CELL - WIN)
                         a, b = sy * W0 / 2, sy * ABA_W2 / 2
-                        g.box(x0, x1, min(a, b), max(a, b), ang(n))
-        sup_corpo(g, zm)
+                        g.caixa_zig(x0, x1, min(a, b), max(a, b))
+        sup_corpo(g, zm, n)
 
 
-def sup_corpo(g, zm):
+def sup_corpo(g, zm, n):
     """Dois aneis de suporte. O de baixo e largo e segura o degrau do pe; o de
     cima e um tubo fino de parede unica, estavel por ser fechado, e seu topo
     acompanha a rampa da came ponto a ponto."""
@@ -360,10 +409,16 @@ def sup_corpo(g, zm):
             g.path(rr(ABA_L - 2 * d, ABA_W2 - 2 * d, max(0.6, ABA_R - d)), SUP_W, V_SUP)
             d += SUP_PITCH
         return
-    for d in (0.7, 2.3, 3.9):
-        if ABA_L - 2 * d < L0 + 1.4:
+    # A folga entre a parede do pote (123,4) e a borda da aba (129,4) e de so
+    # 3,0 mm por lado. Com um anel so, o suporte da aba vira uma parede de
+    # 0,42 mm com 50 mm de altura - 120:1 de esbeltez, cai no primeiro esbarrao.
+    # Dois aneis travados por nervuras a cada 10 mm formam um tubo, que e rigido.
+    aneis = []
+    for d in (0.6, 2.2):
+        if ABA_L - 2 * d < L0 + 1.0:
             continue
-        loop = densify(rr(ABA_L - 2 * d, ABA_W2 - 2 * d, max(0.6, ABA_R - d)), 1.2)
+        aneis.append(densify(rr(ABA_L - 2 * d, ABA_W2 - 2 * d, max(0.6, ABA_R - d)), 1.2))
+    for loop in aneis:
         run = []
         for p in loop:
             if teto(*p) - SUP_GAP > zm:
@@ -374,6 +429,16 @@ def sup_corpo(g, zm):
                 run = []
         if len(run) > 2:
             g.path(run, SUP_W, V_SUP)
+    # nervuras so a cada 5 camadas (1 mm de altura) e a cada 15 mm de perimetro:
+    # travar os dois aneis nao precisa de mais que isso, e cada nervura custa uma
+    # viagem com retracao.
+    if len(aneis) == 2 and n % 5 == 0:
+        a, b = aneis
+        m = min(len(a), len(b))
+        passo = max(1, int(15.0 / 1.2))
+        for i in range(0, m, passo):
+            if teto(*a[i]) - SUP_GAP > zm and teto(*b[i]) - SUP_GAP > zm:
+                g.path([a[i], b[i]], SUP_W, V_SUP)
 
 
 # ---------------------------------------------------------------- TAMPA
@@ -381,7 +446,7 @@ WING_T = 1.8
 Z_PRATO0 = MUR_H
 Z_PRATO1 = MUR_H + PRATO
 Z_SAIA1 = Z_PRATO1 + SAIA_H
-Z_WING0 = Z_PRATO1 + SK_FUNDO + FIT
+Z_WING0 = Z_PRATO1 + SK_FUNDO + FIT_Z
 SAIA_IN_L, SAIA_IN_W = ABA_L + 2 * FIT, ABA_W2 + 2 * FIT
 WING_Y0, WING_Y1 = W0 / 2 + FIT, ABA_W2 / 2 + FIT
 HOOK_X = [rail_start(k) + CURSO - HOOK / 2 for k in range(NH)]
@@ -401,9 +466,9 @@ def tampa(g):
             if zm >= Z_WING0:
                 for sy in (-1, 1):
                     for xc in HOOK_X:
-                        g.box(xc - HOOK / 2, xc + HOOK / 2,
-                              sy * WING_Y1 if sy < 0 else WING_Y0,
-                              sy * WING_Y0 if sy < 0 else WING_Y1, ang(n))
+                        g.caixa_zig(xc - HOOK / 2, xc + HOOK / 2,
+                                    sy * WING_Y1 if sy < 0 else WING_Y0,
+                                    sy * WING_Y0 if sy < 0 else WING_Y1)
         sup_tampa(g, zm, n)
 
 
