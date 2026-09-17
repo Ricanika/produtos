@@ -395,6 +395,7 @@ Uma a menos que a linha 1, porque o aro moldado virou perfil extrudado.
 | `calculo-deslizante.py` | memória de cálculo: linha, vedação, came, detente, ganchos, queda, injeção |
 | `mecanismo-came.html` | cópia da página publicada: dois cortes interativos do curso de fechamento |
 | `modelo-3d.html` | cópia da página publicada: modelo 3D orbitável, com corte e a sequência animada |
+| `verifica-modelo-3d.js` | roda o motor do modelo 3D fora do navegador e confere que todos os estados desenham dentro do quadro |
 | `gera-gcode.py` | fatiador paramétrico → G-code de FDM, direto da geometria (não de STL) |
 | `gcode/corpo-600.gcode` | corpo de 600 ml, 289 camadas, ~88 g, ~7,8 h |
 | `gcode/tampa.gcode` | tampa, 62 camadas, ~60 g, ~5,4 h |
@@ -402,6 +403,12 @@ Uma a menos que a linha 1, porque o aro moldado virou perfil extrudado.
 Páginas publicadas:
 - Modelo 3D: https://claude.ai/artifact/26MfzdTdy4EnPUfbYnEejP
 - Cortes 2D do mecanismo: https://claude.ai/artifact/6MLM4LeKMsvPn62wexfApX
+
+**O modelo 3D não usa WebGL.** A primeira versão usava Three.js e ficava em branco em qualquer
+navegador sem WebGL — sem nem avisar. Hoje o desenho é Canvas 2D com projeção própria,
+ordenação por profundidade e corte de polígono no plano; não depende de CDN nem de placa de
+vídeo. `verifica-modelo-3d.js` roda esse motor no Node com um canvas falso e confere, estado a
+estado, quantas faces são pintadas e se caem dentro do quadro.
 
 O cálculo roda sozinho: `python3 calculo-deslizante.py`. A integração de volume usa Simpson de
 3 pontos, que é **exata** aqui (a seção é quadrática em z), não aproximação numérica.

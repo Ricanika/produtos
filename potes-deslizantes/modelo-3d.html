@@ -183,255 +183,341 @@ projetista.</p>
 </section>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
-  if(!window.THREE){ document.getElementById('cv').insertAdjacentHTML('afterend',
-    '<p class="note" style="padding:14px">Não foi possível carregar a biblioteca 3D.</p>'); return; }
+  "use strict";
+  var cv = document.getElementById('cv');
+  var ctx = cv && cv.getContext && cv.getContext('2d');
+  function falhou(msg){
+    if(cv) cv.style.display='none';
+    var p=document.createElement('p'); p.className='note';
+    p.style.padding='24px'; p.textContent=msg;
+    (cv?cv.parentNode:document.body).appendChild(p);
+  }
+  if(!ctx){ falhou('Este navegador não expôs o canvas 2D, então o modelo não pode ser desenhado.'); return; }
 
-  // ---------- cotas, mm ----------
+  // =============== cotas, mm (z = 0 na face de cima da aba) ===============
   var POT_L=123.4, POT_W=94.9, R=18, POT_H=58, WALL=1.15, FUNDO=1.6;
+  var PE_L=112.4, PE_W=83.9, PE_H=6, R_PE=13.0;
   var MO_L=POT_L-2*WALL, MO_W=POT_W-2*WALL, MO_R=R-WALL;
   var ABA=3.0, ABA_L=POT_L+2*ABA, ABA_W=POT_W+2*ABA, ABA_R=R+ABA, ABA_T=1.6;
-  var CAME_T=3.4, SKIRT=1.2, SK_BOT=-5.1, RAMP_TOP=-3.1, RAMP_L=6.0;
-  // O trilho so cabe no trecho RETO do lado longo: fora dele o canto R18 ja
-  // curvou a aba para dentro e nao ha material sobre o gancho.
-  var RETO=ABA_L-2*ABA_R;
-  var CURSO=16.0, NH=3, CELL=RETO/NH, WIN=11.0, HOOK=10.0, HOOK_P=3.2, WING_T=1.8;
-  var PRATO=2.0, HOME_GAP=0.0, MUR_H=3.5, MUR_T=1.5, MUR_I=114.4, SAIA=2.6, SAIA_H=7.0;
-  var LID_L=ABA_L+2*SAIA, LID_W=ABA_W+2*SAIA, LID_R=ABA_R+SAIA;
+  var SK_BOT=-5.1, SK_RASO=-3.1, SKIRT=1.2, CAME_T=3.4;
+  var RETO=ABA_L-2*ABA_R, NH=3, CELL=RETO/NH, WIN=11.0;
+  var CURSO=16.0, RAMP_L=6.0, HOOK=10.0, HOOK_P=3.2, WING_T=1.8;
+  var PRATO=2.0, MUR_H=3.5, MUR_T=1.5, MUR_I=114.4, SAIA_H=7.0;
+  var LID_L=ABA_L+2*HOOK_P, LID_W=ABA_W+2*HOOK_P, LID_R=ABA_R+HOOK_P;
   var SEAL=125.4, HOVER=2.0, MODULO=60;
+  var DIF=POT_L-POT_W;
+  function rail0(k){ return -RETO/2 + k*CELL + WIN; }
 
-  var C={corpo:0x8FA6B4, trilho:0x2F4B5C, gancho:0xC9761F, tpe:0x9A3D22, tampa:0xB6C3CB};
+  var COR={corpo:[143,166,180], trilho:[47,75,92], gancho:[201,118,31],
+           tpe:[154,61,34], tampa:[182,195,203], ghost:[143,166,180]};
 
-  // ---------- helpers ----------
-  function rr(L,W,rad){
-    var l=L/2-rad, w=W/2-rad, s=new THREE.Shape();
-    s.moveTo(-l,-W/2); s.lineTo(l,-W/2);
-    s.absarc(l,-w,rad,-Math.PI/2,0,false); s.lineTo(L/2,w);
-    s.absarc(l,w,rad,0,Math.PI/2,false); s.lineTo(-l,W/2);
-    s.absarc(-l,w,rad,Math.PI/2,Math.PI,false); s.lineTo(-L/2,-w);
-    s.absarc(-l,-w,rad,Math.PI,1.5*Math.PI,false);
-    return s;
+  // =============== construção de faces ===============
+  // Cada face: {p:[[x,y,z],...], c:[r,g,b], a:alpha, g:grupo}
+  // grupo 0 = corpo (fixo) · 1 = tampa (transladada) · 2 = pote empilhado
+  var faces=[];
+  var marcaMec=false;
+  function push(pts,c,a,g){ faces.push({p:pts,c:c,a:a,g:g,mec:marcaMec}); }
+
+  function rrPts(L,W,rad,seg){
+    seg = seg||8;
+    var l=L/2-rad, w=W/2-rad, p=[], cs=[[l,-w,-Math.PI/2],[l,w,0],[-l,w,Math.PI/2],[-l,-w,Math.PI]];
+    for(var j=0;j<4;j++){
+      for(var i=0;i<=seg;i++){
+        if(j>0 && i===0) continue;
+        var a=cs[j][2]+(Math.PI/2)*i/seg;
+        p.push([cs[j][0]+rad*Math.cos(a), cs[j][1]+rad*Math.sin(a)]);
+      }
+    }
+    return p;
   }
-  function ring(oL,oW,oR,iL,iW,iR,d){
-    var s=rr(oL,oW,oR); s.holes.push(rr(iL,iW,iR));
-    return new THREE.ExtrudeGeometry(s,{depth:d,bevelEnabled:false,curveSegments:14});
+  function anel(oL,oW,oR,iL,iW,iR,z0,z1,c,a,g){
+    var o=rrPts(oL,oW,oR), n=o.length, ii=rrPts(iL,iW,iR);
+    for(var i=0;i<n;i++){
+      var j=(i+1)%n;
+      push([[o[i][0],o[i][1],z0],[o[j][0],o[j][1],z0],[o[j][0],o[j][1],z1],[o[i][0],o[i][1],z1]],c,a,g);
+      push([[ii[j][0],ii[j][1],z0],[ii[i][0],ii[i][1],z0],[ii[i][0],ii[i][1],z1],[ii[j][0],ii[j][1],z1]],c,a,g);
+      push([[o[i][0],o[i][1],z1],[o[j][0],o[j][1],z1],[ii[j][0],ii[j][1],z1],[ii[i][0],ii[i][1],z1]],c,a,g);
+      push([[ii[i][0],ii[i][1],z0],[ii[j][0],ii[j][1],z0],[o[j][0],o[j][1],z0],[o[i][0],o[i][1],z0]],c,a,g);
+    }
   }
-  function slab(L,W,rad,d){
-    return new THREE.ExtrudeGeometry(rr(L,W,rad),{depth:d,bevelEnabled:false,curveSegments:14});
+  function chapa(L,W,rad,z0,z1,c,a,g){
+    var o=rrPts(L,W,rad), n=o.length, topo=[], base=[];
+    for(var i=0;i<n;i++){
+      var j=(i+1)%n;
+      push([[o[i][0],o[i][1],z0],[o[j][0],o[j][1],z0],[o[j][0],o[j][1],z1],[o[i][0],o[i][1],z1]],c,a,g);
+      topo.push([o[i][0],o[i][1],z1]); base.push([o[n-1-i][0],o[n-1-i][1],z0]);
+    }
+    push(topo,c,a,g); push(base,c,a,g);
   }
-  var clip=new THREE.Plane(new THREE.Vector3(0,-1,0),0);
-  function mat(col,op){
-    return new THREE.MeshStandardMaterial({color:col,roughness:.42,metalness:.02,
-      transparent:op<1, opacity:op, side:THREE.DoubleSide, clippingPlanes:[], depthWrite:op>.9});
+  function caixa(x0,x1,y0,y1,z0,z1,c,a,g){
+    var v=[[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0],[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]];
+    [[0,3,2,1],[4,5,6,7],[0,1,5,4],[2,3,7,6],[1,2,6,5],[3,0,4,7]]
+      .forEach(function(f){ push(f.map(function(i){return v[i];}),c,a,g); });
   }
-  var mats=[];
-  function M(col,op){ var m=mat(col,op); mats.push(m); return m; }
-  function add(parent,geo,m,z){ var o=new THREE.Mesh(geo,m); if(z!==undefined)o.position.z=z;
-    parent.add(o); return o; }
+  // prisma sobre um perfil no plano (x,z), extrudado em y
+  function prismaY(perfil,y0,y1,c,a,g){
+    var n=perfil.length, A=[], B=[];
+    for(var i=0;i<n;i++){
+      A.push([perfil[i][0],y0,perfil[i][1]]);
+      B.push([perfil[i][0],y1,perfil[i][1]]);
+    }
+    for(var i=0;i<n;i++){
+      var j=(i+1)%n;
+      push([A[i],A[j],B[j],B[i]],c,a,g);
+    }
+    push(A.slice().reverse(),c,a,g); push(B,c,a,g);
+  }
 
-  // ---------- cena ----------
-  var cv=document.getElementById('cv');
-  var renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
-  renderer.localClippingEnabled=true;
-  var scene=new THREE.Scene();
-  var camera=new THREE.PerspectiveCamera(34,1,1,3000);
-  camera.up.set(0,0,1);
-  scene.add(new THREE.HemisphereLight(0xffffff,0x60707a,0.85));
-  var d1=new THREE.DirectionalLight(0xffffff,0.62); d1.position.set(160,-240,300); scene.add(d1);
-  var d2=new THREE.DirectionalLight(0xffffff,0.34); d2.position.set(-220,180,120); scene.add(d2);
-
-  var root=new THREE.Group(); scene.add(root);
-
-  // ===== CORPO =====
-  var corpo=new THREE.Group(); root.add(corpo);
-  var mCorpo=M(C.corpo,.34), mTrilho=M(C.trilho,1);
-  add(corpo, ring(POT_L,POT_W,R,MO_L,MO_W,MO_R, POT_H-ABA_T-FUNDO), mCorpo, -POT_H+FUNDO);
-  add(corpo, slab(POT_L,POT_W,R,FUNDO), mCorpo, -POT_H);
-  add(corpo, ring(ABA_L,ABA_W,ABA_R,MO_L,MO_W,MO_R,ABA_T), mCorpo, -ABA_T);
-
-  // saia curta dos lados curtos (contínua, só rigidez)
+  // ---------------- CORPO ----------------
+  var Zb=-POT_H;
+  chapa(PE_L,PE_W,R_PE, Zb, Zb+FUNDO, COR.corpo,0.30,0);
+  anel(PE_L,PE_W,R_PE, PE_L-2*WALL,PE_W-2*WALL,R_PE-WALL, Zb+FUNDO, Zb+PE_H, COR.corpo,0.30,0);
+  anel(POT_L,POT_W,R, PE_L-2*WALL,PE_W-2*WALL,R_PE-WALL, Zb+PE_H, Zb+PE_H+WALL, COR.corpo,0.30,0);
+  anel(POT_L,POT_W,R, MO_L,MO_W,MO_R, Zb+PE_H+WALL, -ABA_T, COR.corpo,0.30,0);
+  anel(ABA_L,ABA_W,ABA_R, MO_L,MO_W,MO_R, -ABA_T, 0, COR.corpo,0.42,0);
+  // lábio dos lados curtos
   [-1,1].forEach(function(sx){
-    var g=new THREE.BoxGeometry(SKIRT, ABA_W-2*ABA_R+2*(ABA_R-2), Math.abs(SK_BOT)-ABA_T);
-    var m=new THREE.Mesh(g,mCorpo);
-    m.position.set(sx*(ABA_L/2-SKIRT/2), 0, (SK_BOT+(-ABA_T))/2);
-    corpo.add(m);
+    var a=sx*ABA_L/2, b=sx*(ABA_L/2-SKIRT), yl=ABA_W/2-ABA_R;
+    caixa(Math.min(a,b),Math.max(a,b),-yl,yl, SK_BOT,-ABA_T, COR.corpo,0.42,0);
   });
-
-  // trilhos da came: 4 por lado longo
-  function railGeo(){
-    var s=new THREE.Shape();           // x = ao longo da borda, y = para BAIXO
-    var u0=0, u1=CELL-WIN;
-    s.moveTo(u0, ABA_T);
-    s.lineTo(u0, -RAMP_TOP);
-    s.lineTo(u0+RAMP_L, -SK_BOT);
-    s.lineTo(u1, -SK_BOT);
-    s.lineTo(u1, ABA_T);
-    return new THREE.ExtrudeGeometry(s,{depth:CAME_T,bevelEnabled:false});
-  }
-  var rg=railGeo();
-  var rails=[];
-  [-1,1].forEach(function(sy){
+  // TRILHOS DA CAME (a fêmea) — perfil com a rampa
+  marcaMec=true;
+  for(var sy=-1; sy<=1; sy+=2){
     for(var k=0;k<NH;k++){
-      var m=new THREE.Mesh(rg,mTrilho);
-      m.rotation.x=-Math.PI/2;
-      m.position.x = RAIL0(k);
-      m.position.y = sy>0 ? (ABA_W/2-CAME_T) : (-ABA_W/2);
-      m.position.z = 0;
-      corpo.add(m); rails.push(m);
+      var u0=rail0(k), u1=u0+(CELL-WIN);
+      var perfil=[[u0,-ABA_T],[u0,SK_RASO],[u0+RAMP_L,SK_BOT],[u1,SK_BOT],[u1,-ABA_T]];
+      var ya=sy>0 ? ABA_W/2-CAME_T : -ABA_W/2;
+      prismaY(perfil, ya, ya+CAME_T, COR.trilho,1,0);
     }
-  });
-
-  // ===== TAMPA =====
-  var tampa=new THREE.Group(); root.add(tampa);
-  var mTampa=M(C.tampa,.46), mGan=M(C.gancho,1), mTpe=M(C.tpe,1);
-  add(tampa, slab(LID_L,LID_W,LID_R,PRATO), mTampa, HOME_GAP);
-  add(tampa, ring(MUR_I+2*MUR_T, MUR_I+2*MUR_T-(POT_L-POT_W), 15, MUR_I, MUR_I-(POT_L-POT_W), 13.5, MUR_H),
-      mTampa, HOME_GAP+PRATO);
-  add(tampa, ring(LID_L,LID_W,LID_R,ABA_L,ABA_W,ABA_R,SAIA_H), mTampa, HOME_GAP-SAIA_H);
-  // lábio de TPE
-  // labio de TPE: mora numa canaleta na face de baixo do prato e desce 0,9 mm
-  // para dentro de um rebaixo na aba. O prato encosta na aba - e esse batente que
-  // define a compressao de 1,00 mm e que carrega a pilha.
-  add(tampa, ring(SEAL+1.3, SEAL+1.3-(POT_L-POT_W), ABA_R-2.5, SEAL-1.3, SEAL-1.3-(POT_L-POT_W), ABA_R-3.8, 1.0),
-      mTpe, HOME_GAP-0.9);
-  // ganchos: asa por baixo do trilho + poste por fora
-  var WING_TOP=SK_BOT;
-  [-1,1].forEach(function(sy){
-    for(var k=0;k<NH;k++){
-      var xc = RAIL0(k) + CURSO - HOOK/2;
-      var wing=new THREE.Mesh(new THREE.BoxGeometry(HOOK,CAME_T,WING_T),mGan);
-      wing.position.set(xc, sy*(ABA_W/2-CAME_T/2), WING_TOP-WING_T/2);
-      tampa.add(wing);
-      var hPost = (HOME_GAP) - (WING_TOP-WING_T);
-      var post=new THREE.Mesh(new THREE.BoxGeometry(HOOK,HOOK_P,hPost),mGan);
-      post.position.set(xc, sy*(ABA_W/2+HOOK_P/2), (WING_TOP-WING_T+HOME_GAP)/2);
-      tampa.add(post);
-    }
-  });
-  // linguetas do detente, 2 por lado
-  [-1,1].forEach(function(sy){
-    [-1,1].forEach(function(sx){
-      var t=new THREE.Mesh(new THREE.BoxGeometry(16,1.4,5.0),mGan);
-      t.position.set(sx*RETO*0.30, sy*(ABA_W/2+HOOK_P/2), HOME_GAP-2.6);
-      tampa.add(t);
-    });
-  });
-
-  // ===== POTE EMPILHADO =====
-  var pilha=new THREE.Group(); pilha.visible=false; root.add(pilha);
-  var mGhost=M(C.corpo,.20);
-  add(pilha, ring(POT_L,POT_W,R,MO_L,MO_W,MO_R,POT_H-ABA_T-FUNDO), mGhost, MODULO-POT_H);
-  // pe embutido de 6 mm: o fundo do pote de cima recua, e o murete entra nele
-  add(pilha, ring(POT_L,POT_W,R,MUR_I-2,MUR_I-2-(POT_L-POT_W),13, FUNDO), mGhost,
-      MODULO-POT_H+6.0-FUNDO);
-  add(pilha, ring(ABA_L,ABA_W,ABA_R,MO_L,MO_W,MO_R,ABA_T), mGhost, MODULO-ABA_T);
-
-  // ---------- cinemática ----------
-  function camZ(t){                       // altura da tampa acima da posição de casa
-    if(t<=0) return HOVER;
-    if(t>=RAMP_L) return 0;
-    return HOVER*(1-t/RAMP_L);
   }
-  var FASES=['Tampa fora','Pousando','Deslizando — came puxando','Junta comprimindo','Travada · clique'];
-  function setSeq(u){                     // u de 0 a 1
+  marcaMec=false;
+
+  // ---------------- TAMPA (grupo 1) ----------------
+  chapa(LID_L,LID_W,LID_R, 0, PRATO, COR.tampa,0.45,1);
+  anel(MUR_I+2*MUR_T, MUR_I+2*MUR_T-DIF, 15, MUR_I, MUR_I-DIF, 13.5, PRATO, PRATO+MUR_H, COR.tampa,0.60,1);
+  anel(LID_L,LID_W,LID_R, ABA_L,ABA_W,ABA_R, -SAIA_H, 0, COR.tampa,0.45,1);
+  anel(SEAL+1.3, SEAL+1.3-DIF, ABA_R-2.5, SEAL-1.3, SEAL-1.3-DIF, ABA_R-3.8, -0.9, 0.1, COR.tpe,1,1);
+  // GANCHOS (o macho): asa sob o trilho + poste por fora
+  marcaMec=true;
+  for(var sy=-1; sy<=1; sy+=2){
+    for(var k=0;k<NH;k++){
+      var xc=rail0(k)+CURSO-HOOK/2;
+      var wa=sy>0 ? ABA_W/2-CAME_T : -ABA_W/2;
+      caixa(xc-HOOK/2, xc+HOOK/2, wa, wa+CAME_T, SK_BOT-WING_T, SK_BOT, COR.gancho,1,1);
+      var pa=sy>0 ? ABA_W/2 : -ABA_W/2-HOOK_P;
+      caixa(xc-HOOK/2, xc+HOOK/2, pa, pa+HOOK_P, SK_BOT-WING_T, 0, COR.gancho,1,1);
+    }
+  }
+  marcaMec=false;
+
+  // ---------------- POTE EMPILHADO (grupo 2) ----------------
+  anel(POT_L,POT_W,R, MO_L,MO_W,MO_R, MODULO-POT_H, MODULO-ABA_T, COR.ghost,0.16,2);
+  anel(POT_L,POT_W,R, MUR_I-2, MUR_I-2-DIF, 13, MODULO-POT_H+PE_H-FUNDO, MODULO-POT_H+PE_H, COR.ghost,0.16,2);
+  anel(ABA_L,ABA_W,ABA_R, MO_L,MO_W,MO_R, MODULO-ABA_T, MODULO, COR.ghost,0.16,2);
+
+  // =============== cinemática ===============
+  function camZ(t){ return t<=0 ? HOVER : (t>=RAMP_L ? 0 : HOVER*(1-t/RAMP_L)); }
+  var estado={t:0, z:HOVER, dx:-CURSO, pilha:false, corte:false};
+
+  // =============== câmera e desenho ===============
+  var az=-0.62, pol=0.62, dist=330, foco=1000, alvo=[0,0,-20], panx=0, pany=0;
+  function proj(p, off){
+    var x=p[0]+off[0]-alvo[0], y=p[1]+off[1]-alvo[1], z=p[2]+off[2]-alvo[2];
+    var ca=Math.cos(az), sa=Math.sin(az);
+    var X=x*ca+y*sa, Y=-x*sa+y*ca;
+    var cp=Math.cos(pol), sp=Math.sin(pol);
+    var Y2=Y*cp+z*sp, Z2=-Y*sp+z*cp;
+    var d=dist-Y2; if(d<20) d=20;
+    var f=foco/d;
+    return [W2+panx+X*f, H2+pany-Z2*f, d];
+  }
+  var W2=0,H2=0;
+  // corte: Sutherland-Hodgman contra o plano y = 0, mantendo y <= 0
+  function corta(pts, off){
+    var out=[];
+    for(var i=0;i<pts.length;i++){
+      var a=pts[i], b=pts[(i+1)%pts.length];
+      var ay=a[1]+off[1], by=b[1]+off[1];
+      var ain=ay<=0, bin=by<=0;
+      if(ain) out.push(a);
+      if(ain!==bin){
+        var s=ay/(ay-by);
+        out.push([a[0]+(b[0]-a[0])*s, a[1]+(b[1]-a[1])*s, a[2]+(b[2]-a[2])*s]);
+      }
+    }
+    return out;
+  }
+  // Enquadra sozinho: mede a caixa projetada e escolhe foco e centro. E o que
+  // garante que o modelo aparece inteiro em qualquer tela e em qualquer estado.
+  function bbox(filtro){
+    var offs=[[0,0,0],[estado.dx,0,estado.z],[0,0,0]];
+    var a=1e9,b=-1e9,c=1e9,d=-1e9,n=0;
+    for(var i=0;i<faces.length;i++){
+      var f=faces[i];
+      if(f.g===2 && !estado.pilha) continue;
+      if(filtro && !filtro(f)) continue;
+      var off=offs[f.g];
+      for(var j=0;j<f.p.length;j++){
+        var q=proj(f.p[j], off);
+        if(!isFinite(q[0])||!isFinite(q[1])) continue;
+        if(q[0]<a)a=q[0]; if(q[0]>b)b=q[0]; if(q[1]<c)c=q[1]; if(q[1]>d)d=q[1]; n++;
+      }
+    }
+    return n ? {x0:a,x1:b,y0:c,y1:d} : null;
+  }
+  function ajusta(filtro){
+    var wpx=cv.clientWidth||900, hpx=cv.clientHeight||480;
+    W2=wpx/2; H2=hpx/2;
+    panx=0; pany=0; foco=1000;
+    var bb=bbox(filtro);
+    if(!bb) return;
+    var lw=(bb.x1-bb.x0)/1000, lh=(bb.y1-bb.y0)/1000;
+    if(lw<=1e-6||lh<=1e-6) return;
+    foco = Math.min(wpx*0.88/lw, hpx*0.88/lh);
+    bb = bbox(filtro);
+    if(!bb) return;
+    panx = W2 - (bb.x0+bb.x1)/2;
+    pany = H2 - (bb.y0+bb.y1)/2;
+  }
+  function soMecanismo(f){
+    if(!f.mec) return false;
+    var sy=0; for(var i=0;i<f.p.length;i++) sy+=f.p[i][1];
+    return sy/f.p.length > 20;
+  }
+
+  var LUZ=[0.42,-0.76,0.50];
+  function sombra(pts){
+    var u=[pts[1][0]-pts[0][0],pts[1][1]-pts[0][1],pts[1][2]-pts[0][2]];
+    var v=[pts[2][0]-pts[0][0],pts[2][1]-pts[0][1],pts[2][2]-pts[0][2]];
+    var n=[u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]];
+    var m=Math.hypot(n[0],n[1],n[2])||1;
+    var d=Math.abs((n[0]*LUZ[0]+n[1]*LUZ[1]+n[2]*LUZ[2])/m);
+    return 0.52+0.48*d;
+  }
+
+  function desenha(){
+    var wpx=cv.clientWidth, hpx=cv.clientHeight;
+    var dpr=Math.min(2, window.devicePixelRatio||1);
+    if(cv.width!==Math.round(wpx*dpr)){ cv.width=Math.round(wpx*dpr); cv.height=Math.round(hpx*dpr); }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,wpx,hpx);
+    W2=wpx/2; H2=hpx/2;
+
+    var offs=[[0,0,0],[estado.dx,0,estado.z],[0,0,0]];
+    var lista=[];
+    for(var i=0;i<faces.length;i++){
+      var f=faces[i];
+      if(f.g===2 && !estado.pilha) continue;
+      var off=offs[f.g];
+      var pts=estado.corte ? corta(f.p, off) : f.p;
+      if(pts.length<3) continue;
+      var pr=[], dsum=0, fora=false;
+      for(var j=0;j<pts.length;j++){
+        var q=proj(pts[j], off);
+        if(!isFinite(q[0])||!isFinite(q[1])){ fora=true; break; }
+        pr.push(q); dsum+=q[2];
+      }
+      if(fora) continue;
+      lista.push({pr:pr, d:dsum/pr.length, c:f.c, a:f.a, s:sombra(pts)});
+    }
+    lista.sort(function(a,b){ return b.d-a.d; });
+    for(var i=0;i<lista.length;i++){
+      var L=lista[i], c=L.c, s=L.s;
+      ctx.beginPath();
+      ctx.moveTo(L.pr[0][0], L.pr[0][1]);
+      for(var j=1;j<L.pr.length;j++) ctx.lineTo(L.pr[j][0], L.pr[j][1]);
+      ctx.closePath();
+      ctx.fillStyle='rgba('+Math.round(c[0]*s)+','+Math.round(c[1]*s)+','+Math.round(c[2]*s)+','+L.a+')';
+      ctx.fill();
+      ctx.lineWidth=0.6;
+      ctx.strokeStyle='rgba(0,0,0,'+(0.22*L.a)+')';
+      ctx.stroke();
+    }
+  }
+
+  // =============== leitura ===============
+  var FASES=['Tampa fora','Pousando','Deslizando — came puxando','Junta comprimindo','Travada'];
+  function setSeq(u){
     var pousa=0.34, desliza=0.90, t, z, fase;
-    if(u<pousa){
-      var k=u/pousa;
-      t=0; z=HOVER + (1-k)*46;
-      fase = k<0.06 ? 0 : 1;
-    } else if(u<desliza){
-      t = CURSO*(u-pousa)/(desliza-pousa);
-      z = camZ(t);
-      fase = (HOVER-z) > 0.98 ? 3 : 2;
-    } else { t=CURSO; z=0; fase=4; }
-    tampa.position.x = -(CURSO - t);
-    tampa.position.z = z;
-    var comp = Math.max(0, 1.0 - z);
+    if(u<pousa){ var k=u/pousa; t=0; z=HOVER+(1-k)*46; fase=k<0.06?0:1; }
+    else if(u<desliza){ t=CURSO*(u-pousa)/(desliza-pousa); z=camZ(t); fase=(HOVER-z)>0.98?3:2; }
+    else { t=CURSO; z=0; fase=4; }
+    estado.t=t; estado.z=z; estado.dx=-(CURSO-t);
+    var comp=Math.max(0,1.0-z);
     document.getElementById('rFase').textContent=FASES[fase];
     document.getElementById('rCurso').textContent=t.toFixed(1).replace('.',',')+' mm';
     document.getElementById('rQueda').textContent=(HOVER-z).toFixed(2).replace('.',',')+' mm';
-    document.getElementById('rJunta').textContent =
-      comp<0.005 ? 'solta' : comp.toFixed(2).replace('.',',')+' mm';
+    document.getElementById('rJunta').textContent=comp<0.005?'solta':comp.toFixed(2).replace('.',',')+' mm';
+    desenha();
   }
 
-  // ---------- câmera orbital ----------
-  var az=-0.62, pol=1.16, dist=330, target=new THREE.Vector3(0,0,-24);
-  function place(){
-    camera.position.set(
-      target.x + dist*Math.sin(pol)*Math.cos(az),
-      target.y + dist*Math.sin(pol)*Math.sin(az),
-      target.z + dist*Math.cos(pol));
-    camera.lookAt(target);
-  }
-  var drag=null;
-  cv.addEventListener('pointerdown',function(e){ drag={x:e.clientX,y:e.clientY};
-    cv.setPointerCapture(e.pointerId); });
+  // =============== interação ===============
+  var arrasto=null;
+  cv.addEventListener('pointerdown',function(e){ arrasto={x:e.clientX,y:e.clientY};
+    try{cv.setPointerCapture(e.pointerId);}catch(_){} });
   cv.addEventListener('pointermove',function(e){
-    if(!drag) return;
-    az -= (e.clientX-drag.x)*0.008;
-    pol = Math.max(0.12, Math.min(2.0, pol - (e.clientY-drag.y)*0.006));
-    drag={x:e.clientX,y:e.clientY}; place();
+    if(!arrasto) return;
+    az -= (e.clientX-arrasto.x)*0.009;
+    pol = Math.max(-1.35, Math.min(1.45, pol + (e.clientY-arrasto.y)*0.007));
+    arrasto={x:e.clientX,y:e.clientY}; desenha();
   });
   ['pointerup','pointercancel','pointerleave'].forEach(function(t){
-    cv.addEventListener(t,function(){ drag=null; }); });
+    cv.addEventListener(t,function(){ arrasto=null; }); });
   cv.addEventListener('wheel',function(e){
-    e.preventDefault(); dist=Math.max(70,Math.min(760,dist*(1+Math.sign(e.deltaY)*0.11))); place();
+    e.preventDefault();
+    dist=Math.max(90,Math.min(760, dist*(1+(e.deltaY>0?0.12:-0.12)))); desenha();
   },{passive:false});
+  window.addEventListener('resize', function(){ ajusta(zoomLigado()?soMecanismo:null); desenha(); });
 
-  function resize(){
-    var w=cv.clientWidth, h=cv.clientHeight;
-    renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
-    renderer.setSize(w,h,false);
-    camera.aspect=w/h; camera.updateProjectionMatrix();
-  }
-  window.addEventListener('resize',function(){ resize(); place(); });
-
-  // ---------- controles ----------
   var scrub=document.getElementById('scrub'), play=document.getElementById('play'), raf=null;
-  function stopAnim(){ if(raf){cancelAnimationFrame(raf); raf=null;}
-    play.textContent = parseFloat(scrub.value) > 500 ? 'Abrir' : 'Fechar'; }
-  scrub.addEventListener('input',function(){ stopAnim(); setSeq(scrub.value/1000); });
+  function para(){ if(raf){cancelAnimationFrame(raf); raf=null;}
+    play.textContent = parseFloat(scrub.value)>500 ? 'Abrir' : 'Fechar'; }
+  scrub.addEventListener('input',function(){ para(); setSeq(scrub.value/1000); });
   play.addEventListener('click',function(){
-    if(raf){ stopAnim(); return; }
-    var from=parseFloat(scrub.value)/1000, to = from>0.5 ? 0 : 1, t0=null, dur=3400;
+    if(raf){ para(); return; }
+    var de=parseFloat(scrub.value)/1000, para_=de>0.5?0:1, t0=null, dur=3400;
     play.textContent='Parar';
-    (function step(ts){
+    function passo(ts){
       if(t0===null) t0=ts;
-      var k=Math.min(1,(ts-t0)/dur), v=from+(to-from)*k;
+      var k=Math.min(1,(ts-t0)/dur), v=de+(para_-de)*k;
       scrub.value=v*1000; setSeq(v);
-      if(k<1){ raf=requestAnimationFrame(step); }
-      else { raf=null; play.textContent = to>0.5 ? 'Abrir' : 'Fechar'; }
-    })(performance.now());
+      if(k<1){ raf=requestAnimationFrame(passo); }
+      else { raf=null; play.textContent = para_>0.5?'Abrir':'Fechar'; }
+    }
+    raf=requestAnimationFrame(passo);
   });
-
-  function toggle(id,fn){
+  function botao(id,fn){
     var b=document.getElementById(id);
     b.addEventListener('click',function(){
-      var on = b.getAttribute('aria-pressed')!=='true';
-      b.setAttribute('aria-pressed', on?'true':'false'); fn(on);
+      var on=b.getAttribute('aria-pressed')!=='true';
+      b.setAttribute('aria-pressed', on?'true':'false'); fn(on); desenha();
     });
   }
-  toggle('tCorte',function(on){
-    mats.forEach(function(m){ m.clippingPlanes = on ? [clip] : []; m.needsUpdate=true; });
+  botao('tCorte',function(on){ estado.corte=on; });
+  function zoomLigado(){ return document.getElementById('tZoom').getAttribute('aria-pressed')==='true'; }
+  botao('tZoom',function(on){
+    // enquadra so os trilhos e ganchos de um lado longo
+    dist = on ? 170 : 330;
+    alvo = on ? [0, 40, -3] : [0, 0, -20];
+    pol  = on ? 0.26 : 0.62;
+    ajusta(on ? soMecanismo : null);
   });
-  toggle('tZoom',function(on){
-    dist = on ? 108 : 330; target.set(0,0, on ? -3 : -24);
-    pol = on ? 1.44 : 1.16; place();
-  });
-  toggle('tPilha',function(on){ pilha.visible=on; });
+  botao('tPilha',function(on){ estado.pilha=on; ajusta(zoomLigado()?soMecanismo:null); });
   document.getElementById('tReset').addEventListener('click',function(){
-    az=-0.62; pol=1.16; dist=330; target.set(0,0,-24);
+    az=-0.62; pol=0.62; dist=330; alvo=[0,0,-20];
     ['tCorte','tZoom'].forEach(function(id){
       var b=document.getElementById(id);
-      if(b.getAttribute('aria-pressed')==='true'){ b.click(); }
+      if(b.getAttribute('aria-pressed')==='true') b.click();
     });
-    place();
+    ajusta(null); desenha();
   });
 
-  resize(); place(); setSeq(0);
-  requestAnimationFrame(function(){ resize(); place(); });
-  (function loop(){ renderer.render(scene,camera); requestAnimationFrame(loop); })();
+  // setSeq primeiro: no instante u=0 a tampa esta 46 mm no ar, que e o caso
+  // mais alto. Enquadrar antes disso cortaria a tampa.
+  setSeq(0);
+  ajusta(null);
+  requestAnimationFrame(function(){ ajusta(zoomLigado()?soMecanismo:null); desenha(); });
 })();
 </script>
