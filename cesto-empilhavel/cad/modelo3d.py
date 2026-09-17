@@ -56,7 +56,13 @@ T_PAREDE = 1.4
 T_FUNDO  = 2.0
 T_RIM    = 3.2            # parede engrossada na faixa do rim
 H_RIM    = 10.0
-H_PE     = 6.0            # saia: a parede desce 6 mm abaixo da chapa
+H_PE     = 5.0            # a chapa do fundo flutua 5 mm acima do piso
+# Pezinhos: 4 blocos ocos SOB a chapa, recuados da borda dela. De fora nao
+# aparecem -- a chapa faz aba sobre eles. As posicoes em y sao assimetricas de
+# proposito (ver PE_Y/BERCO_Y).
+PE_X, PE_W, PE_T = 97.5, 13.0, 1.4
+PE_Y = ((-40.0, -20.0), (52.0, 78.0))     # frente e TRASEIRO
+SOQ_H, SOQ_T, SOQ_F = 2.5, 2.0, 0.6       # soquete: altura, parede, folga
 BERCO_L, BERCO_P, BERCO_H = 18.0, 10.0, 5.0   # orelhas de apoio no rim
 BERCO_Y = (-38.0, 75.0)   # centros, nos cantos -- fora das travas
 
@@ -193,7 +199,43 @@ def _canaleta_D(y0, y1):
     return c
 
 
-def _macho_E(env, y0, y1):
+def _pezinhos():
+    """4 pezinhos ocos sob a chapa, abertos embaixo (pino da cavidade)."""
+    out = None
+    for sx in (-1, 1):
+        for y0, y1 in PE_Y:
+            b = _caixa(sx, PE_X - PE_W, PE_X, y0, y1, 0.0, H_PE + T_FUNDO)
+            b -= _caixa(sx, PE_X - PE_W + PE_T, PE_X - PE_T,
+                        y0 + PE_T, y1 - PE_T, -1.0, H_PE)
+            out = b if out is None else out + b
+    return out
+
+
+def _soquetes(fora, so_traseiro=True):
+    """Bercos no rim que recebem os pezinhos da peca de cima.
+
+    O traseiro ganha paredes (soquete) e e ele que trava a pilha na frente e
+    atras -- daí o nome 'encaixe do pe traseiro'. ATENCAO: qualquer berco que
+    avance para dentro do rim fecha o encaixe (a chapa da peca de cima tem
+    99,9 mm de meia-largura e nao passa). E empilhar OU encaixar.
+    """
+    x_i = secao(ALT, T_RIM)[0] / 2
+    out = None
+    for sx in (-1, 1):
+        for i, (y0, y1) in enumerate(PE_Y):
+            b = _caixa(sx, PE_X - PE_W - 2, LARG, y0 - 3, y1 + 3,
+                       ALT - 4.0, ALT) & fora
+            if i == 1 and so_traseiro:        # soquete do pe traseiro
+                xe, xd = PE_X - PE_W - SOQ_F, PE_X + SOQ_F
+                for cx in ((xe - SOQ_T, xe), (xd, xd + SOQ_T)):
+                    b += _caixa(sx, cx[0], cx[1], y0 - SOQ_F - SOQ_T,
+                                y1 + SOQ_F + SOQ_T, ALT, ALT + SOQ_H)
+                for cy in ((y0 - SOQ_F - SOQ_T, y0 - SOQ_F),
+                           (y1 + SOQ_F, y1 + SOQ_F + SOQ_T)):
+                    b += _caixa(sx, xe - SOQ_T, xd + SOQ_T, cy[0], cy[1],
+                                ALT, ALT + SOQ_H)
+            out = b if out is None else out + b
+    return out
     """Trava curta com gancho, apoiada na parede nua de 1,4 mm da vizinha."""
     xo = LARG / 2 + E_SALTO
     s = _caixa(1, LARG / 2 - 6, xo, y0, y1, Z_D0, ALT) - env
@@ -269,10 +311,11 @@ def _risco(sx, faixas):
     return out
 
 
-def cesto(acopl=None, h_rim=None):
+def cesto(acopl=None, h_rim=None, empilha=False):
     """acopl: None, 'A' (trilho corrido), 'B' (trilho embutido), 'C' (travas).
 
     h_rim permite medir o custo da faixa de 18 mm sem nenhuma feicao.
+    empilha=True poe os bercos/soquetes no rim -- o que fecha o encaixe.
     """
     if h_rim is None:
         h_rim = (H_FAIXA2 if acopl in ("D", "E")
@@ -288,10 +331,11 @@ def cesto(acopl=None, h_rim=None):
     # cavidade fosse deslocada para cima mantendo a planta da base, a parede
     # engrossaria em H_PE*tan(DRAFT) -- 0,5 mm, ou +35% de peso.)
     p = fora - extrude(interno, ALT + 10, taper=-DRAFT)
-    # chapa do fundo assentada H_PE acima do piso: a parede desce abaixo dela
-    # como SAIA. De fora nao ha pe aparente -- so a parede encontrando o chao.
+    # chapa do fundo assentada H_PE acima do piso
     p += fora & Pos(0, 0, H_PE) * extrude(
         RectangleRounded(LARG + 40, PROF + 40, 0.1), T_FUNDO)
+    # sem saia: a parede termina na chapa e quem apoia sao os pezinhos
+    p -= extrude(RectangleRounded(LARG + 40, PROF + 40, 0.1), H_PE)
 
     # faixa do rim: parede engrossada no alto
     cheio = fora - Pos(0, 0, T_FUNDO) * extrude(
@@ -366,20 +410,9 @@ def cesto(acopl=None, h_rim=None):
     # --- bercos de apoio: 4 orelhas na face INTERNA do rim -------------------
     # A saia da peca de cima assenta nelas. Ficam dentro da peca, invisiveis de
     # fora, e o passo empilhado fica exatamente a altura: 130 mm.
-    b_y = E_BERCO_Y if acopl == "E" else BERCO_Y
-    b_l = E_BERCO_L if acopl == "E" else BERCO_L
-    for sx in (-1, 1):
-        for y_b in b_y:
-            if acopl == "A" and sx == -1:
-                continue          # desse lado o rim foi rebaixado
-            x_i = secao(ALT, T_RIM)[0] / 2
-            p += Pos(sx * (x_i - BERCO_P / 2), y_b, ALT - BERCO_H / 2) * \
-                Box(BERCO_P, b_l, BERCO_H)
-    if acopl == "A":              # compensa no fundo o que o rebaixo tirou
-        for x_b in (-52.0, 52.0):
-            y_i = secao(ALT, T_RIM)[1] / 2
-            p += Pos(x_b, y_i - BERCO_P / 2, ALT - BERCO_H / 2) * \
-                Box(BERCO_L, BERCO_P, BERCO_H)
+    p += _pezinhos()
+    if empilha:
+        p += _soquetes(fora)
     return p, n
 
 

@@ -32,10 +32,10 @@ injetada: sem dobradiça, sem painel, sem montagem.
 | Forma da referência | **Medida no STL, não interpretada** — chanfros a 45°: 52 mm no topo, 36 mm no pé, face frontal de 42 mm (seção 2.2) |
 | Furos redondos em gradiente | **Resolvido** — 4 bandas, Ø 15 → 6 mm, passo 21 mm, 68 furos, faixa cega de 40 mm |
 | Fundo sólido | **Atendido** — chapa de 2,0 mm sem furo |
-| Pé discreto | **Resolvido** — não há pé aparente: a parede desce 6 mm abaixo da chapa do fundo (seção 4.1) |
-| Empilhar com acesso frontal | **Resolvido** — a saia de 6 mm assenta em 4 berços internos do rim; chanfro de topo de 52 mm dá o acesso |
+| Pé discreto | **Resolvido** — 4 pezinhos ocos sob a chapa, recuados 2 mm da borda; a chapa faz aba (seção 4.1) |
+| Empilhar com acesso frontal | **Escolha a fazer** — 130 mm com soquete no pé traseiro, ou 55,5 mm encaixando. Não dá os dois (seção 4.2) |
 | Acoplar lateralmente | **5 opções em 3D, todas com interferência zero.** A recomendada é a **D**: trilho de 1,8 mm, rim inteiro nos dois lados, 167,6 g — custa 2 gavetas no molde (seções 4.3 e 4.4) |
-| Encaixar para reduzir volume | **Geometria confirmada** — saída de 3,5°/lado; **passo do encaixe a medir na amostra** (seção 4.2) |
+| Encaixar para reduzir volume | **Medido no sólido: passo de 55,5 mm**, 630 mm para 10 peças. Exclusivo do empilhamento a 130 mm — ver seção 4.2 |
 | Injeção no parque atual | **1 cavidade numa 200 t (76%)** — a casa tem **12 máquinas** dessa classe |
 | Ferramental | **USD 19,5 mil FOB**, 1 molde — por analogia direta com dois moldes da casa |
 | Payback | **~6,8 meses** a 150 mil un/ano em PP virgem (5,4 com moído), com o molde estimado por cima |
@@ -61,9 +61,9 @@ que custaria a família dobrável) e **o risco é o volume de venda**.
 | Raios trabalhados | **R20** nas duas pontas dos chanfros · **R12** nas duas quinas da face frontal |
 | Saída de molde | **3,5° por lado** — é ela que permite o encaixe |
 | Parede / fundo / rim | 1,4 / 2,0 / 3,2 mm |
-| Pé | **saia de 6 mm** — a parede desce abaixo da chapa; nenhum pé aparente |
-| Capacidade | **4,43 L** |
-| Peso | **163,7 g** (180,9 cm³ de PP) |
+| Pé | **4 pezinhos ocos** sob a chapa, que flutua 5 mm acima do piso |
+| Capacidade | **4,46 L** |
+| Peso | **162,6 g** na versão que encaixa (172,5 g com soquetes) |
 | Área projetada | 430 cm² |
 
 ### 2.2 A silhueta, medida no STL de referência
@@ -145,52 +145,75 @@ Duas consequências para a cotação:
 
 ### 4.1 Empilhado
 
-#### O pé: não existe pé
+#### O pé: 4 pezinhos sob a chapa
 
-Os quatro pés de canto foram removidos. No lugar deles, a **chapa do fundo sobe 6 mm** e a parede
-continua descendo abaixo dela — o que apoia no chão é a própria parede, em todo o perímetro. É uma
-**saia**, não um pé: de fora não há nada para ver, a base da peça está por cima e o apoio embaixo.
+A chapa do fundo fica **5 mm acima do piso** e quem apoia são **4 pezinhos
+ocos de 13 × 20 e 13 × 26 mm**, recuados 2 mm da borda da chapa. A chapa faz
+aba sobre eles: de fora não se vê pé — vê-se a chapa e uma sombra de 5 mm.
 
-Três consequências:
+Eles substituem a saia corrida de 6 mm que estava aqui antes, e a troca é boa
+nos dois sentidos: a peça ficou **mais leve** (162,6 contra 167,6 g) e a saia
+era justamente o que impedia o encaixe (seção 4.2).
 
-- **Apoio contínuo.** 6 mm de aba em todo o contorno, contra 4 blocos de 32 × 32 mm. Não balança
-  e não marca a bancada.
-- **A chapa do fundo não toca o chão.** Fica 6 mm acima — água e poeira não chegam nela.
-- **Sem sacrifício de desmoldagem.** A saia sai na direção de abertura, com a mesma saída de 3,5°.
-  Nenhum movimento novo no molde.
+São ocos e abertos embaixo — pino na cavidade, na direção de abertura. Parede
+de 1,4 mm, como o resto da peça: nada de bloco maciço, que marcaria a face.
 
-O que o empilhamento perdeu com isso foi o batente: sem pé de canto, a peça de cima afundaria na de
-baixo até encostar na parede. Voltou como **4 berços internos no rim** (30 × 10 × 5 mm, faces
-superiores rasantes a z = 130), na face de dentro da parede engrossada. A saia da peça de cima
-assenta neles. Ficam **dentro** da peça, invisíveis de fora, e mantêm o passo empilhado em
-**exatamente 130 mm**. O chanfro de topo de 52 mm dá o acesso frontal sem desempilhar.
+#### O encaixe do pé traseiro
 
-#### O que o pé custou em peso e em volume
+Empilhadas, as peças precisam de um batente, senão a de cima corre — e corre
+justamente para a frente, que é onde o chanfro abre. O **pé traseiro** resolve:
+o berço do rim que o recebe ganha **duas paredes de 2 × 2,5 mm** formando um
+soquete, com 0,6 mm de folga por lado. O pé cai dentro e a pilha não corre nem
+para a frente nem para o lado. O berço tem 4 mm de espessura e o topo rasante a
+z = 130, então o passo empilhado fica **exatamente 130 mm** — medido no sólido.
 
-| | Antes (4 pés de canto) | Agora (saia + berços) |
+### 4.2 Encaixado — e o achado: empilhar a 130 mm e encaixar são exclusivos
+
+**Correção.** Eu vinha citando 601 mm para 10 peças encaixadas sem nunca ter
+medido. Medindo no sólido — busca binária do menor deslocamento vertical em que
+duas cópias não se interpenetram (`cad/empilha.py`) — o resultado foi **130,0 mm
+nas duas orientações**: a peça não encaixava. A causa eram os berços que eu mesmo
+havia posto no rim quando troquei o pé: eles avançam 10 mm para dentro, deixando
+94,3 mm de abertura livre contra 99,55 mm de meia-largura da base.
+
+Tirando o que avança para dentro do rim, o passo encaixado medido é **55,5 mm**
+— 10 peças em **630 mm** de caixa.
+
+E aqui está o problema de fundo, que não é de acabamento:
+
+| | precisa | consequência |
 |---|---|---|
-| Peso | 155,4 g | **163,7 g** |
-| Capacidade | 4,50 L | **4,43 L** |
+| Empilhar a 130 mm | algo segurando a peça de cima **dentro** da boca da de baixo | fecha a passagem |
+| Encaixar | **nada** dentro da boca | não há batente |
 
-São **+8,3 g (+5,3%)**: a saia corrida pesa mais que 4 blocos de canto, e os berços somam ~4,9 g.
-A R$ 9,54/kg de PP virgem isso é **R$ 0,08 por peça** — R$ 12 mil/ano a 150 mil peças. É o preço
-de não ter pé aparente, e é um preço que eu pagaria.
+A chapa da peça de cima tem 99,9 mm de meia-largura; o soquete deixa 82,5 mm de
+abertura livre. Não passa. E **girar 180° não salva**: os pezinhos estão em
+posições assimétricas em y e se desviam dos soquetes, mas a chapa e a parede
+passam por todo y. Medido: 127,6 mm girada.
 
-O volume caiu porque a chapa do fundo subiu 6 mm. Para compensar, o **chanfro do pé foi reduzido de
-52 para 36 mm**: o fundo passou de 148 para 164 mm de profundidade. Sem isso a capacidade cairia
-para 4,29 L. O chanfro de topo ficou intacto nos 52 mm — é ele que dá o acesso frontal, e nele não
-se mexe.
+A raiz é a conicidade. Para encaixar é preciso que a base seja menor que a boca
+livre (base + 2 × 3,2 ≤ boca); para empilhar sobre o rim é preciso que a base
+alcance a boca livre (base ≥ boca − 2 × 3,2). As duas condições se excluem, e
+nenhuma feição resolve isso porque a saliência que alcançaria o rim seria
+contra-saída (mesma regra da seção 4.4).
 
-### 4.2 Encaixado
+As duas versões estão modeladas e medidas:
 
-A saída de **3,5° por lado** faz o corpo ser menor que a boca: a peça afunda na de baixo. O que
-limita o afundamento são os **berços do rim**, e eles estão agora na face interna da parede — a
-saia da peça de cima passa por dentro deles se a peça entrar **deslocada ou inclinada**, que é
-como o encaixe acontece na prática.
+| | N · só pezinhos | P · pezinhos + soquetes |
+|---|---|---|
+| Passo medido | **55,5 mm** (encaixa) | **130,0 mm** (empilha) |
+| 10 peças na caixa | **630 mm** | 1.300 mm |
+| Peso | **162,6 g** | 172,5 g |
+| Capacidade | 4,46 L | 4,46 L |
 
-**O passo do encaixe não está calculado**, e não vou fingir precisão: depende da cinemática da
-entrada. É o número que sustenta a promessa de embalagem do pacote de 10, e sai de uma medição na
-amostra ou num protótipo impresso.
+**Recomendo a N.** O pedido foi "empilhar para dar cubagem e acoplar para usar":
+a cubagem vem do encaixe (metade da caixa) e o uso vem do acoplamento lateral da
+seção 4.4. E a N não deixa de empilhar — empilha a 55,5 mm, com o chanfro de topo
+abrindo a frente de cada nível. O que ela não faz é empilhar a 130 mm.
+
+Se os 130 mm forem obrigatórios, há um caminho com peça a mais: rim só com berço
+raso e **4 espaçadores** de encaixar, que vão na embalagem e só entram quando o
+cliente quer torre. Custa um 2º molde pequeno.
 
 ### 4.3 Acoplado — as três canaletas
 
@@ -440,4 +463,6 @@ cad/variantes.py   monta as 3 opcoes de canaleta, mede a interferencia entre
 cad/proposta-canaleta.py  o desenho 2D que motivou as 3 opcoes
 cad/camufladas.py  monta as opcoes D e E, normaliza a escala das vistas
                    ortogonais e compoe camufladas.png / camufladas-frente.png
+cad/empilha.py     mede no solido o passo de empilhamento e de encaixe
+cad/pe.py          pezinhos, soquete do pe traseiro e a folha pezinho.png
 ```
