@@ -349,6 +349,9 @@ Uma a menos que a linha 1, porque o aro moldado virou perfil extrudado.
 |---|---|
 | `README.md` | este estudo |
 | `calculo-deslizante.py` | memória de cálculo: linha, vedação, came, detente, ganchos, queda, injeção |
+| `mecanismo-came.html` | cópia da página publicada: dois cortes interativos do curso de fechamento |
+
+Página publicada: https://claude.ai/artifact/6MLM4LeKMsvPn62wexfApX
 
 O cálculo roda sozinho: `python3 calculo-deslizante.py`. A integração de volume usa Simpson de
 3 pontos, que é **exata** aqui (a seção é quadrática em z), não aproximação numérica.

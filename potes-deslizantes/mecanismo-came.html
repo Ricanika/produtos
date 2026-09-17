@@ -1,0 +1,442 @@
+<title>Tampa deslizante de came</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+  :root{
+    --paper:#EDEEEA; --surface:#F9F9F6; --ink:#15181A; --steel:#3B5262;
+    --amber:#A8571A; --fill:#D6DAD6; --muted:#66717A; --rule:#CED1CB;
+    --hatch:#8C9AA4; --lid:#B9C4CB; --ok:#2E6B4F; --warn:#9A5B12;
+    --sans:'Archivo',system-ui,sans-serif;
+    --serif:'Source Serif 4',Georgia,serif;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#0F1214; --surface:#171B1E; --ink:#E2E6E5; --steel:#8DAFC3;
+      --amber:#DB8B3E; --fill:#242B30; --muted:#8B969B; --rule:#293034;
+      --hatch:#5C6E7A; --lid:#3D4A52; --ok:#67B98F; --warn:#D8973E;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0F1214; --surface:#171B1E; --ink:#E2E6E5; --steel:#8DAFC3;
+    --amber:#DB8B3E; --fill:#242B30; --muted:#8B969B; --rule:#293034;
+    --hatch:#5C6E7A; --lid:#3D4A52; --ok:#67B98F; --warn:#D8973E;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--paper);color:var(--ink);font-family:var(--serif);
+       font-size:17px;line-height:1.62;margin:0}
+  .wrap{max-width:900px;margin:0 auto;padding-inline:16px;padding-block:44px 80px}
+  .col{max-width:64ch}
+  h1,h2,h3{font-family:var(--sans);text-wrap:balance;margin:0}
+  h1{font-size:clamp(30px,6vw,46px);font-weight:700;letter-spacing:-.022em;line-height:1.04}
+  h2{font-size:clamp(19px,3.2vw,23px);font-weight:600;letter-spacing:-.01em;margin-block:0 10px}
+  h3{font-size:16px;font-weight:600;letter-spacing:.01em;margin-block:0 6px}
+  p{margin:0 0 14px}
+  section{margin-top:52px}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;
+           text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+  .lede{font-size:20px;line-height:1.5;margin-top:18px;color:var(--ink)}
+  .lede b{font-weight:600;box-shadow:inset 0 -.45em 0 color-mix(in srgb,var(--amber) 18%,transparent)}
+  .meta{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:22px;
+        padding-top:14px;border-top:1px solid var(--rule)}
+  strong{font-weight:600}
+  em.t{font-style:normal;font-family:var(--mono);font-size:.88em;color:var(--amber)}
+
+  /* ---- figura interativa ---- */
+  .fig{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
+       margin-top:26px;overflow:hidden}
+  .views{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:0}
+  @media (max-width:640px){.views{grid-template-columns:1fr}}
+  .view{padding:16px 14px;min-width:0}
+  .view+.view{border-left:1px solid var(--rule)}
+  @media (max-width:640px){.view+.view{border-left:0;border-top:1px solid var(--rule)}}
+  .view svg{display:block;width:100%;height:auto;max-width:100%}
+  .cap{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;
+       text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+  .ctrl{border-top:1px solid var(--rule);padding:14px;display:flex;gap:14px;
+        align-items:center;flex-wrap:wrap}
+  button{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--surface);
+         background:var(--ink);border:0;border-radius:2px;padding:9px 16px;cursor:pointer}
+  button:hover{background:var(--steel)}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  input[type=range]{flex:1;min-width:150px;accent-color:var(--amber);height:22px}
+  .readout{display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--rule)}
+  .ro{flex:1 1 120px;padding:11px 14px;border-right:1px solid var(--rule)}
+  .ro:last-child{border-right:0}
+  .ro dt{font-family:var(--mono);font-size:10px;letter-spacing:.09em;
+         text-transform:uppercase;color:var(--muted);margin:0 0 3px}
+  .ro dd{font-family:var(--mono);font-size:17px;font-variant-numeric:tabular-nums;
+         margin:0;font-weight:500}
+  #estado{font-size:13px;line-height:1.5;letter-spacing:.02em}
+
+  /* ---- tabelas ---- */
+  .tw{overflow-x:auto;margin:18px 0 6px}
+  table{border-collapse:collapse;font-family:var(--mono);font-size:13px;
+        font-variant-numeric:tabular-nums;width:100%;min-width:400px}
+  th{font-weight:500;text-align:left;color:var(--muted);font-size:10.5px;
+     letter-spacing:.09em;text-transform:uppercase;padding:0 14px 7px 0;
+     border-bottom:1px solid var(--rule);white-space:nowrap}
+  td{padding:7px 14px 7px 0;border-bottom:1px solid var(--rule)}
+  tr:last-child td{border-bottom:0}
+  td.n{text-align:right;padding-right:22px}
+  .bad{color:var(--amber);font-weight:500}
+  .good{color:var(--ok)}
+
+  .spec{font-family:var(--mono);font-size:12.5px;line-height:1.85;
+        background:var(--surface);border:1px solid var(--rule);border-left:2px solid var(--amber);
+        border-radius:2px;padding:16px 18px;margin:18px 0;overflow-x:auto}
+  .spec b{color:var(--amber);font-weight:500}
+  .note{font-size:14.5px;color:var(--muted);line-height:1.55;margin-top:10px}
+  ol.open{padding-left:0;list-style:none;counter-reset:o;margin:16px 0 0}
+  ol.open li{counter-increment:o;position:relative;padding-left:34px;margin-bottom:12px}
+  ol.open li::before{content:counter(o,decimal-leading-zero);position:absolute;left:0;top:.18em;
+      font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:.04em}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header class="col">
+  <p class="eyebrow">Linha 2 · potes modulares em PP · derivado do Projeto 115</p>
+  <h1>Tampa deslizante de came</h1>
+  <p class="lede">Pote retangular hermético que <b>não abre de cabeça para baixo</b> e
+  <b>não tem trava de orelha</b>. A tampa pousa deslocada 14&nbsp;mm e é empurrada: no próprio
+  curso, uma rampa a puxa para baixo e comprime a junta.</p>
+  <p class="meta">17/09/2026 · memória de cálculo em <span style="color:var(--ink)">potes-deslizantes/calculo-deslizante.py</span></p>
+</header>
+
+<section>
+  <p class="eyebrow">O mecanismo</p>
+  <h2>Arraste o curso</h2>
+  <p class="col">Os dois cortes são o mesmo instante. À esquerda, o encaixe: macho na tampa,
+  fêmea no corpo. À direita, a came vista ao longo da borda — é a aresta de baixo do lábio da
+  aba, rampada.</p>
+
+  <div class="fig">
+    <div class="views">
+      <div class="view">
+        <p class="cap">A · corte transversal</p>
+        <svg id="svgA" viewBox="0 0 250 372" role="img"
+             aria-label="Corte transversal da borda do pote com a tampa encaixada"></svg>
+      </div>
+      <div class="view">
+        <p class="cap">B · corte longitudinal, ao longo da borda</p>
+        <svg id="svgB" viewBox="0 0 520 250" role="img"
+             aria-label="Corte longitudinal mostrando o perfil rampado da came"></svg>
+      </div>
+    </div>
+    <div class="ctrl">
+      <button id="play" type="button">Fechar</button>
+      <input id="curso" type="range" min="0" max="14" step="0.1" value="0"
+             aria-label="Curso de fechamento em milímetros">
+    </div>
+    <dl class="readout">
+      <div class="ro"><dt>Curso</dt><dd id="rCurso">0,0 mm</dd></div>
+      <div class="ro"><dt>Queda da tampa</dt><dd id="rQueda">0,00 mm</dd></div>
+      <div class="ro"><dt>Junta comprimida</dt><dd id="rComp">0,00 mm</dd></div>
+      <div class="ro"><dt>Carga na junta</dt><dd id="rCarga">0,0 N</dd></div>
+      <div class="ro" style="flex:1 1 170px"><dt>Estado</dt><dd id="estado">Pousada</dd></div>
+    </dl>
+  </div>
+  <p class="note col">Esquema em corte, escala real em milímetros — não é desenho de
+  fabricação. O molde precisa do CAD paramétrico do projetista.</p>
+</section>
+
+<section class="col">
+  <p class="eyebrow">O nó do projeto</p>
+  <h2>Nada pode entrar na boca do pote</h2>
+  <p>A linha 1 fechava com uma bandeja <strong>rebaixada</strong> — o piso 2,0 mm abaixo da
+  borda, formado por um plug que descia na boca. Aqui isso é impossível: qualquer coisa que
+  entre na boca <strong>trava o curso horizontal</strong>. A tampa não teria por onde deslizar.</p>
+  <p>A bandeja virou um <strong>murete acima do prato</strong> (é o degrau que aparece no alto
+  do corte A). Vão interno 114,4&nbsp;×&nbsp;85,9&nbsp;mm, 3,5&nbsp;mm de altura, e ele fica
+  escondido dentro do corpo do pote de cima.</p>
+  <p>Custou 4,0&nbsp;mm de altura de corpo por tamanho, e a perda pesa mais no pote pequeno —
+  6,9% da altura do 600&nbsp;ml contra 1,7% da do 2,4&nbsp;L. Foi o que mudou quem manda no
+  footprint: na linha 1 era o 2,4&nbsp;L; <strong>aqui é o 600&nbsp;ml</strong>.</p>
+  <p>Em troca, o passo passou a ser travado por uma <strong>cota externa</strong>
+  (<em class="t">altura do corpo = 60n − 2,0</em>) em vez da espessura do fundo. Isso libertou o
+  fundo para variar por tamanho — 1,60&nbsp;mm no 600&nbsp;ml, 2,50&nbsp;mm nos outros três — e
+  é ele que fecha as quatro capacidades num footprint só, sem fundo falso em nenhum deles.</p>
+</section>
+
+<section class="col">
+  <p class="eyebrow">A armadilha</p>
+  <h2>Sabão é lubrificante</h2>
+  <p>A rampa de 11,3° é auto-travante com µ&nbsp;=&nbsp;0,30, e a conta fecha bonito na
+  bancada. Só que <strong>µ do PP com filme de sabão cai para ~0,08</strong> — e aí a rampa não
+  trava mais. A tampa voltaria sozinha.</p>
+  <div class="tw"><table>
+    <thead><tr><th>µ do PP</th><th>Ângulo de atrito</th><th>vs. rampa de 11,3°</th></tr></thead>
+    <tbody>
+      <tr><td>0,30 &nbsp;seco</td><td class="n">16,7°</td><td class="good">trava</td></tr>
+      <tr><td>0,15</td><td class="n">8,5°</td><td class="bad">não trava</td></tr>
+      <tr><td>0,08 &nbsp;ensaboado</td><td class="n">4,6°</td><td class="bad">não trava</td></tr>
+    </tbody>
+  </table></div>
+  <p>O produto <em>é</em> um pote de sabão. Projetar o travamento em cima de um coeficiente que
+  o próprio conteúdo derruba 4× seria projetar para a bancada, não para a pia. Por isso quem
+  segura o fecho é o <strong>detente</strong> — quatro linguetas de 9&nbsp;×&nbsp;16&nbsp;×&nbsp;1,4&nbsp;mm
+  com face de saída a 35°, que é geométrico e funciona com µ&nbsp;=&nbsp;0.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Abrir, no polegar</th><th>Detente</th><th>Arrasto da junta</th><th>Total</th></tr></thead>
+    <tbody>
+      <tr><td>µ 0,08 ensaboado</td><td class="n">26,9 N</td><td class="n">1,0 N</td><td class="n">2,8 kgf</td></tr>
+      <tr><td>µ 0,15</td><td class="n">30,9 N</td><td class="n">1,9 N</td><td class="n">3,3 kgf</td></tr>
+      <tr><td>µ 0,30 seco</td><td class="n">41,2 N</td><td class="n">3,7 N</td><td class="n">4,6 kgf</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Janela alvo 2 a 4 kgf. Seco fica 0,6 kgf acima — e a interferência da lingueta
+  é justamente a cota que se tira aço no try-out até o toque ficar certo, sem mexer em mais
+  nada do conjunto.</p>
+</section>
+
+<section class="col">
+  <p class="eyebrow">A ordem certa</p>
+  <h2>Primeiro baixar a força, depois inventar quem a segura</h2>
+  <p>Vedação axial num retângulo de 412&nbsp;mm de perímetro é o que obriga o mercado a usar
+  trava. Mas o número depende inteiramente de <strong>como</strong> a junta é feita.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Vedação axial</th><th>Fechamento</th><th>Consequência</th></tr></thead>
+    <tbody>
+      <tr><td>Aro esmagado <span style="color:var(--muted)">(linha 1, rev. 2)</span></td>
+          <td class="n bad">32 kgf</td><td>precisa de trava; o PP flui embaixo dela</td></tr>
+      <tr><td>Lábio flexível de TPE</td>
+          <td class="n good">1,26 kgf</td><td>a came segura sem esforço; o PP não flui</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>25× menos força.</strong> É isso que torna a came viável, e é por isso que o lábio
+  teve de vir antes dela. Em repouso cada gancho carrega 2,1&nbsp;N —
+  <em class="t">0,061 MPa</em> de esmagamento, tensão em que o PP não flui. Com os 32 kgf
+  seriam ~1,6&nbsp;MPa e a junta perderia contato em poucos meses.</p>
+  <p>O lábio <strong>abre para dentro do pote</strong>: pressão interna o empurra contra a sede.
+  Pressão de contato 67&nbsp;kPa contra 2,4&nbsp;kPa de coluna de sabão no 2,4&nbsp;L invertido
+  — <strong>de cabeça para baixo a vedação melhora, não piora</strong>.</p>
+</section>
+
+<section class="col">
+  <p class="eyebrow">Contra a trava do mercado</p>
+  <h2>A carga não tem como abrir o gancho</h2>
+  <div class="tw"><table>
+    <thead><tr><th></th><th>Trava de orelha</th><th>Came deslizante</th></tr></thead>
+    <tbody>
+      <tr><td>Segura na queda</td><td>a trava, em flexão</td><td>o gancho, em esmagamento</td></tr>
+      <tr><td>Como falha</td><td class="bad">a carga gira a trava<br>e ela desarma sozinha</td>
+          <td>a fuga do gancho é<br>perpendicular à carga</td></tr>
+      <tr><td>Se a peça cansar</td><td class="bad">abre</td>
+          <td class="good">continua fechada,<br>perde o clique</td></tr>
+      <tr><td>Sinal de fechado</td><td>visual da orelha</td>
+          <td>a tampa fica rente;<br>14 mm para fora = aberta</td></tr>
+    </tbody>
+  </table></div>
+  <p>Queda com o 2,4&nbsp;L cheio de sabão (2,61&nbsp;kg), em cima da tampa, repartida entre os
+  seis ganchos de 33,6&nbsp;mm² de apoio. Limite do PP: 30&nbsp;MPa.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Altura</th><th>Parada</th><th>Força</th><th>Por gancho</th><th>Apoio</th><th>Poste</th></tr></thead>
+    <tbody>
+      <tr><td>0,50 m</td><td>8 mm</td><td class="n">1.602 N</td><td class="n">267 N</td><td class="n">7,9</td><td class="n">8,7 MPa</td></tr>
+      <tr><td>0,75 m</td><td>8 mm</td><td class="n">2.402 N</td><td class="n">400 N</td><td class="n">11,9</td><td class="n">13,0 MPa</td></tr>
+      <tr><td>1,00 m</td><td>8 mm</td><td class="n">3.203 N</td><td class="n">534 N</td><td class="n">15,9</td><td class="n">17,3 MPa</td></tr>
+      <tr><td>1,00 m</td><td>5 mm</td><td class="n">5.125 N</td><td class="n">854 N</td><td class="n bad">25,4</td><td class="n bad">27,7 MPa</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">O último caso passa raspando. É o caso a <strong>medir</strong>, não a confiar
+  na conta.</p>
+</section>
+
+<section class="col">
+  <p class="eyebrow">Cotas</p>
+  <h2>A linha e a tampa</h2>
+  <div class="spec">footprint ........ <b>123,4 × 94,9 mm</b> · canto R18 · saída 0,5°/lado
+módulo ........... 60 mm · pé embutido 112,4 × 83,9 × 6 mm, igual nos quatro
+alturas .......... 58,0 / 118,0 / 178,0 / 238,0 mm  (600 ml · 1,2 · 1,8 · 2,4 L)
+fundo ............ 1,60 mm no 600 ml, 2,50 mm nos outros três
+
+tampa ............ <b>129,4 × 100,9 mm</b>, rente à aba · 32,4 g em PP RP 141 · R$ 0,31
+prato ............ 2,00 mm, 3 nervuras de 1,2 × 5,0 no piso da bandeja
+murete ........... 3,5 mm de altura, 1,5 mm de parede, vão 114,4 × 85,9
+ganchos .......... 6 em L, 14 mm, poste 2,2 mm, asa avança 2,0 mm para dentro
+linguetas ........ 4, de 9 × 16 × 1,4 mm, deflexão 0,60 mm, face de saída 35°
+lábio de TPE ..... 1,30 mm de espessura, 4,0 mm de balanço, 2,6 g, perímetro 412 mm
+curso ............ <b>14 mm</b> = 1 de aproximação + 10 de rampa (desce 2,00) + 3 de patamar</div>
+  <p><strong>Corpo: extração 100% reta, zero gaveta, nos quatro tamanhos.</strong> As duas
+  gavetas ficam no molde da <em>tampa</em> — que é o raso e barato. São quatro moldes de corpo,
+  fundos, de USD 25–40 mil cada; pôr as gavetas na tampa custa ~USD 3–4 mil uma vez.</p>
+  <p>Mesmas máquinas da linha 1: 200&nbsp;t para o 600&nbsp;ml e o 1,2&nbsp;L, 250&nbsp;t para o
+  1,8&nbsp;L, 380&nbsp;t para o 2,4&nbsp;L. O <em class="t">L/t 214</em> do 2,4&nbsp;L continua
+  no limite — câmara quente com 2 pontos ou parede de 1,5&nbsp;mm, a decidir no Moldflow.</p>
+</section>
+
+<section class="col">
+  <p class="eyebrow">Antes de qualquer feira ou catálogo</p>
+  <h2>O que fica aberto</h2>
+  <ol class="open">
+    <li><strong>Busca de anterioridade</strong> no INPI e no Espacenet — B65D 43/20 (tampas
+    deslizantes), 45/16 (fechos por came), 53/02 (juntas). Tampa deslizante existe, fecho por
+    came existe, junta de lábio existe; o que parece não existir é a combinação. Isso é
+    hipótese, não afirmação. Perfil de <strong>Modelo de Utilidade</strong>. Divulgação prévia
+    derruba a novidade — no Brasil há 12 meses de graça, na Europa não há.</li>
+    <li><strong>Atrito real PP/PP com filme de sabão</strong> — medir, não estimar. Toda a
+    janela do detente depende disso.</li>
+    <li><strong>Estanqueidade</strong>: água colorida, 24 h, deitado e invertido, com e sem
+    ciclagem térmica. Só depois disso se fala em promessa de vedação na embalagem.</li>
+    <li><strong>Queda de 0,75 m</strong> com o 2,4 L cheio, sobre a tampa e sobre o canto.</li>
+    <li><strong>Fluência</strong>: 90 dias fechado a 40 °C, medir a deflexão residual do lábio.</li>
+    <li><strong>Protótipo impresso</strong> do 600 ml + tampa. O curso da came e o clique só se
+    avaliam na mão.</li>
+    <li><strong>Recotar o TPE Karinprene 45</strong> (CODPROD 997, sem compra há 4 anos), agora
+    como perfil extrudado e não como aro moldado.</li>
+  </ol>
+</section>
+</div>
+
+<script>
+(function(){
+  var CURSO=14, RAMPA0=1, RAMPA1=11, DZ=2.0, COMP=1.0, K=12.4;
+
+  function zOf(x){                       // altura da tampa acima da posição de casa
+    if(x<=RAMPA0) return DZ;
+    if(x>=RAMPA1) return 0;
+    return DZ*(1-(x-RAMPA0)/(RAMPA1-RAMPA0));
+  }
+  var f1=function(v){return v.toFixed(1).replace('.',',');},
+      f2=function(v){return v.toFixed(2).replace('.',',');};
+
+  // ---------- corte A: transversal ----------
+  var AX=function(mm){return 96+mm*13;}, AY=function(z){return 52+(8-z)*13;};
+  function rect(x0,x1,z0,z1,cls){   // z0 topo, z1 base
+    return '<rect x="'+AX(x0)+'" y="'+AY(z0)+'" width="'+((x1-x0)*13)+'" height="'+((z0-z1)*13)+'" '+cls+'/>';
+  }
+  function drawA(x){
+    var z=zOf(x), plate=3.0+z, wing=-3.6+z, comp=Math.max(0,COMP-z);
+    var body='fill="url(#hx)" stroke="var(--steel)" stroke-width="1.1"',
+        lid ='fill="var(--lid)" stroke="var(--ink)" stroke-width="1.1"';
+    var s='';
+    s+='<defs><pattern id="hx" width="5" height="5" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">'
+      +'<rect width="5" height="5" fill="var(--fill)"/>'
+      +'<line x1="0" y1="0" x2="0" y2="5" stroke="var(--hatch)" stroke-width="1"/></pattern></defs>';
+    // corpo: parede + aba (um contorno só)
+    s+='<path d="M'+AX(0)+' '+AY(-12)+' L'+AX(0)+' '+AY(0)+' L'+AX(4.4)+' '+AY(0)
+      +' L'+AX(4.4)+' '+AY(-1.6)+' L'+AX(1.4)+' '+AY(-1.6)+' L'+AX(1.4)+' '+AY(-12)+' Z" '+body+'/>';
+    // lábio / came  (profundidade acompanha a rampa)
+    s+=rect(2.0,4.4,-1.6,wing,body);
+    // murete da bandeja, sobre o prato
+    s+=rect(-3.1,-1.6,plate+2.0+3.5,plate+2.0,lid);
+    // prato da tampa
+    s+=rect(-6.5,6.6,plate+2.0,plate,lid);
+    // gancho em L: poste por fora, asa por dentro sob o lábio
+    s+='<path d="M'+AX(4.4)+' '+AY(wing)+' L'+AX(6.6)+' '+AY(wing)+' L'+AX(6.6)+' '+AY(plate)
+      +' L'+AX(4.4)+' '+AY(plate)+' L'+AX(4.4)+' '+AY(wing-1.8)+' L'+AX(2.0)+' '+AY(wing-1.8)
+      +' L'+AX(2.0)+' '+AY(wing)+' Z" fill="var(--lid)" stroke="var(--ink)" stroke-width="1.1"/>';
+    // saia externa
+    s+=rect(6.6,8.2,plate,plate-7.0,lid);
+    // lábio de TPE
+    var tipY=AY(Math.max(0,plate-4.0)), tipX=AX(1.15-comp*0.45);
+    s+='<path d="M'+AX(2.55)+' '+AY(plate)+' Q'+AX(2.3)+' '+AY(plate-3.0)+' '+tipX+' '+tipY
+      +'" fill="none" stroke="var(--amber)" stroke-width="3.4" stroke-linecap="round"/>';
+    // contato da junta
+    if(comp>0.001){
+      s+='<line x1="'+AX(0.2)+'" y1="'+AY(0)+'" x2="'+AX(2.2)+'" y2="'+AY(0)
+        +'" stroke="var(--amber)" stroke-width="2.6"/>';
+    }
+    // boca do pote, quebra
+    s+='<line x1="'+AX(-6.5)+'" y1="'+AY(-12)+'" x2="'+AX(0)+'" y2="'+AY(-12)
+      +'" stroke="var(--rule)" stroke-width="1" stroke-dasharray="5 4"/>';
+    // rótulos
+    s+='<g font-family="var(--mono)" font-size="9.5" fill="var(--muted)">'
+      +'<text x="'+AX(-6.4)+'" y="'+AY(-10.6)+'">boca do pote</text>'
+      +'<text x="'+(AX(-3.1)-2)+'" y="'+(AY(plate+2.0+3.5)-6)+'">murete</text>'
+      +'<text x="6" y="'+(AY(0)+4)+'" fill="var(--amber)">junta</text>'
+      +'<text x="'+(AX(8.4))+'" y="'+(AY(plate-3.4))+'">saia</text>'
+      +'<text x="'+(AX(5.0))+'" y="'+(AY(wing)-5)+'" fill="var(--ink)">gancho</text>'
+      +'<text x="'+(AX(1.6))+'" y="'+(AY(-1.0))+'" text-anchor="end">aba</text>'
+      +'<text x="'+(AX(4.9))+'" y="'+(AY(-1.0))+'">lábio / came</text>'
+      +'</g>';
+    document.getElementById('svgA').innerHTML=s;
+  }
+
+  // ---------- corte B: longitudinal ----------
+  var BX=function(p){return 16+p*9.2;}, BY=function(z){return 62+(6-z)*9.2;};
+  function drawB(x){
+    var z=zOf(x), plate=3.0+z, wing=-3.6+z, pl=15+x;
+    var s='';
+    // aba
+    s+='<rect x="'+BX(0)+'" y="'+BY(0)+'" width="'+(52*9.2)+'" height="'+(1.6*9.2)
+      +'" fill="url(#hx2)" stroke="var(--steel)" stroke-width="1.1"/>';
+    s+='<defs><pattern id="hx2" width="5" height="5" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">'
+      +'<rect width="5" height="5" fill="var(--fill)"/>'
+      +'<line x1="0" y1="0" x2="0" y2="5" stroke="var(--hatch)" stroke-width="1"/></pattern></defs>';
+    // lábio rampado: janela até p=16, rampa 16→26, patamar 26→52
+    s+='<path d="M'+BX(16)+' '+BY(-1.6)+' L'+BX(26)+' '+BY(-3.6)+' L'+BX(52)+' '+BY(-3.6)
+      +' L'+BX(52)+' '+BY(-1.6)+' Z" fill="url(#hx2)" stroke="var(--steel)" stroke-width="1.1"/>';
+    // janela de entrada
+    s+='<rect x="'+BX(0)+'" y="'+BY(-1.6)+'" width="'+(16*9.2)+'" height="'+(2.0*9.2)
+      +'" fill="none" stroke="var(--rule)" stroke-width="1" stroke-dasharray="4 3"/>';
+    // gancho (asa), topo plano
+    s+='<rect x="'+BX(pl-14)+'" y="'+BY(wing)+'" width="'+(14*9.2)+'" height="'+(1.8*9.2)
+      +'" fill="var(--lid)" stroke="var(--ink)" stroke-width="1.1"/>';
+    // prato da tampa
+    s+='<rect x="'+BX(pl-17)+'" y="'+BY(plate+2.0)+'" width="'+(24*9.2)+'" height="'+(2.0*9.2)
+      +'" fill="var(--lid)" stroke="var(--ink)" stroke-width="1.1"/>';
+    // ligação poste (fora do plano)
+    s+='<line x1="'+BX(pl-1.1)+'" y1="'+BY(wing-1.8)+'" x2="'+BX(pl-1.1)+'" y2="'+BY(plate)
+      +'" stroke="var(--ink)" stroke-width="1" stroke-dasharray="3 3" opacity=".55"/>';
+    // cota do curso
+    var y=BY(-6.4);
+    s+='<line x1="'+BX(15)+'" y1="'+y+'" x2="'+BX(pl)+'" y2="'+y
+      +'" stroke="var(--amber)" stroke-width="1.6"/>';
+    s+='<line x1="'+BX(15)+'" y1="'+(y-5)+'" x2="'+BX(15)+'" y2="'+(y+5)
+      +'" stroke="var(--amber)" stroke-width="1.6"/>';
+    s+='<line x1="'+BX(pl)+'" y1="'+(y-5)+'" x2="'+BX(pl)+'" y2="'+(y+5)
+      +'" stroke="var(--amber)" stroke-width="1.6"/>';
+    s+='<text x="'+((BX(15)+BX(pl))/2)+'" y="'+(y+17)+'" text-anchor="middle" '
+      +'font-family="var(--mono)" font-size="11" fill="var(--amber)">'+f1(x)+' mm</text>';
+    // rótulos das três zonas
+    s+='<g font-family="var(--mono)" font-size="9.5" fill="var(--muted)">'
+      +'<text x="'+BX(8)+'" y="'+BY(1.2)+'" text-anchor="middle">janela 16 mm</text>'
+      +'<text x="'+BX(21)+'" y="'+BY(1.2)+'" text-anchor="middle">rampa 11,3°</text>'
+      +'<text x="'+BX(38)+'" y="'+BY(1.2)+'" text-anchor="middle">patamar plano</text>'
+      +'<text x="'+BX(29.5)+'" y="'+BY(-4.6)+'">o gancho assenta aqui, 33,6 mm²</text>'
+      +'</g>';
+    document.getElementById('svgB').innerHTML=s;
+  }
+
+  var est=[
+    ['Pousada','var(--muted)'],
+    ['Descendo — junta livre','var(--steel)'],
+    ['Junta encostou','var(--amber)'],
+    ['Travada · clique','var(--ok)']
+  ];
+  function render(x){
+    var z=zOf(x), comp=Math.max(0,COMP-z);
+    drawA(x); drawB(x);
+    document.getElementById('rCurso').textContent=f1(x)+' mm';
+    document.getElementById('rQueda').textContent=f2(DZ-z)+' mm';
+    document.getElementById('rComp').textContent=f2(comp)+' mm';
+    document.getElementById('rCarga').textContent=f1(comp*K)+' N';
+    var i = x>=RAMPA1 ? 3 : (comp>0.001 ? 2 : (x>RAMPA0 ? 1 : 0));
+    var e=document.getElementById('estado');
+    e.textContent=est[i][0]; e.style.color=est[i][1];
+  }
+
+  var slider=document.getElementById('curso'), btn=document.getElementById('play'), timer=null;
+  slider.addEventListener('input',function(){ stop(); render(parseFloat(slider.value)); });
+  function stop(){
+    if(timer){ cancelAnimationFrame(timer); timer=null; }
+    btn.textContent = parseFloat(slider.value) >= CURSO-0.05 ? 'Abrir' : 'Fechar';
+  }
+  btn.addEventListener('click',function(){
+    if(timer){ stop(); return; }
+    var from = parseFloat(slider.value) >= CURSO-0.05 ? CURSO : 0;
+    var to = from === 0 ? CURSO : 0, t0 = null, dur = 2200;
+    btn.textContent='Parar';
+    function step(ts){
+      if(t0===null){ t0=ts; }
+      var k=Math.min(1,(ts-t0)/dur), v=from+(to-from)*k;
+      slider.value=v; render(v);
+      if(k<1){ timer=requestAnimationFrame(step); }
+      else { timer=null; btn.textContent = to===0 ? 'Fechar' : 'Abrir'; }
+    }
+    timer=requestAnimationFrame(step);
+  });
+  render(0);
+})();
+</script>
