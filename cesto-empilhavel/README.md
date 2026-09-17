@@ -37,7 +37,7 @@ injetada: sem dobradiça, sem painel, sem montagem.
 | Encaixar para reduzir volume | **Geometria confirmada** — saída de 3,5°/lado; **passo do encaixe a medir na amostra** (seção 4.2) |
 | Injeção no parque atual | **1 cavidade numa 200 t (76%)** — a casa tem **12 máquinas** dessa classe |
 | Ferramental | **USD 19,5 mil FOB**, 1 molde — por analogia direta com dois moldes da casa |
-| Payback | **~4,9 meses** a 150 mil un/ano, com o molde estimado por cima |
+| Payback | **~6,8 meses** a 150 mil un/ano em PP virgem (5,4 com moído), com o molde estimado por cima |
 | Preço do anúncio de referência | **Não obtido** — o proxy desta sessão bloqueia o Mercado Livre (seção 6) |
 
 O produto é uma **commodity de volume**: contribuição de ~R$ 2,20 por peça, então a conta fecha
@@ -291,14 +291,16 @@ Investimento nacionalizado de 1 cavidade: USD 19,5 mil × R$ 5,45 × 1,30 = **R$
 
 | Volume/ano | Cenário | Contribuição/ano | Payback | Horas de máquina |
 |---|---|---|---|---|
-| 60.000 | virgem | R$ 135,0 mil | 12,3 meses | 368 h |
-| **150.000** | **virgem** | **R$ 337,5 mil** | **4,9 meses** | 920 h |
-| 150.000 | moído | R$ 418,5 mil | 4,0 meses | 920 h |
-| 300.000 | virgem | R$ 675,0 mil | 2,5 meses | 1.840 h |
+| 60.000 | virgem | R$ 98,2 mil | 16,9 meses | 367 h |
+| 60.000 | moído | R$ 122,8 mil | 13,5 meses | 367 h |
+| **150.000** | **virgem** | **R$ 245,6 mil** | **6,8 meses** | 917 h |
+| 150.000 | moído | R$ 306,9 mil | 5,4 meses | 917 h |
+| 300.000 | virgem | R$ 491,1 mil | 3,4 meses | 1.833 h |
+| 300.000 | moído | R$ 613,9 mil | 2,7 meses | 1.833 h |
 
 Referência de volume: o **041 (Organizador Multiuso 3 divisórias) vendeu 262 mil unidades em 12
 meses** para 1.847 clientes — é o campeão de volume da casa em organizador pequeno. Se o cesto
-novo chegar à metade disso, o payback é de 4,8 meses.
+novo chegar à metade disso (131 mil/ano), o payback é de 7,8 meses em virgem.
 
 ---
 

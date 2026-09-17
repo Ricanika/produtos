@@ -50,10 +50,10 @@ def main():
     import modelo3d as M
     p, n_furos = M.cesto()
     peso = p.volume * M.RHO / 1000        # kg
-    nominal, util = M.capacidade()
+    cap = M.capacidade()
     area = M.LARG * M.PROF / 100.0
 
-    print(f"PECA: {peso*1000:.1f} g | {nominal:.2f} L nominal | {util:.2f} L util "
+    print(f"PECA: {peso*1000:.1f} g | {cap:.2f} L | pe em saia de {M.H_PE:.0f} mm "
           f"| area projetada {area:.0f} cm2 | {n_furos} furos\n")
 
     print("COMPARAVEIS DA CASA (TGFCUS x TGFITE, 12 meses)")
