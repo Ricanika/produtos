@@ -34,7 +34,7 @@ injetada: sem dobradiça, sem painel, sem montagem.
 | Fundo sólido | **Atendido** — chapa de 2,0 mm sem furo |
 | Pé discreto | **Resolvido** — não há pé aparente: a parede desce 6 mm abaixo da chapa do fundo (seção 4.1) |
 | Empilhar com acesso frontal | **Resolvido** — a saia de 6 mm assenta em 4 berços internos do rim; chanfro de topo de 52 mm dá o acesso |
-| Acoplar lateralmente | **3 opções em 3D, todas com interferência zero** — a canaleta é horizontal e mora no rim; a vertical mataria o encaixe (seção 4.3) |
+| Acoplar lateralmente | **5 opções em 3D, todas com interferência zero.** A recomendada é a **D**: trilho de 1,8 mm, rim inteiro nos dois lados, 167,6 g — custa 2 gavetas no molde (seções 4.3 e 4.4) |
 | Encaixar para reduzir volume | **Geometria confirmada** — saída de 3,5°/lado; **passo do encaixe a medir na amostra** (seção 4.2) |
 | Injeção no parque atual | **1 cavidade numa 200 t (76%)** — a casa tem **12 máquinas** dessa classe |
 | Ferramental | **USD 19,5 mil FOB**, 1 molde — por analogia direta com dois moldes da casa |
@@ -243,8 +243,60 @@ B é a mais bem resolvida vista peça a peça (o bloco lê como reforço de rim,
 simétrico nos dois lados), e a pior vista acoplada: a junta de 8,7 mm fica
 aparente.
 
-Se a assimetria da A incomodar, ela encolhe: a faixa pode cair de 18 para 12 mm
-(aba de 12 + gancho de 6), e o rebaixo da fêmea cai de 18 para 12 mm junto.
+#### As três foram recusadas — e a razão delas serem grandes
+
+O pedido passou a ser **camuflado**. As A/B/C avançam 7,5 a 8,7 mm por um motivo
+só: a aba tem de cruzar a fresta e **passar por trás da parede da vizinha**. Com
+o rim engrossado de 3,2 mm como ressalto, a face interna da vizinha fica em
+x=111,8 e a aba precisa avançar 6,1 mm; com a parede nua de 1,4 mm, 4,3 mm.
+
+E há uma regra de desmoldagem que fecha o cerco: **a peça sai do molde na
+direção do rim, então toda saliência tem de chegar ao rim.** Se ela morre no
+meio da parede, a face que olha para cima é contra-saída. Logo a janela da fêmea
+também tem de abrir no topo — e o fio do rim daquele lado quebra. **Sem ação
+lateral no molde não há como esconder.** Descer a feição na parede não ajuda: o
+excesso sobre o contorno da peça é mínimo no rim (3,2 mm) e cresce para baixo,
+porque a fresta abre a 0,1223 mm/mm e o contorno só a 0,0612.
+
+### 4.4 As duas camufladas — D e E
+
+| | D · canaleta embutida rasa | E · travas nas pontas |
+|---|---|---|
+| Como | canaleta **cavada dentro da faixa** do rim; trilho com pescoço de 0,8 e cabeça de 1,0 atrás dele | 2 abas de 32 × 14 nas **pontas** da lateral, junto dos cantos, com gancho de 2,0 × 4,0 |
+| Ressalto | as bordas da própria canaleta | a **parede nua de 1,4 mm**, não o rim de 3,2 |
+| Avanço | **1,8 mm** | 5,0 mm |
+| Envelope | **216,8 mm** (boca 215) | 220,0 mm |
+| Rim | **inteiro nos dois lados** | inteiro no meio; quebrado só nas pontas |
+| Simetria | simétrico | simétrico |
+| Trava | extensão toda, em X e em Z; batente no fundo da canaleta | 2 × 32 mm, em X, com 2 mm de folga em Y |
+| Montagem | desliza pela frente (o chanfro é a entrada) | desce |
+| Molde | **2 gavetas laterais** (~USD 3 mil) | sem gaveta |
+| Peso | 167,6 g | **166,9 g** |
+| Interferência medida | 0 mm³ | 0 mm³ |
+
+A D só é possível com gaveta, e é exatamente isso que a torna pequena: a
+canaleta é cavada nos 3,2–4,1 mm da faixa, então o trilho **não precisa passar
+por trás da parede da vizinha** — basta entrar na canaleta dela. Para a faixa
+ter face de encosto de verdade, a face externa dela passa a ser **vertical**
+(saída zero) nos 14 mm sob o rim: sem isso as duas faixas se tocariam só no fio
+do rim e divergiriam 2 mm até a base da faixa. O colar que faz isso custa parte
+dos 3,9 g de diferença para a peça sem acoplamento.
+
+Vista de cima, a fêmea da D é **invisível**: o lábio superior da canaleta cobre
+a abertura. E as duas são mais leves que qualquer uma das A/B/C (166,9 e 167,6 g
+contra 177,4 a 187,8), porque a faixa caiu de 18 para 14 mm e as saliências
+encolheram.
+
+A E tem 2 mm de folga em Y (aba de 32 em janela de 34). A D trava em X e Z na
+extensão toda e encosta no fundo da canaleta num sentido; no outro ela sai
+deslizando para a frente, e isso se resolve com um detente de ~0,2 mm de
+interferência no trilho — cota de ajuste de amostra, não de projeto.
+
+Correção de registro: o risco decorativo de 0,9 mm que eu havia proposto na
+opção C **é contra-saída** (um sulco horizontal com material acima dele). Só
+sairia por deformação elástica, e 0,9 mm é muito para arrancar em PP. Se um
+risco decorativo entrar, ele tem de ser aberto no topo (um degrau) ou raso de
+verdade (~0,3 mm) — e confirmado com o ferramenteiro.
 
 ## 5. Injeção
 
@@ -386,4 +438,6 @@ economia.py        comparaveis, resina, fechamento, cenarios e payback
 cad/variantes.py   monta as 3 opcoes de canaleta, mede a interferencia entre
                    duas pecas acopladas e compoe variantes.png / variantes-iso.png
 cad/proposta-canaleta.py  o desenho 2D que motivou as 3 opcoes
+cad/camufladas.py  monta as opcoes D e E, normaliza a escala das vistas
+                   ortogonais e compoe camufladas.png / camufladas-frente.png
 ```

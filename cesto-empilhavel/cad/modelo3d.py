@@ -79,6 +79,22 @@ B_COSTAS = 0.8             # costas do bloco, atras do bolso
 B_PESC   = (118.0, 124.0)  # z do pescoco
 B_CAB    = (116.0, 126.0)  # z da cabeca
 
+# --- opcoes CAMUFLADAS ------------------------------------------------------
+H_FAIXA2 = 14.0            # faixa mais baixa: z de 116 a 130
+# D: canaleta cavada DENTRO da faixa. So e possivel com gaveta lateral, e por
+# isso o trilho avanca 1,8 mm em vez de 7,5: ele nao precisa passar por tras
+# da parede da vizinha, so entrar na canaleta dela.
+D_TRILHO = 1.8             # quanto o trilho avanca
+D_BOCA   = 0.8             # profundidade da boca (o resto e bolso)
+D_PESC   = (121.0, 125.0)  # z do pescoco do trilho
+D_CAB    = (119.0, 127.0)  # z da cabeca do trilho
+# E: travas curtas nas PONTAS da lateral, junto dos cantos, sem gaveta. O
+# ressalto e a parede nua de 1,4 mm (nao o rim), o que derruba o avanco.
+E_SALTO  = 5.0
+E_GANCHO = (2.0, 4.0)      # espessura, quanto desce
+E_Y      = ((-45.0, -13.0), (40.0, 72.0))
+E_BERCO_Y, E_BERCO_L = (-3.0, 82.0), 16.0
+
 # --- vazado -----------------------------------------------------------------
 PASSO   = 21.0            # >= D_TOPO + 6 mm de web, senao os furos se fundem
 D_TOPO  = 15.0
@@ -143,6 +159,47 @@ def grade(extensao, passo):
 X_OUT = LARG / 2 + SALTO      # plano externo do macho (opcoes A e C)
 Z_B0 = ALT - H_BANDA          # base da faixa da canaleta
 X_B = LARG / 2 + B_BOCA + B_BOLSO + B_COSTAS   # plano externo do bloco femea
+Z_D0 = ALT - H_FAIXA2         # base da faixa das opcoes D e E
+
+
+def _colar():
+    """Faz a face EXTERNA da faixa ficar vertical (saida zero).
+
+    Sem isso as duas faixas se tocam so no fio do rim e divergem 2 mm ate a
+    base da faixa -- com ela ha face de encosto de verdade, 14 x 132 mm.
+    """
+    return Pos(0, 0, Z_D0) * extrude(
+        RectangleRounded(LARG, PROF, 14.0 + ALT * TAN), H_FAIXA2)
+
+
+def _trilho_D(y0, y1):
+    """Trilho raso de 1,8 mm: pescoco de 0,8 e cabeca de 1,0 atras dele."""
+    s = _caixa(1, LARG / 2, LARG / 2 + D_BOCA, y0, y1, *D_PESC)
+    s += _caixa(1, LARG / 2 + D_BOCA, LARG / 2 + D_TRILHO, y0, y1, *D_CAB)
+    return s
+
+
+def _canaleta_D(y0, y1):
+    """Canaleta cavada na faixa: boca estreita na face, bolso largo atras.
+
+    Aberta na FRENTE (por onde o trilho entra, no fim do chanfro) e FECHADA no
+    fundo: assim o trilho encosta e a peca para de correr no comprimento.
+    """
+    f = 0.3
+    c = _caixa(-1, LARG / 2 - D_BOCA, LARG / 2 + 3, y0 - 9, y1 + 0.4,
+               D_PESC[0] - f, D_PESC[1] + f)
+    c += _caixa(-1, LARG / 2 - D_TRILHO - f, LARG / 2 - D_BOCA, y0 - 9,
+                y1 + 0.4, D_CAB[0] - f, D_CAB[1] + f)
+    return c
+
+
+def _macho_E(env, y0, y1):
+    """Trava curta com gancho, apoiada na parede nua de 1,4 mm da vizinha."""
+    xo = LARG / 2 + E_SALTO
+    s = _caixa(1, LARG / 2 - 6, xo, y0, y1, Z_D0, ALT) - env
+    s += _caixa(1, xo - E_GANCHO[0], xo, y0, y1,
+                Z_D0 - E_GANCHO[1], Z_D0) - env
+    return s
 
 
 def passo_acoplado(acopl):
@@ -218,7 +275,8 @@ def cesto(acopl=None, h_rim=None):
     h_rim permite medir o custo da faixa de 18 mm sem nenhuma feicao.
     """
     if h_rim is None:
-        h_rim = H_BANDA if acopl else H_RIM
+        h_rim = (H_FAIXA2 if acopl in ("D", "E")
+                 else H_BANDA if acopl else H_RIM)
     z_topo = ALT - h_rim - 9.0
 
     # casca tronco-piramidal
@@ -241,6 +299,9 @@ def cesto(acopl=None, h_rim=None):
         ALT, taper=-DRAFT)
     p += cheio & Pos(0, 0, ALT - h_rim) * extrude(
         RectangleRounded(LARG + 40, PROF + 40, 0.1), h_rim + 10)
+
+    if acopl == "D":
+        p += _colar() - extrude(interno, ALT + 10, taper=-DRAFT)
 
     # recorta pela silhueta: e isso que da a forma do STL de referencia
     p = p & extrude(Plane.YZ * silhueta(), LARG / 2 + 30, both=True)
@@ -277,6 +338,14 @@ def cesto(acopl=None, h_rim=None):
         # lingueta em T de um lado, canaleta em T do outro -- exige gaveta
         p += _lingueta_T(env, yc0, yc1)
         p += _canaleta_T(env, yc0, yc1)
+    elif acopl == "D":
+        p += _trilho_D(yc0, yc1)
+        p -= _canaleta_D(yc0, yc1)
+    elif acopl == "E":
+        for ya, yb in E_Y:
+            p += _macho_E(env, ya, yb)
+            p -= _caixa(-1, LARG / 2 - 14, LARG / 2 + E_SALTO + 8,
+                        ya - 1, yb + 1, Z_D0, ALT + 4)
     elif acopl == "C":
         vaos_m, vaos_f = [], []
         y_ant_m = y_ant_f = yc0
@@ -297,13 +366,15 @@ def cesto(acopl=None, h_rim=None):
     # --- bercos de apoio: 4 orelhas na face INTERNA do rim -------------------
     # A saia da peca de cima assenta nelas. Ficam dentro da peca, invisiveis de
     # fora, e o passo empilhado fica exatamente a altura: 130 mm.
+    b_y = E_BERCO_Y if acopl == "E" else BERCO_Y
+    b_l = E_BERCO_L if acopl == "E" else BERCO_L
     for sx in (-1, 1):
-        for y_b in BERCO_Y:
+        for y_b in b_y:
             if acopl == "A" and sx == -1:
                 continue          # desse lado o rim foi rebaixado
             x_i = secao(ALT, T_RIM)[0] / 2
             p += Pos(sx * (x_i - BERCO_P / 2), y_b, ALT - BERCO_H / 2) * \
-                Box(BERCO_P, BERCO_L, BERCO_H)
+                Box(BERCO_P, b_l, BERCO_H)
     if acopl == "A":              # compensa no fundo o que o rebaixo tirou
         for x_b in (-52.0, 52.0):
             y_i = secao(ALT, T_RIM)[1] / 2
