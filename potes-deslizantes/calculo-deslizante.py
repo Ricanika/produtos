@@ -68,10 +68,9 @@ SAIA_H    = 7.00    # saia da tampa, por fora do corpo
 SAIA_T    = 1.60
 
 CURSO     = 14.0    # curso horizontal do fechamento
-RAMPA_L   = 10.0    # trecho util de rampa
-RAMPA_DZ  = 1.20    # quanto a came baixa a tampa no trecho de rampa
-SC_L      = 3.0     # trecho de sobre-centro
-SC_DZ     = 0.80    # quanto a rampa SOBE no sobre-centro
+RAMPA_L   = 10.0    # trecho de rampa
+HOVER     = 1.00    # folga da tampa acima do 1o contato da junta, no pouso
+PATAMAR_L = 3.0     # patamar PLANO no fim da nervura: e onde o gancho assenta
 
 LAB_T, LAB_L, LAB_DEF = 1.30, 4.00, 1.00   # labio de TPE: espessura, balanco, deflexao
 E_TPE     = 3.5     # MPa, TPE ~55 Shore A
@@ -83,8 +82,8 @@ GANCHO_P  = 2.20    # espessura do poste do gancho
 GANCHO_O  = 2.00    # quanto cada asa do pe do gancho avanca sob a nervura da came
 CAME_T    = 1.20    # espessura da nervura da came (sao DUAS, uma de cada lado)
 
-LING_N, LING_L, LING_W, LING_T = 2, 9.0, 16.0, 1.40   # linguetas do detente
-LING_DEF, LING_ANG = 0.60, 45.0
+LING_N, LING_L, LING_W, LING_T = 4, 9.0, 16.0, 1.40   # linguetas do detente (2 por lado)
+LING_DEF, LING_ANG = 0.60, 35.0
 
 SIGMA_PP  = 30.0    # MPa, escoamento do PP
 MU_SECO, MU_SABAO = 0.30, 0.08
@@ -255,48 +254,61 @@ def main():
               f"({dp/p_cont*100:3.0f}% da pressao de contato)")
 
     # ---------------- 4. a came ----------------
-    sep("4. A CAME: RAMPA + SOBRE-CENTRO")
+    sep("4. A CAME: RAMPA E PATAMAR")
+    RAMPA_DZ = HOVER + LAB_DEF          # nao e numero livre: e o percurso vertical
     ang_r = math.degrees(math.atan(RAMPA_DZ / RAMPA_L))
-    ang_sc = math.degrees(math.atan(SC_DZ / SC_L))
-    k_ved = F_ved / LAB_DEF                       # N/mm, rigidez do labio
-    print(f"Curso total {CURSO:.0f} mm = aproximacao {CURSO-RAMPA_L-SC_L:.0f} + rampa "
-          f"{RAMPA_L:.0f} + sobre-centro {SC_L:.0f}")
-    print(f"Rampa: desce {RAMPA_DZ:.2f} mm em {RAMPA_L:.0f} mm -> {ang_r:.1f}°")
-    print(f"Sobre-centro: sobe {SC_DZ:.2f} mm em {SC_L:.0f} mm -> {ang_sc:.1f}°")
-    print(f"Rigidez do labio {k_ved:.1f} N/mm; no fundo do sobre-centro a junta comprime "
-          f"{LAB_DEF+SC_DZ:.2f} mm e relaxa para {LAB_DEF:.2f} mm em casa")
+    k_ved = F_ved / LAB_DEF
+    print(f"Curso total {CURSO:.0f} mm = aproximacao {CURSO-RAMPA_L-PATAMAR_L:.0f} + rampa "
+          f"{RAMPA_L:.0f} + patamar {PATAMAR_L:.0f}")
+    print(f"Queda da rampa = folga de pouso {HOVER:.2f} + compressao da junta "
+          f"{LAB_DEF:.2f} = {RAMPA_DZ:.2f} mm")
+    print(f"  {RAMPA_DZ:.2f} mm em {RAMPA_L:.0f} mm -> rampa de {ang_r:.1f}°")
+    print(f"  patamar dos ultimos {PATAMAR_L:.0f} mm e PLANO: e ali que o gancho assenta de")
+    print(f"  face inteira ({2*GANCHO_W*CAME_T:.1f} mm2) e onde o detente clica.")
+    print(f"\nPor que o patamar tem de ser plano - e onde eu errei primeiro:")
+    print(f"  A ideia inicial era um SOBRE-CENTRO na propria nervura: uma depressao de")
+    print(f"  0,8 mm que a tampa teria de re-descer para voltar. Nao fecha. O gancho tem")
+    print(f"  {GANCHO_W:.0f} mm de topo PLANO, e um topo plano nao entra numa depressao mais")
+    print(f"  curta que ele - ele faz ponte. Para o gancho passar da depressao inteira o")
+    print(f"  curso teria de dobrar para ~29 mm. Rampar o topo do gancho para acompanhar")
+    print(f"  daria uma cunha de {GANCHO_W*RAMPA_DZ/RAMPA_L:.1f} mm de altura, que bate na aba.")
+    print(f"  Uma funcao por peca: a RAMPA puxa, o DETENTE segura.")
     print(f"\nARMADILHA: sabao e lubrificante. mu do PP cai de ~{MU_SECO:.2f} seco para "
           f"~{MU_SABAO:.2f} ensaboado.")
     for mu in (MU_SECO, 0.15, MU_SABAO, 0.0):
         ang_at = math.degrees(math.atan(mu))
         trava = "trava" if ang_at > ang_r else "NAO TRAVA"
         print(f"  mu={mu:.2f} -> angulo de atrito {ang_at:4.1f}° vs rampa {ang_r:.1f}°: {trava}")
-    print("Conclusao: NAO se pode contar com auto-travamento por atrito. Quem segura e o")
-    print("sobre-centro + o detente, que sao geometricos e funcionam com mu = 0.")
+    print("Mesmo travando seco, nao se pode contar com isso: o produto E um pote de sabao.")
+    print("Quem segura e o DETENTE, que e geometrico e funciona com mu = 0.")
 
     # ---------------- 5. detente ----------------
-    sep("5. DETENTE: DUAS LINGUETAS, E A COTA QUE SE AJUSTA NO TRY-OUT")
+    sep("5. DETENTE: E ELE QUE SEGURA, E E A COTA QUE SE AJUSTA NO TRY-OUT")
     I_l = LING_W * LING_T ** 3 / 12
     F_ling = 3 * E_PP * I_l * LING_DEF / LING_L ** 3
     eps = 3 * LING_T * LING_DEF / (2 * LING_L ** 2) * 100
     N_det = LING_N * F_ling
-    print(f"Lingueta {LING_L:.0f} x {LING_W:.0f} x {LING_T:.2f} mm, deflexao {LING_DEF:.2f} mm")
-    print(f"  forca normal por lingueta {F_ling:.1f} N, duas = {N_det:.1f} N")
+    print(f"{LING_N} linguetas ({LING_N//2} por lado longo) de {LING_L:.0f} x {LING_W:.0f} x "
+          f"{LING_T:.2f} mm, deflexao {LING_DEF:.2f} mm")
+    print(f"  forca normal por lingueta {F_ling:.1f} N, {LING_N} = {N_det:.1f} N")
     print(f"  deformacao na raiz {eps:.2f}% (PP suporta ~2% em ciclagem; "
           f"{'OK' if eps < 2 else 'ALTO'})")
-    print(f"\nForca no polegar para ABRIR (face do detente a {LING_ANG:.0f}°), somando "
-          f"sobre-centro e atrito:")
+    print(f"  face de saida a {LING_ANG:.0f}° - mais em pe que isso e a forca de abrir fica")
+    print(f"  refem do atrito; mais deitada e o detente nao segura nada.")
+    print(f"\nForca no polegar para ABRIR (detente + arrasto da junta no patamar):")
     ta = math.tan(math.radians(LING_ANG))
     for mu in (MU_SABAO, 0.15, MU_SECO):
         f_det = N_det * (ta + mu) / (1 - mu * ta)
-        N_sc = F_ved + k_ved * SC_DZ
-        f_sc = N_sc * (math.tan(math.radians(ang_sc)) + mu) / (1 - mu * math.tan(math.radians(ang_sc)))
-        tot = f_det + f_sc
-        print(f"  mu={mu:.2f} -> detente {f_det:5.1f} N + sobre-centro {f_sc:5.1f} N = "
+        f_at = mu * F_ved
+        tot = f_det + f_at
+        print(f"  mu={mu:.2f} -> detente {f_det:5.1f} N + junta {f_at:4.1f} N = "
               f"{tot:5.1f} N = {tot/9.81:4.1f} kgf")
     print(f"\nJanela alvo: 2 a 4 kgf. Abaixo disso abre sozinho na bolsa; acima, o usuario")
     print(f"acha que quebrou. A interferencia da lingueta e a cota que se tira aco no")
     print(f"try-out ate o toque ficar certo - nenhuma outra cota do conjunto se mexe.")
+    print(f"\nDegradacao segura: se o detente cansar, a tampa NAO sai - os ganchos sao")
+    print(f"geometricos. Perde-se o clique e um pouco de vedacao, nao o fecho. Trava de")
+    print(f"mercado que quebra perde tudo de uma vez.")
 
     # ---------------- 6. ganchos e queda ----------------
     sep("6. GANCHOS: DIMENSIONADOS PELA QUEDA, NAO PELA VEDACAO")

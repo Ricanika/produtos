@@ -43,12 +43,14 @@ no sentido do comprimento**. Nesse curso acontecem quatro coisas, nesta ordem:
 1. **Entram os ganchos.** Seis ganchos em T na face de baixo da tampa (3 por lado longo)
    descem pelas janelas do canal da aba. É o macho; o canal é a fêmea.
 2. **A came puxa a tampa para baixo.** O teto do canal tem duas nervuras rampadas por gancho.
-   Conforme o gancho avança, a rampa desce e **arrasta a tampa junto** — 1,2 mm em 10 mm (6,8°).
-   A junta só encosta no fim: durante o deslizamento ela não raspa em nada.
-3. **Sobre-centro.** Nos últimos 3 mm a rampa **sobe** 0,8 mm. A junta é comprimida 1,80 mm no
-   fundo do sobre-centro e relaxa para 1,00 mm na posição de casa. Para voltar, a tampa tem
-   que recomprimir a junta — é uma barreira de energia, não um atrito.
-4. **Clique.** Duas linguetas flexíveis caem num rebaixo e param o curso.
+   Conforme o gancho avança, a rampa desce e **arrasta a tampa junto** — 2,00 mm em 10 mm
+   (11,3°). Esses 2,00 mm não são número livre: são 1,00 mm de folga de pouso + 1,00 mm de
+   compressão da junta. A junta só encosta nos últimos 5 mm do curso — durante o deslizamento
+   ela não raspa em nada.
+3. **Patamar.** Os últimos 3 mm da nervura são planos. É ali que o gancho assenta de face
+   inteira (33,6 mm²) em vez de apoiar numa linha.
+4. **Clique.** Quatro linguetas flexíveis caem num rebaixo no fim do patamar. **É o detente
+   que segura o fecho** — não o atrito da rampa.
 
 Abrir é o mesmo caminho ao contrário: empurra, e **a came levanta a tampa enquanto ela sai**.
 Isso quebra a sucção sozinho — não existe o "briga com o pote para tirar a tampa".
@@ -59,7 +61,7 @@ Isso quebra a sucção sozinho — não existe o "briga com o pote para tirar a 
 |---|---|---|
 | O que segura na queda | a trava, em **flexão** | o gancho, em **esmagamento/cisalhamento** |
 | Como falha | a carga gira a trava e ela **desarma sozinha** (camagem) | não tem como: a fuga do gancho é **perpendicular** à carga |
-| Se a peça cansar | abre | continua fechada, só perde vedação |
+| Se a peça cansar | abre | continua fechada, só perde o clique e vedação |
 | Estética | orelha saliente, dois pontos de quebra | nada aparece: o mecanismo mora embaixo da aba |
 | Sinal de "está fechado" | visual da orelha | a tampa fica **rente**; 14 mm para fora = aberta |
 
@@ -95,21 +97,36 @@ Então o fundo virou a variável que fecha as quatro capacidades num footprint s
 600 ml, 2,50 mm nos outros três — que é exatamente onde o pote grande quer rigidez de qualquer
 jeito. Sem fundo falso em nenhum deles.
 
-### c) Sabão é lubrificante — não dá para contar com atrito
+### c) O sobre-centro na nervura não fecha — e foi onde eu errei primeiro
 
-Essa quase passou. A rampa de 6,8° é auto-travante com µ = 0,30 (ângulo de atrito 16,7°), e a
-conta fecha bonito. Só que **µ do PP com filme de sabão cai para ~0,08**, ângulo de atrito
-4,6° — e aí a rampa **não trava mais**. A tampa voltaria sozinha.
+A ideia inicial era um **sobre-centro na própria came**: uma depressão de 0,8 mm que a tampa
+teria de re-descer para voltar. Barreira de energia pura, sem peça extra. Elegante e errada.
 
-| µ | ângulo de atrito | vs. rampa de 6,8° |
+O gancho tem **14 mm de topo plano**, e um topo plano **não entra numa depressão mais curta
+que ele** — faz ponte. Para o gancho passar da depressão inteira, o curso teria de dobrar para
+~29 mm. Rampar o topo do gancho para acompanhar o perfil daria uma cunha de 2,8 mm de altura,
+que bate na aba.
+
+Virou **uma função por peça**: a rampa puxa, o detente segura. O patamar plano dos últimos
+3 mm é o que dá ao gancho os 33,6 mm² de apoio de face inteira — sem ele o contato seria uma
+linha, e toda a conta de queda da seção 6 cairia.
+
+### d) Sabão é lubrificante — não dá para contar com atrito
+
+Essa quase passou. A rampa de 11,3° é auto-travante com µ = 0,30 (ângulo de atrito 16,7°), e a
+conta fecha bonito na bancada. Só que **µ do PP com filme de sabão cai para ~0,08**, ângulo de
+atrito 4,6° — e aí a rampa **não trava mais**. A tampa voltaria sozinha. O produto *é* um pote
+de sabão: projetar o travamento em cima de um coeficiente que o próprio conteúdo derruba 4×
+seria projetar para a bancada, não para a pia.
+
+| µ | ângulo de atrito | vs. rampa de 11,3° |
 |---|---|---|
 | 0,30 (seco) | 16,7° | trava |
-| 0,15 | 8,5° | trava |
+| 0,15 | 8,5° | **NÃO TRAVA** |
 | **0,08 (ensaboado)** | **4,6°** | **NÃO TRAVA** |
 
-Por isso quem segura o fecho é o **sobre-centro + o detente**, que são geométricos e funcionam
-com µ = 0. O atrito virou coadjuvante — entra na conta do esforço do polegar, não na do
-travamento. É a diferença entre um projeto que funciona na bancada e um que funciona na pia.
+Por isso quem segura o fecho é o **detente**, que é geométrico e funciona com µ = 0. O atrito
+virou coadjuvante — entra na conta do esforço do polegar, não na do travamento. É a diferença entre um projeto que funciona na bancada e um que funciona na pia.
 
 ---
 
@@ -141,9 +158,9 @@ prato ............ 2,00 mm, com 3 nervuras de 1,2 × 5,0 mm no piso da bandeja
 murete ........... 3,5 mm de altura, 1,5 mm de parede, vão 114,4 × 85,9
 saia ............. 7,0 mm × 1,6 mm, por fora do corpo (esconde o mecanismo)
 ganchos .......... 6 em T, 14 mm, poste 2,2 mm, asa 2,0 mm de cada lado
-linguetas ........ 2, de 9 × 16 × 1,4 mm, deflexão 0,60 mm
+linguetas ........ 4 (2 por lado), 9 × 16 × 1,4 mm, deflexão 0,60 mm, face de saída 35°
 lábio de TPE ..... 1,30 mm de espessura, 4,0 mm de balanço, 2,6 g, perímetro 412 mm
-curso ............ 14 mm = 1 de aproximação + 10 de rampa + 3 de sobre-centro
+curso ............ 14 mm = 1 de aproximação + 10 de rampa (desce 2,00) + 3 de patamar plano
 ```
 
 ### A vedação: lábio flexível, não aro esmagado
@@ -178,16 +195,20 @@ Apoio por gancho: 33,6 mm² (2 × 14 × 1,2).
 
 ### Esforço do polegar
 
-| µ | Detente | Sobre-centro | Total |
+| µ | Detente | Arrasto da junta | Total |
 |---|---|---|---|
-| 0,08 (ensaboado) | 19,1 N | 7,9 N | **2,8 kgf** |
-| 0,15 | 22,0 N | 9,7 N | **3,2 kgf** |
-| 0,30 (seco) | 30,2 N | 13,7 N | **4,5 kgf** |
+| 0,08 (ensaboado) | 26,9 N | 1,0 N | **2,8 kgf** |
+| 0,15 | 30,9 N | 1,9 N | **3,3 kgf** |
+| 0,30 (seco) | 41,2 N | 3,7 N | **4,6 kgf** |
 
-Janela alvo 2 a 4 kgf. Abaixo disso abre na bolsa; acima, o usuário acha que quebrou.
+Janela alvo 2 a 4 kgf — seco fica 0,6 kgf acima, e é justamente o que o try-out acerta. Abaixo disso abre na bolsa; acima, o usuário acha que quebrou.
 **A interferência da lingueta é a cota que se tira aço no try-out** até o toque ficar certo —
 e nenhuma outra cota do conjunto se mexe junto. Deformação na raiz da lingueta: 1,56%
 (PP aguenta ~2% em ciclagem).
+
+**Degradação segura:** se o detente cansar, a tampa **não sai** — os ganchos são geométricos.
+Perde-se o clique e um pouco de vedação, não o fecho. Trava de mercado que quebra perde tudo
+de uma vez.
 
 ### Queda com o 2,4 L cheio de sabão (2,61 kg), em cima da tampa
 
@@ -272,8 +293,8 @@ viscoso e pode não precisar.
 
 Tampa deslizante existe (caixa de pão, estojo, alguns bentôs). Fecho por came existe. Junta de
 lábio existe. **O que parece não existir é a combinação**: retangular, rente, sem saliência,
-com a came gerando a carga de vedação no próprio curso de fechamento e o sobre-centro
-segurando sem depender de atrito.
+com a came gerando a carga de vedação no próprio curso de fechamento e a retenção vertical
+saindo de ganchos geométricos, sem depender de atrito nem de trava saliente.
 
 Isso **não é uma afirmação de que é inédito** — é uma hipótese que precisa de busca:
 
