@@ -33,8 +33,8 @@ injetada: sem dobradiça, sem painel, sem montagem.
 | Furos redondos em gradiente | **Resolvido** — 4 bandas, Ø 15 → 6 mm, passo 21 mm, 68 furos, faixa cega de 40 mm |
 | Fundo sólido | **Atendido** — chapa de 2,0 mm sem furo |
 | Pé discreto | **Resolvido** — 4 pezinhos ocos sob a chapa, recuados 2 mm da borda; a chapa faz aba (seção 4.1) |
-| Empilhar **e** encaixar | **Resolvido pela estrutura na borda** — empilha a 130,0 mm e encaixa a 102,7 mm, medido no sólido (seção 4.2.1) |
-| Acoplar lateralmente | **5 opções em 3D, todas com interferência zero.** A recomendada é a **D**: trilho de 1,8 mm, rim inteiro nos dois lados, 167,6 g — custa 2 gavetas no molde (seções 4.3 e 4.4) |
+| Empilhar, encaixar **e** acoplar | **Os três, medidos no sólido** — empilha 130,0 · encaixa 102,7 na mesma orientação · acopla com trava, 0,00 mm³ de interferência na cena (seções 4.2.1 e 4.2.2) |
+| Acoplar lateralmente | **Resolvido dentro das paredes de empilhamento** — cauda de andorinha vertical de 1,4 mm, sem gaveta, trava puxando de lado (seção 4.2.2) |
 | Encaixar para reduzir volume | **Medido no sólido: passo de 55,5 mm**, 630 mm para 10 peças. Exclusivo do empilhamento a 130 mm — ver seção 4.2 |
 | Injeção no parque atual | **1 cavidade numa 200 t (76%)** — a casa tem **12 máquinas** dessa classe |
 | Ferramental | **USD 19,5 mil FOB**, 1 molde — por analogia direta com dois moldes da casa |
@@ -63,7 +63,7 @@ que custaria a família dobrável) e **o risco é o volume de venda**.
 | Parede / fundo / rim | 1,4 / 2,0 / 3,2 mm |
 | Pé | **4 pezinhos ocos** sob a chapa, que flutua 5 mm acima do piso |
 | Capacidade | **4,46 L** |
-| Peso | **162,6 g** na versão que encaixa (172,5 g com soquetes) |
+| Peso | **170,8 g** (versão final, com estrutura e acoplamento) |
 | Área projetada | 430 cm² |
 
 ### 2.2 A silhueta, medida no STL de referência
@@ -304,6 +304,61 @@ saídas, se isso não servir:
 
 Na Q′ a canaleta de acoplamento também encurta de 80 para **36 mm** (y 48…84):
 a estrutura de empilhamento ocupa o rim da lateral.
+
+### 4.2.2 Empilhar E acoplar: o acoplamento dentro das paredes
+
+Com a estrutura de empilhamento ocupando o rim da lateral, sobravam 36 mm para
+a canaleta de acoplamento — e o produto deixava de acoplar de verdade. A saída
+não foi disputar espaço: **o acoplamento foi morar dentro da própria estrutura.**
+
+É onde duas peças lado a lado se tocam: as paredes da borda ficam face a face
+no plano x = 107,5. Na face externa de cada parede entra uma **cauda de
+andorinha vertical**:
+
+| | |
+|---|---|
+| Avanço do macho | **1,4 mm** (pescoço de 0,5 + cabeça de 0,9) |
+| Largura do pescoço / cabeça | 5,0 / 9,0 mm |
+| Folga | 0,35 mm por lado |
+| Altura | os 10 mm da parede, prismática em z |
+
+Três propriedades que fazem isso funcionar:
+
+1. **Prismática em z, aberta no topo** — sai na direção de abertura do molde.
+   Nenhuma gaveta, mesmo sendo uma contra-saída em x.
+2. **Hermafrodita e invariante a 180°** — numa lateral a 1ª parede é macho e a
+   2ª é fêmea, espelhado na outra. Girando a peça, macho e fêmea trocam de lado
+   juntos, então a **pilha girada continua acoplando nível a nível**.
+3. **Trava por descida.** A cabeça de 9 mm não passa pela boca de 5,7 mm.
+
+#### Medido no sólido
+
+| | |
+|---|---|
+| Empilha (girada 180°) | **130,0 mm** |
+| Encaixa (mesma orientação) | **102,7 mm** — 10 peças em 1.054 mm |
+| Acopla, nível não girado | 0,00 mm³ de interferência |
+| Acopla, nível girado | 0,00 mm³ |
+| **Trava lateral** | bloqueia de **0,2 a 1,2 mm** de afastamento |
+| Solta levantando | 35 mm |
+| **Cena de 2 colunas × 3 níveis** | **0,00 mm³** |
+| Peso / capacidade | **170,8 g** / 4,46 L |
+| Envelope | 217,8 × 197 × 140 mm |
+
+A varredura do afastamento lateral é o que prova a trava: a peça teria de passar
+por todas as posições de 0,2 a 1,2 mm para separar, e todas elas
+interpenetram. Puxar de lado não abre.
+
+A profundidade da cauda é o ajuste fino entre trava e usabilidade — medido:
+
+| avanço | trava até | solta levantando |
+|---|---|---|
+| 1,0 mm | 0,8 mm | 25 mm |
+| **1,4 mm** | **1,2 mm** | **35 mm** |
+| 2,0 mm | 1,8 mm | 45 mm |
+
+Escolhido 1,4 mm. A canaleta da opção D no rim foi **removida**: ela não é mais
+necessária e liberou a faixa do rim.
 
 #### As três versões, medidas
 
@@ -570,5 +625,7 @@ cad/camufladas.py  monta as opcoes D e E, normaliza a escala das vistas
 cad/empilha.py     mede no solido o passo de empilhamento e de encaixe
 cad/pe.py          pezinhos, soquete do pe traseiro e a folha pezinho.png
 cad/estrutura.py   a estrutura de empilhamento na borda e a folha estrutura.png
-cad/cesto-final.step/.stl  a peca com tudo: pe, estrutura e canaleta D
+cad/final.py       a peca completa e a folha final.png
+cad/cesto-final.step/.stl  a peca com tudo: pezinhos, estrutura de
+                   empilhamento e cauda de andorinha do acoplamento
 ```

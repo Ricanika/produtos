@@ -72,8 +72,18 @@ SOQ_H, SOQ_T, SOQ_F = 2.5, 2.0, 0.6       # soquete: altura, parede, folga
 # As nervuras e as paredes ficam em posicoes ESPELHADAS em y (PAR_Y = -NERV_Y)
 # e os intervalos nao se cruzam. Assim, na MESMA orientacao a nervura cai onde
 # nao ha parede -> ENCAIXA; girada 180 ela encontra a parede -> EMPILHA.
-NERV_Y = ((-46.0, -24.0), (8.0, 20.0))
-PAR_Y = tuple((-b, -a) for a, b in NERV_Y)   # (24..46) e (-20..-8)
+NERV_Y = ((-46.0, -24.0), (8.0, 22.0))
+PAR_Y = tuple((-b, -a) for a, b in NERV_Y)   # (24..46) e (-22..-8)
+
+# ACOPLAMENTO DENTRO DAS PAREDES DA BORDA -- cauda de andorinha vertical.
+# Duas pecas lado a lado se tocam justamente onde essas paredes ficam, e a
+# feicao e prismatica em z (aberta no topo): sai na direcao de abertura, sem
+# gaveta. Em cada lateral uma parede e macho e a outra e femea, espelhado ->
+# o arranjo e invariante a 180 graus, entao a pilha girada continua acoplando.
+ACO_P = 1.4        # quanto o macho avanca alem de LARG/2
+ACO_PESC = 0.5     # profundidade do pescoco (o resto e cabeca)
+ACO_WR, ACO_WC = 5.0, 9.0     # largura do pescoco e da cabeca, em y
+ACO_F = 0.35       # folga
 # Cotas resolvidas do sistema de restricoes (ver README 4.5): com a parede da
 # borda de altura h = z0 o passo empilhado da ALT, e o encaixe fica limitado a
 # d <= 29,9 mm. Escolhido d = 26 -> passo encaixado de 104 mm.
@@ -232,12 +242,31 @@ def _nervura(env, sx, y0, y1):
     return s - env
 
 
-def _parede_borda(sx, y0, y1):
-    """A parede que sai da borda superior e recebe a nervura de cima."""
-    p = _caixa(sx, EMP_XI, LARG / 2, y0, y1, ALT, ALT + EMP_H)
-    # chanfro de entrada no topo interno, para guiar a descida
+def _parede_borda(sx, y0, y1, macho=None):
+    """A parede que sai da borda superior e recebe a nervura de cima.
+
+    macho=True poe a cauda de andorinha do acoplamento na face externa dela;
+    macho=False abre a canaleta correspondente.
+    """
+    x0, z0, z1 = LARG / 2, ALT, ALT + EMP_H
+    p = _caixa(sx, EMP_XI, x0, y0, y1, z0, z1)
+    # chanfro de entrada no topo interno, para guiar a descida da nervura
     p -= _caixa(sx, EMP_XI - 2, EMP_XI + 1.4, y0 - 1, y1 + 1,
-                ALT + EMP_H - 1.4, ALT + EMP_H + 1)
+                z1 - 1.4, z1 + 1)
+    if macho is None:
+        return p
+    yc = (y0 + y1) / 2
+    if macho:
+        p += _caixa(sx, x0, x0 + ACO_PESC, yc - ACO_WR / 2, yc + ACO_WR / 2,
+                    z0, z1)
+        p += _caixa(sx, x0 + ACO_PESC, x0 + ACO_P, yc - ACO_WC / 2,
+                    yc + ACO_WC / 2, z0, z1)
+    else:
+        f = ACO_F
+        p -= _caixa(sx, x0 - ACO_PESC, x0 + 1, yc - ACO_WR / 2 - f,
+                    yc + ACO_WR / 2 + f, z0, z1 + 1)
+        p -= _caixa(sx, x0 - ACO_P - f, x0 - ACO_PESC, yc - ACO_WC / 2 - f,
+                    yc + ACO_WC / 2 + f, z0, z1 + 1)
     return p
 
 
@@ -461,8 +490,10 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False):
         for sx in (-1, 1):
             for y0, y1 in NERV_Y:
                 p += _nervura(env, sx, y0, y1)
-            for y0, y1 in PAR_Y:
-                p += _parede_borda(sx, y0, y1)
+            for i, (y0, y1) in enumerate(PAR_Y):
+                # hermafrodita: na direita a 1a parede e macho e a 2a femea;
+                # na esquerda o contrario
+                p += _parede_borda(sx, y0, y1, macho=((sx > 0) == (i == 0)))
     return p, n
 
 
