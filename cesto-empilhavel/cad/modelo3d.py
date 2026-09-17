@@ -57,7 +57,19 @@ T_FUNDO  = 2.0
 T_RIM    = 3.2            # parede engrossada na faixa do rim
 H_RIM    = 10.0
 H_PE     = 6.0            # saia: a parede desce 6 mm abaixo da chapa
-BERCO_L, BERCO_P, BERCO_H = 30.0, 10.0, 5.0   # orelhas de apoio no rim
+BERCO_L, BERCO_P, BERCO_H = 18.0, 10.0, 5.0   # orelhas de apoio no rim
+BERCO_Y = (-38.0, 75.0)   # centros, nos cantos -- fora das travas
+
+# --- acoplamento lateral: MACHO em +X, FEMEA em -X --------------------------
+H_BANDA  = 18.0            # faixa da canaleta: z de 112 a 130
+Y_CAN    = (-47.0, 85.0)   # o trecho RETO da lateral no rim: 132 mm
+SALTO    = 7.5             # o macho avanca 7,5 -- tem de vencer o rim de 3,2
+GANCHO_D = 2.5             # espessura do gancho
+GANCHO_H = 6.0             # quanto o gancho desce abaixo da faixa
+TRAVA_L  = 40.0            # opcao C: duas abas de 40
+JANELA_L = 42.0
+Y_TRAVAS = (-26.0, 24.0)   # inicio de cada aba / janela
+RISCO_D  = 0.9             # profundidade do risco decorativo da canaleta
 
 # --- vazado -----------------------------------------------------------------
 PASSO   = 21.0            # >= D_TOPO + 6 mm de web, senao os furos se fundem
@@ -106,10 +118,11 @@ def z_silhueta(y):
     return (ALT - CHANFRO) + (y - yf)      # a 45 graus
 
 
-def filas():
-    n = int((Z_TOPO - BANDA) // PASSO) + 1
+def filas(z_topo=None):
+    z_topo = Z_TOPO if z_topo is None else z_topo
+    n = int((z_topo - BANDA) // PASSO) + 1
     ds = np.linspace(D_TOPO, D_BASE, n)
-    return [(Z_TOPO - i * PASSO, float(ds[i])) for i in range(n)]
+    return [(z_topo - i * PASSO, float(ds[i])) for i in range(n)]
 
 
 def grade(extensao, passo):
@@ -119,9 +132,69 @@ def grade(extensao, passo):
     return [(-(n - 1) * passo / 2) + i * passo for i in range(n)]
 
 
-def cesto():
+X_OUT = LARG / 2 + SALTO      # plano externo do macho
+Z_B0 = ALT - H_BANDA          # base da faixa da canaleta
+
+
+def _caixa(sx, x0, x1, y0, y1, z0, z1):
+    """Caixa no lado sx (+1 direita, -1 esquerda); x0/x1 sempre positivos."""
+    return Pos(sx * (x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2) * \
+        Box(x1 - x0, y1 - y0, z1 - z0)
+
+
+def _macho(env, y0, y1):
+    """Aba saliente no lado +X, com gancho para baixo na ponta (opcoes A e C).
+
+    Nasce na propria superficie da parede: a caixa entra no solido e o que
+    sobra depois de subtrair o envelope e exatamente a saliencia.
+    """
+    s = _caixa(1, LARG / 2 - 6, X_OUT, y0, y1, Z_B0, ALT) - env
+    s += _caixa(1, X_OUT - GANCHO_D, X_OUT, y0, y1, Z_B0 - GANCHO_H, Z_B0) - env
+    return s
+
+
+def _lingueta_T(env, y0, y1):
+    """Opcao B: lingueta em T -- pescoco de 12, cabeca de 16, corrida."""
+    s = _caixa(1, LARG / 2 - 6, X_OUT - 2.5, y0, y1, Z_B0 + 3, ALT - 3) - env
+    s += _caixa(1, X_OUT - 2.5, X_OUT, y0, y1, Z_B0 + 1, ALT - 1) - env
+    return s
+
+
+def _canaleta_T(env, y0, y1):
+    """Opcao B: bloco na esquerda com a canaleta em T, aberta na frente."""
+    bloco = _caixa(-1, LARG / 2 - 6, X_OUT, y0, y1, Z_B0, ALT) - env
+    cav = _caixa(-1, LARG / 2 - 9, X_OUT - 2.5, y0 - 6, y1 + 6,
+                 Z_B0 + 2.6, ALT - 2.6)
+    cav += _caixa(-1, X_OUT - 2.5, X_OUT + 2, y0 - 6, y1 + 6,
+                  Z_B0 + 0.6, ALT - 0.6)
+    return bloco - cav
+
+
+def _abre_rim(y0, y1):
+    """Solido a subtrair para abrir o rim do lado -X (janela ou rebaixo)."""
+    return _caixa(-1, LARG / 2 - 14, X_OUT + 8, y0, y1, Z_B0, ALT + 4)
+
+
+def _risco(sx, faixas):
+    """Risco decorativo da canaleta, em trechos de y."""
+    out = None
+    for y0, y1 in faixas:
+        if y1 - y0 < 2:
+            continue
+        b = _caixa(sx, LARG / 2 - RISCO_D, X_OUT + 8, y0, y1,
+                   ALT - 5.5, ALT - 2.5)
+        out = b if out is None else out + b
+    return out
+
+
+def cesto(acopl=None):
+    """acopl: None, 'A' (trilho corrido), 'B' (trilho embutido), 'C' (travas)."""
+    h_rim = H_BANDA if acopl else H_RIM
+    z_topo = ALT - h_rim - 9.0
+
     # casca tronco-piramidal
     fora = extrude(RectangleRounded(BASE_X, BASE_Y, 14.0), ALT, taper=-DRAFT)
+    env = extrude(RectangleRounded(BASE_X, BASE_Y, 14.0), ALT + 40, taper=-DRAFT)
     interno = RectangleRounded(BASE_X - 2 * T_PAREDE, BASE_Y - 2 * T_PAREDE, 12.0)
     # Tubo aberto: a cavidade sai do MESMO plano z=0 e com a MESMA saida da
     # casca, entao a parede fica em T_PAREDE constante em toda a altura. (Se a
@@ -137,8 +210,8 @@ def cesto():
     cheio = fora - Pos(0, 0, T_FUNDO) * extrude(
         RectangleRounded(BASE_X - 2 * T_RIM, BASE_Y - 2 * T_RIM, 11.0),
         ALT, taper=-DRAFT)
-    p += cheio & Pos(0, 0, ALT - H_RIM) * extrude(
-        RectangleRounded(LARG + 40, PROF + 40, 0.1), H_RIM + 10)
+    p += cheio & Pos(0, 0, ALT - h_rim) * extrude(
+        RectangleRounded(LARG + 40, PROF + 40, 0.1), h_rim + 10)
 
     # recorta pela silhueta: e isso que da a forma do STL de referencia
     p = p & extrude(Plane.YZ * silhueta(), LARG / 2 + 30, both=True)
@@ -146,12 +219,13 @@ def cesto():
     # --- vazado ---
     # Colunas calculadas UMA vez, com a margem do maior diametro, para que
     # todas as fileiras usem as mesmas colunas e o reticulado alinhe.
-    z_ref = filas()[0][0]
+    fl = filas(z_topo)
+    z_ref = fl[0][0]
     cols_fundo = grade(secao(z_ref, T_RIM)[0] - D_TOPO - 30, PASSO)
     cols_lat = grade(secao(z_ref, T_RIM)[1] - D_TOPO - 30, PASSO)
 
     furos, n = [], 0
-    for z, d in filas():
+    for z, d in fl:
         for x in cols_fundo:                                 # parede do fundo
             furos.append(Pos(x, 0, z) * Rot(90, 0, 0) * Cylinder(d / 2, PROF + 60))
             n += 1
@@ -162,14 +236,50 @@ def cesto():
             n += 2
     p -= furos
 
+    # --- acoplamento lateral -------------------------------------------------
+    yc0, yc1 = Y_CAN
+    if acopl == "A":
+        # trilho corrido de ponta a ponta + rim rebaixado do outro lado
+        p += _macho(env, yc0, yc1)
+        p -= _abre_rim(yc0, yc1)
+        p += cheio & _caixa(-1, 60, X_OUT, yc0 - 3, yc1 + 3,
+                            Z_B0 - GANCHO_H - 3, Z_B0 + 1)
+    elif acopl == "B":
+        # lingueta em T de um lado, canaleta em T do outro -- exige gaveta
+        p += _lingueta_T(env, yc0, yc1)
+        p += _canaleta_T(env, yc0, yc1)
+    elif acopl == "C":
+        vaos_m, vaos_f = [], []
+        y_ant_m = y_ant_f = yc0
+        for ya in Y_TRAVAS:
+            p += _macho(env, ya, ya + TRAVA_L)
+            jf0, jf1 = ya - 1, ya - 1 + JANELA_L
+            p -= _abre_rim(jf0, jf1)
+            p += cheio & _caixa(-1, 60, X_OUT, jf0 - 3, jf1 + 3,
+                                Z_B0 - GANCHO_H - 3, Z_B0 + 1)
+            vaos_m.append((y_ant_m, ya)); y_ant_m = ya + TRAVA_L
+            vaos_f.append((y_ant_f, jf0)); y_ant_f = jf1
+        vaos_m.append((y_ant_m, yc1)); vaos_f.append((y_ant_f, yc1))
+        for sx, vaos in ((1, vaos_m), (-1, vaos_f)):
+            r = _risco(sx, vaos)
+            if r is not None:
+                p -= r
+
     # --- bercos de apoio: 4 orelhas na face INTERNA do rim -------------------
     # A saia da peca de cima assenta nelas. Ficam dentro da peca, invisiveis de
     # fora, e o passo empilhado fica exatamente a altura: 130 mm.
     for sx in (-1, 1):
-        for sy, y_b in ((-1, -PROF / 2 + CHANFRO + 24), (1, PROF / 2 - 22)):
+        for y_b in BERCO_Y:
+            if acopl == "A" and sx == -1:
+                continue          # desse lado o rim foi rebaixado
             x_i = secao(ALT, T_RIM)[0] / 2
             p += Pos(sx * (x_i - BERCO_P / 2), y_b, ALT - BERCO_H / 2) * \
                 Box(BERCO_P, BERCO_L, BERCO_H)
+    if acopl == "A":              # compensa no fundo o que o rebaixo tirou
+        for x_b in (-52.0, 52.0):
+            y_i = secao(ALT, T_RIM)[1] / 2
+            p += Pos(x_b, y_i - BERCO_P / 2, ALT - BERCO_H / 2) * \
+                Box(BERCO_L, BERCO_P, BERCO_H)
     return p, n
 
 
