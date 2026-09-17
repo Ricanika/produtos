@@ -68,7 +68,7 @@
   <header>
     <p class="eyebrow">Nitron · Projeto 115 · modelo paramétrico</p>
     <h1>Potes modulares em 3D</h1>
-    <p class="sub">O sólido sai das mesmas cotas do estudo — corpo de 121,2 × 93,3 mm com aba de borda, canto R18, saída de 0,5°, módulo de 60 mm. Abra o <strong>corte</strong>: é lá que se vê onde a tampa veda — o plug desce dentro do pote e o aro de TPE trabalha contra a <strong>parede</strong>, não contra a borda. Por fora não há saia: a tampa fica rente à aba.</p>
+    <p class="sub">O sólido sai das mesmas cotas do estudo — corpo de 139,7 × 79,8 mm com aba de borda, canto R10, saída de 0,5°, módulo de 60 mm. Abra o <strong>corte</strong>: é lá que se vê onde a tampa veda — o plug desce dentro do pote e o aro de TPE trabalha contra a <strong>parede</strong>, não contra a borda. Por fora não há saia: a tampa fica rente à aba.</p>
   </header>
 
   <div class="barra">
@@ -126,12 +126,12 @@
     <table>
       <thead><tr><th>Peça</th><th>Altura</th><th>Passo</th><th>Cavidade na malha</th><th>Alvo</th><th>Peso da malha</th><th>Triângulos</th></tr></thead>
       <tbody>
-        <tr><td class="tam">600 ml</td><td class="num">62,0 mm</td><td class="num">60</td><td class="num">604,7 ml</td><td class="num">600</td><td class="num">44,9 g</td><td class="num">1440</td></tr>
-        <tr><td class="tam">1,2 L</td><td class="num">122,0 mm</td><td class="num">120</td><td class="num">1204,1 ml</td><td class="num">1200</td><td class="num">71,2 g</td><td class="num">1440</td></tr>
-        <tr><td class="tam">1,8 L</td><td class="num">182,0 mm</td><td class="num">180</td><td class="num">1806,3 ml</td><td class="num">1800</td><td class="num">102,3 g</td><td class="num">1440</td></tr>
-        <tr><td class="tam">2,4 L</td><td class="num">242,0 mm</td><td class="num">240</td><td class="num">2409,5 ml</td><td class="num">2400</td><td class="num">137,2 g</td><td class="num">1344</td></tr>
-        <tr><td class="tam">Tampa</td><td class="num">13,5 mm</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">22,4 g</td><td class="num">1152</td></tr>
-        <tr><td class="tam">Aro TPE</td><td class="num">2,4 mm</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">1,8 g</td><td class="num">384</td></tr>
+        <tr><td class="tam">600 ml</td><td class="num">62,0 mm</td><td class="num">60</td><td class="num">603,2 ml</td><td class="num">600</td><td class="num">46,5 g</td><td class="num">1440</td></tr>
+        <tr><td class="tam">1,2 L</td><td class="num">122,0 mm</td><td class="num">120</td><td class="num">1203,2 ml</td><td class="num">1200</td><td class="num">74,3 g</td><td class="num">1440</td></tr>
+        <tr><td class="tam">1,8 L</td><td class="num">182,0 mm</td><td class="num">180</td><td class="num">1803,9 ml</td><td class="num">1800</td><td class="num">107,3 g</td><td class="num">1440</td></tr>
+        <tr><td class="tam">2,4 L</td><td class="num">242,0 mm</td><td class="num">240</td><td class="num">2405,3 ml</td><td class="num">2400</td><td class="num">144,4 g</td><td class="num">1344</td></tr>
+        <tr><td class="tam">Tampa</td><td class="num">13,5 mm</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">22,9 g</td><td class="num">1152</td></tr>
+        <tr><td class="tam">Aro TPE</td><td class="num">2,4 mm</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">1,9 g</td><td class="num">384</td></tr>
       </tbody>
     </table>
   </div>
@@ -243,7 +243,7 @@
       NOMES.forEach(function(n, i){ pivo.add(pote(n, (i - 1.5) * 150, 0, tampa, aro)); });
       alvo.set(0, 120, 0);
       t.textContent = 'A linha';
-      d.textContent = '600 · 1200 · 1800 · 2400 ml — corpo de 121,2 × 93,3 mm, 127,2 × 99,2 na aba, mesma tampa nos quatro';
+      d.textContent = '600 · 1200 · 1800 · 2400 ml — corpo de 139,7 × 79,8 mm, 145,7 × 85,8 na aba, mesma tampa nos quatro';
     } else if (vista === 'pilha'){
       [0, 60, 120, 180].forEach(function(y){ pivo.add(pote('pote-600', -100, y, tampa, aro)); });
       pivo.add(pote('pote-2400', 100, 0, tampa, aro));
@@ -267,7 +267,7 @@
       alvo.set(0, 120 + sep, 0);
       if (vista === 'encaixe'){
         t.textContent = 'Encaixe explodido';
-        d.textContent = 'pote de 1,2 L · aro de TPE na canaleta do plug · tampa · pé do pote de cima. O pé de 112,4 × 84,4 mm desce dentro da bandeja.';
+        d.textContent = 'pote de 1,2 L · aro de TPE na canaleta do plug · tampa · pé do pote de cima. O pé de 130,9 × 71,0 mm desce dentro da bandeja.';
       } else {
         t.textContent = 'Corte';
         d.textContent = 'o plug da tampa desce 12 mm na boca e leva o aro de TPE numa canaleta: o aro comprime 0,2 mm contra a PAREDE do pote. Vedação radial — não precisa de trava nem de força permanente. O piso da bandeja, 2,0 mm abaixo da borda, é o plano modular.';
