@@ -40,16 +40,16 @@ no sentido do comprimento**. Nesse curso acontecem quatro coisas, nesta ordem:
     │  pote  │                                │     pote      │
 ```
 
-1. **Entram os ganchos.** Seis ganchos em L na face de baixo da tampa (3 por lado longo)
+1. **Entram os ganchos.** Oito ganchos em L na face de baixo da tampa (4 por lado longo)
    descem pelas janelas abertas no lábio da aba. É o macho; o lábio rampado é a fêmea.
 2. **A came puxa a tampa para baixo.** A came é a **aresta de baixo do lábio descendente da
    aba**, rampada.
-   Conforme o gancho avança, a rampa desce e **arrasta a tampa junto** — 2,00 mm em 10 mm
-   (11,3°). Esses 2,00 mm não são número livre: são 1,00 mm de folga de pouso + 1,00 mm de
+   Conforme o gancho avança, a rampa desce e **arrasta a tampa junto** — 2,00 mm em 8 mm
+   (14,0°). Esses 2,00 mm não são número livre: são 1,00 mm de folga de pouso + 1,00 mm de
    compressão da junta. A junta só encosta nos últimos 8 mm do curso — durante o deslizamento
    ela não raspa em nada.
-3. **Patamar.** Os últimos 3 mm da nervura são planos. É ali que o gancho assenta de face
-   inteira (33,6 mm²) em vez de apoiar numa linha.
+3. **Patamar.** Os últimos 9 mm do lábio são planos. É ali que o gancho assenta de face
+   inteira (30,0 mm²) em vez de apoiar numa linha.
 4. **Clique.** Quatro linguetas flexíveis caem num rebaixo no fim do patamar. **É o detente
    que segura o fecho** — não o atrito da rampa.
 
@@ -98,7 +98,24 @@ Então o fundo virou a variável que fecha as quatro capacidades num footprint s
 600 ml, 2,50 mm nos outros três — que é exatamente onde o pote grande quer rigidez de qualquer
 jeito. Sem fundo falso em nenhum deles.
 
-### c) O sobre-centro na nervura não fecha — e foi onde eu errei primeiro
+### c) O comprimento do gancho não é livre
+
+Essa só apareceu ao montar o sólido em 3D — nos cortes 2D ela fica invisível. Para o gancho
+assentar **inteiro** no patamar no fim do curso:
+
+```
+comprimento do gancho + comprimento da rampa  ≤  curso
+```
+
+Com os 6 ganchos de 14 mm e rampa de 10 que eu tinha, dá 24 contra 14 de curso: no fim do curso
+o gancho ficaria montado **meio na rampa, meio no patamar**, apoiado numa linha em vez de numa
+face — e toda a conta de queda da seção 6 cairia junto.
+
+Virou **8 ganchos de 10 mm, rampa de 8, curso de 18**: 10 + 8 = 18. De quebra, ganchos menores
+e em maior número encurtaram o vão da borda entre eles de 41 para 31 mm, e o levantamento
+máximo da borda caiu de 16 para **5 µm**.
+
+### d) O sobre-centro na nervura não fecha — e foi onde eu errei primeiro
 
 A ideia inicial era um **sobre-centro na própria came**: uma depressão de 0,8 mm que a tampa
 teria de re-descer para voltar. Barreira de energia pura, sem peça extra. Elegante e errada.
@@ -109,18 +126,18 @@ que ele** — faz ponte. Para o gancho passar da depressão inteira, o curso ter
 que bate na aba.
 
 Virou **uma função por peça**: a rampa puxa, o detente segura. O patamar plano dos últimos
-3 mm é o que dá ao gancho os 33,6 mm² de apoio de face inteira — sem ele o contato seria uma
+9 mm é o que dá ao gancho os 30,0 mm² de apoio de face inteira — sem ele o contato seria uma
 linha, e toda a conta de queda da seção 6 cairia.
 
-### d) Sabão é lubrificante — não dá para contar com atrito
+### e) Sabão é lubrificante — não dá para contar com atrito
 
-Essa quase passou. A rampa de 11,3° é auto-travante com µ = 0,30 (ângulo de atrito 16,7°), e a
+Essa quase passou. A rampa de 14,0° é auto-travante com µ = 0,30 (ângulo de atrito 16,7°), e a
 conta fecha bonito na bancada. Só que **µ do PP com filme de sabão cai para ~0,08**, ângulo de
 atrito 4,6° — e aí a rampa **não trava mais**. A tampa voltaria sozinha. O produto *é* um pote
 de sabão: projetar o travamento em cima de um coeficiente que o próprio conteúdo derruba 4×
 seria projetar para a bancada, não para a pia.
 
-| µ | ângulo de atrito | vs. rampa de 11,3° |
+| µ | ângulo de atrito | vs. rampa de 14,0° |
 |---|---|---|
 | 0,30 (seco) | 16,7° | trava |
 | 0,15 | 8,5° | **NÃO TRAVA** |
@@ -158,10 +175,11 @@ Contra a linha 1: footprint +2,2 mm, corpo 4,0 mm mais baixo, peso do corpo gran
 prato ............ 2,00 mm, com 3 nervuras de 1,2 × 5,0 mm no piso da bandeja
 murete ........... 3,5 mm de altura, 1,5 mm de parede, vão 114,4 × 85,9
 saia ............. 7,0 mm × 1,6 mm, por fora do corpo (esconde o mecanismo)
-ganchos .......... 6 em L, 14 mm, poste 2,2 mm, asa avança 2,0 mm para dentro
+ganchos .......... 8 em L, 10 mm, poste 2,6 mm, asa 3,0 mm sob o lábio
 linguetas ........ 4 (2 por lado), 9 × 16 × 1,4 mm, deflexão 0,60 mm, face de saída 35°
 lábio de TPE ..... 1,30 mm de espessura, 4,0 mm de balanço, 2,6 g, perímetro 412 mm
-curso ............ 14 mm = 1 de aproximação + 10 de rampa (desce 2,00) + 3 de patamar plano
+curso ............ 18 mm = 1 de aproximação + 8 de rampa (desce 2,00) + 9 de patamar plano
+célula ........... 32,35 mm por gancho = janela 12 + trilho 20,35
 ```
 
 ### A vedação: lábio flexível, não aro esmagado
@@ -194,7 +212,15 @@ Engrossar a **aba** para fazer a rampa daria rechupe **exatamente na face que ve
 O poste do gancho desce **por fora** do lábio e a asa volta para dentro, por baixo dele. Com
 isso o gancho inteiro cabe num corte transversal só, e a saia de 7 mm da tampa esconde tudo.
 
-Apoio por gancho: **33,6 mm² (14 × 2,4)**.
+Apoio por gancho: **30,0 mm² (10 × 3,0)**.
+
+### O batente que fecha o passo
+
+O prato **encosta na aba** — o lábio de TPE mora numa canaleta na face de baixo do prato e
+desce num rebaixo da aba. Quando o prato bate, a compressão é exatamente 1,00 mm. Esse batente
+rígido faz três coisas: define a vedação sem depender de tolerância de came, carrega a pilha, e
+é ele que faz o passo dar **58 + 2 = 60 mm** exatos. Se a tampa apoiasse *sobre* o lábio, o
+passo daria 61,2 mm e a modularidade cairia.
 
 ---
 
@@ -221,13 +247,13 @@ de uma vez.
 
 | Altura | Parada | Força | Por gancho | Apoio | Poste | |
 |---|---|---|---|---|---|---|
-| 0,50 m | 8 mm | 1.602 N | 267 N | 7,9 MPa | 8,7 MPa | OK |
-| 0,75 m | 8 mm | 2.402 N | 400 N | 11,9 MPa | 13,0 MPa | OK |
-| 1,00 m | 8 mm | 3.203 N | 534 N | 15,9 MPa | 17,3 MPa | OK |
-| 1,00 m | 5 mm | 5.125 N | 854 N | 25,4 MPa | 27,7 MPa | OK, no limite |
+| 0,50 m | 8 mm | 1.602 N | 200 N | 6,7 MPa | 7,7 MPa | OK |
+| 0,75 m | 8 mm | 2.402 N | 300 N | 10,0 MPa | 11,6 MPa | OK |
+| 1,00 m | 8 mm | 3.203 N | 400 N | 13,3 MPa | 15,4 MPa | OK |
+| 1,00 m | 5 mm | 5.125 N | 641 N | 21,4 MPa | 24,6 MPa | OK |
 
-Limite do PP: 30 MPa. O caso de 1,00 m com parada em 5 mm passa raspando — é o caso a
-**medir**, não a confiar na conta.
+Limite do PP: 30 MPa. Oito ganchos repartem melhor que seis: mesmo o caso de 1,00 m com parada
+em 5 mm agora tem 18% de margem. Ainda assim é caso a **medir**, não a confiar na conta.
 
 ### Fluência, que é o que mata vedação de PP a longo prazo
 
@@ -237,8 +263,8 @@ poucos meses. **Foi por isso que o lábio flexível teve de vir antes da came.**
 
 ### A borda entre ganchos
 
-Ganchos a cada 41 mm. A seção em U da aba dá I = 54 mm⁴/mm (parede simples de 1,40 mm daria
-0,23 — **235×**). Levantamento máximo no meio do vão: **16 µm** contra 1.000 µm de deflexão do
+Ganchos a cada 31 mm. A seção em U da aba dá I = 54 mm⁴/mm (parede simples de 1,40 mm daria
+0,23 — **235×**). Levantamento máximo no meio do vão: **5 µm** contra 1.000 µm de deflexão do
 lábio. A junta acompanha de sobra; não há por onde vazar entre ganchos.
 
 ---
@@ -249,7 +275,7 @@ lábio. A junta acompanha de sobra; não há por onde vazar entre ganchos.
 O canal da aba abre para baixo, as nervuras da came penduram para baixo, as janelas de entrada
 são interrupções nessas nervuras. Toda superfície é vista de cima ou de fora/baixo.
 
-**Tampa: 2 gavetas laterais** (uma por lado longo), que formam as asas dos 6 ganchos.
+**Tampa: 2 gavetas laterais** (uma por lado longo), que formam as asas dos 8 ganchos.
 
 Essa alocação é deliberada. São **quatro moldes de corpo** — fundos, caros, USD 25–40 mil cada
 — e **um molde de tampa** raso e barato. Pôr as gavetas na tampa custa ~USD 3–4 mil uma vez;
@@ -350,8 +376,11 @@ Uma a menos que a linha 1, porque o aro moldado virou perfil extrudado.
 | `README.md` | este estudo |
 | `calculo-deslizante.py` | memória de cálculo: linha, vedação, came, detente, ganchos, queda, injeção |
 | `mecanismo-came.html` | cópia da página publicada: dois cortes interativos do curso de fechamento |
+| `modelo-3d.html` | cópia da página publicada: modelo 3D orbitável, com corte e a sequência animada |
 
-Página publicada: https://claude.ai/artifact/6MLM4LeKMsvPn62wexfApX
+Páginas publicadas:
+- Modelo 3D: https://claude.ai/artifact/26MfzdTdy4EnPUfbYnEejP
+- Cortes 2D do mecanismo: https://claude.ai/artifact/6MLM4LeKMsvPn62wexfApX
 
 O cálculo roda sozinho: `python3 calculo-deslizante.py`. A integração de volume usa Simpson de
 3 pontos, que é **exata** aqui (a seção é quadrática em z), não aproximação numérica.

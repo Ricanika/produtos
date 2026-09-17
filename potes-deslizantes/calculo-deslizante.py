@@ -68,22 +68,23 @@ FOLGA_PE  = 1.00    # folga do pe dentro do murete, por lado
 SAIA_H    = 7.00    # saia da tampa, por fora do corpo
 SAIA_T    = 1.60
 
-CURSO     = 14.0    # curso horizontal do fechamento
-RAMPA_L   = 10.0    # trecho de rampa
+CURSO     = 18.0    # curso horizontal do fechamento
+RAMPA_L   = 8.0     # trecho de rampa. Limitado por: CURSO - GANCHO_W >= RAMPA_L,
+                    # senao o gancho nao chega inteiro ao patamar no fim do curso.
 HOVER     = 1.00    # folga da tampa acima do 1o contato da junta, no pouso
-PATAMAR_L = 3.0     # patamar PLANO no fim da nervura: e onde o gancho assenta
+PATAMAR_L = 9.0     # patamar PLANO no fim da rampa: e onde o gancho assenta
 
 LAB_T, LAB_L, LAB_DEF = 1.30, 4.00, 1.00   # labio de TPE: espessura, balanco, deflexao
 E_TPE     = 3.5     # MPa, TPE ~55 Shore A
 E_PP      = 900.0   # MPa, PP RP 141 randomico (tampa)
 
-GANCHO_N  = 6       # 3 por lado longo
-GANCHO_W  = 14.0    # largura do gancho
-GANCHO_P  = 2.20    # espessura do poste do gancho
+GANCHO_N  = 8       # 4 por lado longo
+GANCHO_W  = 10.0    # comprimento do gancho, no sentido do curso
+GANCHO_P  = 2.60    # espessura do poste do gancho
 GANCHO_O  = 2.00    # quanto cada asa do pe do gancho avanca sob a nervura da came
-CAME_T    = 2.40    # espessura do labio descendente da aba NA ZONA DA CAME.
+CAME_T    = 3.00    # espessura do labio descendente da aba NA ZONA DA CAME.
                     # O labio ja existia para dar rigidez a borda (secao em U);
-                    # engrossado de 1,20 para 2,40 ele vira a propria came, e a
+                    # engrossado de 1,20 para 3,00 ele vira a propria came, e a
                     # aresta de baixo dele e a rampa. Uma peca, duas funcoes.
 
 LING_N, LING_L, LING_W, LING_T = 4, 9.0, 16.0, 1.40   # linguetas do detente (2 por lado)
@@ -270,12 +271,17 @@ def main():
     print(f"  patamar dos ultimos {PATAMAR_L:.0f} mm e PLANO: e ali que o gancho assenta de")
     print(f"  face inteira ({GANCHO_W*CAME_T:.1f} mm2) e onde o detente clica.")
     print(f"\nPor que o patamar tem de ser plano - e onde eu errei primeiro:")
-    print(f"  A ideia inicial era um SOBRE-CENTRO na propria nervura: uma depressao de")
-    print(f"  0,8 mm que a tampa teria de re-descer para voltar. Nao fecha. O gancho tem")
-    print(f"  {GANCHO_W:.0f} mm de topo PLANO, e um topo plano nao entra numa depressao mais")
-    print(f"  curta que ele - ele faz ponte. Para o gancho passar da depressao inteira o")
-    print(f"  curso teria de dobrar para ~29 mm. Rampar o topo do gancho para acompanhar")
-    print(f"  daria uma cunha de {GANCHO_W*RAMPA_DZ/RAMPA_L:.1f} mm de altura, que bate na aba.")
+    print(f"  A ideia inicial era um SOBRE-CENTRO na propria came: uma depressao que a")
+    print(f"  tampa teria de re-descer para voltar. Nao fecha - um gancho de topo plano nao")
+    print(f"  entra numa depressao mais curta que ele, faz ponte.")
+    print(f"\nO COMPRIMENTO DO GANCHO TAMBEM NAO E LIVRE:")
+    print(f"      GANCHO_W + RAMPA_L <= CURSO")
+    print(f"  Com gancho de 14 mm e rampa de 10 isso nao fecha (24 > 14): no fim do curso o")
+    print(f"  gancho fica montado meio na rampa, meio no patamar, e o apoio de FACE INTEIRA")
+    print(f"  - que e o que a conta de queda usa - simplesmente nao existe. Dai {GANCHO_N} ganchos")
+    print(f"  de {GANCHO_W:.0f} mm em vez de 6 de 14: {GANCHO_W:.0f} + {RAMPA_L:.0f} = "
+          f"{GANCHO_W+RAMPA_L:.0f} <= {CURSO:.0f}. Ganchos menores e em")
+    print(f"  maior numero tambem encurtam o vao da borda entre eles, o que ajuda a vedacao.")
     print(f"  Uma funcao por peca: a RAMPA puxa, o DETENTE segura.")
     print(f"\nARMADILHA: sabao e lubrificante. mu do PP cai de ~{MU_SECO:.2f} seco para "
           f"~{MU_SABAO:.2f} ensaboado.")

@@ -1,0 +1,428 @@
+<title>Pote de came deslizante em 3D</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+  :root{
+    --paper:#EDEEEA; --surface:#F9F9F6; --ink:#15181A; --steel:#3B5262;
+    --amber:#A8571A; --muted:#66717A; --rule:#CED1CB; --stage:#DFE2DD;
+    --sans:'Archivo',system-ui,sans-serif; --serif:'Source Serif 4',Georgia,serif;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --paper:#0F1214; --surface:#171B1E; --ink:#E2E6E5; --steel:#8DAFC3;
+    --amber:#DB8B3E; --muted:#8B969B; --rule:#293034; --stage:#0A0D0F;
+  }}
+  :root[data-theme="dark"]{
+    --paper:#0F1214; --surface:#171B1E; --ink:#E2E6E5; --steel:#8DAFC3;
+    --amber:#DB8B3E; --muted:#8B969B; --rule:#293034; --stage:#0A0D0F;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;
+       line-height:1.62;margin:0}
+  .wrap{max-width:940px;margin:0 auto;padding-inline:16px;padding-block:40px 72px}
+  .col{max-width:64ch}
+  h1,h2{font-family:var(--sans);text-wrap:balance;margin:0}
+  h1{font-size:clamp(28px,5.5vw,42px);font-weight:700;letter-spacing:-.022em;line-height:1.05}
+  h2{font-size:clamp(18px,3vw,22px);font-weight:600;letter-spacing:-.01em;margin-bottom:10px}
+  p{margin:0 0 14px}
+  section{margin-top:46px}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+           color:var(--muted);margin:0 0 12px}
+  .lede{font-size:19px;line-height:1.5;margin-top:16px}
+
+  .stage{margin-top:24px;background:var(--surface);border:1px solid var(--rule);border-radius:3px;
+         overflow:hidden}
+  #cv{display:block;width:100%;height:clamp(340px,58vh,520px);background:var(--stage);
+      touch-action:none;cursor:grab}
+  #cv:active{cursor:grabbing}
+  .bar{border-top:1px solid var(--rule);padding:12px 14px;display:flex;gap:12px;align-items:center;
+       flex-wrap:wrap}
+  button{font-family:var(--sans);font-size:12.5px;font-weight:600;border-radius:2px;
+         padding:8px 14px;cursor:pointer;border:1px solid var(--rule);
+         background:var(--surface);color:var(--ink)}
+  button:hover{border-color:var(--muted)}
+  button.pri{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+  button.pri:hover{background:var(--steel);border-color:var(--steel)}
+  button[aria-pressed="true"]{background:var(--steel);color:var(--surface);border-color:var(--steel)}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  input[type=range]{flex:1;min-width:150px;accent-color:var(--amber);height:22px}
+  .toggles{border-top:1px solid var(--rule);padding:12px 14px;display:flex;gap:8px;flex-wrap:wrap}
+  .readout{display:flex;flex-wrap:wrap;border-top:1px solid var(--rule)}
+  .ro{flex:1 1 130px;padding:10px 14px;border-right:1px solid var(--rule)}
+  .ro:last-child{border-right:0}
+  .ro dt{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+         color:var(--muted);margin:0 0 3px}
+  .ro dd{font-family:var(--mono);font-size:16px;font-variant-numeric:tabular-nums;margin:0;font-weight:500}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;border-top:1px solid var(--rule);padding:11px 14px;
+          font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;
+            vertical-align:-1px}
+  .note{font-size:14.5px;color:var(--muted);line-height:1.55;margin-top:12px}
+  .steps{counter-reset:s;list-style:none;padding:0;margin:18px 0 0}
+  .steps li{counter-increment:s;position:relative;padding-left:38px;margin-bottom:16px}
+  .steps li::before{content:counter(s);position:absolute;left:0;top:0;width:24px;height:24px;
+      border-radius:50%;background:var(--amber);font-family:var(--mono);font-size:12px;
+      display:flex;align-items:center;justify-content:center;font-weight:500;
+      color:var(--paper)}
+  .tw{overflow-x:auto;margin:16px 0}
+  table{border-collapse:collapse;font-family:var(--mono);font-size:13px;width:100%;min-width:380px;
+        font-variant-numeric:tabular-nums}
+  th{font-weight:500;text-align:left;color:var(--muted);font-size:10.5px;letter-spacing:.09em;
+     text-transform:uppercase;padding:0 14px 7px 0;border-bottom:1px solid var(--rule)}
+  td{padding:7px 14px 7px 0;border-bottom:1px solid var(--rule)}
+  tr:last-child td{border-bottom:0}
+  td.n{text-align:right;padding-right:22px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header class="col">
+  <p class="eyebrow">Linha 2 · pote modular de 600 ml · modelo em escala real</p>
+  <h1>Pote de came deslizante em 3D</h1>
+  <p class="lede">Gire com o dedo ou o mouse. Aperte <strong>Fechar</strong> e olhe os
+  ganchos âmbar entrando por baixo dos trilhos azuis — é isso que prende a tampa.</p>
+</header>
+
+<div class="stage">
+  <canvas id="cv"></canvas>
+  <div class="bar">
+    <button id="play" class="pri" type="button">Fechar</button>
+    <input id="scrub" type="range" min="0" max="1000" step="1" value="0"
+           aria-label="Sequência de fechamento">
+  </div>
+  <div class="toggles">
+    <button id="tCorte" type="button" aria-pressed="false">Corte pela metade</button>
+    <button id="tZoom" type="button" aria-pressed="false">Zoom na borda</button>
+    <button id="tPilha" type="button" aria-pressed="false">Pote empilhado</button>
+    <button id="tReset" type="button">Reenquadrar</button>
+  </div>
+  <dl class="readout">
+    <div class="ro"><dt>Fase</dt><dd id="rFase" style="font-size:13px;line-height:1.4">Tampa fora</dd></div>
+    <div class="ro"><dt>Curso</dt><dd id="rCurso">0,0 mm</dd></div>
+    <div class="ro"><dt>Queda da came</dt><dd id="rQueda">0,00 mm</dd></div>
+    <div class="ro"><dt>Junta</dt><dd id="rJunta">solta</dd></div>
+  </dl>
+  <div class="legend">
+    <span><i style="background:#8FA6B4"></i>corpo em PP</span>
+    <span><i style="background:#2F4B5C"></i>trilho da came <b style="color:var(--ink)">(fêmea)</b></span>
+    <span><i style="background:#C9761F"></i>gancho <b style="color:var(--ink)">(macho)</b></span>
+    <span><i style="background:#9A3D22"></i>lábio de TPE</span>
+    <span><i style="background:#B6C3CB"></i>tampa</span>
+  </div>
+</div>
+<p class="note col">Malha paramétrica em milímetros, escala real, saída de 0,5° omitida (é
+imperceptível). Serve para entender o encaixe e imprimir protótipo — o molde precisa do CAD do
+projetista.</p>
+
+<section class="col">
+  <p class="eyebrow">O que você está vendo</p>
+  <h2>Quatro movimentos</h2>
+  <ol class="steps">
+    <li><strong>A tampa pousa deslocada 18 mm.</strong> Os 8 ganchos caem pelas
+    <em>janelas</em> — os trechos onde o trilho azul não existe. Nessa posição a tampa está
+    2,0 mm alta e a junta nem encostou.</li>
+    <li><strong>Você empurra.</strong> Cada gancho entra por baixo do seu trilho. A aresta de
+    baixo do trilho é uma <strong>rampa de 14°</strong>: ela desce no sentido do fechamento,
+    então o gancho — e a tampa inteira — é <strong>puxado para baixo</strong> 2,00 mm em 8 mm
+    de curso.</li>
+    <li><strong>A junta comprime e o prato bate na aba.</strong> O lábio de TPE mora numa
+    canaleta na face de baixo do prato e desce num rebaixo da aba; quando o prato <em>encosta</em>
+    na aba, a compressão é exatamente 1,00 mm. Esse batente rígido é quem define a vedação e
+    quem carrega a pilha — e é ele que faz o passo modular dar <strong>58 + 2 = 60 mm</strong>
+    exatos. O lábio abre para dentro do pote, então pressão interna o empurra contra a sede:
+    invertido, veda melhor.</li>
+    <li><strong>Os últimos 10 mm são patamar plano.</strong> O gancho assenta de face inteira,
+    30 mm² cada, e as linguetas do detente caem no rebaixo. Clique.</li>
+  </ol>
+  <p>Para abrir, o caminho inverso: a came <em>levanta</em> a tampa enquanto ela sai. Isso
+  quebra a sucção sozinho — não existe o "briga com o pote para tirar a tampa".</p>
+</section>
+
+<section class="col">
+  <p class="eyebrow">A pergunta que importa</p>
+  <h2>Por que não sai de cabeça para baixo</h2>
+  <p>Ative <strong>Corte pela metade</strong> e <strong>Zoom na borda</strong>, feche, e gire
+  até ver o gancho por baixo do trilho. O gancho está <strong>embaixo</strong> de uma aresta de
+  PP maciço. Para a tampa subir, o gancho teria que atravessar o trilho.</p>
+  <p>A trava de orelha do mercado não funciona assim: ela segura por <strong>flexão</strong>, e
+  a carga de uma queda <em>gira</em> a trava até ela desarmar sozinha — é a camagem. Aqui a
+  direção de fuga do gancho é <strong>perpendicular</strong> à carga. Não existe esse caminho.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Queda, 2,4 L cheio (2,61 kg)</th><th>Por gancho</th><th>Apoio</th><th>Poste</th></tr></thead>
+    <tbody>
+      <tr><td>0,75 m, parada em 8 mm</td><td class="n">300 N</td><td class="n">10,0</td><td class="n">11,6 MPa</td></tr>
+      <tr><td>1,00 m, parada em 8 mm</td><td class="n">400 N</td><td class="n">13,3</td><td class="n">15,4 MPa</td></tr>
+      <tr><td>1,00 m, parada em 5 mm</td><td class="n">641 N</td><td class="n">21,4</td><td class="n">24,6 MPa</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Limite do PP: 30 MPa. Oito ganchos de 10 mm com 30 mm² de apoio cada. Ainda
+  assim é caso de <strong>medir</strong>, não de confiar na conta.</p>
+</section>
+
+<section class="col">
+  <p class="eyebrow">O que o 3D me obrigou a corrigir</p>
+  <h2>Gancho não cabia no patamar</h2>
+  <p>Montar o sólido expôs uma regra que os cortes escondiam. Para o gancho assentar
+  <em>inteiro</em> no patamar no fim do curso:</p>
+  <p style="font-family:var(--mono);font-size:15px;background:var(--surface);border:1px solid var(--rule);
+     border-left:2px solid var(--amber);border-radius:2px;padding:14px 16px">
+     comprimento do gancho + comprimento da rampa ≤ curso</p>
+  <p>Com os 6 ganchos de 14 mm e rampa de 10 que eu tinha, dá 24 contra 14 de curso — no fim do
+  curso o gancho ficaria montado <strong>meio na rampa, meio no patamar</strong>, apoiado numa
+  linha em vez de numa face. Toda a conta de queda cairia junto.</p>
+  <p>Virou <strong>8 ganchos de 10 mm</strong>, rampa de 8, curso de 18: 10 + 8 = 18. De quebra,
+  ganchos menores e em maior número encurtam o vão da borda entre eles de 41 para 31 mm, o que
+  ajuda a vedação — o levantamento máximo da borda entre ganchos caiu para 5 µm contra 1.000 µm
+  de deflexão do lábio.</p>
+</section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  if(!window.THREE){ document.getElementById('cv').insertAdjacentHTML('afterend',
+    '<p class="note" style="padding:14px">Não foi possível carregar a biblioteca 3D.</p>'); return; }
+
+  // ---------- cotas, mm ----------
+  var POT_L=123.4, POT_W=94.9, R=18, POT_H=58, WALL=1.15, FUNDO=1.6;
+  var MO_L=POT_L-2*WALL, MO_W=POT_W-2*WALL, MO_R=R-WALL;
+  var ABA=3.0, ABA_L=POT_L+2*ABA, ABA_W=POT_W+2*ABA, ABA_R=R+ABA, ABA_T=1.6;
+  var CAME_T=3.0, SKIRT=1.2, SK_BOT=-5.1, RAMP_TOP=-3.1, RAMP_L=8.0;
+  var CURSO=18.0, NH=4, CELL=ABA_L/NH, WIN=12.0, HOOK=10.0, HOOK_P=2.6, WING_T=1.8;
+  var PRATO=2.0, HOME_GAP=0.0, MUR_H=3.5, MUR_T=1.5, MUR_I=114.4, SAIA=2.6, SAIA_H=7.0;
+  var LID_L=ABA_L+2*SAIA, LID_W=ABA_W+2*SAIA, LID_R=ABA_R+SAIA;
+  var SEAL=125.4, HOVER=2.0, MODULO=60;
+
+  var C={corpo:0x8FA6B4, trilho:0x2F4B5C, gancho:0xC9761F, tpe:0x9A3D22, tampa:0xB6C3CB};
+
+  // ---------- helpers ----------
+  function rr(L,W,rad){
+    var l=L/2-rad, w=W/2-rad, s=new THREE.Shape();
+    s.moveTo(-l,-W/2); s.lineTo(l,-W/2);
+    s.absarc(l,-w,rad,-Math.PI/2,0,false); s.lineTo(L/2,w);
+    s.absarc(l,w,rad,0,Math.PI/2,false); s.lineTo(-l,W/2);
+    s.absarc(-l,w,rad,Math.PI/2,Math.PI,false); s.lineTo(-L/2,-w);
+    s.absarc(-l,-w,rad,Math.PI,1.5*Math.PI,false);
+    return s;
+  }
+  function ring(oL,oW,oR,iL,iW,iR,d){
+    var s=rr(oL,oW,oR); s.holes.push(rr(iL,iW,iR));
+    return new THREE.ExtrudeGeometry(s,{depth:d,bevelEnabled:false,curveSegments:14});
+  }
+  function slab(L,W,rad,d){
+    return new THREE.ExtrudeGeometry(rr(L,W,rad),{depth:d,bevelEnabled:false,curveSegments:14});
+  }
+  var clip=new THREE.Plane(new THREE.Vector3(0,-1,0),0);
+  function mat(col,op){
+    return new THREE.MeshStandardMaterial({color:col,roughness:.42,metalness:.02,
+      transparent:op<1, opacity:op, side:THREE.DoubleSide, clippingPlanes:[], depthWrite:op>.9});
+  }
+  var mats=[];
+  function M(col,op){ var m=mat(col,op); mats.push(m); return m; }
+  function add(parent,geo,m,z){ var o=new THREE.Mesh(geo,m); if(z!==undefined)o.position.z=z;
+    parent.add(o); return o; }
+
+  // ---------- cena ----------
+  var cv=document.getElementById('cv');
+  var renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+  renderer.localClippingEnabled=true;
+  var scene=new THREE.Scene();
+  var camera=new THREE.PerspectiveCamera(34,1,1,3000);
+  camera.up.set(0,0,1);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x60707a,0.85));
+  var d1=new THREE.DirectionalLight(0xffffff,0.62); d1.position.set(160,-240,300); scene.add(d1);
+  var d2=new THREE.DirectionalLight(0xffffff,0.34); d2.position.set(-220,180,120); scene.add(d2);
+
+  var root=new THREE.Group(); scene.add(root);
+
+  // ===== CORPO =====
+  var corpo=new THREE.Group(); root.add(corpo);
+  var mCorpo=M(C.corpo,.34), mTrilho=M(C.trilho,1);
+  add(corpo, ring(POT_L,POT_W,R,MO_L,MO_W,MO_R, POT_H-ABA_T-FUNDO), mCorpo, -POT_H+FUNDO);
+  add(corpo, slab(POT_L,POT_W,R,FUNDO), mCorpo, -POT_H);
+  add(corpo, ring(ABA_L,ABA_W,ABA_R,MO_L,MO_W,MO_R,ABA_T), mCorpo, -ABA_T);
+
+  // saia curta dos lados curtos (contínua, só rigidez)
+  [-1,1].forEach(function(sx){
+    var g=new THREE.BoxGeometry(SKIRT, ABA_W-2*ABA_R+2*(ABA_R-2), Math.abs(SK_BOT)-ABA_T);
+    var m=new THREE.Mesh(g,mCorpo);
+    m.position.set(sx*(ABA_L/2-SKIRT/2), 0, (SK_BOT+(-ABA_T))/2);
+    corpo.add(m);
+  });
+
+  // trilhos da came: 4 por lado longo
+  function railGeo(){
+    var s=new THREE.Shape();           // x = ao longo da borda, y = para BAIXO
+    var u0=0, u1=CELL-WIN;
+    s.moveTo(u0, ABA_T);
+    s.lineTo(u0, -RAMP_TOP);
+    s.lineTo(u0+RAMP_L, -SK_BOT);
+    s.lineTo(u1, -SK_BOT);
+    s.lineTo(u1, ABA_T);
+    return new THREE.ExtrudeGeometry(s,{depth:CAME_T,bevelEnabled:false});
+  }
+  var rg=railGeo();
+  var rails=[];
+  [-1,1].forEach(function(sy){
+    for(var k=0;k<NH;k++){
+      var m=new THREE.Mesh(rg,mTrilho);
+      m.rotation.x=-Math.PI/2;
+      m.position.x = -ABA_L/2 + k*CELL + WIN;
+      m.position.y = sy>0 ? (ABA_W/2-CAME_T) : (-ABA_W/2);
+      m.position.z = 0;
+      corpo.add(m); rails.push(m);
+    }
+  });
+
+  // ===== TAMPA =====
+  var tampa=new THREE.Group(); root.add(tampa);
+  var mTampa=M(C.tampa,.46), mGan=M(C.gancho,1), mTpe=M(C.tpe,1);
+  add(tampa, slab(LID_L,LID_W,LID_R,PRATO), mTampa, HOME_GAP);
+  add(tampa, ring(MUR_I+2*MUR_T, MUR_I+2*MUR_T-(POT_L-POT_W), 15, MUR_I, MUR_I-(POT_L-POT_W), 13.5, MUR_H),
+      mTampa, HOME_GAP+PRATO);
+  add(tampa, ring(LID_L,LID_W,LID_R,ABA_L,ABA_W,ABA_R,SAIA_H), mTampa, HOME_GAP-SAIA_H);
+  // lábio de TPE
+  // labio de TPE: mora numa canaleta na face de baixo do prato e desce 0,9 mm
+  // para dentro de um rebaixo na aba. O prato encosta na aba - e esse batente que
+  // define a compressao de 1,00 mm e que carrega a pilha.
+  add(tampa, ring(SEAL+1.3, SEAL+1.3-(POT_L-POT_W), ABA_R-2.5, SEAL-1.3, SEAL-1.3-(POT_L-POT_W), ABA_R-3.8, 1.0),
+      mTpe, HOME_GAP-0.9);
+  // ganchos: asa por baixo do trilho + poste por fora
+  var WING_TOP=SK_BOT;
+  [-1,1].forEach(function(sy){
+    for(var k=0;k<NH;k++){
+      var xc = -ABA_L/2 + k*CELL + WIN + (CURSO-RAMP_L) + RAMP_L + HOOK/2 - CURSO + CURSO;
+      xc = -ABA_L/2 + k*CELL + WIN + CURSO - HOOK/2;
+      var wing=new THREE.Mesh(new THREE.BoxGeometry(HOOK,CAME_T,WING_T),mGan);
+      wing.position.set(xc, sy*(ABA_W/2-CAME_T/2), WING_TOP-WING_T/2);
+      tampa.add(wing);
+      var hPost = (HOME_GAP) - (WING_TOP-WING_T);
+      var post=new THREE.Mesh(new THREE.BoxGeometry(HOOK,HOOK_P,hPost),mGan);
+      post.position.set(xc, sy*(ABA_W/2+HOOK_P/2), (WING_TOP-WING_T+HOME_GAP)/2);
+      tampa.add(post);
+    }
+  });
+  // linguetas do detente, 2 por lado
+  [-1,1].forEach(function(sy){
+    [-1,1].forEach(function(sx){
+      var t=new THREE.Mesh(new THREE.BoxGeometry(16,1.4,5.0),mGan);
+      t.position.set(sx*CELL*0.62, sy*(ABA_W/2+HOOK_P/2), HOME_GAP-2.6);
+      tampa.add(t);
+    });
+  });
+
+  // ===== POTE EMPILHADO =====
+  var pilha=new THREE.Group(); pilha.visible=false; root.add(pilha);
+  var mGhost=M(C.corpo,.20);
+  add(pilha, ring(POT_L,POT_W,R,MO_L,MO_W,MO_R,POT_H-ABA_T-FUNDO), mGhost, MODULO-POT_H);
+  // pe embutido de 6 mm: o fundo do pote de cima recua, e o murete entra nele
+  add(pilha, ring(POT_L,POT_W,R,MUR_I-2,MUR_I-2-(POT_L-POT_W),13, FUNDO), mGhost,
+      MODULO-POT_H+6.0-FUNDO);
+  add(pilha, ring(ABA_L,ABA_W,ABA_R,MO_L,MO_W,MO_R,ABA_T), mGhost, MODULO-ABA_T);
+
+  // ---------- cinemática ----------
+  function camZ(t){                       // altura da tampa acima da posição de casa
+    if(t<=0) return HOVER;
+    if(t>=RAMP_L) return 0;
+    return HOVER*(1-t/RAMP_L);
+  }
+  var FASES=['Tampa fora','Pousando','Deslizando — came puxando','Junta comprimindo','Travada · clique'];
+  function setSeq(u){                     // u de 0 a 1
+    var pousa=0.34, desliza=0.90, t, z, fase;
+    if(u<pousa){
+      var k=u/pousa;
+      t=0; z=HOVER + (1-k)*46;
+      fase = k<0.06 ? 0 : 1;
+    } else if(u<desliza){
+      t = CURSO*(u-pousa)/(desliza-pousa);
+      z = camZ(t);
+      fase = (HOVER-z) > 0.98 ? 3 : 2;
+    } else { t=CURSO; z=0; fase=4; }
+    tampa.position.x = -(CURSO - t);
+    tampa.position.z = z;
+    var comp = Math.max(0, 1.0 - z);
+    document.getElementById('rFase').textContent=FASES[fase];
+    document.getElementById('rCurso').textContent=t.toFixed(1).replace('.',',')+' mm';
+    document.getElementById('rQueda').textContent=(HOVER-z).toFixed(2).replace('.',',')+' mm';
+    document.getElementById('rJunta').textContent =
+      comp<0.005 ? 'solta' : comp.toFixed(2).replace('.',',')+' mm';
+  }
+
+  // ---------- câmera orbital ----------
+  var az=-0.62, pol=1.16, dist=330, target=new THREE.Vector3(0,0,-24);
+  function place(){
+    camera.position.set(
+      target.x + dist*Math.sin(pol)*Math.cos(az),
+      target.y + dist*Math.sin(pol)*Math.sin(az),
+      target.z + dist*Math.cos(pol));
+    camera.lookAt(target);
+  }
+  var drag=null;
+  cv.addEventListener('pointerdown',function(e){ drag={x:e.clientX,y:e.clientY};
+    cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener('pointermove',function(e){
+    if(!drag) return;
+    az -= (e.clientX-drag.x)*0.008;
+    pol = Math.max(0.12, Math.min(2.0, pol - (e.clientY-drag.y)*0.006));
+    drag={x:e.clientX,y:e.clientY}; place();
+  });
+  ['pointerup','pointercancel','pointerleave'].forEach(function(t){
+    cv.addEventListener(t,function(){ drag=null; }); });
+  cv.addEventListener('wheel',function(e){
+    e.preventDefault(); dist=Math.max(70,Math.min(760,dist*(1+Math.sign(e.deltaY)*0.11))); place();
+  },{passive:false});
+
+  function resize(){
+    var w=cv.clientWidth, h=cv.clientHeight;
+    renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+    renderer.setSize(w,h,false);
+    camera.aspect=w/h; camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize',function(){ resize(); place(); });
+
+  // ---------- controles ----------
+  var scrub=document.getElementById('scrub'), play=document.getElementById('play'), raf=null;
+  function stopAnim(){ if(raf){cancelAnimationFrame(raf); raf=null;}
+    play.textContent = parseFloat(scrub.value) > 500 ? 'Abrir' : 'Fechar'; }
+  scrub.addEventListener('input',function(){ stopAnim(); setSeq(scrub.value/1000); });
+  play.addEventListener('click',function(){
+    if(raf){ stopAnim(); return; }
+    var from=parseFloat(scrub.value)/1000, to = from>0.5 ? 0 : 1, t0=null, dur=3400;
+    play.textContent='Parar';
+    (function step(ts){
+      if(t0===null) t0=ts;
+      var k=Math.min(1,(ts-t0)/dur), v=from+(to-from)*k;
+      scrub.value=v*1000; setSeq(v);
+      if(k<1){ raf=requestAnimationFrame(step); }
+      else { raf=null; play.textContent = to>0.5 ? 'Abrir' : 'Fechar'; }
+    })(performance.now());
+  });
+
+  function toggle(id,fn){
+    var b=document.getElementById(id);
+    b.addEventListener('click',function(){
+      var on = b.getAttribute('aria-pressed')!=='true';
+      b.setAttribute('aria-pressed', on?'true':'false'); fn(on);
+    });
+  }
+  toggle('tCorte',function(on){
+    mats.forEach(function(m){ m.clippingPlanes = on ? [clip] : []; m.needsUpdate=true; });
+  });
+  toggle('tZoom',function(on){
+    dist = on ? 108 : 330; target.set(0,0, on ? -3 : -24);
+    pol = on ? 1.44 : 1.16; place();
+  });
+  toggle('tPilha',function(on){ pilha.visible=on; });
+  document.getElementById('tReset').addEventListener('click',function(){
+    az=-0.62; pol=1.16; dist=330; target.set(0,0,-24);
+    ['tCorte','tZoom'].forEach(function(id){
+      var b=document.getElementById(id);
+      if(b.getAttribute('aria-pressed')==='true'){ b.click(); }
+    });
+    place();
+  });
+
+  resize(); place(); setSeq(0);
+  requestAnimationFrame(function(){ resize(); place(); });
+  (function loop(){ renderer.render(scene,camera); requestAnimationFrame(loop); })();
+})();
+</script>
