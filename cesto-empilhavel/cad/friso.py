@@ -22,7 +22,8 @@ def main():
     M.set_draft(12.0)
     p, _ = M.cesto(aba=True)
     yr = M.PES[1][0]
-    cx = Pos(96.0, yr + M.DESLOC, 128.0) * Box(40.0, 44.0, 28.0)
+    cx = Pos(M.LARG / 2 - 11.5, yr + M.DESLOC, 128.0) * \
+        Box(40.0, 44.0, 28.0)
     export_stl(p & cx, os.path.join(DEST, "fr-a.stl"))
     export_stl((Pos(0, M.DESLOC, 130.0) * p) & cx, os.path.join(DEST, "fr-b.stl"))
     ma = trimesh.load(os.path.join(DEST, "fr-a.stl"))
@@ -77,8 +78,8 @@ def main():
     tb.text(0.0, 0.40, "Os quatro sentidos travam a partir de 0,6 mm de "
             "folga. Antes era um pino só, que segurava apenas o sentido do "
             "encaixe.\n\nCusta zero no encaixe: a face interna do friso mora "
-            "em x = 98,6 mm, para fora dos 98,1 mm onde a parede da peça "
-            "encaixada passa pela cota do rim.", fontsize=9.0, color=TINTA,
+            "em x = %.1f mm, para fora dos %.1f mm onde a parede da peça "
+            "encaixada passa pela cota do rim." % (M.friso_x0(), M.LARG/2 - M.ABA_W + M.TAN*M.FRISO_H), fontsize=9.0, color=TINTA,
             va="top", linespacing=1.55, wrap=True)
     fig.savefig(os.path.join(DEST, "friso.png"), dpi=125, facecolor=FUNDO)
     print("gerado friso.png")

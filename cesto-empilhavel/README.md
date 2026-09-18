@@ -630,6 +630,50 @@ começa o raio de canto). Em 36 ele pousa em 46…54, com 4,4 mm de sobra.
 
 Peso **153,9 g**. Encaixe e empilhamento inalterados: 46,9 e 130,0 mm.
 
+#### O P estava girado: a abertura vai na LARGURA
+
+O lado maior é o **comprimento** e a **abertura fica na largura**. O modelo
+estava ao contrário — a abertura na face de 215 mm e os pés nas de 200. Agora:
+
+| | antes | agora |
+|---|---|---|
+| X — largura (onde fica a abertura) | 215 mm | **200 mm** |
+| Y — comprimento (o lado maior) | 200 mm | **215 mm** |
+| pés e acoplamento | faces de 200 | **faces de 215** |
+| passo acoplado | 215 mm | **200 mm** |
+
+A troca é mais que renomear eixos: as cotas dos pés, do friso e das caudas de
+andorinha são em y, e o trecho reto da lateral mudou de [−46, 58] para
+**[−53,5, 63,9] mm** (o limite de trás é o raio de canto da planta no topo,
+41,6 mm a 12°; o da frente é onde o chanfro come a aba). Reposicionado:
+
+| | antes | agora |
+|---|---|---|
+| pé da frente | y = −39 | **−43 mm** |
+| encaixe de trás | y = 36 | **42 mm** |
+| caudas de acoplamento | −22 / +26 | **−26 / +28 mm** |
+| braço de apoio | 79 mm | **85 mm** |
+
+`aba_livre()` passou a contar o **berço do friso** como ocupado: a fêmea da
+cauda escava a aba 4 mm para dentro e o friso mora justo aí — sem isso a fêmea
+cortaria a perna do friso.
+
+Tudo o que foi medido antes continua valendo, agora com o P na orientação
+certa: **encaixa 46,9 mm** (12 peças em 648 mm), **empilha 130,0 mm** com 4
+apoios e 148 mm² de contato, acoplamento travando a partir de 0,6 mm e
+soltando com 15 mm de levantamento. Peso **155,6 g**, capacidade **3,68 L**,
+envelope 204 × 206 × 132,5 mm.
+
+**O ângulo da abertura** é o chanfro de topo, e com o comprimento em 215 mm
+sobrou trecho reto atrás — ou seja, dá para abrir mais sem mexer no
+empilhamento. `cad/abertura.py` desenha as três (folha `abertura.png`):
+
+| chanfro | face frontal | topo da frente | aba livre atrás |
+|---|---|---|---|
+| 40 mm | 54 mm | z = 90 mm | 175 mm |
+| **52 mm (hoje)** | **42 mm** | **z = 78 mm** | **163 mm** |
+| 68 mm | 26 mm | z = 62 mm | 147 mm |
+
 ### 4.3 Acoplado — as três canaletas
 
 O pedido foi uma **canaleta de ponta a ponta na lateral, macho de um lado e
@@ -890,5 +934,6 @@ cad/aba.py         a arquitetura de 4.2.4 -- aba plana no rim, pes com
 cad/cortes.py      cortes 2D no eixo do pe, tirados do solido com
                    trimesh.mesh_plane, e a folha cortes.png
 cad/friso.py       o friso em U na aba, com a trava medida nos 4 sentidos
+cad/abertura.py    tres angulos de abertura no perfil, e a folha abertura.png
 cad/cesto-aba.step/.stl    a peca da arquitetura da aba (12 graus de saida)
 ```

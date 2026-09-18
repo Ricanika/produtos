@@ -59,6 +59,7 @@ def main(pn):
     m = trimesh.load(arq)
     yc = M.PES[0][0]          # pe da frente
     yr = M.PES[1][0]          # encaixe de tras
+    hx = M.LARG / 2           # plano da junta: tudo em x e relativo a ele
 
     fig, axs = plt.subplots(1, 3, figsize=(17.4, 7.4), facecolor=FUNDO)
     for ax in axs:
@@ -73,20 +74,20 @@ def main(pn):
     desenha(ax, seg(m, yc + DESLOC), "#aab4c2", lw=1.0)
     desenha(ax, seg(m, yc), CINZ)
     desenha(ax, seg(m, yc, pn), NOVO)
-    ax.set_xlim(52, 124); ax.set_ylim(-6, 200)
+    ax.set_xlim(hx - 56, hx + 17); ax.set_ylim(-6, 200)
     ax.set_title(f"ENCAIXE · corte no eixo do pé · passo {pn:.1f} mm"
                  .replace(".", ","), fontsize=12, color=TINTA, weight="bold",
                  pad=14)
-    cota(ax, 66.0, 0.0, pn, f"{pn:.1f} mm".replace(".", ","))
-    ax.text(112, 4, "piso do pé de cima\ndentro do pé de baixo", fontsize=8.4,
+    cota(ax, hx - 42, 0.0, pn, f"{pn:.1f} mm".replace(".", ","))
+    ax.text(hx + 5, 4, "piso do pé de cima\ndentro do pé de baixo", fontsize=8.4,
             color=NOVO, va="center", ha="left")
     ax.annotate("", xy=(M.LARG / 2, 137), xytext=(M.LARG / 2 - M.ABA_W, 137),
                 arrowprops=dict(arrowstyle="<->", color=CINZ, lw=1.0))
-    ax.text(M.LARG / 2 - M.ABA_W - 3, 138,
+    ax.text(hx - M.ABA_W - 3, 138,
             "aba 10 mm: a parede de cima tem\nde passar pela borda interna "
             "dela\n→ 10/tg 12° = 46,9 mm",
             fontsize=8.4, color=CINZ, va="bottom", ha="right")
-    ax.text(53, 196, "cinza claro: a mesma peça 14 mm ao lado,\nonde a "
+    ax.text(hx - 55, 196, "cinza claro: a mesma peça 14 mm ao lado,\nonde a "
             "parede e a aba estão inteiras", fontsize=8.2, color="#9aa4b2",
             va="top", ha="left")
 
@@ -94,14 +95,14 @@ def main(pn):
     ax = axs[1]
     desenha(ax, seg(m, yc + DESLOC), CINZ)
     desenha(ax, seg(m, yc, PASSO_E), NOVO)
-    ax.set_xlim(60, 124); ax.set_ylim(-6, 276)
+    ax.set_xlim(hx - 48, hx + 17); ax.set_ylim(-6, 276)
     ax.set_title(f"EMPILHAMENTO · corte {DESLOC:.0f} mm ao lado do pé · "
                  f"passo {PASSO_E:.1f} mm".replace(".", ","), fontsize=12,
                  color=TINTA, weight="bold", pad=14)
-    cota(ax, 66.0, 0.0, PASSO_E, f"{PASSO_E:.1f} mm".replace(".", ","))
-    ax.text(112, 132, "o piso do pé pousa\nna aba plana", fontsize=8.4,
+    cota(ax, hx - 42, 0.0, PASSO_E, f"{PASSO_E:.1f} mm".replace(".", ","))
+    ax.text(hx + 5, 132, "o piso do pé pousa\nna aba plana", fontsize=8.4,
             color=NOVO, va="center", ha="left")
-    ax.text(112, 120, "aqui a aba é inteira:\no recorte ficou 10 mm\npara lá",
+    ax.text(hx + 5, 120, "aqui a aba é inteira:\no recorte ficou 10 mm\npara lá",
             fontsize=8.4, color=CINZ, va="top", ha="left")
 
     fig.text(0.5, 0.975, "O mesmo pé nas duas funções",
@@ -115,10 +116,10 @@ def main(pn):
     desenha(ax, seg(m, yr + DESLOC), "#aab4c2", lw=1.0)
     desenha(ax, seg(m, ypino), CINZ)
     desenha(ax, seg(m, yr, PASSO_E), NOVO)
-    ax.set_xlim(88, 116); ax.set_ylim(117, 143)
+    ax.set_xlim(hx - 20, hx + 9); ax.set_ylim(117, 143)
     ax.set_title("O ENCAIXE DE TRÁS · o friso na aba", fontsize=12,
                  color=TINTA, weight="bold", pad=14)
-    ax.text(89, 142.5, "friso de 2,5 mm na aba (cinza) encostado no piso do pé "
+    ax.text(hx - 19, 142.5, "friso de 2,5 mm na aba (cinza) encostado no piso do pé "
             "(laranja):\ntrês pernas em U prendem o pé em y nos dois sentidos "
             "e para fora.\nCom o friso dos dois lados, x fica preso também — "
             "o andar\nfica POSICIONADO, não só apoiado.",

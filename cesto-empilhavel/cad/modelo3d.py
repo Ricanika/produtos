@@ -39,8 +39,10 @@ from build123d import (Align, Axis, Box, Cylinder, Plane, Polyline, Pos,
 RHO = 0.905e-3            # g/mm3 - PP copolimero
 
 # --- envelope ---------------------------------------------------------------
-LARG   = 215.0            # X - largura da boca
-PROF   = 200.0            # Y - profundidade
+# O P estava girado: o lado MAIOR e o comprimento (Y, frente-fundo) e a
+# ABERTURA fica na LARGURA (X, os 200 mm). Os pes vao nas faces de 215 mm.
+LARG   = 200.0            # X - largura da boca: e nela que fica a abertura
+PROF   = 215.0            # Y - comprimento (o lado maior)
 ALT    = 130.0            # Z - altura
 DRAFT  = 3.5              # graus por lado: saida de molde e folga de encaixe
 
@@ -135,8 +137,8 @@ DESLOC = 14.0                 # deslocamento em y que troca ENCAIXAR por EMPILHA
 #   tras   -- o ENCAIXE: nervura fina, com o pino da referencia na aba
 # (yc, L em y, parede, saida em y, face externa no piso, tem pino na aba)
 PES = (
-    (-39.0, 10.0, 1.6, 0.045, LARG / 2 - ABA_W + 3.0, False),
-    (36.0, 8.0, 1.2, 0.032, LARG / 2 - ABA_W + 5.5, True),
+    (-43.0, 10.0, 1.6, 0.045, LARG / 2 - ABA_W + 3.0, False),
+    (42.0, 8.0, 1.2, 0.032, LARG / 2 - ABA_W + 5.5, True),
 )
 # Regra de cada pe: saida em y >= parede/passo_encaixe, senao a boca da
 # cavidade nunca engole a lingua. A 46,9 mm de passo: 0,034 para 1,6 mm de
@@ -545,13 +547,21 @@ def _frisos():
 
 
 def aba_livre():
-    """Trechos de y da aba sem recorte e sem pino, no lado reto da lateral."""
+    """Trechos de y da aba livres de recorte e de friso, no lado reto.
+
+    A cauda de andorinha do acoplamento escava a aba de ACO2_D para dentro, e
+    o friso mora justo ai: se as duas se encontrarem a femea corta a perna do
+    friso. Por isso o berco entra na lista de ocupados.
+    """
     r_topo = 14.0 + ALT * TAN
     lim = (-PROF / 2 + CHANFRO + 2, PROF / 2 - r_topo - 2)
     ocupado = []
-    for yc, L, t, ky, r00, pino in PES:
+    for yc, L, t, ky, r00, friso in PES:
         h = L / 2 - t + ky * ALT + 0.5
-        ocupado.append((yc - h, yc + h))
+        ocupado.append((yc - h, yc + h))          # recorte da aba
+        if friso:                                  # e o berco do friso
+            ocupado.append((yc + DESLOC - L / 2 - FRISO_F - FRISO_T - 0.5,
+                            yc + DESLOC + L / 2 + FRISO_F + FRISO_T + 0.5))
     ocupado.sort()
     livres, y = [], lim[0]
     for a, b in ocupado:

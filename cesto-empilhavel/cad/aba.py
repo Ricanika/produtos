@@ -53,10 +53,11 @@ def main():
     pn = passo_xy(p, 0.0)
     pe = passo_xy(p, DESLOC)
     peso, cap = p.volume * M.RHO, M.capacidade()
-    hz = p.bounding_box().size.Z
-    trava = [(dx, (p & (Pos(215.0 + dx, 0, 0) * p)).volume)
+    bb = p.bounding_box()
+    hz = bb.size.Z
+    trava = [(dx, (p & (Pos(M.LARG + dx, 0, 0) * p)).volume)
              for dx in (0.0, 0.6, 1.2, 2.0)]
-    solta = [(dz, (p & (Pos(216.0, 0, dz) * p)).volume)
+    solta = [(dz, (p & (Pos(M.LARG + 1.2, 0, dz) * p)).volume)
              for dz in (0.0, 8.0, 15.0)]
     print(f"peso {peso:.1f} g | cap {cap:.2f} L | encaixa {pn:.1f} | "
           f"empilha {pe:.1f} (dy {DESLOC:.0f})")
@@ -93,7 +94,7 @@ def main():
                                 largura=1050),
                   os.path.join(DEST, "aba-torre.png"))
 
-    folha(peso, cap, pn, pe, n, trava, solta, hz)
+    folha(peso, cap, pn, pe, n, trava, solta, hz, bb)
 
 
 def imagem(fig, rect, arq, titulo=None, sub=None):
@@ -113,7 +114,7 @@ def imagem(fig, rect, arq, titulo=None, sub=None):
                 color=GRIS, linespacing=1.4)
 
 
-def folha(peso, cap, pn, pe, furos, trava, solta, hz):
+def folha(peso, cap, pn, pe, furos, trava, solta, hz, bb):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -138,7 +139,7 @@ def folha(peso, cap, pn, pe, furos, trava, solta, hz):
     imagem(fig, [0.345, 0.078, 0.30, 0.335], "aba-torre.png",
            "EMPILHADAS + ACOPLADAS",
            f"2 colunas × 3 andares · mesma frente, sem inverter · cada "
-           f"andar desloca {M.DESLOC:.0f} mm em y · o pino aponta o sentido")
+           f"andar desloca {M.DESLOC:.0f} mm em y · o friso aponta o sentido")
     tb = fig.add_axes([0.668, 0.078, 0.30, 0.335]); tb.axis("off")
     tb.set_xlim(0, 1); tb.set_ylim(0, 1)
     tb.add_patch(Rectangle((0, 0), 1, 1, transform=tb.transAxes,
@@ -156,7 +157,7 @@ def folha(peso, cap, pn, pe, furos, trava, solta, hz):
               ("solta levantando", "15 mm"),
               ("peso", f"{peso:.1f} g".replace(".", ",")),
               ("capacidade", f"{cap:.2f} L".replace(".", ",")),
-              ("envelope", "219 × 191 × 132,5 mm"),
+              ("envelope", f"{bb.size.X:.0f} × {bb.size.Y:.0f} × {bb.size.Z:.1f} mm".replace(".", ",")),
               ("furos", f"{furos}")]
     y = 0.86
     for k, v in linhas:
