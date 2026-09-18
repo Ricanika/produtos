@@ -60,7 +60,7 @@ H_PE     = 5.0            # a chapa do fundo flutua 5 mm acima do piso
 # Pezinhos: 4 blocos ocos SOB a chapa, recuados da borda dela. De fora nao
 # aparecem -- a chapa faz aba sobre eles. As posicoes em y sao assimetricas de
 # proposito (ver PE_Y/BERCO_Y).
-PE_X, PE_W, PE_T = 97.5, 13.0, 1.4
+PE_W, PE_T = 13.0, 1.4     # PE_X e derivado da base (ver _pezinhos)
 PE_Y = ((-40.0, -20.0), (52.0, 78.0))     # frente e TRASEIRO
 SOQ_H, SOQ_T, SOQ_F = 2.5, 2.0, 0.6       # soquete: altura, parede, folga
 
@@ -87,11 +87,14 @@ ACO_F = 0.35       # folga
 # Cotas resolvidas do sistema de restricoes (ver README 4.5): com a parede da
 # borda de altura h = z0 o passo empilhado da ALT, e o encaixe fica limitado a
 # d <= 29,9 mm. Escolhido d = 26 -> passo encaixado de 104 mm.
-EMP_Z0 = 10.0                 # pe da nervura (= altura da parede, para dar ALT)
-EMP_H = 10.0
-EMP_X0 = 103.30               # face externa da nervura no seu pe
-EMP_S = 0.015                 # inclinacao dessa face (0,86 deg de saida)
-EMP_XI = 101.70               # face interna da parede da borda (apoio de 1,6)
+# O PE e o fundo da propria nervura: ela desce ate z=0 e e nela que a peca se
+# apoia -- e e ela que cai no pino da peca de baixo. Passo empilhado = ALT+EMP_H.
+EMP_Z0 = 0.0                  # pe da nervura, no chao
+EMP_H = 10.0                  # altura do pino na borda
+EMP_S = 0.015                 # inclinacao da face externa da nervura
+EMP_APOIO_B, EMP_FOLGA_C = 1.6, 0.4    # apoio do pe no pino e folga
+EMP_X0 = 103.30               # recalculados por set_draft()
+EMP_XI = 101.70
 EMP_DIAG = 16.0               # a diagonal de entrada da nervura
 EMP_APOIO = 2.5               # trecho reto do pe da nervura, que e o apoio
 BERCO_L, BERCO_P, BERCO_H = 18.0, 10.0, 5.0   # orelhas de apoio no rim
@@ -271,12 +274,18 @@ def _parede_borda(sx, y0, y1, macho=None):
 
 
 def _pezinhos():
-    """4 pezinhos ocos sob a chapa, abertos embaixo (pino da cavidade)."""
+    """4 pezinhos ocos sob a chapa, abertos embaixo (pino da cavidade).
+
+    A face externa acompanha a BASE: com saida maior a base encolhe, e um
+    pezinho de cota fixa sairia para fora da parede -- foi o que aconteceu ao
+    subir a saida de 3,5 para 9 graus, e matava o encaixe.
+    """
+    pe_x = BASE_X / 2 - 2.0
     out = None
     for sx in (-1, 1):
         for y0, y1 in PE_Y:
-            b = _caixa(sx, PE_X - PE_W, PE_X, y0, y1, 0.0, H_PE + T_FUNDO)
-            b -= _caixa(sx, PE_X - PE_W + PE_T, PE_X - PE_T,
+            b = _caixa(sx, pe_x - PE_W, pe_x, y0, y1, 0.0, H_PE + T_FUNDO)
+            b -= _caixa(sx, pe_x - PE_W + PE_T, pe_x - PE_T,
                         y0 + PE_T, y1 - PE_T, -1.0, H_PE)
             out = b if out is None else out + b
     return out
@@ -313,6 +322,35 @@ def _soquetes(fora, so_traseiro=True):
     s += _caixa(1, xo - E_GANCHO[0], xo, y0, y1,
                 Z_D0 - E_GANCHO[1], Z_D0) - env
     return s
+
+
+def w(z):
+    """Meia-largura externa da parede na cota z."""
+    return LARG / 2 - ALT * TAN + TAN * z
+
+
+def cotas_empilhamento():
+    """Resolve as cotas do pino e da nervura a partir da saida de molde.
+
+    passo_pilha = ALT + EMP_H - EMP_Z0, e o encaixe fica limitado a
+    passo_encaixe >= passo_pilha/2 + (T_RIM + apoio + folga)/(2*tg(saida)):
+    o pino esta no alto e o pe embaixo, e encaixando os dois se aproximam ao
+    mesmo tempo -- cada milimetro conta duas vezes.
+    """
+    ps = ALT + EMP_H - EMP_Z0
+    pn = ps / 2 + (T_RIM + EMP_APOIO_B + EMP_FOLGA_C) / (2 * TAN)
+    xi = w(ALT + EMP_H - pn) + EMP_FOLGA_C
+    return xi, xi + EMP_APOIO_B, pn, ps
+
+
+def set_draft(graus):
+    """Muda a saida de molde e recalcula tudo que depende dela."""
+    global DRAFT, TAN, BASE_X, BASE_Y, EMP_XI, EMP_X0
+    DRAFT = graus
+    TAN = np.tan(np.radians(graus))
+    BASE_X = LARG - 2 * ALT * TAN
+    BASE_Y = PROF - 2 * ALT * TAN
+    EMP_XI, EMP_X0 = cotas_empilhamento()[:2]
 
 
 def passo_acoplado(acopl):
@@ -483,7 +521,8 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False):
     # --- bercos de apoio: 4 orelhas na face INTERNA do rim -------------------
     # A saia da peca de cima assenta nelas. Ficam dentro da peca, invisiveis de
     # fora, e o passo empilhado fica exatamente a altura: 130 mm.
-    p += _pezinhos()
+    if not estrutura:          # com estrutura o pe e o fundo da nervura
+        p += _pezinhos()
     if empilha:
         p += _soquetes(fora)
     if estrutura:

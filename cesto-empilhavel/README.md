@@ -374,6 +374,73 @@ necessária e liberou a faixa do rim.
 A Q é a única que faz as duas coisas. A escolha real é entre **Q** (os dois
 modos, caixa de 1.054 mm) e **N** (só encaixe, caixa de 630 mm).
 
+### 4.2.3 Vocabulário, mais ângulo, e a conta que decide
+
+**EMPILHAR** = uma sobre a outra, vários andares, altura cheia.
+**ENCAIXAR** = uma dentro da outra, para transporte.
+**ACOPLAR** = lado a lado.
+
+A saída de molde subiu de **3,5° para 9°** e o **pé virou o fundo da nervura**:
+é ele que cai no pino da peça de baixo, como pedido. Com o pino de 10 mm, o
+passo empilhado é ALT + 10 = **140 mm por andar**.
+
+#### Um erro que estava mascarando tudo
+
+Os pezinhos tinham a face externa em **x = 97,5 fixo**, cota de quando a saída
+era 3,5°. A 9° a base tem 86,9 mm de meia-largura — os pezinhos ficavam **para
+fora da parede** e matavam o encaixe. A peça nua media 89,1 mm de passo quando
+deveria medir 23,8. Corrigido: a face externa passou a ser derivada da base
+(`BASE_X/2 − 2`).
+
+#### A conta
+
+> passo_encaixe ≥ passo_pilha / 2 + (rim + apoio + folga) / (2 · tg saída)
+
+O pino está no alto e o pé embaixo. Encaixando, os dois se aproximam ao mesmo
+tempo — cada milímetro conta duas vezes, e o termo **passo_pilha/2 não some com
+ângulo nenhum**. Medido no sólido:
+
+| saída | base | encaixa | 6 peças | 12 peças | 12 SEM estrutura |
+|---|---|---|---|---|---|
+| 3,5° | 199 | 106,6 | 663 | 1.303 | 740 |
+| 7,0° | 183 | 86,0 | 560 | 1.076 | 446 |
+| **9,0°** | **174** | **82,0** | **540** | **1.032** | **392** |
+| 12,0° | 160 | 78,5 | 522 | 994 | 616 |
+
+(A 12° o encaixe sem estrutura piora porque outra feição passa a limitar.)
+
+#### Onde está o custo — medido isolando cada feição
+
+| | encaixa | 12 peças |
+|---|---|---|
+| pino + nervura | 82,0 mm | 1.032 mm |
+| **só o pino** | **82,0 mm** | 1.032 mm |
+| só a nervura | 74,5 mm | 949 mm |
+| nenhum dos dois | **22,8 mm** | **381 mm** |
+
+**O pino sozinho já custa todo o encaixe.** Ele precisa avançar para dentro do
+rim o suficiente para a nervura o alcançar, e é exatamente esse avanço que
+fecha a boca. Não é a nervura, não é o acoplamento: é o pino.
+
+#### A bifurcação
+
+| | A · com estrutura | B · sem estrutura | C · duas peças |
+|---|---|---|---|
+| Empilha | **140 mm/andar** | não | 140 mm/andar |
+| Encaixa | 82,1 mm | **23,9 mm** | **23,9 mm** |
+| 6 peças | 541 mm | **250 mm** | **250 mm** |
+| 12 peças | 1.033 mm | **393 mm** | **393 mm** |
+| Acopla | sim | sim (parede externa) | sim |
+| Molde | 1 | 1 | 1 + 1 pequeno |
+
+A **C** é a única que entrega os dois no alvo: a peça sai sem pino (encaixa
+fundo) e os **4 pinos vão soltos na embalagem**, encaixando no rim quando o
+cliente quer torre. Como a cauda de andorinha do acoplamento mora no pino, o
+clipe traz empilhamento **e** acoplamento juntos. Custa um 2º molde pequeno
+(~USD 3 a 5 mil), 4 peças a mais por cesto e um passo de embalagem.
+
+Capacidade a 9°: **3,95 L** (era 4,46 a 3,5°). Peso 171,8 g.
+
 ### 4.3 Acoplado — as três canaletas
 
 O pedido foi uma **canaleta de ponta a ponta na lateral, macho de um lado e
@@ -626,6 +693,7 @@ cad/empilha.py     mede no solido o passo de empilhamento e de encaixe
 cad/pe.py          pezinhos, soquete do pe traseiro e a folha pezinho.png
 cad/estrutura.py   a estrutura de empilhamento na borda e a folha estrutura.png
 cad/final.py       a peca completa e a folha final.png
+cad/angulo.py      sweep de saida de molde e a folha angulo.png
 cad/cesto-final.step/.stl  a peca com tudo: pezinhos, estrutura de
                    empilhamento e cauda de andorinha do acoplamento
 ```
