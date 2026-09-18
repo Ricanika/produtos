@@ -12,7 +12,7 @@ function el(id){ return { id, style:{}, textContent:'', value:'0', width:0, heig
   addEventListener(t,f){ (L[id]=L[id]||{})[t]=f; }, setPointerCapture(){},
   getAttribute(){ return press[id]||'false'; },
   setAttribute(k,v){ press[id]=v; }, click(){ if(L[id]&&L[id].click) L[id].click(); }, appendChild(){}, parentNode:{appendChild(){}} }; }
-const nodes={}; ['cv','scrub','play','tCorte','tZoom','tPilha','tReset','rFase','rCurso','rQueda','rJunta']
+const nodes={}; ['cv','scrub','play','tCorte','tZoom','tPilha','tDos','tBico','tReset','rFase','rCurso','rQueda','rJunta']
   .forEach(i=>nodes[i]=el(i));
 global.document={ getElementById:i=>nodes[i]||el(i), createElement:()=>el('x'), body:{appendChild(){}} };
 global.window={ devicePixelRatio:1, addEventListener(){} };
@@ -40,6 +40,12 @@ L.tCorte.click(); const c=cena('fechado + corte');
 L.tPilha.click(); const d=cena('corte + pote empilhado');
 L.tZoom.click();  const e=cena('+ zoom na borda');
 L.tReset.click(); const f=cena('reenquadrado');
-console.log('\n'+([a,b,c,d,e,f].every(v=>v>200) ? 'TODOS OS ESTADOS DESENHAM' : 'ALGUM ESTADO FALHOU'));
+nodes.scrub.value='1000'; L.scrub.input();
+L.tDos.click();   const g=cena('TAMPA DOSADORA (fechada)');
+L.tBico.click();  const i=cena('DOSADORA + bico aberto');
+L.tCorte.click(); const j=cena('DOSADORA + corte');
+L.tCorte.click(); L.tPilha.click(); const k=cena('DOSADORA + pote empilhado');
+console.log('cursor move ao abrir o bico?', g!==i || true ? 'ver bbox acima' : '');
+console.log('\n'+([a,b,c,d,e,f,g,i,j,k].every(v=>v>200) ? 'TODOS OS ESTADOS DESENHAM' : 'ALGUM ESTADO FALHOU'));
 console.log('corte remove faces?', c<b ? `sim (${b} -> ${c})` : `NAO (${b} -> ${c})`);
 console.log('pilha adiciona faces?', d>c ? `sim (${c} -> ${d})` : `NAO (${c} -> ${d})`);

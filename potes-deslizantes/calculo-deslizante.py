@@ -89,6 +89,10 @@ CAME_T    = 3.40    # espessura do labio descendente da aba NA ZONA DA CAME.
                     # engrossado de 1,20 para 3,40 ele vira a propria came, e a
                     # aresta de baixo dele e a rampa. Uma peca, duas funcoes.
 
+AB_L, AB_W = 30.0, 22.0       # abertura da tampa dosadora
+CUR_L, CUR_T, CUR_TOPO = 34.0, 1.8, 3.0   # cursor: comprimento, espessura, saliencia
+CUR_CAME_L, CUR_CAME_DZ = 5.0, 1.5        # came do cursor
+BICO_P, BICO_H = 4.4, 5.0     # bico: projecao e altura
 LING_N, LING_L, LING_W, LING_T = 4, 9.0, 16.0, 1.40   # linguetas do detente (2 por lado)
 LING_DEF, LING_ANG = 0.60, 35.0
 
@@ -454,21 +458,68 @@ def main():
           f"molde com 2 gavetas laterais (os ganchos)")
 
     # ---------------- 11. bico ----------------
-    sep("11. TAMPA DOSADORA (a que motivou o projeto)")
-    print(f"Mesmo casco, mesma came, mesmos ganchos. Muda o miolo do prato:")
-    print(f"  furo de vazao 26 x 16 mm no canto, encostado no murete")
-    print(f"  entalhe de 14 mm no murete - o canto R18 ja faz a curva do bico")
-    print(f"  labio de corte de 0,4 mm na aresta de saida (quebra o filme de sabao)")
-    print(f"  caimento de 3° no piso para o furo: o que respinga volta para dentro")
-    print(f"  tampinha com dobradica viva e BUJAO CONICO (conicidade 6°, interferencia")
-    print(f"    0,15 mm em 3 mm) - de cabeca para baixo quem veda o furo e o bujao")
-    a_furo = 26 * 16 / 1e2
+    sep("11. TAMPA DOSADORA: ABERTURA COM CURSOR + BICO")
+    pe_borda = PE_L / 2
+    parede_cima = ext_l / 2
+    mur_int = murete_int / 2
+    boca = boca_min / 2
+    print(f"Mesmo casco, mesma came, mesmos ganchos, mesmo labio. Muda o miolo do prato:")
+    print(f"  abertura {AB_L:.0f} x {AB_W:.0f} mm no extremo da tampa, encostada no murete")
+    print(f"  cursor {CUR_L:.0f} mm corre em dois trilhos e descobre a abertura")
+    print(f"  bico fixo na ponta, projetando {BICO_P:.1f} mm e subindo {BICO_H:.1f} mm")
+
+    print(f"\nO BICO NAO CUSTA EMPILHAMENTO - e o resultado que decidiu o desenho.")
+    print(f"  O pe embutido do pote de cima deixa uma faixa livre em volta do apoio:")
+    print(f"    fundo do pote de cima (onde ele apoia) ... |x| = {pe_borda:.2f} mm")
+    print(f"    parede do pote de cima, acima do pe ...... |x| = {parede_cima:.2f} mm")
+    print(f"    -> faixa de {parede_cima - pe_borda:.2f} mm de largura por {PE_H:.1f} mm de altura")
+    print(f"  O bico mora inteiro nessa faixa: {BICO_P:.1f} x {BICO_H:.1f} mm, com "
+          f"{parede_cima - pe_borda - BICO_P:.1f} mm de folga lateral")
+    print(f"  e {PE_H - BICO_H:.1f} mm de folga vertical. E ele ultrapassa a boca "
+          f"(|x|={boca:.2f}), entao o")
+    print(f"  jato sai livre da parede em vez de escorrer por ela.")
+
+    print(f"\nO CURSOR CUSTA. Ele corre no MEIO da tampa, |x| < {pe_borda:.1f} - exatamente")
+    print(f"  onde o pote de cima apoia. Saliencia de {CUR_TOPO:.1f} mm -> o passo viraria")
+    print(f"  {M + CUR_TOPO:.1f} mm em vez de {M:.0f}. Nao ha como esconder isso.")
+    print(f"  DECISAO: a tampa dosadora e a tampa do TOPO da pilha. O pote de sabao fica na")
+    print(f"  pia, nao no meio do armario, e empilhar em cima dele taparia o proprio bico.")
+    print(f"  O que a linha nao perde: ele continua empilhando SOBRE os outros.")
+
+    print(f"\nVEDACAO DO CURSOR - e aqui esta a segunda armadilha:")
+    print(f"  Cursor deslizante NAO veda liquido. O mercado so usa cursor em mantimento")
+    print(f"  seco justamente por isso. Solucao: o cursor ganha a MESMA came da tampa.")
+    sel_l, sel_w = AB_L + 5, AB_W + 5
+    per_c = perim(sel_l, sel_w, 4.0)
+    f_mm_c = 3 * E_TPE * (LAB_T ** 3 / 12) * LAB_DEF / LAB_L ** 3
+    F_c = f_mm_c * per_c
+    ang_c = math.degrees(math.atan(CUR_CAME_DZ / CUR_CAME_L))
+    print(f"  linha de vedacao {sel_l:.0f} x {sel_w:.0f} mm, perimetro {per_c:.0f} mm")
+    print(f"  labio de TPE igual ao da tampa -> {F_c:.1f} N = {F_c/9.81:.2f} kgf de fechamento")
+    print(f"  came do cursor: desce {CUR_CAME_DZ:.1f} mm nos ultimos {CUR_CAME_L:.0f} mm "
+          f"({ang_c:.1f}°)")
+    for mu in (MU_SABAO, MU_SECO):
+        ta = math.tan(math.radians(ang_c))
+        p = F_c * (ta + mu) / (1 - mu * ta)
+        print(f"    mu={mu:.2f} -> {p:5.2f} N = {p/9.81:.2f} kgf no polegar")
+    print(f"  Pressao interna empurra o cursor CONTRA o prato: invertido, veda melhor.")
+
+    print(f"\nSENTIDO DO CURSOR - detalhe que evita um erro de uso:")
+    print(f"  A tampa TRAVA deslizando num sentido. O cursor ABRE no MESMO sentido.")
+    print(f"  Assim, empurrar o cursor para usar o bico so aperta mais a tampa contra o")
+    print(f"  batente. Nao ha gesto que destrave o pote sem querer.")
+
+    print(f"\nRESPIRO: nao precisa.")
+    print(f"  Abertura de {AB_W:.0f} mm na menor direcao. Acima de ~20 mm o ar entra pela")
+    print(f"  propria abertura enquanto o liquido sai. O furo de 26 x 16 do plano anterior")
+    print(f"  tinha 16 mm e glugulejaria.")
+    a_ab = AB_L * AB_W / 1e2
+    print(f"\nCarga no cursor com o pote invertido (so a coluna de sabao):")
     for p in potes:
-        dp = 1030 * 9.81 * (p['H_ext']/1000) / 1000
-        F = dp * 1000 * a_furo / 1e4
-        print(f"  {p['cap']:>5} ml invertido -> {F:.2f} N ({F/9.81:.2f} kgf) no bujao do bico")
-    print(f"\nRespiro: 2,4 L por um furo de 26x16 glugleja. Avaliar respiro de 6 mm no canto")
-    print(f"oposto, sob a mesma dobradica. Medir no prototipo antes de decidir.")
+        dp = 1030 * 9.81 * (p['H_ext'] / 1000) / 1000
+        F = dp * 1000 * a_ab / 1e4
+        print(f"  {p['cap']:>5} ml -> {F:5.2f} N ({F/9.81:.2f} kgf) sobre {a_ab:.1f} cm2 "
+              f"de cursor")
 
     sep("12. O QUE FICA ABERTO")
     abertos = [

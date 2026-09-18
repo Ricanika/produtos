@@ -92,6 +92,8 @@
   <div class="toggles">
     <button id="tCorte" type="button" aria-pressed="false">Corte pela metade</button>
     <button id="tZoom" type="button" aria-pressed="false">Zoom na borda</button>
+    <button id="tDos" type="button" aria-pressed="false">Tampa dosadora</button>
+    <button id="tBico" type="button" aria-pressed="false">Abrir o bico</button>
     <button id="tPilha" type="button" aria-pressed="false">Pote empilhado</button>
     <button id="tReset" type="button">Reenquadrar</button>
   </div>
@@ -107,6 +109,7 @@
     <span><i style="background:#C9761F"></i>gancho <b style="color:var(--ink)">(macho)</b></span>
     <span><i style="background:#9A3D22"></i>lábio de TPE</span>
     <span><i style="background:#B6C3CB"></i>tampa</span>
+    <span><i style="background:#3F7D6A"></i>cursor e bico</span>
   </div>
 </div>
 <p class="note col">Malha paramétrica em milímetros, escala real, saída de 0,5° omitida (é
@@ -207,10 +210,18 @@ projetista.</p>
   var PRATO=2.0, MUR_H=3.5, MUR_T=1.5, MUR_I=114.4, SAIA_H=7.0;
   var LID_L=ABA_L+2*HOOK_P, LID_W=ABA_W+2*HOOK_P, LID_R=ABA_R+HOOK_P;
   var SEAL=125.4, HOVER=2.0, MODULO=60;
+  // ---- tampa dosadora ----
+  var AB_L=30, AB_W=22;                    // abertura
+  var AB_X0=-56.8, AB_X1=AB_X0+AB_L;         // encostada no murete do lado -X
+  var CUR_L=34, CUR_W=27, CUR_T=1.8, CUR_H=2.2, CUR_CURSO=30;
+  var BICO_X0=-61.2, BICO_X1=-56.8, BICO_W=13, BICO_H=5.0, BICO_T=1.5;
+  // o entalhe do murete tem de deixar passar o cursor E os trilhos, nao so o bico
+  var ENT_W=16.5, CUR_TOPO=3.0;   // saliencia total do conjunto sobre o prato
+  var MUR_O=MUR_I+2*MUR_T;
   var DIF=POT_L-POT_W;
   function rail0(k){ return -RETO/2 + k*CELL + WIN; }
 
-  var COR={corpo:[143,166,180], trilho:[47,75,92], gancho:[201,118,31],
+  var COR={bico:[63,125,106], corpo:[143,166,180], trilho:[47,75,92], gancho:[201,118,31],
            tpe:[154,61,34], tampa:[182,195,203], ghost:[143,166,180]};
 
   // =============== construção de faces ===============
@@ -231,6 +242,31 @@ projetista.</p>
       }
     }
     return p;
+  }
+  function reamostra(p,n){
+    var L=[0], t=0;
+    for(var i=1;i<p.length;i++){ t+=Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]); L.push(t); }
+    var per=t+Math.hypot(p[0][0]-p[p.length-1][0],p[0][1]-p[p.length-1][1]);
+    var out=[];
+    for(var k=0;k<n;k++){
+      var d=per*k/n, i=0;
+      while(i<L.length-1 && L[i+1]<d) i++;
+      var a=p[i], b=p[(i+1)%p.length], seg=(L[Math.min(i+1,L.length-1)]-L[i])||1;
+      var u=Math.min(1,(d-L[i])/seg);
+      out.push([a[0]+(b[0]-a[0])*u, a[1]+(b[1]-a[1])*u]);
+    }
+    return out;
+  }
+  // anel entre dois contornos ARBITRARIOS (o furo do prato nao e concentrico)
+  function anelPts(o,ii,z0,z1,c,a,g){
+    var n=o.length; ii=reamostra(ii,n);
+    for(var i=0;i<n;i++){
+      var j=(i+1)%n;
+      push([[o[i][0],o[i][1],z0],[o[j][0],o[j][1],z0],[o[j][0],o[j][1],z1],[o[i][0],o[i][1],z1]],c,a,g);
+      push([[ii[j][0],ii[j][1],z0],[ii[i][0],ii[i][1],z0],[ii[i][0],ii[i][1],z1],[ii[j][0],ii[j][1],z1]],c,a,g);
+      push([[o[i][0],o[i][1],z1],[o[j][0],o[j][1],z1],[ii[j][0],ii[j][1],z1],[ii[i][0],ii[i][1],z1]],c,a,g);
+      push([[ii[i][0],ii[i][1],z0],[ii[j][0],ii[j][1],z0],[o[j][0],o[j][1],z0],[o[i][0],o[i][1],z0]],c,a,g);
+    }
   }
   function anel(oL,oW,oR,iL,iW,iR,z0,z1,c,a,g){
     var o=rrPts(oL,oW,oR), n=o.length, ii=rrPts(iL,iW,iR);
@@ -312,6 +348,45 @@ projetista.</p>
   }
   marcaMec=false;
 
+  // ---------------- TAMPA DOSADORA (grupo 3) + CURSOR (grupo 4) ----------------
+  // prato COM o furo: anel entre o contorno externo e o retangulo da abertura
+  anelPts(rrPts(LID_L,LID_W,LID_R),
+          [[AB_X0,-AB_W/2],[AB_X1,-AB_W/2],[AB_X1,AB_W/2],[AB_X0,AB_W/2]],
+          0, PRATO, COR.tampa,0.45,3);
+  anel(LID_L,LID_W,LID_R, ABA_L,ABA_W,ABA_R, -SAIA_H, 0, COR.tampa,0.45,3);
+  anel(SEAL+1.3, SEAL+1.3-DIF, ABA_R-2.5, SEAL-1.3, SEAL-1.3-DIF, ABA_R-3.8, -0.9, 0.1, COR.tpe,1,3);
+  marcaMec=true;
+  for(var sy=-1; sy<=1; sy+=2){
+    for(var k=0;k<NH;k++){
+      var xc=rail0(k)+CURSO-HOOK/2;
+      var wa=sy>0 ? ABA_W/2-CAME_T : -ABA_W/2;
+      caixa(xc-HOOK/2, xc+HOOK/2, wa, wa+CAME_T, SK_BOT-WING_T, SK_BOT, COR.gancho,1,3);
+      var pa=sy>0 ? ABA_W/2 : -ABA_W/2-HOOK_P;
+      caixa(xc-HOOK/2, xc+HOOK/2, pa, pa+HOOK_P, SK_BOT-WING_T, 0, COR.gancho,1,3);
+    }
+  }
+  marcaMec=false;
+  // murete ENTALHADO: o lado -X abre para o bico passar
+  caixa(-MUR_O/2, MUR_O/2, MUR_I/2-DIF/2, MUR_O/2-DIF/2, PRATO, PRATO+MUR_H, COR.tampa,0.6,3);
+  caixa(-MUR_O/2, MUR_O/2, -MUR_O/2+DIF/2, -MUR_I/2+DIF/2, PRATO, PRATO+MUR_H, COR.tampa,0.6,3);
+  caixa(MUR_I/2, MUR_O/2, -MUR_I/2+DIF/2, MUR_I/2-DIF/2, PRATO, PRATO+MUR_H, COR.tampa,0.6,3);
+  [[-MUR_O/2,-MUR_I/2,-MUR_I/2+DIF/2,-ENT_W],[-MUR_O/2,-MUR_I/2,ENT_W,MUR_I/2-DIF/2]]
+    .forEach(function(b){ caixa(b[0],b[1],b[2],b[3], PRATO, PRATO+MUR_H, COR.tampa,0.6,3); });
+  // trilhos do cursor
+  for(var sy=-1; sy<=1; sy+=2){
+    var y0 = sy>0 ? CUR_W/2 : -CUR_W/2-2.2;
+    caixa(AB_X0-1, AB_X0+CUR_CURSO+CUR_L, y0, y0+2.2, PRATO, PRATO+CUR_TOPO, COR.bico,1,3);
+  }
+  // BICO: piso + duas paredes, tudo dentro do rebaixo do pe do pote de cima
+  caixa(BICO_X0, BICO_X1, -BICO_W, BICO_W, PRATO, PRATO+1.2, COR.bico,1,3);
+  [[-BICO_W,-BICO_W+BICO_T],[BICO_W-BICO_T,BICO_W]].forEach(function(b){
+    caixa(BICO_X0, BICO_X1, b[0], b[1], PRATO, PRATO+BICO_H, COR.bico,1,3);
+  });
+  // CURSOR (grupo 4) — fechado cobre a abertura
+  caixa(AB_X0-2, AB_X0-2+CUR_L, -CUR_W/2, CUR_W/2, PRATO+CUR_H-CUR_T, PRATO+CUR_H, COR.bico,1,4);
+  caixa(AB_X0-2+CUR_L-4, AB_X0-2+CUR_L, -CUR_W/2, CUR_W/2,
+        PRATO+CUR_H, PRATO+CUR_H+1.6, COR.bico,1,4);   // pega
+
   // ---------------- POTE EMPILHADO (grupo 2) ----------------
   anel(POT_L,POT_W,R, MO_L,MO_W,MO_R, MODULO-POT_H, MODULO-ABA_T, COR.ghost,0.16,2);
   anel(POT_L,POT_W,R, MUR_I-2, MUR_I-2-DIF, 13, MODULO-POT_H+PE_H-FUNDO, MODULO-POT_H+PE_H, COR.ghost,0.16,2);
@@ -319,7 +394,7 @@ projetista.</p>
 
   // =============== cinemática ===============
   function camZ(t){ return t<=0 ? HOVER : (t>=RAMP_L ? 0 : HOVER*(1-t/RAMP_L)); }
-  var estado={t:0, z:HOVER, dx:-CURSO, pilha:false, corte:false};
+  var estado={t:0, z:HOVER, dx:-CURSO, pilha:false, corte:false, dos:false, bico:false};
 
   // =============== câmera e desenho ===============
   var az=-0.62, pol=0.62, dist=330, foco=1000, alvo=[0,0,-20], panx=0, pany=0;
@@ -351,12 +426,23 @@ projetista.</p>
   }
   // Enquadra sozinho: mede a caixa projetada e escolhe foco e centro. E o que
   // garante que o modelo aparece inteiro em qualquer tela e em qualquer estado.
+  function grupos(){
+    var L=[estado.dx,0,estado.z];
+    return [[0,0,0], L, [0,0,0], L,
+            [L[0] + (estado.bico ? CUR_CURSO : 0), L[1], L[2]]];
+  }
+  function visivel(f){
+    if(f.g===2) return estado.pilha;
+    if(f.g===1) return !estado.dos;
+    if(f.g===3 || f.g===4) return estado.dos;
+    return true;
+  }
   function bbox(filtro){
-    var offs=[[0,0,0],[estado.dx,0,estado.z],[0,0,0]];
+    var offs=grupos();
     var a=1e9,b=-1e9,c=1e9,d=-1e9,n=0;
     for(var i=0;i<faces.length;i++){
       var f=faces[i];
-      if(f.g===2 && !estado.pilha) continue;
+      if(!visivel(f)) continue;
       if(filtro && !filtro(f)) continue;
       var off=offs[f.g];
       for(var j=0;j<f.p.length;j++){
@@ -405,11 +491,11 @@ projetista.</p>
     ctx.clearRect(0,0,wpx,hpx);
     W2=wpx/2; H2=hpx/2;
 
-    var offs=[[0,0,0],[estado.dx,0,estado.z],[0,0,0]];
+    var offs=grupos();
     var lista=[];
     for(var i=0;i<faces.length;i++){
       var f=faces[i];
-      if(f.g===2 && !estado.pilha) continue;
+      if(!visivel(f)) continue;
       var off=offs[f.g];
       var pts=estado.corte ? corta(f.p, off) : f.p;
       if(pts.length<3) continue;
@@ -504,6 +590,8 @@ projetista.</p>
     pol  = on ? 0.26 : 0.62;
     ajusta(on ? soMecanismo : null);
   });
+  botao('tDos',function(on){ estado.dos=on; });
+  botao('tBico',function(on){ estado.bico=on; });
   botao('tPilha',function(on){ estado.pilha=on; ajusta(zoomLigado()?soMecanismo:null); });
   document.getElementById('tReset').addEventListener('click',function(){
     az=-0.62; pol=0.62; dist=330; alvo=[0,0,-20];

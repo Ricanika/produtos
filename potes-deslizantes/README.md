@@ -319,26 +319,70 @@ estava parada, segue como candidata ao try-out.
 
 ---
 
-## 8. A tampa dosadora — a que motivou tudo
+## 8. A tampa dosadora — abertura com cursor + bico
 
-Mesmo casco, mesma came, mesmos ganchos, mesmo lábio. Muda só o miolo do prato:
+Mesmo casco, mesma came, mesmos ganchos, mesmo lábio. Muda o miolo do prato:
 
-1. Furo de vazão **26 × 16 mm** no canto, encostado no murete.
-2. Entalhe de 14 mm no murete — o canto R18 já faz a curva, não se molda bico.
-3. **Lábio de corte de 0,4 mm** na aresta de saída: quebra o filme de sabão, a gota se solta
-   em vez de escorrer pela parede.
-4. Caimento de 3° no piso para o furo: o que respinga volta para dentro pelo mesmo furo.
-5. Tampinha com dobradiça viva e **bujão cônico** (6° de conicidade, 0,15 mm de interferência
-   em 3 mm de engate).
+```
+abertura ......... 30 × 22 mm no extremo da tampa, encostada no murete
+cursor ........... 34 mm, 1,8 mm de espessura, correndo em dois trilhos
+bico ............. fixo na ponta, projeta 4,4 mm e sobe 5,0 mm
+saliência total .. 3,0 mm (cursor + trilhos) acima do prato
+```
 
-De cabeça para baixo, quem veda o furo é o bujão, e a carga nele é ridícula — **1,00 N
-(0,10 kgf) no 2,4 L**. Um bujão cônico de PP segura isso com folga.
+### O bico não custa empilhamento — foi o resultado que decidiu o desenho
 
-**Respiro:** 2,4 L saindo por um furo de 26 × 16 vai gluglejar. Avaliar respiro de 6 mm no
-canto oposto sob a mesma dobradiça. **Medir no protótipo antes de decidir** — sabão líquido é
-viscoso e pode não precisar.
+O pé embutido do pote de cima deixa uma **faixa livre** em volta do apoio:
 
----
+| | |x| |
+|---|---|
+| fundo do pote de cima, onde ele apoia | 56,20 mm |
+| parede do pote de cima, acima do pé | 61,69 mm |
+| **faixa livre** | **5,49 mm de largura × 6,0 mm de altura** |
+
+O bico de 4,4 × 5,0 mm mora inteiro ali, com **1,1 mm de folga lateral e 1,0 mm vertical**. E
+ele ultrapassa a boca do pote (|x| = 60,29), então **o jato sai livre da parede** em vez de
+escorrer por ela — que é a função do bico da referência.
+
+### O cursor custa, e não tem como esconder
+
+O cursor corre no **meio** da tampa, |x| < 56,2 — exatamente onde o pote de cima apoia. São
+**3,0 mm de saliência**, e o passo viraria 63,0 mm em vez de 60.
+
+**Decisão: a tampa dosadora é a tampa do topo da pilha.** O pote de sabão fica na pia, não no
+meio do armário, e empilhar em cima dele taparia o próprio bico. O que a linha **não** perde: o
+pote dosador continua empilhando *sobre* os outros — só não recebe ninguém em cima.
+
+### Cursor deslizante não veda líquido
+
+Essa é a segunda armadilha, e é o motivo de o mercado só usar cursor em **mantimento seco**.
+Um painel plano correndo num rebaixo chora.
+
+A solução é a própria invenção do projeto, em escala menor: **o cursor ganha a mesma came**.
+Os últimos 5 mm do trilho descem 1,5 mm (16,7°) e puxam o cursor contra um lábio de TPE em
+volta da abertura.
+
+| | |
+|---|---|
+| perímetro de vedação (35 × 27 mm) | 117 mm |
+| força de fechamento | **0,36 kgf** |
+| polegar para fechar, ensaboado / seco | 0,14 / 0,24 kgf |
+| carga no cursor com o 2,4 L invertido | 0,16 kgf |
+
+Pressão interna empurra o cursor **contra** o prato: invertido, veda melhor. Mesmo princípio do
+lábio da tampa principal.
+
+### O cursor abre no mesmo sentido em que a tampa trava
+
+Detalhe pequeno que evita um erro de uso: a tampa principal trava deslizando num sentido, e o
+cursor **abre no mesmo sentido**. Empurrar o cursor para usar o bico só aperta mais a tampa
+contra o batente — **não existe gesto que destrave o pote sem querer**.
+
+### Respiro: não precisa
+
+A abertura tem **22 mm na menor direção**. Acima de ~20 mm o ar entra pela própria abertura
+enquanto o líquido sai. O furo de 26 × 16 do plano anterior tinha 16 mm e glugulejaria — era
+por isso que eu tinha deixado o respiro em aberto.
 
 ## 9. Patente — fazer a busca antes de mostrar para alguém
 
