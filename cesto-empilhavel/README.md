@@ -585,6 +585,51 @@ frente ou muito atrás. Quem resolveria isso é um pé na parede de trás (a aba
 corre lá também, e a distância a vencer é a mesma 17,6 mm) — mais um recorte,
 a decidir.
 
+#### A frente sem meias-bolas, e o friso no lugar do pino
+
+**A frente é a parte aberta** (−Y no modelo), e a borda dela é o corte da
+silhueta na casca inclinada: no meio ela fica em z ≈ 89 mm e nas pontas sobe
+para ≈ 101 mm, por causa do raio de canto da planta. Os furos da frente
+estavam **trombando nesse arco**, e cada um deixava uma meia-bola na borda.
+
+A causa era um cilindro só varando a frente E o fundo: para manter o fundo
+cheio (lá a parede vai até o rim) era obrigatório aceitar o furo cortado na
+frente. Agora **a frente e o fundo são furados separadamente**, e a frente
+descarta o furo que não passa o teste `cabe_na_frente(x, z, d, folga)` —
+avaliado no topo do furo e no x dele mais próximo do meio, que é onde a borda
+está mais baixa. As duas fileiras de cima da frente saem; o fundo continua com
+as quatro. Borda limpa, sem recorte na aresta.
+
+**O pino virou friso.** No lugar da saliência única, um **U de três pernas de
+1,2 × 2,5 mm** em relevo na aba, no lugar exato onde o piso do pé de trás da
+peça de cima pousa. Medido, empurrando a peça de cima 1 mm:
+
+| sentido | interferência |
+|---|---|
+| y + | 16,3 mm³ |
+| y − | 16,3 mm³ |
+| x + | 15,0 mm³ |
+| x − | 15,0 mm³ |
+
+Os quatro sentidos travam a partir de **0,6 mm** de folga — o andar fica
+**posicionado**, não só apoiado. Antes, com um pino só, apenas o sentido do
+encaixe estava seguro.
+
+O friso custa **zero** no encaixe, e há uma conta que garante isso:
+
+> friso_x0 = LARG/2 − ABA_W + tg(saída)·FRISO_H + 0,6 = **98,6 mm**
+
+A peça de cima, encaixada, cruza a cota do rim da de baixo com a parede em
+x = LARG/2 − ABA_W = 97,5 mm; subindo os 2,5 mm de relevo ela engorda
+tg 12° × 2,5 = 0,53. O friso mora para fora disso. Se o relevo crescer, a face
+interna dele tem de recuar na mesma proporção.
+
+O encaixe de trás também andou de y = 40 para **36 mm**: pousando em
+y = 50…58 ele estava encostando no fim do trecho reto da lateral (58,4 mm, onde
+começa o raio de canto). Em 36 ele pousa em 46…54, com 4,4 mm de sobra.
+
+Peso **153,9 g**. Encaixe e empilhamento inalterados: 46,9 e 130,0 mm.
+
 ### 4.3 Acoplado — as três canaletas
 
 O pedido foi uma **canaleta de ponta a ponta na lateral, macho de um lado e
@@ -844,5 +889,6 @@ cad/aba.py         a arquitetura de 4.2.4 -- aba plana no rim, pes com
                    cavidade, cauda de andorinha na borda -- e a folha aba.png
 cad/cortes.py      cortes 2D no eixo do pe, tirados do solido com
                    trimesh.mesh_plane, e a folha cortes.png
+cad/friso.py       o friso em U na aba, com a trava medida nos 4 sentidos
 cad/cesto-aba.step/.stl    a peca da arquitetura da aba (12 graus de saida)
 ```

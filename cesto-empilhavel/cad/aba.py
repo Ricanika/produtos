@@ -127,8 +127,8 @@ def folha(peso, cap, pn, pe, furos, trava, solta, hz):
              ha="center", va="top", fontsize=11.5, color="#3d444d")
 
     imagem(fig, [0.022, 0.535, 0.30, 0.335], "aba-peca.png",
-           "A PEÇA", f"aba plana de {M.ABA_W:.0f} mm em toda a borda · 2 pés "
-           f"+ 2 encaixes · saída {SAIDA:.0f}°/lado")
+           "A PEÇA", f"aba plana de {M.ABA_W:.0f} mm em toda a borda · 2 pés + 2 "
+           f"encaixes com friso · frente sem meias-bolas")
     imagem(fig, [0.345, 0.512, 0.635, 0.360], "cortes.png")
 
     imagem(fig, [0.022, 0.078, 0.30, 0.335], "aba-col.png",
@@ -152,10 +152,11 @@ def folha(peso, cap, pn, pe, furos, trava, solta, hz):
               ("deslocamento p/ empilhar", f"{M.DESLOC:.0f} mm"),
               ("apoios na aba", "4 · 148 mm² de contato"),
               ("trava lateral a partir de", "0,6 mm"),
+              ("friso trava o andar em", "y ±  e x ± · 0,6 mm"),
               ("solta levantando", "15 mm"),
               ("peso", f"{peso:.1f} g".replace(".", ",")),
               ("capacidade", f"{cap:.2f} L".replace(".", ",")),
-              ("envelope", "219 × 191 × 133 mm"),
+              ("envelope", "219 × 191 × 132,5 mm"),
               ("furos", f"{furos}")]
     y = 0.86
     for k, v in linhas:

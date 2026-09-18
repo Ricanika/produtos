@@ -111,16 +111,17 @@ def main(pn):
              color=GRIS)
     # --- 3: o encaixe de tras e o pino na aba ----------------------------
     ax = axs[2]
-    ypino = yr + DESLOC - M.PES[1][1] / 2 - M.PINO_F - M.PINO_W / 2
+    ypino = yr + DESLOC - M.PES[1][1] / 2 - M.FRISO_F - M.FRISO_T / 2
     desenha(ax, seg(m, yr + DESLOC), "#aab4c2", lw=1.0)
     desenha(ax, seg(m, ypino), CINZ)
     desenha(ax, seg(m, yr, PASSO_E), NOVO)
     ax.set_xlim(88, 116); ax.set_ylim(117, 143)
-    ax.set_title("O ENCAIXE DE TRÁS · o pino da referência", fontsize=12,
+    ax.set_title("O ENCAIXE DE TRÁS · o friso na aba", fontsize=12,
                  color=TINTA, weight="bold", pad=14)
-    ax.text(89, 142.5, "pino de 3 mm na aba (cinza) encostado no piso do pé "
-            "(laranja):\né o que impede a peça de escorregar de volta para a "
-            "posição\nde encaixe — e aponta o único sentido que tem apoio nos 4 pés.",
+    ax.text(89, 142.5, "friso de 2,5 mm na aba (cinza) encostado no piso do pé "
+            "(laranja):\ntrês pernas em U prendem o pé em y nos dois sentidos "
+            "e para fora.\nCom o friso dos dois lados, x fica preso também — "
+            "o andar\nfica POSICIONADO, não só apoiado.",
             fontsize=8.4, color=TINTA, va="top", ha="left")
 
     fig.subplots_adjust(top=0.855, bottom=0.03, left=0.015, right=0.985)

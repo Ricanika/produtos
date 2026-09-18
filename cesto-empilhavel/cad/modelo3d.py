@@ -136,7 +136,7 @@ DESLOC = 14.0                 # deslocamento em y que troca ENCAIXAR por EMPILHA
 # (yc, L em y, parede, saida em y, face externa no piso, tem pino na aba)
 PES = (
     (-39.0, 10.0, 1.6, 0.045, LARG / 2 - ABA_W + 3.0, False),
-    (40.0, 8.0, 1.2, 0.032, LARG / 2 - ABA_W + 5.5, True),
+    (36.0, 8.0, 1.2, 0.032, LARG / 2 - ABA_W + 5.5, True),
 )
 # Regra de cada pe: saida em y >= parede/passo_encaixe, senao a boca da
 # cavidade nunca engole a lingua. A 46,9 mm de passo: 0,034 para 1,6 mm de
@@ -144,8 +144,12 @@ PES = (
 # PINO na aba (a referencia do cliente): pequena saliencia que encosta na
 # lateral do piso do pe e impede a peca de escorregar de volta para a posicao
 # de encaixe. Fica do lado do recorte, um para cada sentido de deslocamento.
-PINO_H, PINO_W = 3.0, 1.2     # altura acima da aba e espessura em y
-PINO_F = 0.3                  # folga entre o pino e o piso do pe
+# FRISO na aba (a "paredinha" da referencia do cliente): um L de relevo que
+# o piso do pe de tras da peca de cima encosta -- a perna em y impede de
+# escorregar de volta para a posicao de encaixe, a perna em x prende para
+# fora. O rim continua plano em todo o resto.
+FRISO_H, FRISO_T = 2.5, 1.2   # altura acima da aba e espessura da paredinha
+FRISO_F = 0.3                 # folga entre o friso e o piso do pe
 # ACOPLAMENTO na borda: cauda de andorinha em PLANTA no bordo da aba.
 # So e possivel por causa do encaixe raso: com passo de encaixe de 47 mm, tudo
 # o que estiver acima de ALT - (ALT - 47) = 47 mm do topo da peca de cima fica
@@ -181,7 +185,8 @@ D_TOPO  = 15.0
 D_BASE  = 6.0
 Z_TOPO  = ALT - H_RIM - 9.0
 BANDA   = 40.0            # faixa cega no pe da parede
-FOLGA_S = 9.0             # folga entre furo e a silhueta
+FOLGA_S = 9.0             # folga entre furo e a silhueta (laterais)
+FOLGA_F = 6.0             # idem na frente, onde a borda e o arco da silhueta
 
 TAN = np.tan(np.radians(DRAFT))
 BASE_X = LARG - 2 * ALT * TAN
@@ -212,6 +217,34 @@ def silhueta():
     # quinas da face frontal
     sk = fillet(sk.vertices().filter_by_position(Axis.X, yf - 1, yf + 1), R_FRENTE)
     return sk
+
+
+def y_frente(x, z):
+    """y da superficie EXTERNA da frente, na cota z e na posicao x.
+
+    Precisa do raio de canto: perto das pontas a planta volta para dentro, e
+    e por isso que a borda da frente sobe la (ela e o corte da silhueta na
+    casca inclinada). E esse arco que faz as "meias bolas" quando um furo
+    tromba nele.
+    """
+    w, h = secao(z)
+    r = 14.0 + z * TAN
+    reto = w / 2 - r
+    if abs(x) <= reto:
+        return -h / 2
+    dx = min(abs(x) - reto, r)
+    return -(h / 2 - r + np.sqrt(max(r * r - dx * dx, 0.0)))
+
+
+def cabe_na_frente(x, z, d, folga):
+    """O furo da frente respeita a borda arqueada?
+
+    Avalia no topo do furo e no x dele mais proximo do meio, que e onde a
+    borda esta mais BAIXA (no meio z_silhueta vale ~89 mm, nas pontas ~118).
+    """
+    zt = z + d / 2
+    xs = np.sign(x) * max(abs(x) - d / 2, 0.0)
+    return zt + folga <= z_silhueta(y_frente(xs, zt))
 
 
 def z_silhueta(y):
@@ -461,34 +494,52 @@ def _pes_cavidade():
     return out
 
 
-def _pinos():
-    """Pinos na aba -- o encaixe da referencia do cliente.
+def friso_x0():
+    """Face interna do friso: o limite que o encaixe no impoe.
 
-    Saliencia de PINO_H acima da aba, encostada na lateral do piso do pe da
-    peca de cima, do LADO DO RECORTE: e o que impede a peca de escorregar de
-    volta para a posicao de encaixe.
+    A peca de cima, encaixada, cruza a cota do rim da de baixo com a parede
+    em x = LARG/2 - ABA_W; subindo FRISO_H ela engorda TAN*FRISO_H. O friso
+    tem de morar para fora disso, senao ele fecha o encaixe.
+    """
+    return LARG / 2 - ABA_W + TAN * FRISO_H + 0.6
 
-    Um so por encaixe, e no sentido +y. O deslocamento negativo NAO serve: o
+
+def _frisos():
+    """Friso em L na aba -- a paredinha da referencia do cliente.
+
+    Tres pernas de FRISO_T x FRISO_H de relevo formando um U, no lugar onde o
+    piso do pe de tras da peca de cima pousa: as duas pernas em y travam o
+    deslocamento nos dois sentidos (uma delas impede de escorregar de volta
+    para a posicao de encaixe) e a perna em x prende para fora. Com o friso
+    dos dois lados, x fica preso nos dois sentidos tambem -- o empilhamento
+    fica POSICIONADO, nao so apoiado.
+
+    So no pe de tras e so no sentido +y. O deslocamento negativo nao serve: o
     chanfro de topo come a aba a partir de y = -PROF/2 + CHANFRO = -48, e o pe
     da frente deslocado -14 mm cairia no vazio (medido: 2 apoios em vez de 4).
-    Por isso o pino aponta o unico sentido que tem apoio -- e a coluna sobe
-    escalonada de DESLOC por andar. Para empilhar nos dois sentidos, o pe da
-    frente teria de recuar para y = -26; custa 13 mm de bracos de apoio.
-
-    Custa zero no encaixe: a 46,9 mm de passo, o rim da peca de baixo encontra
-    a peca de cima onde a parede dela ainda esta em x = LARG/2 - ABA_W, e o
-    pino mora para fora disso.
+    O friso aponta o unico sentido que tem apoio -- e a coluna sobe escalonada
+    de DESLOC por andar.
     """
+    x0 = friso_x0()
     out = None
     for sx in (-1, 1):
-        for yc, L, t, ky, r00, pino in PES:
-            if not pino:
+        for yc, L, t, ky, r00, friso in PES:
+            if not friso:
                 continue
-            for s in (1,):
-                y1 = yc + s * (DESLOC - L / 2 - PINO_F)
-                y0 = y1 - s * PINO_W
-                b = _caixa(sx, LARG / 2 - ABA_W + 0.8, r00,
-                           min(y0, y1), max(y0, y1), ALT - 1, ALT + PINO_H)
+            ya = yc + DESLOC - L / 2 - FRISO_F          # face que o pe encosta
+            yb = yc + DESLOC + L / 2 + FRISO_F
+            pernas = [
+                # perna em y: atravessa a aba, trava o deslocamento
+                _caixa(sx, x0, r00 + FRISO_F + FRISO_T,
+                       ya - FRISO_T, ya, ALT - 1, ALT + FRISO_H),
+                # perna em x: corre ao lado do pe, trava para fora
+                _caixa(sx, r00 + FRISO_F, r00 + FRISO_F + FRISO_T,
+                       ya - FRISO_T, yb + FRISO_T, ALT - 1, ALT + FRISO_H),
+                # perna em y do outro lado: fecha o berco
+                _caixa(sx, x0, r00 + FRISO_F + FRISO_T,
+                       yb, yb + FRISO_T, ALT - 1, ALT + FRISO_H),
+            ]
+            for b in pernas:
                 out = b if out is None else out + b
     return out
 
@@ -681,9 +732,18 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
 
     furos, n = [], 0
     for z, d in fl:
-        for x in cols_fundo:                                 # parede do fundo
-            furos.append(Pos(x, 0, z) * Rot(90, 0, 0) * Cylinder(d / 2, PROF + 60))
+        for x in cols_fundo:
+            # frente e fundo furados SEPARADAMENTE: o mesmo cilindro varando
+            # os dois obriga a aceitar o furo cortado pela borda da frente
+            # (as "meias bolas"). Separados, so a frente perde os furos que
+            # tromba na borda -- o fundo, que vai ate o rim, fica cheio.
+            furos.append(Pos(x, 95.0, z) * Rot(90, 0, 0)
+                         * Cylinder(d / 2, 70.0))            # parede do fundo
             n += 1
+            if cabe_na_frente(x, z, d, FOLGA_F):
+                furos.append(Pos(x, -95.0, z) * Rot(90, 0, 0)
+                             * Cylinder(d / 2, 70.0))        # parede da frente
+                n += 1
         for y in cols_lat:                                   # laterais
             if z + d / 2 + FOLGA_S > z_silhueta(y):
                 continue
@@ -734,7 +794,7 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
     if aba:
         p += _pes_nervura(env)
         p -= _pes_cavidade()
-        p += _pinos()
+        p += _frisos()
         for yc in aco_y():
             p += _cauda2(1, yc) - env          # macho na direita
             p -= _cauda2(-1, yc, dentro=True, f=ACO2_F)   # femea na esquerda
