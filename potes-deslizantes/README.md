@@ -335,56 +335,60 @@ estava parada, segue como candidata ao try-out.
 
 ---
 
-## 8. A tampa dosadora — bico com copo
+## 8. A tampa dosadora — bocal rente, filete e travinha de giro
 
-O cursor deslizante foi **descartado**. A objeção estava certa: um painel plano correndo num
-rebaixo chora, e é exatamente por isso que o mercado só põe cursor em mantimento **seco**.
-
-No lugar dele, o arranjo da referência: **uma chaminé com bico, e um copo tampando a chaminé.**
+O bocal **desceu e virou parte da tampa** — não é mais uma chaminé separada. Ele sobe 3,5 mm do
+piso da bandeja e **para exatamente no plano da aba da tampa**: saliência zero. É uma peça só
+com o prato.
 
 ```
-chaminé .... 38 mm interno, parede 1,5, saindo do piso da bandeja
-boca ....... cortada a 30°: 24 mm do lado alto, 14 mm do lado do despejo,
-             com aresta de corte de 0,4 mm para a gota se soltar
-flange ..... anel plano a 10 mm de altura, até Ø52 — é a SEDE da vedação
-copo ....... Ø54 interno × 30 mm, entra por cima da chaminé. 69 ml.
+furo ........ Ø40 mm, parede do bocal 1,5 mm
+travinha .... 3 ressaltos MACHO na face externa do bocal, até Ø46,5,
+              8 mm de largura × 1,2 de altura — 1,1 mm ABAIXO do plano da tampa
+filete TPE .. cordão Ø2,0 em canaleta no piso, no círculo Ø49
+copo ........ Ø52 interno × 32 mm, com 3 rasgos FÊMEA em L na saia. 68 ml.
 ```
 
-### O fecho sem trava: a mesma came, só que rotativa
+### O fecho: pousa, gira 30°, trava
 
-O copo pousa, **gira 30°**, e três ressaltos internos correm em três rampas no flange. A rampa
-puxa o copo 1,2 mm para baixo contra um lábio de TPE. Nada de rosca, nada de orelha, nada
-aparente — é o mesmo gesto da tampa, deslizar para travar, só que em arco.
+A perna circunferencial do rasgo é **rampada**: no giro ela puxa o copo 1,2 mm para baixo e
+esmaga o filete 0,8 mm. É a mesma came da tampa, em arco.
 
 | | |
 |---|---|
-| linha de vedação (Ø46,5) | 146 mm de perímetro |
-| força de fechamento | **0,45 kgf** |
-| rampa do copo | 1,2 mm em 13,6 mm de arco = **5,0°** |
-| torque para fechar, ensaboado / seco | 17 / 41 N·mm |
+| filete Ø49, perímetro | 154 mm |
+| força de fechamento | **0,47 kgf** |
+| rampa do rasgo | 1,2 mm em 12,2 mm de arco = **5,6°** |
+| torque para fechar, ensaboado / seco | **19 / 44 N·mm** |
 
-Tampa de vidro comum pede 500 a 1500 N·mm. Ou seja, **a vedação não dá nenhum "toque"** — quem
-dá o toque é o detente, três ressaltos no fim da rampa dimensionados para ~300 N·mm. Mesma
-lógica da tampa: a rampa puxa, o detente segura, e nenhum dos dois depende de atrito.
+Tampa de vidro comum pede 500 a 1500 N·mm. **A vedação não dá nenhum "toque"** — quem dá é o
+detente no fim da rampa, ~300 N·mm.
 
-### Por que o copo não sai se o pote tombar
+### A travinha aguenta
 
-Mesmo argumento dos ganchos: **a fuga do ressalto é rotacional e a carga de um tombo é axial.
-Perpendicular.** Com o 2,4 L invertido, a coluna de sabão faz 0,28 kgf sobre o copo.
+Três ressaltos de 8 × 1,75 mm de engate dão 42 mm² de cisalhamento = **128 kgf** de capacidade,
+contra **0,31 kgf** de carga real com o 2,4 L invertido. Fator 410×.
 
-### O copo é o dosador
+E a fuga do ressalto é **rotacional** contra carga **axial** — perpendicular, como nos ganchos
+da tampa. Um tombo não tem como girar o copo.
 
-**69 ml cheio**, com 25 e 50 ml em relevo. É a razão de ele existir: sabão líquido se dosa, não
-se despeja.
+### O preço de deixar o bocal rente
 
-### Respiro e empilhamento
+Honestamente: **bico saliente quebra o filete de líquido longe da parede; bocal rente não.**
+As compensações ficam todas dentro do plano da tampa:
 
-Chaminé de 38 mm — acima de ~20 mm o ar entra pela própria boca enquanto o líquido sai, então
-**não precisa de respiro**.
+- piso da bandeja com **caimento de 3°** para o bocal — nada empoça;
+- **entalhe de 14 mm** na parede da bandeja, do lado do despejo;
+- **aresta de corte de 0,4 mm na borda externa da tampa** nesse lado. É ali que o filete se
+  solta, a 63,6 mm do centro — já fora da boca do pote (59,2 mm), então o jato não lambe a
+  parede.
 
-A chaminé e o copo sobem 24 e 40 mm no meio da tampa. A tampa dosadora é, declaradamente, **a
-tampa do topo da pilha** — ela continua empilhando *sobre* as outras, só não recebe ninguém em
-cima. O pote de sabão fica na pia, não no meio do armário.
+Fica em aberto **medir o respingo no protótipo**. Se incomodar, o bocal volta a subir 4 mm e a
+tampa dosadora deixa de ser rente — é uma cota, não um redesenho.
+
+### Respiro
+
+Não precisa. Furo de Ø40 — acima de ~20 mm o ar entra pelo próprio furo enquanto o líquido sai.
 
 ## 9. Patente — fazer a busca antes de mostrar para alguém
 

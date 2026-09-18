@@ -142,6 +142,36 @@ projetista.</p>
 </section>
 
 <section class="col">
+  <p class="eyebrow">A tampa dosadora</p>
+  <h2>Bocal rente, filete e travinha</h2>
+  <p>O bocal <strong>desceu e virou parte da tampa</strong> — não é mais uma chaminé. Ele sobe
+  3,5 mm do piso da bandeja e <strong>para exatamente no plano da aba da tampa</strong>:
+  saliência zero. Aperte <strong>Tampa dosadora</strong> e depois <strong>Tirar o copo</strong>
+  para ver.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Peça</th><th>Cota</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>furo do bocal</td><td class="n">Ø40 mm</td><td>parede 1,5</td></tr>
+      <tr><td>travinha <strong>macho</strong></td><td class="n">3 × Ø46,5</td><td>8 mm de largura, 1,2 de altura</td></tr>
+      <tr><td>filete de TPE</td><td class="n">cordão Ø2,0</td><td>em canaleta no círculo Ø49</td></tr>
+      <tr><td>copo, rasgos <strong>fêmea</strong></td><td class="n">Ø52 × 32</td><td>68 ml, dosador</td></tr>
+    </tbody>
+  </table></div>
+  <p>Pousa, <strong>gira 30°</strong>, trava. A perna circunferencial do rasgo é rampada: no
+  giro ela puxa o copo 1,2 mm e esmaga o filete 0,8 mm. Torque para fechar <strong>19 a 44
+  N·mm</strong> — tampa de vidro comum pede 500 a 1500. A vedação não dá nenhum "toque"; quem
+  dá é o detente no fim da rampa.</p>
+  <p>As três travinhas dão <strong>128 kgf</strong> de capacidade ao cisalhamento contra
+  0,31 kgf de carga real com o 2,4 L invertido — fator 410×. E a fuga do ressalto é
+  <em>rotacional</em> contra carga <em>axial</em>: um tombo não tem como girar o copo.</p>
+  <p class="note">O preço de deixar rente, e é honesto dizer: bico saliente quebra o filete de
+  líquido longe da parede, bocal rente não. As compensações ficam todas dentro do plano —
+  caimento de 3° no piso, entalhe de 14 mm na parede da bandeja, e aresta de corte de 0,4 mm na
+  borda externa da tampa, a 63,6 mm do centro, já fora da boca do pote (59,2). Medir o respingo
+  no protótipo: se incomodar, o bocal volta a subir 4 mm — é uma cota, não um redesenho.</p>
+</section>
+
+<section class="col">
   <p class="eyebrow">A pergunta que importa</p>
   <h2>Por que não sai de cabeça para baixo</h2>
   <p>Ative <strong>Corte pela metade</strong> e <strong>Zoom na borda</strong>, feche, e gire
@@ -216,8 +246,12 @@ projetista.</p>
   var LID_L=ABA_L, LID_W=ABA_W, LID_R=ABA_R, SAIA_H=9.0;
   var SEAL=123.5, MODULO=60, DIF=POT_L-POT_W;
   // BICO COM COPO
-  var BX=-18, BI=19.0, BE=20.5, FLG=26.0, FZ=-RECESSO+10;
-  var B_ALTO=-RECESSO+24, B_BAIXO=-RECESSO+14, COPO_R=28.5, COPO_Z=FZ+30;
+  // BOCAL RENTE: sobe do piso da bandeja e PARA no plano da aba da tampa.
+  var BX=-20, BI=20.0, BE=21.5;              // furo 40, externo 43
+  var LUG_R=23.25, LUG_N=3, LUG_HW=4.0, LUG_Z0=-0.8, LUG_Z1=0.4;   // travinha MACHO
+  var TPE_RI=23.5, TPE_RE=25.5;              // filete de TPE no piso
+  var CUP_SI=23.75, CUP_SE=25.25, CUP_BI=26.0, CUP_BE=27.5;
+  var CUP_SK=4.0, CUP_TOP=30.0;              // saia com rasgos FEMEA, e corpo
   function rail0(k){ return -RETO/2 + k*CELL + WIN; }
 
   var COR={bico:[63,125,106], corpo:[143,166,180], trilho:[47,75,92],
@@ -288,16 +322,26 @@ projetista.</p>
     push(A.slice().reverse(),c,a,g); push(B,c,a,g);
   }
   // tubo redondo; ftop(angulo) permite o corte em bisel do bico
-  function tubo(cx,ri,re,z0,ftop,c,a,g,tampado){
+  function tubo(cx,ri,re,z0,ftop,c,a,g,tampado,pular){
     var seg=28, P=[];
     for(var i=0;i<seg;i++){ var t=2*Math.PI*i/seg; P.push([Math.cos(t),Math.sin(t),t]); }
     for(var i=0;i<seg;i++){
       var j=(i+1)%seg, p=P[i], q=P[j], zp=ftop(p[2]), zq=ftop(q[2]);
+      if(pular && pular(p[2])) continue;
       push([[cx+p[0]*re,p[1]*re,z0],[cx+q[0]*re,q[1]*re,z0],[cx+q[0]*re,q[1]*re,zq],[cx+p[0]*re,p[1]*re,zp]],c,a,g);
       push([[cx+q[0]*ri,q[1]*ri,z0],[cx+p[0]*ri,p[1]*ri,z0],[cx+p[0]*ri,p[1]*ri,zp],[cx+q[0]*ri,q[1]*ri,zq]],c,a,g);
       push([[cx+p[0]*re,p[1]*re,zp],[cx+q[0]*re,q[1]*re,zq],[cx+q[0]*ri,q[1]*ri,zq],[cx+p[0]*ri,p[1]*ri,zp]],c,a,g);
       if(tampado) push([[cx+p[0]*ri,p[1]*ri,z0],[cx+q[0]*ri,q[1]*ri,z0],[cx,0,z0]],c,a,g);
     }
+  }
+
+  function trava(cx,ang,r0,r1,hw,z0,z1,c,a,g){
+    var ca=Math.cos(ang), sa=Math.sin(ang);
+    function P(r,w,z){ return [cx + r*ca - w*sa, r*sa + w*ca, z]; }
+    var v=[P(r0,-hw,z0),P(r1,-hw,z0),P(r1,hw,z0),P(r0,hw,z0),
+           P(r0,-hw,z1),P(r1,-hw,z1),P(r1,hw,z1),P(r0,hw,z1)];
+    [[0,3,2,1],[4,5,6,7],[0,1,5,4],[2,3,7,6],[1,2,6,5],[3,0,4,7]]
+      .forEach(function(f){ push(f.map(function(i){return v[i];}),c,a,g); });
   }
 
   // ---------------- CORPO (grupo 0) — o da linha 1 ----------------
@@ -351,14 +395,27 @@ projetista.</p>
   }
   casco(1, false);
   casco(3, true);
-  // CHAMINE com bico em bisel + flange (sede da vedacao) + labio de TPE
-  var fTopo=function(t){ return B_BAIXO + (B_ALTO-B_BAIXO)*(1-Math.cos(t))/2; };
-  tubo(BX, BI, BE, -PENETRA, fTopo, COR.bico,1,3,false);
-  tubo(BX, BE, FLG, FZ-1.5, function(){ return FZ; }, COR.bico,1,3,false);
-  tubo(BX, (BE+FLG)/2-1.3, (BE+FLG)/2+1.3, FZ, function(){ return FZ+1.0; }, COR.tpe,1,3,false);
-  // COPO (grupo 4)
-  tubo(BX, COPO_R-1.6, COPO_R, FZ-0.5, function(){ return COPO_Z; }, COR.bico,0.55,4,false);
-  tubo(BX, 0, COPO_R-1.6, COPO_Z, function(){ return COPO_Z+1.6; }, COR.bico,0.55,4,true);
+  // BOCAL RENTE — sobe do piso da bandeja e PARA no plano da aba. Saliencia zero.
+  tubo(BX, BI, BE, -PENETRA, function(){ return PRATO; }, COR.bico,1,3,false);
+  // TRAVINHA MACHO: 3 ressaltos na face externa do bocal
+  for(var i=0;i<LUG_N;i++){
+    trava(BX, 2*Math.PI*i/LUG_N, BE, LUG_R, LUG_HW, LUG_Z0, LUG_Z1, COR.bico,1,3);
+  }
+  // FILETE DE TPE em canaleta no piso da bandeja
+  tubo(BX, TPE_RI, TPE_RE, -RECESSO-0.4, function(){ return -RECESSO+0.6; }, COR.tpe,1,3,false);
+  // canal de despejo: entalhe na parede da bandeja + aresta de corte na borda
+  caixa(-LID_L/2, BX-BE, -7, 7, PRATO-0.8, PRATO, COR.bico,1,3);
+  // COPO (grupo 4): saia com 3 RASGOS FEMEA, e corpo
+  var rasgo=function(t){
+    for(var k=0;k<LUG_N;k++){
+      var d=Math.abs(((t - 2*Math.PI*k/LUG_N + Math.PI) % (2*Math.PI)) - Math.PI);
+      if(d < 0.28) return true;
+    }
+    return false;
+  };
+  tubo(BX, CUP_SI, CUP_SE, -RECESSO, function(){ return CUP_SK; }, COR.bico,0.55,4,false,rasgo);
+  tubo(BX, CUP_BI, CUP_BE, CUP_SK, function(){ return CUP_TOP; }, COR.bico,0.55,4,false);
+  tubo(BX, 0, CUP_BI, CUP_TOP, function(){ return CUP_TOP+1.6; }, COR.bico,0.55,4,true);
 
   // ---------------- POTE EMPILHADO (grupo 2) ----------------
   var mG=0.16;

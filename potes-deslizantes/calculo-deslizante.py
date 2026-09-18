@@ -462,65 +462,75 @@ def main():
           f"molde com 2 gavetas laterais (os ganchos)")
 
     # ---------------- 11. bico ----------------
-    sep("11. TAMPA DOSADORA: BICO COM COPO, E O FECHO SEM TRAVA")
-    BICO_DI, BICO_PAR = 38.0, 1.5
-    BICO_DE = BICO_DI + 2 * BICO_PAR
-    FLANGE_D, FLANGE_Z = 52.0, 10.0
-    BICO_ALTO, BICO_BAIXO = 24.0, 14.0
-    COPO_DI, COPO_PROF = 54.0, 30.0
-    GIRO, COPO_DZ, N_LUG = 30.0, 1.2, 3
-    print(f"Cursor deslizante foi descartado: painel plano correndo em rebaixo chora, e e")
-    print(f"por isso que o mercado so poe cursor em mantimento SECO. No lugar dele, o que a")
-    print(f"referencia mostra: uma chamine com bico, e um copo tampando a chamine.")
-    print(f"\n  chamine ..... {BICO_DI:.0f} mm interno, parede {BICO_PAR:.1f}, saindo do piso da bandeja")
-    print(f"  boca cortada a 30°: {BICO_ALTO:.0f} mm do lado alto, {BICO_BAIXO:.0f} mm do lado do")
-    print(f"              despejo, com aresta de corte de 0,4 mm")
-    print(f"  flange ...... anel plano a {FLANGE_Z:.0f} mm de altura, ate {FLANGE_D:.0f} mm - "
-          f"e a SEDE da vedacao")
-    print(f"  copo ........ {COPO_DI:.0f} mm interno x {COPO_PROF:.0f} mm, entra por cima da chamine")
+    sep("11. TAMPA DOSADORA: BOCAL RENTE, FILETE DE TPE E TRAVINHA DE GIRO")
+    COL_DI, COL_DE = 40.0, 43.0          # bocal: furo e externo
+    LUG_DE, LUG_N, LUG_W, LUG_H = 46.5, 3, 8.0, 1.2
+    TPE_D, TPE_SEC, TPE_COMP = 49.0, 2.0, 0.8
+    COPO_DI, COPO_PROF = 52.0, 32.0
+    GIRO, COPO_DZ = 30.0, 1.2
+    col_h = RECESSO + PRATO_T            # do piso da bandeja ate o plano da tampa
+    print(f"O bocal DESCEU e virou parte da tampa - nao e mais chamine.")
+    print(f"  Ele sobe {col_h:.1f} mm do piso da bandeja e para EXATAMENTE no plano da aba")
+    print(f"  da tampa. Saliencia acima da tampa: ZERO. E uma peca so com o prato.")
+    print(f"\n  furo ........ {COL_DI:.0f} mm | parede do bocal {(COL_DE-COL_DI)/2:.1f} mm")
+    print(f"  travinha .... {LUG_N} ressaltos MACHO na face externa do bocal, ate "
+          f"{LUG_DE:.1f} mm,")
+    print(f"                {LUG_W:.0f} mm de largura, {LUG_H:.1f} mm de altura")
+    print(f"  filete TPE .. cordao de {TPE_SEC:.1f} mm em canaleta no piso, no circulo "
+          f"{TPE_D:.0f} mm")
+    print(f"  copo ........ {COPO_DI:.0f} mm interno x {COPO_PROF:.0f} mm, com {LUG_N} rasgos "
+          f"FEMEA em L na saia")
 
-    print(f"\nO FECHO SEM TRAVA: a MESMA came, so que ROTATIVA.")
-    print(f"  O copo pousa, gira {GIRO:.0f}°, e {N_LUG} ressaltos internos correm em "
-          f"{N_LUG} rampas no flange.")
-    print(f"  A rampa puxa o copo {COPO_DZ:.1f} mm para baixo contra um labio de TPE no flange.")
-    print(f"  Nada de rosca, nada de orelha, nada aparente. O gesto e o mesmo da tampa -")
-    print(f"  deslizar para travar - so que em arco.")
-    per_c = math.pi * (FLANGE_D + BICO_DE) / 2
+    print(f"\nO FECHO: pousa, gira {GIRO:.0f}°, trava. Sem rosca, sem orelha, sem trava aparente.")
+    print(f"  A perna circunferencial do rasgo e RAMPADA: no giro ela puxa o copo")
+    print(f"  {COPO_DZ:.1f} mm para baixo e esmaga o filete {TPE_COMP:.1f} mm.")
+    per_c = math.pi * TPE_D
     f_mm_c = 3 * E_TPE * (LAB_T ** 3 / 12) * LAB_DEF / LAB_L ** 3
     F_c = f_mm_c * per_c
-    r_med = (FLANGE_D + BICO_DE) / 4
-    arco = math.pi * FLANGE_D * GIRO / 360
+    r_lug = LUG_DE / 2
+    arco = math.pi * LUG_DE * GIRO / 360
     ang_c = math.degrees(math.atan(COPO_DZ / arco))
-    print(f"\n  linha de vedacao: circulo de {(FLANGE_D+BICO_DE)/2:.1f} mm, perimetro {per_c:.0f} mm")
-    print(f"  labio de TPE igual ao da tampa -> {F_c:.1f} N = {F_c/9.81:.2f} kgf de fechamento")
-    print(f"  rampa do copo: {COPO_DZ:.1f} mm em {arco:.1f} mm de arco = {ang_c:.1f}°")
+    print(f"\n  filete: circulo {TPE_D:.0f} mm, perimetro {per_c:.0f} mm")
+    print(f"  forca de fechamento {F_c:.1f} N = {F_c/9.81:.2f} kgf")
+    print(f"  rampa do rasgo: {COPO_DZ:.1f} mm em {arco:.1f} mm de arco = {ang_c:.1f}°")
     for mu in (MU_SABAO, MU_SECO):
         ta = math.tan(math.radians(ang_c))
-        T = F_c * (r_med / 1000) * (ta + mu) / (1 - mu * ta)
-        print(f"    mu={mu:.2f} -> torque para fechar {T*1000:.0f} N.mm "
-              f"({T:.3f} N.m). Tampa de vidro comum pede 500 a 1500.")
-    print(f"  Ou seja: a vedacao nao da nenhum 'toque'. Quem da o toque e o DETENTE -")
-    print(f"  {N_LUG} ressaltos no fim da rampa, dimensionados para ~300 N.mm. Mesma logica")
-    print(f"  da tampa: a rampa puxa, o detente segura, e nenhum dos dois depende de atrito.")
+        T = F_c * (r_lug / 1000) * (ta + mu) / (1 - mu * ta)
+        print(f"    mu={mu:.2f} -> torque para fechar {T*1000:5.0f} N.mm")
+    print(f"  Tampa de vidro comum pede 500 a 1500 N.mm. Ou seja: a vedacao nao da nenhum")
+    print(f"  'toque'. Quem da o toque e o DETENTE no fim da rampa, ~300 N.mm.")
 
-    print(f"\nPOR QUE O COPO NAO SAI SE O POTE TOMBAR - mesmo argumento dos ganchos:")
-    print(f"  a fuga do ressalto e ROTACIONAL, e a carga de um tombo e AXIAL. Perpendicular.")
-    print(f"  Carga axial no copo com o pote invertido, so a coluna de sabao:")
-    a_bico = math.pi * (BICO_DI / 2) ** 2 / 1e2
-    for p in potes:
+    print(f"\nA TRAVINHA AGUENTA? {LUG_N} ressaltos de {LUG_W:.0f} x "
+          f"{(LUG_DE-COL_DE)/2:.2f} mm de engate:")
+    a_lug = LUG_N * LUG_W * (LUG_DE - COL_DE) / 2
+    a_furo = math.pi * (COL_DI / 2) ** 2 / 1e2
+    print(f"  area de cisalhamento {a_lug:.1f} mm2 -> capacidade "
+          f"{a_lug * SIGMA_PP / 9.81:.0f} kgf")
+    for p in potes[-1:]:
         dp = 1030 * 9.81 * (p['H_ext'] / 1000) / 1000
-        F = dp * 1000 * a_bico / 1e4
-        print(f"    {p['cap']:>5} ml -> {F:5.2f} N ({F/9.81:.2f} kgf) sobre {a_bico:.1f} cm2")
+        F = dp * 1000 * a_furo / 1e4
+        print(f"  carga real com o 2,4 L invertido: {F:.2f} N = {F/9.81:.2f} kgf "
+              f"-> fator {a_lug*SIGMA_PP/F:.0f}x")
+    print(f"  E a fuga do ressalto e ROTACIONAL contra carga AXIAL: perpendicular, como")
+    print(f"  nos ganchos da tampa. Um tombo nao tem como girar o copo.")
 
-    vol_copo = math.pi * (COPO_DI / 2) ** 2 * COPO_PROF / 1e3
-    print(f"\nO COPO E O DOSADOR: {vol_copo:.0f} ml cheio. Marcar 25 e 50 ml em relevo.")
-    print(f"  E a razao de ele existir: sabao liquido se dosa, nao se despeja.")
-    print(f"\nRESPIRO: nao precisa. Chamine de {BICO_DI:.0f} mm - acima de ~20 mm o ar entra")
-    print(f"  pela propria boca enquanto o liquido sai.")
-    print(f"\nEMPILHAMENTO: a chamine e o copo ficam no meio da tampa e sobem "
-          f"{BICO_ALTO + FLANGE_Z*0:.0f} mm.")
-    print(f"  A tampa dosadora e, declaradamente, a tampa do TOPO da pilha. O pote de sabao")
-    print(f"  fica na pia. Ele continua empilhando SOBRE os outros - so nao recebe ninguem.")
+    vol = math.pi * (COPO_DI / 2) ** 2 * COPO_PROF / 1e3
+    print(f"\nO COPO E O DOSADOR: {vol:.0f} ml. Marcar 25 e 50 ml em relevo.")
+    print(f"  Altura acima do plano da tampa: {COPO_PROF - col_h:.1f} mm.")
+
+    print(f"\nO PRECO DE DEIXAR O BOCAL RENTE - e honesto dizer:")
+    print(f"  bico saliente quebra o filete de liquido longe da parede. Bocal rente nao.")
+    print(f"  Compensacoes, todas dentro do plano da tampa:")
+    print(f"    - piso da bandeja com caimento de 3° para o bocal (nada empoca)")
+    print(f"    - entalhe de 14 mm na parede da bandeja, do lado do despejo")
+    print(f"    - aresta de corte de 0,4 mm na BORDA EXTERNA da tampa, nesse lado:")
+    print(f"      e ali que o filete se solta, a {(ext_l + 2*ABA_W)/2:.1f} mm do centro,")
+    print(f"      ja para fora da boca do pote ({boca_min/2:.1f} mm) - o jato nao lambe a parede.")
+    print(f"  Fica em aberto medir o respingo no prototipo. Se incomodar, o bico volta a")
+    print(f"  subir 4 mm e a tampa dosadora deixa de ser rente - e uma cota, nao um redesenho.")
+
+    print(f"\nRESPIRO: nao precisa. Furo de {COL_DI:.0f} mm - acima de ~20 mm o ar entra")
+    print(f"  pelo proprio furo enquanto o liquido sai.")
 
     sep("12. O QUE FICA ABERTO")
     abertos = [
