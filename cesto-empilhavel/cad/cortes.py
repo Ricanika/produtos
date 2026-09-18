@@ -16,10 +16,12 @@ from trimesh.intersections import mesh_plane
 
 import modelo3d as M
 
+DESLOC = None  # vem de modelo3d.DESLOC em main()
+
 DEST = os.path.dirname(os.path.abspath(__file__))
 FUNDO, TINTA, GRIS = "#fbfaf8", "#1f2328", "#6b7280"
 NOVO, CINZ = "#c2410c", "#64748b"
-DESLOC, PASSO_E = 10.0, 130.0
+PASSO_E = 130.0
 
 
 def seg(m, y, dz=0.0):
@@ -46,16 +48,19 @@ def cota(ax, x, z0, z1, txt, cor=NOVO, lado=1):
 
 
 def main(pn):
+    global DESLOC
     M.set_draft(12.0)
+    DESLOC = M.DESLOC
     arq = os.path.join(DEST, "cesto-aba.stl")
     if not os.path.exists(arq):
         from build123d import export_stl
         p, _ = M.cesto(aba=True)
         export_stl(p, arq)
     m = trimesh.load(arq)
-    yc = sum(M.nerv_y()[1]) / 2
+    yc = M.PES[0][0]          # pe da frente
+    yr = M.PES[1][0]          # encaixe de tras
 
-    fig, axs = plt.subplots(1, 2, figsize=(13.2, 7.4), facecolor=FUNDO)
+    fig, axs = plt.subplots(1, 3, figsize=(17.4, 7.4), facecolor=FUNDO)
     for ax in axs:
         ax.set_facecolor(FUNDO)
         ax.set_aspect("equal")
@@ -81,7 +86,7 @@ def main(pn):
             "aba 10 mm: a parede de cima tem\nde passar pela borda interna "
             "dela\n→ 10/tg 12° = 46,9 mm",
             fontsize=8.4, color=CINZ, va="bottom", ha="right")
-    ax.text(53, 196, "cinza claro: a mesma peça 10 mm ao lado,\nonde a "
+    ax.text(53, 196, "cinza claro: a mesma peça 14 mm ao lado,\nonde a "
             "parede e a aba estão inteiras", fontsize=8.2, color="#9aa4b2",
             va="top", ha="left")
 
@@ -104,7 +109,21 @@ def main(pn):
     fig.text(0.5, 0.942, "cortes tirados do sólido · cinza = peça de baixo, "
              "laranja = peça de cima", ha="center", va="top", fontsize=10,
              color=GRIS)
-    fig.subplots_adjust(top=0.855, bottom=0.03, left=0.02, right=0.98)
+    # --- 3: o encaixe de tras e o pino na aba ----------------------------
+    ax = axs[2]
+    ypino = yr + DESLOC - M.PES[1][1] / 2 - M.PINO_F - M.PINO_W / 2
+    desenha(ax, seg(m, yr + DESLOC), "#aab4c2", lw=1.0)
+    desenha(ax, seg(m, ypino), CINZ)
+    desenha(ax, seg(m, yr, PASSO_E), NOVO)
+    ax.set_xlim(88, 116); ax.set_ylim(117, 143)
+    ax.set_title("O ENCAIXE DE TRÁS · o pino da referência", fontsize=12,
+                 color=TINTA, weight="bold", pad=14)
+    ax.text(89, 142.5, "pino de 3 mm na aba (cinza) encostado no piso do pé "
+            "(laranja):\né o que impede a peça de escorregar de volta para a "
+            "posição\nde encaixe — e aponta o único sentido que tem apoio nos 4 pés.",
+            fontsize=8.4, color=TINTA, va="top", ha="left")
+
+    fig.subplots_adjust(top=0.855, bottom=0.03, left=0.015, right=0.985)
     fig.savefig(os.path.join(DEST, "cortes.png"), dpi=125, facecolor=FUNDO)
     print("gerado cortes.png")
 

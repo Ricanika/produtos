@@ -538,6 +538,53 @@ passa pela boca de 7,4 mm — para soltar, levanta 15 mm.
 Arquivos: `cad/aba.py` (folha `aba.png`), `cad/cortes.py` (`cortes.png`, cortes
 2D tirados do sólido), `cad/cesto-aba.step` e `.stl`.
 
+#### Dois pés por lateral: um pé na frente e um ENCAIXE atrás
+
+Segunda rodada do pedido: dos três pés por lateral ficaram **dois** — o da
+frente (na altura do rasgo curvado da silhueta) sustenta, o do meio saiu, e o
+de trás virou um **encaixe** mais fino, com o **pino na aba** da referência do
+cliente.
+
+| | frente | trás (encaixe) |
+|---|---|---|
+| y do centro | −39 mm | +40 mm |
+| comprimento em y | 10 mm | 8 mm |
+| parede | 1,6 mm | 1,2 mm |
+| saída em y | 2,6°/lado | 1,8°/lado |
+| face externa no piso | 100,5 mm | 103,0 mm |
+| recorte que abre na aba | 18,5 mm | 13,9 mm |
+
+Regra de cada pé: **saída em y ≥ parede / passo_encaixe**, senão a boca da
+cavidade nunca engole a língua. A 46,9 mm de passo isso dá 0,034 para 1,6 mm
+de parede e 0,026 para 1,2 — as duas com folga.
+
+Resultado medido: **peso caiu de 163,8 para 154,0 g**, o encaixe continua em
+**46,9 mm** e o empilhamento em **130,0 mm** (0,00 mm³ de interferência a
+130,0 exatos), agora com **4 apoios e 148 mm² de contato**. A aba interrompida
+caiu de 111 para **65 mm** do perímetro (8%).
+
+**O pino.** Saliência de 3 mm acima da aba, encostada com 0,3 mm de folga na
+lateral do piso do pé da peça de cima, do lado do recorte: é o que impede a
+peça de escorregar de volta para a posição de encaixe. Custa **zero** no
+encaixe — a 46,9 mm de passo o rim da peça de baixo encontra a peça de cima
+onde a parede dela ainda está em x = LARG/2 − ABA_W, e o pino mora para fora
+disso.
+
+**O que isso custou, e é honesto dizer:** o deslocamento agora só funciona no
+sentido **+y**. O chanfro de topo come a aba a partir de
+y = −PROF/2 + CHANFRO = −48 mm, e o pé da frente deslocado −14 mm cai no vazio
+— medido: **2 apoios em vez de 4**. Por isso o pino aponta um só sentido, e a
+coluna sobe **escalonada de 14 mm por andar**. Para empilhar nos dois sentidos
+(coluna a prumo) o pé da frente teria de recuar para y = −26, o que encurta o
+braço de apoio de 79 para 66 mm. É uma escolha de projeto, não uma limitação
+de molde.
+
+Com 4 apoios num retângulo de 200 × 79 mm dentro de uma peça de 200 mm de
+profundidade, a cesta de cima **pode balançar** se for carregada muito na
+frente ou muito atrás. Quem resolveria isso é um pé na parede de trás (a aba
+corre lá também, e a distância a vencer é a mesma 17,6 mm) — mais um recorte,
+a decidir.
+
 ### 4.3 Acoplado — as três canaletas
 
 O pedido foi uma **canaleta de ponta a ponta na lateral, macho de um lado e

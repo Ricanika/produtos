@@ -22,7 +22,7 @@ COR, COR2, CINZ = (0.93, 0.44, 0.13), (0.72, 0.30, 0.08), (0.55, 0.63, 0.72)
 FUNDO, TINTA, GRIS = "#fbfaf8", "#1f2328", "#6b7280"
 NOVO, VERDE = "#c2410c", "#15803d"
 SAIDA = 12.0
-DESLOC = 10.0          # deslocamento em y para empilhar (medido: 5 mm bastam)
+DESLOC = None          # vem de modelo3d.DESLOC (14 mm)
 PASSO_E = 130.0
 
 
@@ -44,13 +44,16 @@ def stl(s, nome):
 
 
 def main():
+    global DESLOC
     M.set_draft(SAIDA)
+    DESLOC = M.DESLOC
     p, n = M.cesto(aba=True)
     export_step(p, os.path.join(DEST, "cesto-aba.step"))
     m = stl(p, "cesto-aba.stl")
     pn = passo_xy(p, 0.0)
     pe = passo_xy(p, DESLOC)
     peso, cap = p.volume * M.RHO, M.capacidade()
+    hz = p.bounding_box().size.Z
     trava = [(dx, (p & (Pos(215.0 + dx, 0, 0) * p)).volume)
              for dx in (0.0, 0.6, 1.2, 2.0)]
     solta = [(dz, (p & (Pos(216.0, 0, dz) * p)).volume)
@@ -83,14 +86,14 @@ def main():
     for lvl in range(3):
         for col in (0, M.LARG):
             t = m.copy()
-            dy = DESLOC if lvl == 1 else 0.0
+            dy = lvl * DESLOC        # o deslocamento e cumulativo
             t.apply_translation([col, dy, lvl * PASSO_E])
             cena.append((t, COR if (lvl + (col > 0)) % 2 == 0 else COR2))
     render.salvar(render.render(cena, direcao=(-0.95, -1.2, -0.5),
                                 largura=1050),
                   os.path.join(DEST, "aba-torre.png"))
 
-    folha(peso, cap, pn, pe, n, trava, solta)
+    folha(peso, cap, pn, pe, n, trava, solta, hz)
 
 
 def imagem(fig, rect, arq, titulo=None, sub=None):
@@ -110,7 +113,7 @@ def imagem(fig, rect, arq, titulo=None, sub=None):
                 color=GRIS, linespacing=1.4)
 
 
-def folha(peso, cap, pn, pe, furos, trava, solta):
+def folha(peso, cap, pn, pe, furos, trava, solta, hz):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -120,22 +123,22 @@ def folha(peso, cap, pn, pe, furos, trava, solta):
              ha="center", va="top", fontsize=22, color=TINTA, weight="bold")
     fig.text(0.5, 0.957, ("empilha na mesma frente · encaixa "
              f"{pn:.1f} mm de passo".replace(".", ",") +
-             f" · 12 peças em {130 + 11*pn:.0f} mm de caixa"),
+             f" · 12 peças em {hz + 11*pn:.0f} mm de caixa"),
              ha="center", va="top", fontsize=11.5, color="#3d444d")
 
     imagem(fig, [0.022, 0.535, 0.30, 0.335], "aba-peca.png",
-           "A PEÇA", f"aba plana de {M.ABA_W:.0f} mm em toda a borda · 6 pés "
-           f"ocos · saída {SAIDA:.0f}°/lado")
+           "A PEÇA", f"aba plana de {M.ABA_W:.0f} mm em toda a borda · 2 pés "
+           f"+ 2 encaixes · saída {SAIDA:.0f}°/lado")
     imagem(fig, [0.345, 0.512, 0.635, 0.360], "cortes.png")
 
     imagem(fig, [0.022, 0.078, 0.30, 0.335], "aba-col.png",
            f"ENCAIXADAS · {pn:.1f} mm".replace(".", ","),
-           f"6 peças em {130 + 5*pn:.0f} mm · mesma orientação, todas no "
+           f"6 peças em {hz + 5*pn:.0f} mm · mesma orientação, todas no "
            f"mesmo sentido")
     imagem(fig, [0.345, 0.078, 0.30, 0.335], "aba-torre.png",
            "EMPILHADAS + ACOPLADAS",
-           f"2 colunas × 3 andares · mesma frente, sem inverter · o andar do "
-           f"meio desloca {DESLOC:.0f} mm em y")
+           f"2 colunas × 3 andares · mesma frente, sem inverter · cada "
+           f"andar desloca {M.DESLOC:.0f} mm em y · o pino aponta o sentido")
     tb = fig.add_axes([0.668, 0.078, 0.30, 0.335]); tb.axis("off")
     tb.set_xlim(0, 1); tb.set_ylim(0, 1)
     tb.add_patch(Rectangle((0, 0), 1, 1, transform=tb.transAxes,
@@ -143,16 +146,16 @@ def folha(peso, cap, pn, pe, furos, trava, solta):
     tb.text(0.06, 0.95, "MEDIDO NO SÓLIDO", fontsize=11.5, color=NOVO,
             weight="bold", va="top")
     linhas = [("encaixa (mesma frente)", f"{pn:.1f} mm".replace(".", ",")),
-              ("6 peças / 12 peças", f"{130+5*pn:.0f} / {130+11*pn:.0f} mm"),
+              ("6 peças / 12 peças", f"{hz+5*pn:.0f} / {hz+11*pn:.0f} mm"),
               (f"empilha (desloca {DESLOC:.0f} mm)",
                f"{pe:.1f} mm".replace(".", ",")),
-              ("deslocamento mínimo", "5 mm (medido)"),
-              ("apoios na aba", "6 pés × 3,0 × 9,8 mm"),
+              ("deslocamento p/ empilhar", f"{M.DESLOC:.0f} mm"),
+              ("apoios na aba", "4 · 148 mm² de contato"),
               ("trava lateral a partir de", "0,6 mm"),
               ("solta levantando", "15 mm"),
               ("peso", f"{peso:.1f} g".replace(".", ",")),
               ("capacidade", f"{cap:.2f} L".replace(".", ",")),
-              ("envelope", "219 × 191 × 130 mm"),
+              ("envelope", "219 × 191 × 133 mm"),
               ("furos", f"{furos}")]
     y = 0.86
     for k, v in linhas:

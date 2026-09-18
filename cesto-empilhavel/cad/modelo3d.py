@@ -126,14 +126,26 @@ B_CAB    = (116.0, 126.0)  # z da cabeca
 # passam pelos recortes e a peca ENCAIXA; deslocado, pousam na aba e EMPILHA.
 ABA_W, ABA_T = 10.0, 2.5      # largura e espessura da aba
 ABA_F = 2.0                   # folga do recorte alem do pe
-NERV_N = 3                    # pes por lateral
-NERV_L = 10.0                 # comprimento de cada pe, em y
-NERV_B = 3.0                  # apoio do pe sobre a aba
-NERV_T = 1.6                  # parede do pe (ele e OCO: a cavidade interna)
 NERV_P = 24.0                 # profundidade do pe em x (>20,6: encosta na parede)
-NERV_KY = 0.045               # saida das faces em y do pe (2,6 deg por lado)
-NERV_R0 = LARG / 2 - ABA_W + NERV_B   # face externa do pe no piso: 100,5
-NERV_KX = (LARG / 2 - NERV_R0) / ALT  # ela sobe ate LARG/2 exatamente no rim
+NERV_T = 1.6                  # parede do pe da frente
+DESLOC = 14.0                 # deslocamento em y que troca ENCAIXAR por EMPILHAR
+
+# DOIS pes por lateral (pedido de 18/09; o do meio saiu):
+#   frente -- o pe que sustenta, na altura do rasgo curvado da silhueta
+#   tras   -- o ENCAIXE: nervura fina, com o pino da referencia na aba
+# (yc, L em y, parede, saida em y, face externa no piso, tem pino na aba)
+PES = (
+    (-39.0, 10.0, 1.6, 0.045, LARG / 2 - ABA_W + 3.0, False),
+    (40.0, 8.0, 1.2, 0.032, LARG / 2 - ABA_W + 5.5, True),
+)
+# Regra de cada pe: saida em y >= parede/passo_encaixe, senao a boca da
+# cavidade nunca engole a lingua. A 46,9 mm de passo: 0,034 para 1,6 mm de
+# parede e 0,026 para 1,2. Em x vale a mesma coisa com NERV_KX.
+# PINO na aba (a referencia do cliente): pequena saliencia que encosta na
+# lateral do piso do pe e impede a peca de escorregar de volta para a posicao
+# de encaixe. Fica do lado do recorte, um para cada sentido de deslocamento.
+PINO_H, PINO_W = 3.0, 1.2     # altura acima da aba e espessura em y
+PINO_F = 0.3                  # folga entre o pino e o piso do pe
 # ACOPLAMENTO na borda: cauda de andorinha em PLANTA no bordo da aba.
 # So e possivel por causa do encaixe raso: com passo de encaixe de 47 mm, tudo
 # o que estiver acima de ALT - (ALT - 47) = 47 mm do topo da peca de cima fica
@@ -372,18 +384,8 @@ def cotas_empilhamento():
 
 
 def nerv_y():
-    """Posicoes em y dos pes, no trecho RETO da lateral.
-
-    O trecho reto acaba no raio do canto, que cresce com a saida de molde:
-    r_topo = 14 + ALT*tg. A 12 graus ele vale 41,6 mm, e um pe colocado alem
-    disso cai na curva do canto -- onde a peca e muito mais estreita e o pe
-    nao passa no encaixe.
-    """
-    r_topo = 14.0 + ALT * TAN
-    y0 = -PROF / 2 + CHANFRO + 4
-    y1 = PROF / 2 - r_topo - 4
-    passo = (y1 - y0 - NERV_L) / (NERV_N - 1)
-    return [(y0 + i * passo, y0 + i * passo + NERV_L) for i in range(NERV_N)]
+    """Compatibilidade: as faixas em y dos pes (yc +- L/2)."""
+    return [(yc - L / 2, yc + L / 2) for yc, L, *_ in PES]
 
 
 def _aba(fora, interno):
@@ -403,29 +405,27 @@ def _aba(fora, interno):
     return a
 
 
-def _pe_bloco(sx, yc, ox=0.0, oy=0.0, z0=0.0, z1=None):
+def _pe_bloco(sx, yc, L, ky, r00, ox=0.0, oy=0.0, z0=0.0, z1=None):
     """Tronco do pe no lado sx, centrado em yc.
 
-    Face externa: de NERV_R0 no piso ate LARG/2 no rim -- inclinacao NERV_KX,
-    sempre POR FORA do cone, de modo que a silhueta da peca nunca diminui
-    subindo (nenhuma face virada para cima = nenhuma contra-saida).
-    Faces em y: saida NERV_KY por lado. E ela que faltava: sem saida em y a
-    boca da cavidade (NERV_L - 2*NERV_T) e sempre mais estreita que a lingua
-    (NERV_L) e o pe NUNCA entra no pe. Com saida, entra a partir de
-    NERV_T/NERV_KY mm de descida.
-    ox/oy recuam a face externa e as faces laterais: e assim que se obtem a
-    casca (a cavidade interna e o mesmo bloco com ox=oy=NERV_T).
+    Face externa: de r00 no piso ate LARG/2 no rim -- sempre POR FORA do cone,
+    de modo que a silhueta da peca nunca diminui subindo (nenhuma face virada
+    para cima = nenhuma contra-saida).
+    Faces em y: saida ky por lado. Sem ela a boca da cavidade (L - 2*parede)
+    e sempre mais estreita que a lingua (L) e o pe NUNCA entra no pe.
+    ox/oy recuam a face externa e as laterais: e assim que se obtem a casca
+    (a cavidade interna e o mesmo bloco com ox=oy=parede).
     """
     if z1 is None:
         z1 = ALT + 6.0
-    kx = NERV_KX
-    r0, r1 = NERV_R0 - ox + kx * z0, NERV_R0 - ox + kx * z1
+    kx = (LARG / 2 - r00) / ALT
+    r0, r1 = r00 - ox + kx * z0, r00 - ox + kx * z1
     pts = [(sx * r0, z0), (sx * r1, z1),
            (sx * (r1 - NERV_P), z1), (sx * (r0 - NERV_P), z0)]
     bx = extrude(Plane.XZ * make_face(Polyline(*pts, close=True)),
                  PROF, both=True)
-    h0 = NERV_L / 2 - oy + NERV_KY * z0
-    h1 = NERV_L / 2 - oy + NERV_KY * z1
+    h0 = L / 2 - oy + ky * z0
+    h1 = L / 2 - oy + ky * z1
     q = [(yc - h0, z0), (yc + h0, z0), (yc + h1, z1), (yc - h1, z1)]
     by = extrude(Plane.YZ * make_face(Polyline(*q, close=True)),
                  LARG, both=True)
@@ -436,8 +436,8 @@ def _pes_nervura(env):
     """Os pes: blocos por fora do cone (a cavidade sai depois, da peca toda)."""
     out = None
     for sx in (-1, 1):
-        for y0, y1 in nerv_y():
-            b = _pe_bloco(sx, (y0 + y1) / 2, z1=ALT) - env
+        for yc, L, t, ky, r00, _ in PES:
+            b = _pe_bloco(sx, yc, L, ky, r00, z1=ALT) - env
             out = b if out is None else out + b
     return out
 
@@ -446,28 +446,86 @@ def _pes_cavidade():
     """Cavidade interna do pe -- subtraida da PECA INTEIRA, nao do pe.
 
     Subtraida da peca toda ela faz tres coisas de uma vez:
-      1. esvazia o pe (casca de NERV_T), deixando so o piso de apoio embaixo;
-      2. vaza a parede atras do pe (janela de NERV_L - 2*NERV_T = 6,8 mm,
-         escondida de fora pela propria face externa do pe);
+      1. esvazia o pe (casca de `t`), deixando so o piso de apoio embaixo;
+      2. vaza a parede atras do pe (janela de L - 2*t, escondida de fora pela
+         propria face externa do pe);
       3. abre o recorte na aba por onde a lingua do pe de cima desce.
     Sem a janela (2) o piso do pe de cima bateria na parede da peca de baixo:
-    ele nasce na parede e avanca 20 mm para fora, tem de atravessa-la.
+    ele nasce na parede e avanca mais de 20 mm para fora, tem de atravessa-la.
     """
     out = None
     for sx in (-1, 1):
-        for y0, y1 in nerv_y():
-            c = _pe_bloco(sx, (y0 + y1) / 2, ox=NERV_T, oy=NERV_T,
-                          z0=NERV_T)
+        for yc, L, t, ky, r00, _ in PES:
+            c = _pe_bloco(sx, yc, L, ky, r00, ox=t, oy=t, z0=t)
             out = c if out is None else out + c
     return out
 
 
+def _pinos():
+    """Pinos na aba -- o encaixe da referencia do cliente.
+
+    Saliencia de PINO_H acima da aba, encostada na lateral do piso do pe da
+    peca de cima, do LADO DO RECORTE: e o que impede a peca de escorregar de
+    volta para a posicao de encaixe.
+
+    Um so por encaixe, e no sentido +y. O deslocamento negativo NAO serve: o
+    chanfro de topo come a aba a partir de y = -PROF/2 + CHANFRO = -48, e o pe
+    da frente deslocado -14 mm cairia no vazio (medido: 2 apoios em vez de 4).
+    Por isso o pino aponta o unico sentido que tem apoio -- e a coluna sobe
+    escalonada de DESLOC por andar. Para empilhar nos dois sentidos, o pe da
+    frente teria de recuar para y = -26; custa 13 mm de bracos de apoio.
+
+    Custa zero no encaixe: a 46,9 mm de passo, o rim da peca de baixo encontra
+    a peca de cima onde a parede dela ainda esta em x = LARG/2 - ABA_W, e o
+    pino mora para fora disso.
+    """
+    out = None
+    for sx in (-1, 1):
+        for yc, L, t, ky, r00, pino in PES:
+            if not pino:
+                continue
+            for s in (1,):
+                y1 = yc + s * (DESLOC - L / 2 - PINO_F)
+                y0 = y1 - s * PINO_W
+                b = _caixa(sx, LARG / 2 - ABA_W + 0.8, r00,
+                           min(y0, y1), max(y0, y1), ALT - 1, ALT + PINO_H)
+                out = b if out is None else out + b
+    return out
+
+
+def aba_livre():
+    """Trechos de y da aba sem recorte e sem pino, no lado reto da lateral."""
+    r_topo = 14.0 + ALT * TAN
+    lim = (-PROF / 2 + CHANFRO + 2, PROF / 2 - r_topo - 2)
+    ocupado = []
+    for yc, L, t, ky, r00, pino in PES:
+        h = L / 2 - t + ky * ALT + 0.5
+        ocupado.append((yc - h, yc + h))
+    ocupado.sort()
+    livres, y = [], lim[0]
+    for a, b in ocupado:
+        if a - y > 1:
+            livres.append((y, min(a, lim[1])))
+        y = max(y, b)
+    if lim[1] - y > 1:
+        livres.append((y, lim[1]))
+    return [(a, b) for a, b in livres if b > a]
+
 
 def aco_y():
-    """Centros das caudas: no meio dos vaos livres da aba, entre os pes."""
-    hy = NERV_L / 2 - NERV_T + NERV_KY * ALT     # meia-boca do recorte no rim
-    cs = [(a + b) / 2 for a, b in nerv_y()]
-    return [(cs[i] + hy + cs[i + 1] - hy) / 2 for i in range(len(cs) - 1)]
+    """Centros das duas caudas de acoplamento, nos trechos livres da aba.
+
+    Duas e nao uma: uma cauda sozinha trava a separacao mas deixa a peca
+    girar em torno dela. Com dois pes por lateral sobra um trecho livre
+    grande no meio, e as duas caudas cabem dentro dele.
+    """
+    livres = sorted(aba_livre(), key=lambda ab: ab[0] - ab[1])
+    bons = [ab for ab in livres if ab[1] - ab[0] >= ACO2_WT + 3]
+    if len(bons) >= 2:
+        return sorted((a + b) / 2 for a, b in bons[:2])
+    a, b = bons[0]
+    m = (ACO2_WT + 3) / 2          # nas pontas do trecho: braco maximo
+    return [a + m, b - m]
 
 
 def _cauda2(sx, yc, dentro=False, f=0.0):
@@ -676,6 +734,7 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
     if aba:
         p += _pes_nervura(env)
         p -= _pes_cavidade()
+        p += _pinos()
         for yc in aco_y():
             p += _cauda2(1, yc) - env          # macho na direita
             p -= _cauda2(-1, yc, dentro=True, f=ACO2_F)   # femea na esquerda
