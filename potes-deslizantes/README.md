@@ -164,24 +164,40 @@ virou coadjuvante — entra na conta do esforço do polegar, não na do travamen
 
 ---
 
-## 4. A linha
+## 4. A linha — o corpo é o da linha 1, cota por cota
 
-Footprint **123,4 × 94,9 mm** · canto R18 · saída 0,5°/lado · módulo 60 mm ·
-pé embutido 112,4 × 83,9 × 6 mm igual nos quatro
+Footprint **121,2 × 93,3 mm** · aba 127,2 × 99,2 · canto R18 · saída 0,5°/lado ·
+fundo **2,0 mm igual nos quatro** · pé embutido 112,4 × 84,4 × 6 mm
 
-| | Altura ext. | Passo | Fundo | Elev. piso | Parede | Peso corpo | Resina (H 105) |
-|---|---|---|---|---|---|---|---|
-| 600 ml | 58,0 mm | 60 | 1,60 mm | 0,0 mm | 1,15 mm | 40,7 g | R$ 0,45 |
-| 1,2 L | 118,0 mm | 120 | 2,50 mm | 3,2 mm | 1,20 mm | 73,9 g | R$ 0,82 |
-| 1,8 L | 178,0 mm | 180 | 2,50 mm | 5,3 mm | 1,30 mm | 105,2 g | R$ 1,16 |
-| 2,4 L | 238,0 mm | 240 | 2,50 mm | 5,4 mm | 1,40 mm | 140,3 g | R$ 1,55 |
+| | Altura ext. | Passo | Elev. piso | Parede | Peso corpo |
+|---|---|---|---|---|---|
+| 600 ml | 62,0 mm | 60 | 2,0 mm | 1,15 mm | 44,9 g |
+| 1,2 L | 122,0 mm | 120 | 3,4 mm | 1,20 mm | 70,9 g |
+| 1,8 L | 182,0 mm | 180 | 2,7 mm | 1,30 mm | 101,7 g |
+| 2,4 L | 242,0 mm | 240 | 0,0 mm | 1,40 mm | 136,2 g |
 
 Empilhamento confere: `600×4` = `1,2 L×2` = `600+600+1,2 L` = `600+1,8 L` = `2,4 L` = 240 mm.
 
-Contra a linha 1: footprint +2,2 mm, corpo 4,0 mm mais baixo, peso do corpo grande +5 g.
-É o preço do mecanismo, e é barato.
+**Nada mudou do ombro para baixo.** O mecanismo inteiro vive nos últimos 5,5 mm do topo.
 
----
+### O que isso custou à came
+
+Numa versão intermediária eu tinha tirado a bandeja de dentro da boca — virou um murete acima
+do prato — porque **qualquer coisa que entre na boca trava o curso horizontal**. Aquilo custava
+corpo 4,0 mm mais baixo e footprint 2,2 mm maior: já não era o corpo da linha 1.
+
+Para devolver o corpo original, foi a **came** que teve de crescer:
+
+| | Com murete | Com a bandeja rebaixada da linha 1 |
+|---|---|---|
+| a tampa paira, antes de deslizar | 2,00 mm | **4,00 mm** (3,50 de bandeja + 0,50) |
+| curso | 16 mm | **24 mm** |
+| rampa | 6 mm a 18,4° | **10 mm a 21,8°** |
+| ganchos | 6 de 10 mm | **4 de 14 mm** |
+
+São só quatro ganchos porque a rampa ficou longa e o gancho precisa caber no trilho junto com
+ela (`gancho + rampa ≤ curso`). Com 4, cada um pega 1/4 da carga de queda — o que exige gancho
+de 14 mm, lábio de 3,4 e poste de 3,6 mm.
 
 ## 5. A tampa
 
@@ -319,70 +335,56 @@ estava parada, segue como candidata ao try-out.
 
 ---
 
-## 8. A tampa dosadora — abertura com cursor + bico
+## 8. A tampa dosadora — bico com copo
 
-Mesmo casco, mesma came, mesmos ganchos, mesmo lábio. Muda o miolo do prato:
+O cursor deslizante foi **descartado**. A objeção estava certa: um painel plano correndo num
+rebaixo chora, e é exatamente por isso que o mercado só põe cursor em mantimento **seco**.
+
+No lugar dele, o arranjo da referência: **uma chaminé com bico, e um copo tampando a chaminé.**
 
 ```
-abertura ......... 30 × 22 mm no extremo da tampa, encostada no murete
-cursor ........... 34 mm, 1,8 mm de espessura, correndo em dois trilhos
-bico ............. fixo na ponta, projeta 4,4 mm e sobe 5,0 mm
-saliência total .. 3,0 mm (cursor + trilhos) acima do prato
+chaminé .... 38 mm interno, parede 1,5, saindo do piso da bandeja
+boca ....... cortada a 30°: 24 mm do lado alto, 14 mm do lado do despejo,
+             com aresta de corte de 0,4 mm para a gota se soltar
+flange ..... anel plano a 10 mm de altura, até Ø52 — é a SEDE da vedação
+copo ....... Ø54 interno × 30 mm, entra por cima da chaminé. 69 ml.
 ```
 
-### O bico não custa empilhamento — foi o resultado que decidiu o desenho
+### O fecho sem trava: a mesma came, só que rotativa
 
-O pé embutido do pote de cima deixa uma **faixa livre** em volta do apoio:
-
-| | |x| |
-|---|---|
-| fundo do pote de cima, onde ele apoia | 56,20 mm |
-| parede do pote de cima, acima do pé | 61,69 mm |
-| **faixa livre** | **5,49 mm de largura × 6,0 mm de altura** |
-
-O bico de 4,4 × 5,0 mm mora inteiro ali, com **1,1 mm de folga lateral e 1,0 mm vertical**. E
-ele ultrapassa a boca do pote (|x| = 60,29), então **o jato sai livre da parede** em vez de
-escorrer por ela — que é a função do bico da referência.
-
-### O cursor custa, e não tem como esconder
-
-O cursor corre no **meio** da tampa, |x| < 56,2 — exatamente onde o pote de cima apoia. São
-**3,0 mm de saliência**, e o passo viraria 63,0 mm em vez de 60.
-
-**Decisão: a tampa dosadora é a tampa do topo da pilha.** O pote de sabão fica na pia, não no
-meio do armário, e empilhar em cima dele taparia o próprio bico. O que a linha **não** perde: o
-pote dosador continua empilhando *sobre* os outros — só não recebe ninguém em cima.
-
-### Cursor deslizante não veda líquido
-
-Essa é a segunda armadilha, e é o motivo de o mercado só usar cursor em **mantimento seco**.
-Um painel plano correndo num rebaixo chora.
-
-A solução é a própria invenção do projeto, em escala menor: **o cursor ganha a mesma came**.
-Os últimos 5 mm do trilho descem 1,5 mm (16,7°) e puxam o cursor contra um lábio de TPE em
-volta da abertura.
+O copo pousa, **gira 30°**, e três ressaltos internos correm em três rampas no flange. A rampa
+puxa o copo 1,2 mm para baixo contra um lábio de TPE. Nada de rosca, nada de orelha, nada
+aparente — é o mesmo gesto da tampa, deslizar para travar, só que em arco.
 
 | | |
 |---|---|
-| perímetro de vedação (35 × 27 mm) | 117 mm |
-| força de fechamento | **0,36 kgf** |
-| polegar para fechar, ensaboado / seco | 0,14 / 0,24 kgf |
-| carga no cursor com o 2,4 L invertido | 0,16 kgf |
+| linha de vedação (Ø46,5) | 146 mm de perímetro |
+| força de fechamento | **0,45 kgf** |
+| rampa do copo | 1,2 mm em 13,6 mm de arco = **5,0°** |
+| torque para fechar, ensaboado / seco | 17 / 41 N·mm |
 
-Pressão interna empurra o cursor **contra** o prato: invertido, veda melhor. Mesmo princípio do
-lábio da tampa principal.
+Tampa de vidro comum pede 500 a 1500 N·mm. Ou seja, **a vedação não dá nenhum "toque"** — quem
+dá o toque é o detente, três ressaltos no fim da rampa dimensionados para ~300 N·mm. Mesma
+lógica da tampa: a rampa puxa, o detente segura, e nenhum dos dois depende de atrito.
 
-### O cursor abre no mesmo sentido em que a tampa trava
+### Por que o copo não sai se o pote tombar
 
-Detalhe pequeno que evita um erro de uso: a tampa principal trava deslizando num sentido, e o
-cursor **abre no mesmo sentido**. Empurrar o cursor para usar o bico só aperta mais a tampa
-contra o batente — **não existe gesto que destrave o pote sem querer**.
+Mesmo argumento dos ganchos: **a fuga do ressalto é rotacional e a carga de um tombo é axial.
+Perpendicular.** Com o 2,4 L invertido, a coluna de sabão faz 0,28 kgf sobre o copo.
 
-### Respiro: não precisa
+### O copo é o dosador
 
-A abertura tem **22 mm na menor direção**. Acima de ~20 mm o ar entra pela própria abertura
-enquanto o líquido sai. O furo de 26 × 16 do plano anterior tinha 16 mm e glugulejaria — era
-por isso que eu tinha deixado o respiro em aberto.
+**69 ml cheio**, com 25 e 50 ml em relevo. É a razão de ele existir: sabão líquido se dosa, não
+se despeja.
+
+### Respiro e empilhamento
+
+Chaminé de 38 mm — acima de ~20 mm o ar entra pela própria boca enquanto o líquido sai, então
+**não precisa de respiro**.
+
+A chaminé e o copo sobem 24 e 40 mm no meio da tampa. A tampa dosadora é, declaradamente, **a
+tampa do topo da pilha** — ela continua empilhando *sobre* as outras, só não recebe ninguém em
+cima. O pote de sabão fica na pia, não no meio do armário.
 
 ## 9. Patente — fazer a busca antes de mostrar para alguém
 

@@ -47,8 +47,7 @@ ASP     = 1.30
 R_EXT   = 18.0
 M       = 60.0
 SAIDA   = 0.50
-BASE_T  = 2.00      # so referencia; aqui o fundo varia por tamanho (ver fundos())
-FUNDO_MIN, FUNDO_MAX = 1.60, 2.50
+BASE_T  = 2.00      # fundo IGUAL nos quatro - volta a regra da linha 1
 PE_H    = 6.00
 PE_L    = 112.4
 W_BORDA = 1.40
@@ -60,29 +59,33 @@ CICLO   = {1: 17, 2: 21, 3: 25, 4: 29}
 PRECO_H105, PRECO_RP141 = 11.06, 9.54
 
 # ---------------- o que e novo ----------------
-PRATO_T   = 2.00    # prato da tampa: E ELE que entra na conta do passo
-MURETE_H  = 3.50    # murete da bandeja, ACIMA do prato (nao entra no passo)
+PRATO_T   = 1.50    # prato da tampa
+RECESSO   = 2.00    # piso da bandeja ABAIXO da borda do pote. E o plano modular
+                    # da linha 1, e e o que devolve as cotas originais do corpo.
+PENETRA   = RECESSO + PRATO_T   # quanto a bandeja entra na boca = 3,50 mm
+MURETE_H  = 3.50    # parede da bandeja (agora rebaixada, nao murete)
 MURETE_T  = 1.50
 NERV_N, NERV_H, NERV_T = 3, 5.00, 1.20   # nervuras no piso da bandeja
 FOLGA_PE  = 1.00    # folga do pe dentro do murete, por lado
-SAIA_H    = 7.00    # saia da tampa, por fora do corpo
+SAIA_H    = 9.00    # saia da tampa, por fora do corpo
 SAIA_T    = 1.60
 
-CURSO     = 16.0    # curso horizontal do fechamento
-RAMPA_L   = 6.0     # trecho de rampa. Limitado por: CURSO - GANCHO_W >= RAMPA_L,
+CURSO     = 24.0    # curso horizontal do fechamento
+RAMPA_L   = 10.0    # trecho de rampa. Limitado por: CURSO - GANCHO_W >= RAMPA_L,
                     # senao o gancho nao chega inteiro ao patamar no fim do curso.
-HOVER     = 1.00    # folga da tampa acima do 1o contato da junta, no pouso
-PATAMAR_L = 10.0    # patamar PLANO no fim da rampa: e onde o gancho assenta
+HOVER     = PENETRA + 0.50  # a tampa tem de pairar acima da BOCA, nao so acima da
+                            # junta: a bandeja rebaixada entra 3,50 mm na boca.
+PATAMAR_L = 14.0    # patamar PLANO no fim da rampa: e onde o gancho assenta
 
 LAB_T, LAB_L, LAB_DEF = 1.30, 4.00, 1.00   # labio de TPE: espessura, balanco, deflexao
-RAMPA_DZ  = HOVER + LAB_DEF   # queda da rampa. NAO e numero livre: e a folga de
-                              # pouso mais a compressao da junta.
+RAMPA_DZ  = HOVER            # queda da rampa = altura de pouso. A junta encosta
+                             # dentro desse percurso, no ultimo 1,00 mm.
 E_TPE     = 3.5     # MPa, TPE ~55 Shore A
 E_PP      = 900.0   # MPa, PP RP 141 randomico (tampa)
 
-GANCHO_N  = 6       # 3 por lado longo
-GANCHO_W  = 10.0    # comprimento do gancho, no sentido do curso
-GANCHO_P  = 3.20    # espessura do poste do gancho
+GANCHO_N  = 4       # 2 por lado longo
+GANCHO_W  = 14.0    # comprimento do gancho, no sentido do curso
+GANCHO_P  = 3.60    # espessura do poste do gancho
 GANCHO_O  = 2.00    # quanto cada asa do pe do gancho avanca sob a nervura da came
 CAME_T    = 3.40    # espessura do labio descendente da aba NA ZONA DA CAME.
                     # O labio ja existia para dar rigidez a borda (secao em U);
@@ -115,16 +118,19 @@ def volume(a0, b0, at, bt, r, h):
 
 
 def linha(ext_l, fundo=None):
-    """Altura EXTERNA do corpo = 60n - PRATO_T. E essa cota externa que fecha o
-    passo - nao mais a espessura do fundo. Isso LIBERA o fundo para variar por
-    tamanho, que e como as quatro capacidades fecham num footprint so."""
+    """Regra modular da LINHA 1, restaurada:
+      1. fundo de 2,00 mm igual nos quatro;
+      2. piso da bandeja da tampa 2,00 mm ABAIXO da borda do pote - e o plano
+         modular;
+      3. pe embutido nos ultimos 6 mm da base, medida igual nos quatro.
+    Com isso o corpo volta a ser exatamente o da linha 1: 121,2 x 93,3 mm e
+    alturas de 62 / 122 / 182 / 242 mm."""
     ext_w = ext_l / ASP
     t = math.tan(math.radians(SAIDA))
     potes = []
     for n in (1, 2, 3, 4):
         w = WALL[n]
-        BASE_T = (fundo or {}).get(n, FUNDO_MIN)
-        H = n * M - PRATO_T - BASE_T            # piso interno ate a borda
+        H = n * M                               # piso interno ate a borda
         at, bt, r = ext_l - 2 * w, ext_w - 2 * w, R_EXT - w
         a0, b0 = at - 2 * H * t, bt - 2 * H * t
         ext_base = ext_l - 2 * H * t
@@ -153,32 +159,18 @@ def linha(ext_l, fundo=None):
 
 
 def footprint():
-    """Footprint amarrado pelo 600 ml com o fundo no MINIMO (1,60 mm).
-
-    O corpo encurtou 60n -> 60n-2,0 de altura externa, e a perda de altura util
-    pesa mais no pote pequeno. Entao quem manda no footprint agora e o 600 ml, e
-    nao o 2,4 L como na linha 1."""
+    """Footprint em que o MAIOR pote fecha 2400 ml com o fundo no nivel - que e
+    o criterio da linha 1, e devolve os mesmos 121,2 x 93,3 mm."""
     lo, hi = 95.0, 170.0
     for _ in range(60):
         mid = (lo + hi) / 2
-        lo, hi = ((lo, mid) if linha(mid, {1: FUNDO_MIN})[0]['elev'] > 0.0
-                  else (mid, hi))
+        lo, hi = (lo, mid) if linha(mid)[3]['elev'] > 0.0 else (mid, hi)
     return (lo + hi) / 2
 
 
 def fundos(ext_l):
-    """Espessura de fundo de cada tamanho para a capacidade fechar EXATA com o
-    piso no nivel (elevacao zero). Nada de fundo falso: o que sobra de altura
-    vira fundo, que e onde o pote grande precisa de rigidez mesmo."""
-    f = {1: FUNDO_MIN}
-    for n in (2, 3, 4):
-        lo, hi = FUNDO_MIN, FUNDO_MAX
-        for _ in range(60):
-            mid = (lo + hi) / 2
-            p = linha(ext_l, {n: mid})[n - 1]
-            lo, hi = (mid, hi) if p['elev'] > 0.0 else (lo, mid)
-        f[n] = (lo + hi) / 2
-    return f
+    """Mantida por compatibilidade: agora o fundo e 2,00 mm nos quatro."""
+    return {n: BASE_T for n in (1, 2, 3, 4)}
 
 
 def sep(t): print("\n" + t + "\n" + "-" * len(t))
@@ -196,11 +188,9 @@ def main():
     print(f"Footprint {ext_l:.1f} x {ext_w:.1f} mm | canto R{R_EXT:.0f} | saida {SAIDA}°/lado")
     print(f"Modulo {M:.0f} mm | pe embutido {PE_L:.1f} x {PE_L - dif:.1f} mm x "
           f"{PE_H:.0f} mm de altura")
-    print(f"Regra do passo: altura EXTERNA do corpo = 60n - {PRATO_T:.1f} mm. "
-          f"O prato da tampa completa o modulo.")
-    print(f"Como o passo virou cota externa, o FUNDO ficou livre para variar por "
-          f"tamanho - e e ele que\nfecha as quatro capacidades num footprint so, "
-          f"sem fundo falso em nenhum deles.\n")
+    print(f"Regra do passo (a da LINHA 1, restaurada): fundo {BASE_T:.2f} mm igual nos quatro,")
+    print(f"piso da bandeja da tampa {RECESSO:.2f} mm ABAIXO da borda, pe embutido de "
+          f"{PE_H:.0f} mm igual nos quatro.\n")
     print(f"{'':>8} {'H ext':>7} {'passo':>6} {'bocal int':>13} {'base ext':>9} "
           f"{'degrau':>7} {'fundo':>6} {'elev':>5} {'parede':>7} {'V ml':>6} {'peso':>7}")
     for p in potes:
@@ -213,22 +203,32 @@ def main():
         tot = sum(combo) * M
         print("  " + " + ".join(f"{c*600}ml" for c in combo).ljust(34)
               + f"= {tot:.0f} mm  {'OK' if abs(tot - 4*M) < 1e-9 else 'FALHA'}")
-    print(f"\nComparando com a linha 1: corpo {4.0:.1f} mm mais baixo em cada tamanho, "
-          f"footprint {ext_l:.1f} contra 121.2 mm (+{ext_l-121.2:.1f}).")
+    alturas = "/".join(f"{p['H_ext']:.0f}" for p in potes)
+    print(f"\nO CORPO E O DA LINHA 1, cota por cota: {ext_l:.1f} x {ext_w:.1f} mm, "
+          f"alturas {alturas} mm.")
+    print(f"Nada mudou do ombro para baixo. O mecanismo inteiro vive nos ultimos "
+          f"{PENETRA + 2.0:.1f} mm do topo.")
 
     # ---------------- 2. bandeja: murete em vez de rebaixo ----------------
-    sep("2. BANDEJA: MURETE ACIMA DO PRATO (foi o que liberou o curso)")
-    murete_int = PE_L + 2 * FOLGA_PE
+    sep("2. A BANDEJA VOLTOU A SER REBAIXADA - e o que a came teve de pagar")
+    bandeja_int = murete_int = PE_L + 2 * FOLGA_PE
     murete_ext = murete_int + 2 * MURETE_T
     boca_min = min(p['at'] for p in potes)
-    print(f"Vao interno do murete {murete_int:.1f} x {murete_int-dif:.1f} mm recebe o pe de "
-          f"{PE_L:.1f} mm (folga {FOLGA_PE:.2f}/lado)")
-    print(f"Face externa do murete {murete_ext:.1f} mm, dentro do corpo do pote de cima "
-          f"({potes[3]['ext_base']:.1f} mm na base do 2,4 L) -> murete fica escondido")
-    print(f"Altura do murete {MURETE_H:.1f} mm; o pe tem {PE_H:.1f} mm, entao sobra "
-          f"{PE_H-MURETE_H:.1f} mm de degrau visivel")
-    print(f"NADA da tampa entra na boca ({boca_min:.1f} mm no menor caso) -> o curso "
-          f"horizontal de {CURSO:.0f} mm fica livre. Era esse o no do projeto.")
+    print(f"Piso da bandeja {RECESSO:.2f} mm abaixo da borda, prato de {PRATO_T:.2f} mm:")
+    print(f"  a bandeja ENTRA {PENETRA:.2f} mm na boca do pote.")
+    print(f"  vao interno {bandeja_int:.1f} x {bandeja_int - dif:.1f} mm recebe o pe de "
+          f"{PE_L:.1f} mm")
+    print(f"\nNa versao anterior eu tinha tirado a bandeja de dentro da boca justamente")
+    print(f"porque qualquer coisa que entre na boca trava o curso horizontal. O preco era")
+    print(f"corpo 4,0 mm mais baixo e footprint 2,2 mm maior - ou seja, NAO era mais o corpo")
+    print(f"da linha 1. Para devolver o corpo original, a came e que teve de crescer:")
+    print(f"  a tampa agora paira {HOVER:.2f} mm ({PENETRA:.2f} de bandeja + 0,50 de folga)")
+    print(f"  antes de deslizar, em vez de {2.0:.2f} mm. A rampa desce esses {RAMPA_DZ:.2f} mm.")
+    print(f"  Isso obrigou curso maior ({CURSO:.0f} mm) e ganchos maiores e em menor numero")
+    print(f"  ({GANCHO_N} de {GANCHO_W:.0f} mm, contra 6 de 10). Detalhe na secao 4.")
+    print(f"\nBoca do pote: {boca_min:.1f} mm no menor caso; a parede da bandeja fica em")
+    print(f"{bandeja_int + 2 * MURETE_T:.1f} mm, com {(boca_min - bandeja_int - 2*MURETE_T)/2:.2f} mm "
+          f"de folga por lado.")
 
     # ---------------- 3. vedacao ----------------
     sep("3. VEDACAO: LABIO DE TPE NA FACE DE CIMA DA ABA (axial, mas flexivel)")
@@ -281,9 +281,10 @@ def main():
     print(f"  entra numa depressao mais curta que ele, faz ponte.")
     print(f"\nO COMPRIMENTO DO GANCHO TAMBEM NAO E LIVRE:")
     print(f"      GANCHO_W + RAMPA_L <= CURSO")
-    print(f"  Com gancho de 14 mm e rampa de 10 isso nao fecha (24 > 14): no fim do curso o")
-    print(f"  gancho fica montado meio na rampa, meio no patamar, e o apoio de FACE INTEIRA")
-    print(f"  - que e o que a conta de queda usa - simplesmente nao existe. Dai ganchos")
+    print(f"  Com os 6 ganchos de 10 mm e rampa de 6 da versao anterior isso fechava justo.")
+    print(f"  Se nao fechar, no fim do curso o gancho fica montado meio na rampa, meio no")
+    print(f"  patamar, e o apoio de FACE INTEIRA - que e o que a conta de queda usa -")
+    print(f"  simplesmente nao existe. Dai ganchos")
     print(f"  de {GANCHO_W:.0f} mm com rampa de {RAMPA_L:.0f}: {GANCHO_W:.0f} + {RAMPA_L:.0f} = "
           f"{GANCHO_W+RAMPA_L:.0f} <= {CURSO:.0f}, e o gancho chega inteiro ao patamar.")
     print(f"  Uma funcao por peca: a RAMPA puxa, o DETENTE segura.")
@@ -298,15 +299,17 @@ def main():
     print(f"    celula {cel:.2f} = janela {jan:.1f} + trilho {cel-jan:.2f}")
     print(f"    o trilho precisa de >= CURSO ({CURSO:.0f}) para o gancho chegar em casa: "
           f"{cel-jan:.2f} >= {CURSO:.0f} {'OK' if cel-jan >= CURSO else 'FALHA'}")
-    print(f"  Foi isso que baixou o curso de 18 para {CURSO:.0f} e a rampa de 8 para "
-          f"{RAMPA_L:.0f} ({ang_r:.1f}°).")
+    print(f"  Com {GANCHO_N//2} celulas por lado o trilho sobra; o que aperta e a queda de "
+          f"{RAMPA_DZ:.2f} mm,")
+    print(f"  que exige rampa de {RAMPA_L:.0f} mm para nao ficar ingreme - e rampa longa "
+          f"exige curso longo.")
     print(f"\nARMADILHA: sabao e lubrificante. mu do PP cai de ~{MU_SECO:.2f} seco para "
           f"~{MU_SABAO:.2f} ensaboado.")
     for mu in (MU_SECO, 0.15, MU_SABAO, 0.0):
         ang_at = math.degrees(math.atan(mu))
         trava = "trava" if ang_at > ang_r else "NAO TRAVA"
         print(f"  mu={mu:.2f} -> angulo de atrito {ang_at:4.1f}° vs rampa {ang_r:.1f}°: {trava}")
-    print("Com a rampa a 18,4° nao trava nem seco. Isso NAO e um problema - e a ordem certa:")
+    print(f"Com a rampa a {ang_r:.1f}° nao trava nem seco. Isso NAO e um problema - e a ordem certa:")
     print("rampa livre significa que fechar e abrir custam pouco, e a retencao fica inteira")
     print("com o DETENTE, que e geometrico e funciona com mu = 0. Amarrar travamento a atrito")
     print("num pote de SABAO seria projetar para a bancada, nao para a pia.")
@@ -348,10 +351,11 @@ def main():
           f"comprimento, poste {GANCHO_P:.2f} mm, asa avanca {GANCHO_O:.2f} mm para dentro")
     print(f"A came e a aresta de baixo do LABIO DESCENDENTE da aba, engrossado de 1,20 para")
     print(f"{CAME_T:.2f} mm na zona de trabalho. O labio ja existia para dar rigidez a borda.")
-    print(f"Com {GANCHO_N} ganchos (3 por lado) em vez de 8, cada um pega 1/{GANCHO_N} da carga de")
-    print(f"queda em vez de 1/8. Foi o que obrigou o labio a ir de 3,00 para {CAME_T:.2f} mm e o")
-    print(f"poste de 2,60 para {GANCHO_P:.2f} mm. A {GANCHO_P:.2f} mm o poste ja pede alma vazada")
-    print(f"ou nervura no molde, senao rechupa na saia.")
+    print(f"Sao so {GANCHO_N} ganchos porque a rampa ficou longa ({RAMPA_L:.0f} mm) e o gancho")
+    print(f"precisa caber no trilho junto com ela. Cada um pega 1/{GANCHO_N} da carga de queda,")
+    print(f"o que obrigou gancho de {GANCHO_W:.0f} mm, labio de {CAME_T:.2f} e poste de "
+          f"{GANCHO_P:.2f} mm. A {GANCHO_P:.2f} mm")
+    print(f"o poste ja pede alma vazada ou nervura no molde, senao rechupa na saia.")
     print(f"NAO se engrossa a ABA: ela e a face que veda, e variar espessura nela daria")
     print(f"rechupe bem em cima da junta. No labio, que e saia escondida, rechupe nao importa.")
     print(f"O poste desce por FORA do labio e a asa volta para dentro, por baixo dele - assim")
@@ -408,7 +412,7 @@ def main():
     w_nerv = 5 * q_n * murete_int**4 / (384 * E_PP * I_n)
     print(f"Prato {PRATO_T:.1f} mm, E={E_PP:.0f} MPa -> D = {D:.0f} N.mm")
     print(f"Caso REAL (pilha): o pe do pote de cima e um perimetro de {PE_L:.1f} mm que apoia")
-    print(f"  a {(murete_int-PE_L)/2:.1f} mm da parede do murete - a carga cai praticamente em")
+    print(f"  a {(murete_int-PE_L)/2:.1f} mm da parede da bandeja - a carga cai praticamente em")
     print(f"  cima do apoio, nao no vao. Flecha desprezivel.")
     print(f"Caso RUIM (alguem poe {m24:.1f} kg espalhado no centro da tampa), carga "
           f"{q_dist*1000:.2f} kPa:")
@@ -419,7 +423,7 @@ def main():
           f"{w_nerv:5.2f} mm  ({I_n/I_liso:.1f}x mais rigida)")
     print(f"  A placa lisa ja da {w_liso:.2f} mm porque trabalha nas duas direcoes; as nervuras")
     print(f"  entram para garantir margem e matar o empenamento de moldagem no prato chato.")
-    print(f"  As nervuras ficam NO PISO DA BANDEJA, dentro do murete. O pe do pote de cima e")
+    print(f"  As nervuras ficam NO PISO DA BANDEJA. O pe do pote de cima e")
     print(f"  um perimetro vazado de {PE_H:.0f} mm - as nervuras de {NERV_H:.1f} mm passam por dentro dele.")
 
     # ---------------- 9. peso e custo ----------------
@@ -458,68 +462,65 @@ def main():
           f"molde com 2 gavetas laterais (os ganchos)")
 
     # ---------------- 11. bico ----------------
-    sep("11. TAMPA DOSADORA: ABERTURA COM CURSOR + BICO")
-    pe_borda = PE_L / 2
-    parede_cima = ext_l / 2
-    mur_int = murete_int / 2
-    boca = boca_min / 2
-    print(f"Mesmo casco, mesma came, mesmos ganchos, mesmo labio. Muda o miolo do prato:")
-    print(f"  abertura {AB_L:.0f} x {AB_W:.0f} mm no extremo da tampa, encostada no murete")
-    print(f"  cursor {CUR_L:.0f} mm corre em dois trilhos e descobre a abertura")
-    print(f"  bico fixo na ponta, projetando {BICO_P:.1f} mm e subindo {BICO_H:.1f} mm")
+    sep("11. TAMPA DOSADORA: BICO COM COPO, E O FECHO SEM TRAVA")
+    BICO_DI, BICO_PAR = 38.0, 1.5
+    BICO_DE = BICO_DI + 2 * BICO_PAR
+    FLANGE_D, FLANGE_Z = 52.0, 10.0
+    BICO_ALTO, BICO_BAIXO = 24.0, 14.0
+    COPO_DI, COPO_PROF = 54.0, 30.0
+    GIRO, COPO_DZ, N_LUG = 30.0, 1.2, 3
+    print(f"Cursor deslizante foi descartado: painel plano correndo em rebaixo chora, e e")
+    print(f"por isso que o mercado so poe cursor em mantimento SECO. No lugar dele, o que a")
+    print(f"referencia mostra: uma chamine com bico, e um copo tampando a chamine.")
+    print(f"\n  chamine ..... {BICO_DI:.0f} mm interno, parede {BICO_PAR:.1f}, saindo do piso da bandeja")
+    print(f"  boca cortada a 30°: {BICO_ALTO:.0f} mm do lado alto, {BICO_BAIXO:.0f} mm do lado do")
+    print(f"              despejo, com aresta de corte de 0,4 mm")
+    print(f"  flange ...... anel plano a {FLANGE_Z:.0f} mm de altura, ate {FLANGE_D:.0f} mm - "
+          f"e a SEDE da vedacao")
+    print(f"  copo ........ {COPO_DI:.0f} mm interno x {COPO_PROF:.0f} mm, entra por cima da chamine")
 
-    print(f"\nO BICO NAO CUSTA EMPILHAMENTO - e o resultado que decidiu o desenho.")
-    print(f"  O pe embutido do pote de cima deixa uma faixa livre em volta do apoio:")
-    print(f"    fundo do pote de cima (onde ele apoia) ... |x| = {pe_borda:.2f} mm")
-    print(f"    parede do pote de cima, acima do pe ...... |x| = {parede_cima:.2f} mm")
-    print(f"    -> faixa de {parede_cima - pe_borda:.2f} mm de largura por {PE_H:.1f} mm de altura")
-    print(f"  O bico mora inteiro nessa faixa: {BICO_P:.1f} x {BICO_H:.1f} mm, com "
-          f"{parede_cima - pe_borda - BICO_P:.1f} mm de folga lateral")
-    print(f"  e {PE_H - BICO_H:.1f} mm de folga vertical. E ele ultrapassa a boca "
-          f"(|x|={boca:.2f}), entao o")
-    print(f"  jato sai livre da parede em vez de escorrer por ela.")
-
-    print(f"\nO CURSOR CUSTA. Ele corre no MEIO da tampa, |x| < {pe_borda:.1f} - exatamente")
-    print(f"  onde o pote de cima apoia. Saliencia de {CUR_TOPO:.1f} mm -> o passo viraria")
-    print(f"  {M + CUR_TOPO:.1f} mm em vez de {M:.0f}. Nao ha como esconder isso.")
-    print(f"  DECISAO: a tampa dosadora e a tampa do TOPO da pilha. O pote de sabao fica na")
-    print(f"  pia, nao no meio do armario, e empilhar em cima dele taparia o proprio bico.")
-    print(f"  O que a linha nao perde: ele continua empilhando SOBRE os outros.")
-
-    print(f"\nVEDACAO DO CURSOR - e aqui esta a segunda armadilha:")
-    print(f"  Cursor deslizante NAO veda liquido. O mercado so usa cursor em mantimento")
-    print(f"  seco justamente por isso. Solucao: o cursor ganha a MESMA came da tampa.")
-    sel_l, sel_w = AB_L + 5, AB_W + 5
-    per_c = perim(sel_l, sel_w, 4.0)
+    print(f"\nO FECHO SEM TRAVA: a MESMA came, so que ROTATIVA.")
+    print(f"  O copo pousa, gira {GIRO:.0f}°, e {N_LUG} ressaltos internos correm em "
+          f"{N_LUG} rampas no flange.")
+    print(f"  A rampa puxa o copo {COPO_DZ:.1f} mm para baixo contra um labio de TPE no flange.")
+    print(f"  Nada de rosca, nada de orelha, nada aparente. O gesto e o mesmo da tampa -")
+    print(f"  deslizar para travar - so que em arco.")
+    per_c = math.pi * (FLANGE_D + BICO_DE) / 2
     f_mm_c = 3 * E_TPE * (LAB_T ** 3 / 12) * LAB_DEF / LAB_L ** 3
     F_c = f_mm_c * per_c
-    ang_c = math.degrees(math.atan(CUR_CAME_DZ / CUR_CAME_L))
-    print(f"  linha de vedacao {sel_l:.0f} x {sel_w:.0f} mm, perimetro {per_c:.0f} mm")
+    r_med = (FLANGE_D + BICO_DE) / 4
+    arco = math.pi * FLANGE_D * GIRO / 360
+    ang_c = math.degrees(math.atan(COPO_DZ / arco))
+    print(f"\n  linha de vedacao: circulo de {(FLANGE_D+BICO_DE)/2:.1f} mm, perimetro {per_c:.0f} mm")
     print(f"  labio de TPE igual ao da tampa -> {F_c:.1f} N = {F_c/9.81:.2f} kgf de fechamento")
-    print(f"  came do cursor: desce {CUR_CAME_DZ:.1f} mm nos ultimos {CUR_CAME_L:.0f} mm "
-          f"({ang_c:.1f}°)")
+    print(f"  rampa do copo: {COPO_DZ:.1f} mm em {arco:.1f} mm de arco = {ang_c:.1f}°")
     for mu in (MU_SABAO, MU_SECO):
         ta = math.tan(math.radians(ang_c))
-        p = F_c * (ta + mu) / (1 - mu * ta)
-        print(f"    mu={mu:.2f} -> {p:5.2f} N = {p/9.81:.2f} kgf no polegar")
-    print(f"  Pressao interna empurra o cursor CONTRA o prato: invertido, veda melhor.")
+        T = F_c * (r_med / 1000) * (ta + mu) / (1 - mu * ta)
+        print(f"    mu={mu:.2f} -> torque para fechar {T*1000:.0f} N.mm "
+              f"({T:.3f} N.m). Tampa de vidro comum pede 500 a 1500.")
+    print(f"  Ou seja: a vedacao nao da nenhum 'toque'. Quem da o toque e o DETENTE -")
+    print(f"  {N_LUG} ressaltos no fim da rampa, dimensionados para ~300 N.mm. Mesma logica")
+    print(f"  da tampa: a rampa puxa, o detente segura, e nenhum dos dois depende de atrito.")
 
-    print(f"\nSENTIDO DO CURSOR - detalhe que evita um erro de uso:")
-    print(f"  A tampa TRAVA deslizando num sentido. O cursor ABRE no MESMO sentido.")
-    print(f"  Assim, empurrar o cursor para usar o bico so aperta mais a tampa contra o")
-    print(f"  batente. Nao ha gesto que destrave o pote sem querer.")
-
-    print(f"\nRESPIRO: nao precisa.")
-    print(f"  Abertura de {AB_W:.0f} mm na menor direcao. Acima de ~20 mm o ar entra pela")
-    print(f"  propria abertura enquanto o liquido sai. O furo de 26 x 16 do plano anterior")
-    print(f"  tinha 16 mm e glugulejaria.")
-    a_ab = AB_L * AB_W / 1e2
-    print(f"\nCarga no cursor com o pote invertido (so a coluna de sabao):")
+    print(f"\nPOR QUE O COPO NAO SAI SE O POTE TOMBAR - mesmo argumento dos ganchos:")
+    print(f"  a fuga do ressalto e ROTACIONAL, e a carga de um tombo e AXIAL. Perpendicular.")
+    print(f"  Carga axial no copo com o pote invertido, so a coluna de sabao:")
+    a_bico = math.pi * (BICO_DI / 2) ** 2 / 1e2
     for p in potes:
         dp = 1030 * 9.81 * (p['H_ext'] / 1000) / 1000
-        F = dp * 1000 * a_ab / 1e4
-        print(f"  {p['cap']:>5} ml -> {F:5.2f} N ({F/9.81:.2f} kgf) sobre {a_ab:.1f} cm2 "
-              f"de cursor")
+        F = dp * 1000 * a_bico / 1e4
+        print(f"    {p['cap']:>5} ml -> {F:5.2f} N ({F/9.81:.2f} kgf) sobre {a_bico:.1f} cm2")
+
+    vol_copo = math.pi * (COPO_DI / 2) ** 2 * COPO_PROF / 1e3
+    print(f"\nO COPO E O DOSADOR: {vol_copo:.0f} ml cheio. Marcar 25 e 50 ml em relevo.")
+    print(f"  E a razao de ele existir: sabao liquido se dosa, nao se despeja.")
+    print(f"\nRESPIRO: nao precisa. Chamine de {BICO_DI:.0f} mm - acima de ~20 mm o ar entra")
+    print(f"  pela propria boca enquanto o liquido sai.")
+    print(f"\nEMPILHAMENTO: a chamine e o copo ficam no meio da tampa e sobem "
+          f"{BICO_ALTO + FLANGE_Z*0:.0f} mm.")
+    print(f"  A tampa dosadora e, declaradamente, a tampa do TOPO da pilha. O pote de sabao")
+    print(f"  fica na pia. Ele continua empilhando SOBRE os outros - so nao recebe ninguem.")
 
     sep("12. O QUE FICA ABERTO")
     abertos = [
