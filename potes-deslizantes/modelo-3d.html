@@ -109,7 +109,7 @@
     <span><i style="background:#C9761F"></i>gancho <b style="color:var(--ink)">(macho)</b></span>
     <span><i style="background:#9A3D22"></i>lábio de TPE</span>
     <span><i style="background:#B6C3CB"></i>tampa</span>
-    <span><i style="background:#3F7D6A"></i>bico e copo</span>
+    <span><i style="background:#3F7D6A"></i>copo (peça separada)</span>
   </div>
 </div>
 <p class="note col">Malha paramétrica em milímetros, escala real, saída de 0,5° omitida (é
@@ -144,10 +144,16 @@ projetista.</p>
 <section class="col">
   <p class="eyebrow">A tampa dosadora</p>
   <h2>Bocal rente, filete e travinha</h2>
-  <p>O bocal <strong>desceu e virou parte da tampa</strong> — não é mais uma chaminé. Ele sobe
-  3,5 mm do piso da bandeja e <strong>para exatamente no plano da aba da tampa</strong>:
-  saliência zero. Aperte <strong>Tampa dosadora</strong> e depois <strong>Tirar o copo</strong>
-  para ver.</p>
+  <p>O bocal e o bico são <strong>a mesma peça, e essa peça é a tampa</strong> — por isso
+  aparecem na cor da tampa, não como parte separada. O bocal sobe 3,5 mm do piso da bandeja e
+  <strong>para exatamente no plano da aba</strong>: saliência zero. Aperte
+  <strong>Tampa dosadora</strong> e depois <strong>Tirar o copo</strong> para ver.</p>
+  <p>Do bocal sai a <strong>calha do bico</strong>, que atravessa a parede da bandeja e vai até
+  a borda da tampa, terminando numa <strong>aresta de corte</strong>. As paredes da calha sobem
+  só até o plano da tampa — nada sobressai. O piso da calha <em>sobe</em> para fora (+0,2 no
+  bocal, +0,8 na borda), então o resíduo escorre de volta para dentro quando o pote volta a
+  ficar de pé. E a face de baixo termina em z&nbsp;=&nbsp;0, rente à face de baixo da tampa: se
+  passasse disso, bateria na aba do pote.</p>
   <div class="tw"><table>
     <thead><tr><th>Peça</th><th>Cota</th><th></th></tr></thead>
     <tbody>
@@ -254,7 +260,7 @@ projetista.</p>
   var CUP_SK=4.0, CUP_TOP=30.0;              // saia com rasgos FEMEA, e corpo
   function rail0(k){ return -RETO/2 + k*CELL + WIN; }
 
-  var COR={bico:[63,125,106], corpo:[143,166,180], trilho:[47,75,92],
+  var COR={copo:[63,125,106], corpo:[143,166,180], trilho:[47,75,92],
            gancho:[201,118,31], tpe:[154,61,34], tampa:[182,195,203], ghost:[143,166,180]};
 
   // =============== construção de faces ===============
@@ -395,27 +401,53 @@ projetista.</p>
   }
   casco(1, false);
   casco(3, true);
-  // BOCAL RENTE — sobe do piso da bandeja e PARA no plano da aba. Saliencia zero.
-  tubo(BX, BI, BE, -PENETRA, function(){ return PRATO; }, COR.bico,1,3,false);
+  // BOCAL + BICO: uma peca so com o prato, na cor da TAMPA. Sobe do piso da
+  // bandeja e para no plano da aba - saliencia zero.
+  var BOCA_ANG=Math.PI;                       // lado do despejo: -X
+  var fBocal=function(t){
+    var d=Math.abs(((t-BOCA_ANG+Math.PI)%(2*Math.PI))-Math.PI);
+    return d < 0.42 ? PRATO-1.3 : PRATO;      // rebaixo por onde o liquido entra no bico
+  };
+  tubo(BX, BI, BE, -PENETRA, fBocal, COR.tampa,0.75,3,false);
   // TRAVINHA MACHO: 3 ressaltos na face externa do bocal
   for(var i=0;i<LUG_N;i++){
-    trava(BX, 2*Math.PI*i/LUG_N, BE, LUG_R, LUG_HW, LUG_Z0, LUG_Z1, COR.bico,1,3);
+    trava(BX, 2*Math.PI*i/LUG_N + 0.6, BE, LUG_R, LUG_HW, LUG_Z0, LUG_Z1, COR.tampa,0.9,3);
   }
   // FILETE DE TPE em canaleta no piso da bandeja
   tubo(BX, TPE_RI, TPE_RE, -RECESSO-0.4, function(){ return -RECESSO+0.6; }, COR.tpe,1,3,false);
-  // canal de despejo: entalhe na parede da bandeja + aresta de corte na borda
-  caixa(-LID_L/2, BX-BE, -7, 7, PRATO-0.8, PRATO, COR.bico,1,3);
-  // COPO (grupo 4): saia com 3 RASGOS FEMEA, e corpo
+
+  // O BICO — calha que sai do rebaixo do bocal e vai ate a borda da tampa,
+  // com o piso caindo 1,2 mm e aresta de corte na ponta. Tudo no plano ou abaixo.
+  (function(){
+    // Perfil: o piso SOBE do bocal (0,2) para a borda (0,8) para que o residuo
+    // escorra de volta para dentro quando o pote volta a ficar de pe. E a face de
+    // baixo termina em z=0, rente a face de baixo da tampa - se passasse disso,
+    // bateria na aba do pote.
+    var x0=BX-BE+1.0, x1=-LID_L/2, w=8.0, par=1.2;
+    var ct=0.2, cb=-0.8, et=0.8, eb=0.0;      // topo e fundo do piso, no bocal e na borda
+    function quad(a,b,c,d){ push([a,b,c,d], COR.tampa,0.75,3); }
+    quad([x0,-w,ct],[x1,-w,et],[x1,w,et],[x0,w,ct]);                 // piso, face de cima
+    quad([x0,w,cb],[x1,w,eb],[x1,-w,eb],[x0,-w,cb]);                 // piso, face de baixo
+    quad([x1,-w,et],[x1,-w,eb],[x1,w,eb],[x1,w,et]);                 // aresta de corte
+    [[-w-par,-w],[w,w+par]].forEach(function(b){
+      quad([x0,b[0],ct],[x1,b[0],et],[x1,b[1],et],[x0,b[1],ct]);     // topo do piso sob a parede
+      quad([x0,b[0],PRATO],[x0,b[1],PRATO],[x1,b[1],PRATO],[x1,b[0],PRATO]); // topo, rente
+      quad([x0,b[0],ct],[x0,b[0],PRATO],[x1,b[0],PRATO],[x1,b[0],et]);       // face externa
+      quad([x0,b[1],ct],[x1,b[1],et],[x1,b[1],PRATO],[x0,b[1],PRATO]);       // face interna
+    });
+  })();
+
+  // COPO (grupo 4): peca separada, saia com 3 RASGOS FEMEA
   var rasgo=function(t){
     for(var k=0;k<LUG_N;k++){
-      var d=Math.abs(((t - 2*Math.PI*k/LUG_N + Math.PI) % (2*Math.PI)) - Math.PI);
+      var d=Math.abs(((t - 2*Math.PI*k/LUG_N - 0.6 + Math.PI) % (2*Math.PI)) - Math.PI);
       if(d < 0.28) return true;
     }
     return false;
   };
-  tubo(BX, CUP_SI, CUP_SE, -RECESSO, function(){ return CUP_SK; }, COR.bico,0.55,4,false,rasgo);
-  tubo(BX, CUP_BI, CUP_BE, CUP_SK, function(){ return CUP_TOP; }, COR.bico,0.55,4,false);
-  tubo(BX, 0, CUP_BI, CUP_TOP, function(){ return CUP_TOP+1.6; }, COR.bico,0.55,4,true);
+  tubo(BX, CUP_SI, CUP_SE, -RECESSO, function(){ return CUP_SK; }, COR.copo,0.55,4,false,rasgo);
+  tubo(BX, CUP_BI, CUP_BE, CUP_SK, function(){ return CUP_TOP; }, COR.copo,0.55,4,false);
+  tubo(BX, 0, CUP_BI, CUP_TOP, function(){ return CUP_TOP+1.6; }, COR.copo,0.55,4,true);
 
   // ---------------- POTE EMPILHADO (grupo 2) ----------------
   var mG=0.16;

@@ -337,9 +337,23 @@ estava parada, segue como candidata ao try-out.
 
 ## 8. A tampa dosadora — bocal rente, filete e travinha de giro
 
-O bocal **desceu e virou parte da tampa** — não é mais uma chaminé separada. Ele sobe 3,5 mm do
-piso da bandeja e **para exatamente no plano da aba da tampa**: saliência zero. É uma peça só
-com o prato.
+O bocal e o bico são **a mesma peça, e essa peça é a tampa** — não é chaminé separada, não é
+inserto. O bocal sobe 3,5 mm do piso da bandeja e **para exatamente no plano da aba**:
+saliência zero.
+
+Do bocal sai a **calha do bico**, que atravessa a parede da bandeja e vai até a borda da tampa,
+terminando numa aresta de corte de 0,4 mm. As paredes da calha sobem só até o plano da tampa —
+nada sobressai.
+
+O perfil do piso da calha tem duas restrições que o fecham:
+
+| | z (0 = face de baixo da tampa, que apoia na aba) |
+|---|---|
+| piso no bocal | topo +0,2 · fundo −0,8 |
+| piso na borda | topo +0,8 · fundo **0,0** |
+
+O piso **sobe** para fora, então o resíduo escorre de volta para dentro quando o pote volta a
+ficar de pé. E o fundo termina em z = 0: se passasse disso, a calha bateria na aba do pote.
 
 ```
 furo ........ Ø40 mm, parede do bocal 1,5 mm
