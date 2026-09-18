@@ -119,6 +119,34 @@ B_COSTAS = 0.8             # costas do bloco, atras do bolso
 B_PESC   = (118.0, 124.0)  # z do pescoco
 B_CAB    = (116.0, 126.0)  # z da cabeca
 
+# --- ABA CORRIDA NO RIM + PES COM CAVIDADE (pedido de 18/09) ----------------
+# Aba plana de ~10 mm em toda a borda: e nela que o pe pousa, em QUALQUER
+# posicao, entao empilhar deixa de precisar girar a peca -- a frente fica
+# sempre igual. A aba tem RECORTES nas posicoes dos pes: alinhado, os pes
+# passam pelos recortes e a peca ENCAIXA; deslocado, pousam na aba e EMPILHA.
+ABA_W, ABA_T = 10.0, 2.5      # largura e espessura da aba
+ABA_F = 2.0                   # folga do recorte alem do pe
+NERV_N = 3                    # pes por lateral
+NERV_L = 10.0                 # comprimento de cada pe, em y
+NERV_B = 3.0                  # apoio do pe sobre a aba
+NERV_T = 1.6                  # parede do pe (ele e OCO: a cavidade interna)
+NERV_P = 24.0                 # profundidade do pe em x (>20,6: encosta na parede)
+NERV_KY = 0.045               # saida das faces em y do pe (2,6 deg por lado)
+NERV_R0 = LARG / 2 - ABA_W + NERV_B   # face externa do pe no piso: 100,5
+NERV_KX = (LARG / 2 - NERV_R0) / ALT  # ela sobe ate LARG/2 exatamente no rim
+# ACOPLAMENTO na borda: cauda de andorinha em PLANTA no bordo da aba.
+# So e possivel por causa do encaixe raso: com passo de encaixe de 47 mm, tudo
+# o que estiver acima de ALT - (ALT - 47) = 47 mm do topo da peca de cima fica
+# ACIMA do rim da de baixo -- ou seja, nao custa nada no encaixe. A cauda mora
+# nos 14 mm de cima, onde e de graca.
+ACO2_H = 14.0                 # altura da cauda (z de 116 a 130)
+ACO2_D = 4.0                  # avanco alem do plano da junta
+ACO2_WN, ACO2_WT = 7.0, 11.0  # largura no pescoco e na ponta (trava em x)
+ACO2_F = 0.2                  # folga por face na femea
+# Passo minimo de encaixe imposto pelo pe: o de cima so entra no de baixo
+# depois de descer NERV_T/NERV_KY em y (35,6 mm) e NERV_T/NERV_KX em x
+# (29,7 mm). Ambos < ABA_W/tg(saida) = 47,1 mm, que e quem manda.
+
 # --- opcoes CAMUFLADAS ------------------------------------------------------
 H_FAIXA2 = 14.0            # faixa mais baixa: z de 116 a 130
 # D: canaleta cavada DENTRO da faixa. So e possivel com gaveta lateral, e por
@@ -343,6 +371,127 @@ def cotas_empilhamento():
     return xi, xi + EMP_APOIO_B, pn, ps
 
 
+def nerv_y():
+    """Posicoes em y dos pes, no trecho RETO da lateral.
+
+    O trecho reto acaba no raio do canto, que cresce com a saida de molde:
+    r_topo = 14 + ALT*tg. A 12 graus ele vale 41,6 mm, e um pe colocado alem
+    disso cai na curva do canto -- onde a peca e muito mais estreita e o pe
+    nao passa no encaixe.
+    """
+    r_topo = 14.0 + ALT * TAN
+    y0 = -PROF / 2 + CHANFRO + 4
+    y1 = PROF / 2 - r_topo - 4
+    passo = (y1 - y0 - NERV_L) / (NERV_N - 1)
+    return [(y0 + i * passo, y0 + i * passo + NERV_L) for i in range(NERV_N)]
+
+
+def _aba(fora, interno):
+    """Aba plana de ABA_W no rim inteiro -- e nela que o pe pousa.
+
+    Os recortes por onde o pe da peca de cima desce NAO sao feitos aqui: quem
+    os abre e _pes_cavidade(), subtraida da peca inteira, de modo que o
+    recorte da aba, a janela na parede e a cavidade do pe sejam UM unico
+    solido (a mesma folga, por construcao).
+    """
+    r = 14.0 + ALT * TAN
+    a = Pos(0, 0, ALT - ABA_T) * extrude(
+        RectangleRounded(LARG, PROF, r), ABA_T)
+    a -= Pos(0, 0, ALT - ABA_T - 1) * extrude(
+        RectangleRounded(LARG - 2 * ABA_W, PROF - 2 * ABA_W,
+                         max(r - ABA_W, 1.0)), ABA_T + 2)
+    return a
+
+
+def _pe_bloco(sx, yc, ox=0.0, oy=0.0, z0=0.0, z1=None):
+    """Tronco do pe no lado sx, centrado em yc.
+
+    Face externa: de NERV_R0 no piso ate LARG/2 no rim -- inclinacao NERV_KX,
+    sempre POR FORA do cone, de modo que a silhueta da peca nunca diminui
+    subindo (nenhuma face virada para cima = nenhuma contra-saida).
+    Faces em y: saida NERV_KY por lado. E ela que faltava: sem saida em y a
+    boca da cavidade (NERV_L - 2*NERV_T) e sempre mais estreita que a lingua
+    (NERV_L) e o pe NUNCA entra no pe. Com saida, entra a partir de
+    NERV_T/NERV_KY mm de descida.
+    ox/oy recuam a face externa e as faces laterais: e assim que se obtem a
+    casca (a cavidade interna e o mesmo bloco com ox=oy=NERV_T).
+    """
+    if z1 is None:
+        z1 = ALT + 6.0
+    kx = NERV_KX
+    r0, r1 = NERV_R0 - ox + kx * z0, NERV_R0 - ox + kx * z1
+    pts = [(sx * r0, z0), (sx * r1, z1),
+           (sx * (r1 - NERV_P), z1), (sx * (r0 - NERV_P), z0)]
+    bx = extrude(Plane.XZ * make_face(Polyline(*pts, close=True)),
+                 PROF, both=True)
+    h0 = NERV_L / 2 - oy + NERV_KY * z0
+    h1 = NERV_L / 2 - oy + NERV_KY * z1
+    q = [(yc - h0, z0), (yc + h0, z0), (yc + h1, z1), (yc - h1, z1)]
+    by = extrude(Plane.YZ * make_face(Polyline(*q, close=True)),
+                 LARG, both=True)
+    return bx & by
+
+
+def _pes_nervura(env):
+    """Os pes: blocos por fora do cone (a cavidade sai depois, da peca toda)."""
+    out = None
+    for sx in (-1, 1):
+        for y0, y1 in nerv_y():
+            b = _pe_bloco(sx, (y0 + y1) / 2, z1=ALT) - env
+            out = b if out is None else out + b
+    return out
+
+
+def _pes_cavidade():
+    """Cavidade interna do pe -- subtraida da PECA INTEIRA, nao do pe.
+
+    Subtraida da peca toda ela faz tres coisas de uma vez:
+      1. esvazia o pe (casca de NERV_T), deixando so o piso de apoio embaixo;
+      2. vaza a parede atras do pe (janela de NERV_L - 2*NERV_T = 6,8 mm,
+         escondida de fora pela propria face externa do pe);
+      3. abre o recorte na aba por onde a lingua do pe de cima desce.
+    Sem a janela (2) o piso do pe de cima bateria na parede da peca de baixo:
+    ele nasce na parede e avanca 20 mm para fora, tem de atravessa-la.
+    """
+    out = None
+    for sx in (-1, 1):
+        for y0, y1 in nerv_y():
+            c = _pe_bloco(sx, (y0 + y1) / 2, ox=NERV_T, oy=NERV_T,
+                          z0=NERV_T)
+            out = c if out is None else out + c
+    return out
+
+
+
+def aco_y():
+    """Centros das caudas: no meio dos vaos livres da aba, entre os pes."""
+    hy = NERV_L / 2 - NERV_T + NERV_KY * ALT     # meia-boca do recorte no rim
+    cs = [(a + b) / 2 for a, b in nerv_y()]
+    return [(cs[i] + hy + cs[i + 1] - hy) / 2 for i in range(len(cs) - 1)]
+
+
+def _cauda2(sx, yc, dentro=False, f=0.0):
+    """Cauda de andorinha em planta: pescoco estreito no plano da junta e
+    ponta larga -- e isso que TRAVA a separacao lateral. Prismatica em z e
+    aberta no topo: desmolda sem gaveta (a peca de cima desce e entra).
+
+    dentro=True devolve a FEMEA: a mesma planta espelhada no plano da junta,
+    escavada para dentro da aba.
+    """
+    x0 = LARG / 2
+    d = -ACO2_D if dentro else ACO2_D
+    xi = x0 - 60.0 if not dentro else x0 + 1.5     # macho: entra na parede
+    pts = [(sx * xi, yc - ACO2_WN / 2 - f),
+           (sx * x0, yc - ACO2_WN / 2 - f),
+           (sx * (x0 + d), yc - ACO2_WT / 2 - f),
+           (sx * (x0 + d), yc + ACO2_WT / 2 + f),
+           (sx * x0, yc + ACO2_WN / 2 + f),
+           (sx * xi, yc + ACO2_WN / 2 + f)]
+    sk = make_face(Polyline(*pts, close=True))
+    h = ACO2_H + 1.0 if dentro else ACO2_H      # o macho para exatamente no rim
+    return Pos(0, 0, ALT - ACO2_H) * extrude(sk, h)
+
+
 def set_draft(graus):
     """Muda a saida de molde e recalcula tudo que depende dela."""
     global DRAFT, TAN, BASE_X, BASE_Y, EMP_XI, EMP_X0
@@ -420,7 +569,8 @@ def _risco(sx, faixas):
     return out
 
 
-def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False):
+def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
+          aba=False):
     """acopl: None, 'A' (trilho corrido), 'B' (trilho embutido), 'C' (travas).
 
     h_rim permite medir o custo da faixa de 18 mm sem nenhuma feicao.
@@ -455,6 +605,8 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False):
     p += cheio & Pos(0, 0, ALT - h_rim) * extrude(
         RectangleRounded(LARG + 40, PROF + 40, 0.1), h_rim + 10)
 
+    if aba:
+        p += _aba(fora, interno)
     if acopl == "D":
         p += _colar() - extrude(interno, ALT + 10, taper=-DRAFT)
 
@@ -521,7 +673,13 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False):
     # --- bercos de apoio: 4 orelhas na face INTERNA do rim -------------------
     # A saia da peca de cima assenta nelas. Ficam dentro da peca, invisiveis de
     # fora, e o passo empilhado fica exatamente a altura: 130 mm.
-    if not estrutura:          # com estrutura o pe e o fundo da nervura
+    if aba:
+        p += _pes_nervura(env)
+        p -= _pes_cavidade()
+        for yc in aco_y():
+            p += _cauda2(1, yc) - env          # macho na direita
+            p -= _cauda2(-1, yc, dentro=True, f=ACO2_F)   # femea na esquerda
+    elif not estrutura:       # com estrutura o pe e o fundo da nervura
         p += _pezinhos()
     if empilha:
         p += _soquetes(fora)

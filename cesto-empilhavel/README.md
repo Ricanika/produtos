@@ -441,6 +441,103 @@ clipe traz empilhamento **e** acoplamento juntos. Custa um 2º molde pequeno
 
 Capacidade a 9°: **3,95 L** (era 4,46 a 3,5°). Peso 171,8 g.
 
+### 4.2.4 A aba plana no rim + pés com cavidade — e o fim da bifurcação
+
+Pedido do cliente, em três partes: (1) empilhar **na mesma ordem do encaixe**,
+os andares com a mesma frente, sem inverter; (2) para isso, **uma parte plana
+de ~1 cm em toda a borda superior**, e é nessa aba que o pé encaixa; (3) os pés
+com **cavidade interna**, para se engolirem no transporte.
+
+Essa arquitetura dispensa o pino, e com ele some a conta de 4.2.3 — que só
+existia porque o pino e o pé se aproximavam ao mesmo tempo. Aqui **quem manda
+no encaixe é a largura da aba**, e só ela:
+
+> passo_encaixe = ABA_W / tg(saída) = 10 / tg 12° = **47,1 mm** (medido: 46,9)
+
+A parede da peça de cima tem de passar pela borda interna da aba, e mais nada
+encosta. Medido no sólido, a 12° de saída:
+
+| | medido |
+|---|---|
+| encaixa (mesma frente, sem deslocar) | **46,9 mm** |
+| 6 peças / 12 peças na caixa | **364 / 646 mm** |
+| empilha (deslocando 10 mm em y) | **130,0 mm** — altura cheia |
+| deslocamento mínimo para empilhar | 5 mm |
+| apoios na aba | 6 pés × 3,0 × 9,8 mm |
+| trava lateral a partir de | 0,6 mm |
+| solta levantando | 15 mm |
+| peso / capacidade | 163,8 g / 3,66 L |
+
+Os alvos do cliente eram 6 peças no mínimo e 12 no ideal: **12 peças cabem em
+646 mm de caixa**.
+
+#### O pé: saída em y, e a cavidade subtraída da peça INTEIRA
+
+Duas correções fizeram o pé funcionar. A primeira: ele **não tinha saída nas
+faces em y**. Sem ela a boca da cavidade (`NERV_L − 2·NERV_T` = 6,8 mm) é
+sempre mais estreita que a língua (10 mm) e **o pé nunca entra no pé** — a peça
+media 106,8 mm de passo, e todos os seis pés apareciam na medição de
+interferência com o vão em y exatamente igual ao comprimento do pé. Com 2,6°
+por lado (`NERV_KY = 0,045`), o pé de cima entra depois de descer
+`NERV_T/NERV_KY` = 35,6 mm — abaixo dos 46,9 que a aba impõe, então não limita.
+
+A segunda: a cavidade é subtraída da **peça inteira**, não do pé. De uma só vez
+ela (a) esvazia o pé, deixando só o piso de apoio embaixo; (b) **vaza a parede
+atrás do pé** — janela de 6,8 mm, escondida de fora pela própria face externa
+do pé; (c) abre o recorte na aba. Sem a janela (b) o piso do pé de cima bate na
+parede da peça de baixo: ele nasce na parede e avança 20,6 mm para fora, tem de
+atravessá-la. A janela é fechamento macho-fêmea no molde, de graça.
+
+A face externa do pé sobe de `LARG/2 − ABA_W + NERV_B` = 100,5 mm no piso até
+`LARG/2` = 107,5 exatamente no rim. Essa inclinação própria (3,1°) faz o pé se
+apagar na parede sem nenhuma face virada para cima — a silhueta da peça nunca
+diminui subindo, logo **nenhuma contra-saída**.
+
+#### Por que o empilhamento exige deslocar 10 mm
+
+Não é escolha: é teorema. Para uma peça única e translação vertical, o repouso
+é determinado pela geometria — existe **um** menor deslocamento sem
+interferência. Alinhadas (dy = 0) as peças encaixam a 46,9 mm, e é onde a
+gravidade as deixa; não há como elas pararem a 130 mm na mesma pose. Empilhar e
+encaixar na pose idêntica são **mutuamente exclusivos**, e todo sistema real
+usa um discriminador: girar 180° (o cliente recusou) ou **deslocar**.
+
+Aqui o discriminador é o deslocamento: o recorte da aba tem 18,5 mm e o piso do
+pé 10 mm, então basta o pé sair do recorte. Medido: 5 mm já dão 130,0 mm, e
+**10 mm dão apoio cheio nos seis pés**. A frente continua sendo a frente — não
+há inversão, que era o que o cliente recusava. E funciona nos **dois sentidos**
+(±10 medidos), então alternando o sinal a coluna não caminha: fica dentro de
+uma faixa de 10 mm em vez de escalonar.
+
+#### O acoplamento ficou de graça
+
+Com passo de encaixe de 46,9 mm, tudo o que estiver **acima de 83 mm** da peça
+de cima fica acima do rim da de baixo — não custa nada no encaixe. A cauda de
+andorinha do acoplamento mora nos 14 mm de cima: em **planta**, pescoço de 7 mm
+no plano da junta e ponta de 11 mm, macho na direita e fêmea na esquerda (as
+duas peças na mesma orientação, então a direita de uma encontra a esquerda da
+outra). Prismática em z e aberta no topo: desmolda **sem gaveta**.
+
+Medido: separação lateral bloqueada a partir de 0,6 mm e a ponta de 11 mm não
+passa pela boca de 7,4 mm — para soltar, levanta 15 mm.
+
+#### O que essa arquitetura custa
+
+- A aba é interrompida por **6 recortes de 18,5 mm** (11% do perímetro do rim).
+  A borda **externa** da aba continua inteira — sobra um lábio de 1,6 mm que
+  atravessa o recorte —, então de fora o rim se lê contínuo; de cima aparecem
+  seis rasgos.
+- Os pés são **contrafortes de 20,6 mm de avanço no piso**, apagando-se no rim.
+  A 12° de saída a base é 55 mm mais estreita que a boca, e o pé tem de vencer
+  essa diferença para alcançar a aba — não há como fugir disso. De fora eles se
+  leem como três pilastras por lateral, que é justo o que as caixas de
+  referência do cliente têm.
+- Capacidade caiu para **3,66 L** (era 4,46 L a 3,5°). É o preço do ângulo que
+  entrega as 12 peças.
+
+Arquivos: `cad/aba.py` (folha `aba.png`), `cad/cortes.py` (`cortes.png`, cortes
+2D tirados do sólido), `cad/cesto-aba.step` e `.stl`.
+
 ### 4.3 Acoplado — as três canaletas
 
 O pedido foi uma **canaleta de ponta a ponta na lateral, macho de um lado e
@@ -696,4 +793,9 @@ cad/final.py       a peca completa e a folha final.png
 cad/angulo.py      sweep de saida de molde e a folha angulo.png
 cad/cesto-final.step/.stl  a peca com tudo: pezinhos, estrutura de
                    empilhamento e cauda de andorinha do acoplamento
+cad/aba.py         a arquitetura de 4.2.4 -- aba plana no rim, pes com
+                   cavidade, cauda de andorinha na borda -- e a folha aba.png
+cad/cortes.py      cortes 2D no eixo do pe, tirados do solido com
+                   trimesh.mesh_plane, e a folha cortes.png
+cad/cesto-aba.step/.stl    a peca da arquitetura da aba (12 graus de saida)
 ```
