@@ -33,8 +33,8 @@ Uso:  python3 modelo3d.py
 import os
 import numpy as np
 from build123d import (Align, Axis, Box, Cylinder, Plane, Polyline, Pos,
-                       RectangleRounded, Rot, export_step, export_stl,
-                       extrude, fillet, make_face)
+                       Rectangle, RectangleRounded, Rot, export_step,
+                       export_stl, extrude, fillet, loft, make_face)
 
 RHO = 0.905e-3            # g/mm3 - PP copolimero
 
@@ -130,12 +130,17 @@ ABA_W, ABA_T = 10.0, 2.5      # largura e espessura da aba
 ABA_F = 2.0                   # folga do recorte alem do pe
 NERV_P = 24.0                 # profundidade do pe em x (>20,6: encosta na parede)
 NERV_T = 1.6                  # parede do pe da frente
+NERV_RC = 4.2                 # raio das pontas do pe em planta (bico redondo)
 # Deslocamento em y que troca ENCAIXAR por EMPILHAR. 14 mm nao serve mais:
 # com um pe por lateral o friso passou para o pe da FRENTE, cujo recorte na
 # aba e mais largo (meia-boca 9,25 mm), e a perna do friso caia DENTRO do
 # recorte -- o pe da peca encaixada batia nela e o encaixe subia para 73,4 mm.
-# Minimo = meia-boca + L/2 + folga + espessura = 9,25 + 5 + 0,3 + 1,2 = 15,75.
-DESLOC = 17.0
+# Minimo por causa do friso = meia-boca + L/2 + folga + espessura = 15,75 mm.
+# Em 21 mm por causa da SAIA de tras: ela e rente a parede, entao a aresta de
+# apoio dela nasce em y = BASE_Y/2 = 97,4 e a borda interna da aba esta em
+# PROF/2 - ABA_W = 115 -- precisa de 17,6 mm so para alcancar a aba, mais o
+# apoio que se quer ter em cima dela.
+DESLOC = 21.0
 
 # DOIS pes por lateral (pedido de 18/09; o do meio saiu):
 #   frente -- o pe que sustenta, na altura do rasgo curvado da silhueta
@@ -147,16 +152,12 @@ PES = (
     (-58.0, 10.0, 1.6, 0.045, LARG / 2 - ABA_W + 3.0, True),
 )
 
-# --- CANETINHA: o terceiro apoio, na sola da base atras ---------------------
-# Uma so, no meio da parede de tras. Ela substitui os dois pes de tras: com os
-# dois pes da frente forma um TRIPE, que e mais estavel que quatro apoios
-# amontoados no meio do comprimento.
-CAN_L = 20.0                  # largura em x
-CAN_T = 1.2                   # parede (ela e oca, como os pes)
-CAN_KX = 0.032                # saida das faces em x
-CAN_D = 24.0                  # profundidade em y
-CAN_P = 2.2                   # expoente do perfil curvo -- ver can_perfil()
-CAN_B = 4.0                   # apoio sobre a aba de tras
+# --- SAIA DE TRAS: o terceiro apoio, embaixo da peca ------------------------
+# A parede de tras continua para baixo na faixa de H_PE, rente a casca. Com os
+# dois pes da frente forma um TRIPE -- so que sem nada aparente.
+SAIA_W = 108.0                # largura da saia em x (o fundo reto tem 116,7)
+SAIA_R = 10.0                 # raio das pontas da saia em planta
+SAIA_B = 4.0                  # espessura da aresta de apoio
 # Regra de cada pe: saida em y >= parede/passo_encaixe, senao a boca da
 # cavidade nunca engole a lingua. A 46,9 mm de passo: 0,034 para 1,6 mm de
 # parede e 0,026 para 1,2. Em x vale a mesma coisa com NERV_KX.
@@ -457,31 +458,41 @@ def _aba(fora, interno):
     return a
 
 
-def _pe_bloco(sx, yc, L, ky, r00, ox=0.0, oy=0.0, z0=0.0, z1=None):
-    """Tronco do pe no lado sx, centrado em yc.
+def _pe_planta(sx, yc, L, ky, r00, z, ox, oy, rc):
+    """Planta do pe na cota z: retangulo ARREDONDADO do bico ao interior.
+
+    O bico redondo e o que o cliente pediu ("lateral curvada, cantos
+    arredondados"): o pe deixa de ser uma caixa e vira uma lingua. As pontas
+    de dentro tambem sao arredondadas, mas ficam dentro da parede e somem no
+    - env.
+    """
+    xi = 60.0                                  # bem dentro da parede
+    r = r00 - ox + (LARG / 2 - r00) * z / ALT
+    h = L / 2 - oy + ky * z
+    w = r - xi
+    rr = min(rc, h * 0.95, w * 0.45) if rc > 0 else 0.0
+    pl = (RectangleRounded(w, 2 * h, rr) if rr > 0.05
+          else Rectangle(w, 2 * h))
+    return Pos(sx * (r + xi) / 2, yc, z) * pl
+
+
+def _pe_bloco(sx, yc, L, ky, r00, ox=0.0, oy=0.0, z0=0.0, z1=None,
+              rc=NERV_RC):
+    """Tronco do pe, por loft entre a planta do piso e a do rim.
 
     Face externa: de r00 no piso ate LARG/2 no rim -- sempre POR FORA do cone,
     de modo que a silhueta da peca nunca diminui subindo (nenhuma face virada
     para cima = nenhuma contra-saida).
     Faces em y: saida ky por lado. Sem ela a boca da cavidade (L - 2*parede)
     e sempre mais estreita que a lingua (L) e o pe NUNCA entra no pe.
-    ox/oy recuam a face externa e as laterais: e assim que se obtem a casca
-    (a cavidade interna e o mesmo bloco com ox=oy=parede).
+    ox/oy/rc recuam a face externa, as laterais e o raio: e assim que se
+    obtem a casca (a cavidade interna e o mesmo bloco com ox=oy=parede e
+    rc = raio - parede, o que mantem a parede constante inclusive no bico).
     """
     if z1 is None:
         z1 = ALT + 6.0
-    kx = (LARG / 2 - r00) / ALT
-    r0, r1 = r00 - ox + kx * z0, r00 - ox + kx * z1
-    pts = [(sx * r0, z0), (sx * r1, z1),
-           (sx * (r1 - NERV_P), z1), (sx * (r0 - NERV_P), z0)]
-    bx = extrude(Plane.XZ * make_face(Polyline(*pts, close=True)),
-                 PROF, both=True)
-    h0 = L / 2 - oy + ky * z0
-    h1 = L / 2 - oy + ky * z1
-    q = [(yc - h0, z0), (yc + h0, z0), (yc + h1, z1), (yc - h1, z1)]
-    by = extrude(Plane.YZ * make_face(Polyline(*q, close=True)),
-                 LARG, both=True)
-    return bx & by
+    return loft([_pe_planta(sx, yc, L, ky, r00, z0, ox, oy, rc),
+                 _pe_planta(sx, yc, L, ky, r00, z1, ox, oy, rc)])
 
 
 def _pes_nervura(env):
@@ -508,71 +519,36 @@ def _pes_cavidade():
     out = None
     for sx in (-1, 1):
         for yc, L, t, ky, r00, _ in PES:
-            c = _pe_bloco(sx, yc, L, ky, r00, ox=t, oy=t, z0=t)
+            c = _pe_bloco(sx, yc, L, ky, r00, ox=t, oy=t, z0=t,
+                          rc=NERV_RC - t)
             out = c if out is None else out + c
     return out
 
 
-def can_y0():
-    """y da face externa da canetinha no piso.
+def _saia_tras():
+    """Saia da parede de tras, descendo ate o piso RENTE a parede.
 
-    Ela pousa na aba de TRAS, e o deslocamento do empilhamento tambem e em y:
-    a canetinha tem de nascer DESLOC mm mais para dentro para, deslocada,
-    cair em cima da aba (y de PROF/2 - ABA_W a PROF/2).
+    Substitui a canetinha (que projetava 4,6 mm e ficava a vista): aqui o pe
+    de tras e a propria parede continuando para baixo na faixa de H_PE que
+    `p -= extrude(..., H_PE)` tinha cortado. Como ela usa exatamente o mesmo
+    cone da casca, fica RENTE -- nao ha saliencia nenhuma para se ver de
+    fora. As pontas em planta sao arredondadas em SAIA_R.
+
+    Custa ZERO no encaixe, e por construcao: a face externa dela E a
+    superficie do cone, entao ela encaixa como a propria parede encaixa
+    (basta passo >= T_PAREDE/tg = 6,6 mm).
+
+    O apoio e a aresta de baixo, de SAIA_B de espessura: deslocada DESLOC ela
+    pousa na aba de tras da peca de baixo.
     """
-    return PROF / 2 - ABA_W + CAN_B - DESLOC
-
-
-def can_perfil(oy, z0, z1, n=28):
-    """Perfil curvo da face externa: y0 no piso, acelerando para PROF/2.
-
-    CAN_P > 1 (concavo) e o que faz a canetinha FUNCIONAR, e a primeira
-    tentativa com CAN_P < 1 (convexo) falhou por isto: a canetinha pousa na
-    aba de TRAS, e o deslocamento do empilhamento tambem e em y -- deslocar
-    nao tira o pe de cima de cima do recorte, porque o recorte ocupa a mesma
-    faixa em y que a propria aba. Medido: 2 apoios em vez de 3, e o encaixe
-    subiu de 46,9 para 73,4 mm.
-
-    Com a curva concava a canetinha sobe devagar, o CONE a alcanca em z ~ 46
-    mm e ela se apaga na parede -- ou seja, ela nunca chega a cota do rim e
-    NAO abre recorte nenhum na aba. A peca encaixada passa a cota do rim da
-    de baixo com a canetinha ainda em y = 113,8 mm, dentro da borda interna
-    da aba (115). E a silhueta continua crescendo para cima em todo o
-    percurso: nenhuma contra-saida.
-    """
-    y0 = can_y0() - oy
-    y1 = PROF / 2 - oy
-    zs = np.linspace(z0, z1, n)
-    return [(y0 + (y1 - y0) * (z / ALT) ** CAN_P, z) for z in zs]
-
-
-def can_ztopo():
-    """Cota onde o cone alcanca a canetinha e ela se apaga na parede.
-
-    Acima disso ela nao tem material, e a cavidade dela nao precisa (nem
-    deve) subir mais: se subisse, abriria recorte na aba de tras.
-    """
-    for z in np.arange(0.0, ALT, 0.5):
-        y = can_y0() + (PROF / 2 - can_y0()) * (z / ALT) ** CAN_P
-        if y + 1.0 <= PROF / 2 - ALT * TAN + TAN * z - T_PAREDE:
-            return float(z)
-    return ALT
-
-
-def _canetinha(oy=0.0, ox=0.0, z0=0.0, z1=None):
-    """Bloco da canetinha: perfil curvo em y-z cortado por um prisma em x."""
-    if z1 is None:
-        z1 = can_ztopo()
-    fora = can_perfil(oy, z0, z1)
-    dentro = [(y - CAN_D, z) for y, z in reversed(fora)]
-    by = extrude(Plane.YZ * make_face(Polyline(*fora, *dentro, close=True)),
-                 LARG, both=True)
-    h0 = CAN_L / 2 - ox + CAN_KX * z0
-    h1 = CAN_L / 2 - ox + CAN_KX * z1
-    q = [(-h0, z0), (h0, z0), (h1, z1), (-h1, z1)]
-    bx = extrude(Plane.XZ * make_face(Polyline(*q, close=True)),
-                 PROF, both=True)
-    return by & bx
+    faixa = extrude(RectangleRounded(BASE_X, BASE_Y, 14.0), H_PE + 0.2,
+                    taper=-DRAFT)
+    dentro = Pos(0, 0, -1.0) * extrude(
+        RectangleRounded(BASE_X - 2 * SAIA_B, BASE_Y - 2 * SAIA_B,
+                         max(14.0 - SAIA_B, 2.0)), H_PE + 3.0, taper=-DRAFT)
+    rec = Pos(0, BASE_Y / 2 - 20.0, -0.5) * extrude(
+        RectangleRounded(SAIA_W, 50.0, SAIA_R), H_PE + 1.5)
+    return (faixa - dentro) & rec
 
 
 def friso_x0():
@@ -583,6 +559,19 @@ def friso_x0():
     tem de morar para fora disso, senao ele fecha o encaixe.
     """
     return LARG / 2 - ABA_W + TAN * FRISO_H + 0.6
+
+
+def pe_apoio_h(L, r00, rc):
+    """Meia-largura do piso do pe na face interna do friso.
+
+    Com o bico redondo o piso do pe afina depressa, e e essa largura -- nao
+    L/2 -- que posiciona a perna do friso. Medido: com L/2 sobravam 0,8 mm
+    de folga e o friso praticamente nao travava em y (0,05 mm3 empurrando
+    1 mm); com a largura na borda interna da aba, 0,27; aqui, na face do
+    proprio friso, e onde o piso e mais largo dentro do vao da perna.
+    """
+    d = min(max(r00 - friso_x0(), 0.0), rc)
+    return (L / 2 - rc) + np.sqrt(max(rc * rc - (rc - d) ** 2, 0.0))
 
 
 def _frisos():
@@ -607,8 +596,9 @@ def _frisos():
         for yc, L, t, ky, r00, friso in PES:
             if not friso:
                 continue
-            ya = yc + DESLOC - L / 2 - FRISO_F          # face que o pe encosta
-            yb = yc + DESLOC + L / 2 + FRISO_F
+            h = pe_apoio_h(L, r00, NERV_RC)
+            ya = yc + DESLOC - h - FRISO_F              # face que o pe encosta
+            yb = yc + DESLOC + h + FRISO_F
             pernas = [
                 # perna em y: atravessa a aba, trava o deslocamento
                 _caixa(sx, x0, r00 + FRISO_F + FRISO_T,
@@ -639,8 +629,8 @@ def aba_livre():
         h = L / 2 - t + ky * ALT + 0.5
         ocupado.append((yc - h, yc + h))          # recorte da aba
         if friso:                                  # e o berco do friso
-            ocupado.append((yc + DESLOC - L / 2 - FRISO_F - FRISO_T - 0.5,
-                            yc + DESLOC + L / 2 + FRISO_F + FRISO_T + 0.5))
+            hb = pe_apoio_h(L, r00, NERV_RC) + FRISO_F + FRISO_T + 0.5
+            ocupado.append((yc + DESLOC - hb, yc + DESLOC + hb))
     ocupado.sort()
     livres, y = [], lim[0]
     for a, b in ocupado:
@@ -882,9 +872,8 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
     # fora, e o passo empilhado fica exatamente a altura: 130 mm.
     if aba:
         p += _pes_nervura(env)
-        p += _canetinha(z1=can_ztopo() + 2.0) - env
+        p += _saia_tras()
         p -= _pes_cavidade()
-        p -= _canetinha(oy=CAN_T, ox=CAN_T, z0=CAN_T)
         p += _frisos()
         for yc in aco_y():
             p += _cauda2(1, yc) - env          # macho na direita

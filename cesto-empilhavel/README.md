@@ -726,6 +726,49 @@ pés em y = −58 e canetinha em y = +119, ou seja **177 mm de base** numa peça
 de 250 — contra os 85 mm de antes. As caudas de acoplamento foram para
 **−27 e +74**, 101 mm de braço.
 
+#### Mais clean: saia de trás invisível e pés da frente arredondados
+
+**O pé de trás saiu de vista.** A canetinha projetava 4,6 mm da parede e
+aparecia. No lugar dela, a parede de trás simplesmente **continua para baixo**
+nos 5 mm de H_PE que `p -= extrude(..., H_PE)` tinha cortado — usando o mesmo
+cone da casca, então fica **rente**: não há saliência nenhuma para se ver de
+fora. As pontas em planta são arredondadas em R10.
+
+Ela custa **zero** no encaixe, e por construção: a face externa dela **é** a
+superfície do cone, então ela encaixa como a própria parede encaixa (basta
+passo ≥ T_PAREDE/tg 12° = 6,6 mm). Nenhuma janela, nenhuma cavidade, nenhum
+recorte na aba.
+
+E o apoio melhorou muito: a aresta de baixo tem 4 mm de espessura e **108 mm
+de largura**, o que dá **370 mm² de contato** na aba de trás, contra os 80 mm²
+da canetinha. Total do tripé: **417 mm²** (era 141).
+
+| | canetinha | saia |
+|---|---|---|
+| aparece de fora | 4,6 mm de saliência | **nada** |
+| contato na aba | 80 mm² | **370 mm²** |
+| custo no encaixe | zero (curva concava) | **zero (é o cone)** |
+| recorte na aba | nenhum | **nenhum** |
+
+**O deslocamento subiu para 21 mm.** A saia é rente, então a aresta de apoio
+dela nasce em y = BASE_Y/2 = 97,4 mm e a borda interna da aba está em 115 —
+são 17,6 mm só para alcançar a aba, mais o apoio que se quer ter em cima dela.
+
+**Os pés da frente viraram língua.** A planta deixou de ser retângulo: agora é
+um retângulo **arredondado em R4,2**, e o pé é construído por `loft` entre a
+planta do piso e a do rim. Bico redondo, lateral curvada, nenhum canto vivo. A
+cavidade usa o mesmo loft com `rc = R − parede`, o que mantém a parede
+constante **inclusive no bico**.
+
+Isso trouxe um efeito colateral que a medição pegou: com o bico redondo o piso
+do pé afina depressa, e a perna do friso — posicionada em L/2 — ficou com
+0,8 mm de folga e praticamente **não travava** em y (0,05 mm³ empurrando
+1 mm). `pe_apoio_h()` passou a calcular a meia-largura real do piso na face do
+friso (4,29 mm em vez de 5,00), e a trava voltou: **2,04 mm³**.
+
+Peso **170,3 g**, capacidade 4,41 L. Encaixe 46,9 e empilhamento 130,0
+inalterados (0,000 mm³ a 130,0 exatos).
+
 ### 4.3 Acoplado — as três canaletas
 
 O pedido foi uma **canaleta de ponta a ponta na lateral, macho de um lado e

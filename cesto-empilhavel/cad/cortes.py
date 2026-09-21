@@ -98,7 +98,7 @@ def main(pn):
             "aba 10 mm: a parede de cima tem\nde passar pela borda interna "
             "dela\n→ 10/tg 12° = 46,9 mm",
             fontsize=8.4, color=CINZ, va="bottom", ha="right")
-    ax.text(hx - 55, 196, "cinza claro: a mesma peça 14 mm ao lado,\nonde a "
+    ax.text(hx - 55, 196, "cinza claro: a mesma peça %.0f mm ao lado,\nonde a " % DESLOC +
             "parede e a aba estão inteiras", fontsize=8.2, color="#9aa4b2",
             va="top", ha="left")
 
@@ -121,18 +121,21 @@ def main(pn):
     fig.text(0.5, 0.942, "cortes tirados do sólido · cinza = peça de baixo, "
              "laranja = peça de cima", ha="center", va="top", fontsize=10,
              color=GRIS)
-    # --- 3: a canetinha, no corte em x = 0 -------------------------------
+    # --- 3: a saia de tras, no corte em x = 0 ----------------------------
     ax = axs[2]
     desenha(ax, seg_x(m, 0.0), CINZ)
     desenha(ax, seg_x(m, 0.0, DESLOC, PASSO_E), NOVO)
-    ax.set_xlim(88, 132); ax.set_ylim(116, 145)
-    ax.set_title("A CANETINHA · corte no meio da traseira", fontsize=12,
+    ax.set_xlim(98, 136); ax.set_ylim(118, 144)
+    ax.set_title("A SAIA DE TRÁS · corte no meio da traseira", fontsize=12,
                  color=TINTA, weight="bold", pad=14)
-    ax.text(89, 144, "a canetinha (laranja) pousa na aba de trás. Ela projeta "
-            "só\n%.1f mm da parede e o cone a alcança em z = %.0f mm, onde ela "
-            "se\napaga — por isso ela NÃO abre recorte na aba, e o encaixe\n"
-            "continua em 46,9 mm." % (M.can_y0() - (M.PROF / 2 - M.ALT * M.TAN),
-                                      M.can_ztopo()),
+    ap = f"{M.BASE_Y / 2 + DESLOC - (M.PROF / 2 - M.ABA_W):.1f}".replace(
+        ".", ",")
+    ax.text(99, 143,
+            f"a parede de trás (laranja) desce {M.H_PE:.0f} mm até o piso, "
+            f"RENTE à casca:\nnada aparece de fora. A aresta de baixo, de "
+            f"{M.SAIA_B:.0f} mm, pousa na aba\nda peça de baixo — {ap} mm de "
+            f"apoio × {M.SAIA_W:.0f} mm de largura.\nCusta zero no encaixe: "
+            f"a face externa dela é a própria superfície do cone.",
             fontsize=8.4, color=TINTA, va="top", ha="left")
 
     fig.subplots_adjust(top=0.855, bottom=0.03, left=0.015, right=0.985)
