@@ -89,16 +89,23 @@ vale nos outros dois. O que mudou em relação ao perfil genérico:
 
 - `gcode_flavor = klipper` (não Marlin)
 - cama 250 × 250, peça centrada em (125, 125)
-- `thumbnails = 230x110 PNG` — é a miniatura que aparece na tela
+- `thumbnails = 230x110 PNG` — é a miniatura que aparece na tela da
+  impressora. **Atenção:** o PrusaSlicer em linha de comando *não* desenha a
+  miniatura (só a interface gráfica desenha), então o arquivo saiu sem ela. A
+  miniatura foi gerada depois pelo `miniatura.py`, que desenha a peça a partir
+  do STL e injeta o bloco `thumbnail begin/end` (PNG em base64, o mesmo
+  formato que o OrcaSlicer escreve) no cabeçalho
 - brim de 4 para **2 mm**: a peça tem 241 mm em y e sobram só 4,8 mm de folga
 - `M900` (pressure advance) **omitido de propósito**: está no perfil da Kobra 3
   mas não no da S1, e um valor errado estraga o canto
 - sem purga manual e sem `G28` no start — quem faz isso é o `G9111`
 
-Conferido no arquivo gerado: `G9111 bedTemp=80 extruderTemp=245` na linha 16,
-miniatura embutida, E relativo com `G92 E0` por camada, suporte só entre
-z 0,3 e 5,1 mm, tudo dentro de 250 × 250 × 250 (x 10…227, y 4,8…245, z até
-132,6) e só comandos que o Klipper conhece — G1/G21/G90/G91/G92 e
+Conferido no arquivo gerado: `G9111 bedTemp=80 extruderTemp=245` na linha 192
+(logo depois da miniatura), miniatura de 230 × 110 conferida byte a byte
+(cabeçalho PNG válido, dimensões reais 230 × 110, tamanho declarado igual ao
+real), E relativo com `G92 E0` por camada, suporte só entre z 0,3 e 5,1 mm,
+tudo dentro de 250 × 250 × 250 (x 10…227, y 4,8…245, z até 132,6) e só
+comandos que o Klipper conhece — G1/G21/G90/G91/G92 e
 M83/M84/M104/M106/M107/M109/M117/M140/M190/M400. Nenhum M205, M900 ou M420.
 
 **O que eu não pude testar:** a máquina. Se o 10133 insistir, o conserto

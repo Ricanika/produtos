@@ -1084,7 +1084,10 @@ cad/visor3d.html   visor 3D interativo (artifact): o solido embutido em 654 KB
                    de binario e o desenho em WebGL2 escrito na propria pagina,
                    sem biblioteca externa -- gera-se dele os quatro modos
                    (peca, encaixadas, empilhadas, acopladas)
-cad/print/         gcode em PETG nos bicos 0,4 e 0,6, os perfis .ini e o
-                   LEIA-ME com o que a impressao nao reproduz
+cad/print/         gcode em PETG: o da Anycubic (Kobra 3 / S1 / 3 Max, com o
+                   macro G9111 no start) e os genericos Marlin nos bicos 0,4
+                   e 0,6; os perfis .ini, o miniatura.py que injeta a
+                   miniatura 230x110 que o PrusaSlicer headless nao desenha,
+                   e o LEIA-ME com o que a impressao nao reproduz
 cad/cesto-aba.step/.stl    a peca da arquitetura da aba (12 graus de saida)
 ```
