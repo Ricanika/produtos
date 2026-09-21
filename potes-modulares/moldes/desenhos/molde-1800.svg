@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="562" height="460" viewBox="0 0 562 460" font-family="Helvetica,Arial" font-size="11">
+<rect width="100%" height="100%" fill="#fbfbf9"/>
+<path d="M 281.9,389.7 L 281.9,170.0 L 249.9,170.0 L 249.9,175.2 L 248.7,175.2 L 248.7,171.6 L 246.8,171.6 L 245.3,348.6 L 242.4,348.6 L 242.3,354.7 L 241.0,354.7 L 241.0,351.9 L 175.9,351.9 L 175.9,389.7 Z" fill="#c8d2dc" stroke="#44515e" stroke-width="1"/>
+<path d="M 70.0,389.7 L 70.0,170.0 L 102.0,170.0 L 102.0,175.2 L 103.2,175.2 L 103.2,171.6 L 105.1,171.6 L 106.6,348.6 L 109.5,348.6 L 109.6,354.7 L 110.9,354.7 L 110.9,351.9 L 175.9,351.9 L 175.9,389.7 Z" fill="#c8d2dc" stroke="#44515e" stroke-width="1"/>
+<polygon points="242.3,354.7 242.4,348.6 245.3,348.6 246.8,171.6 248.7,171.6 248.7,175.2 249.9,175.2 249.9,170.0 241.0,349.9 241.1,348.6 244.0,348.6 245.4,180.2 245.4,170.0" fill="#e8a33d" stroke="#8a5a10" stroke-width="0.8"/>
+<polygon points="109.6,354.7 109.5,348.6 106.6,348.6 105.1,171.6 103.2,171.6 103.2,175.2 102.0,175.2 102.0,170.0 110.8,349.9 110.8,348.6 107.9,348.6 106.5,180.2 106.5,170.0" fill="#e8a33d" stroke="#8a5a10" stroke-width="0.8"/>
+<polygon points="245.4,170.0 245.4,180.2 244.0,348.6 241.1,348.6 241.0,349.9 245.4,110.0 270.4,110.0 270.4,70.0 175.9,70.0 175.9,349.9" fill="#9aa7b4" stroke="#33404d" stroke-width="1"/>
+<polygon points="106.5,170.0 106.5,180.2 107.9,348.6 110.8,348.6 110.8,349.9 106.5,110.0 81.5,110.0 81.5,70.0 175.9,70.0 175.9,349.9" fill="#9aa7b4" stroke="#33404d" stroke-width="1"/>
+<rect x="245.4" y="140.0" width="36.5" height="30.0" fill="#7d8b99" stroke="#33404d" stroke-width="1"/>
+<rect x="70.0" y="140.0" width="36.5" height="30.0" fill="#7d8b99" stroke="#33404d" stroke-width="1"/>
+<circle cx="264.3" cy="367.2" r="5.0" fill="#7fb8e0" stroke="#2c6a9b"/>
+<circle cx="87.5" cy="367.2" r="5.0" fill="#7fb8e0" stroke="#2c6a9b"/>
+<circle cx="264.3" cy="322.2" r="5.0" fill="#7fb8e0" stroke="#2c6a9b"/>
+<circle cx="87.5" cy="322.2" r="5.0" fill="#7fb8e0" stroke="#2c6a9b"/>
+<circle cx="264.3" cy="277.2" r="5.0" fill="#7fb8e0" stroke="#2c6a9b"/>
+<circle cx="87.5" cy="277.2" r="5.0" fill="#7fb8e0" stroke="#2c6a9b"/>
+<circle cx="270.6" cy="232.2" r="5.0" fill="#7fb8e0" stroke="#2c6a9b"/>
+<circle cx="81.2" cy="232.2" r="5.0" fill="#7fb8e0" stroke="#2c6a9b"/>
+<circle cx="270.6" cy="187.2" r="5.0" fill="#7fb8e0" stroke="#2c6a9b"/>
+<circle cx="81.2" cy="187.2" r="5.0" fill="#7fb8e0" stroke="#2c6a9b"/>
+<rect x="137.3" y="70.0" width="12.0" height="267.8" fill="#7fb8e0" fill-opacity="0.55" stroke="#2c6a9b" stroke-dasharray="3 2"/>
+<rect x="137.3" y="70.0" width="12.0" height="267.8" fill="#7fb8e0" fill-opacity="0.55" stroke="#2c6a9b" stroke-dasharray="3 2"/>
+<rect x="202.5" y="70.0" width="12.0" height="267.8" fill="#7fb8e0" fill-opacity="0.55" stroke="#2c6a9b" stroke-dasharray="3 2"/>
+<rect x="202.5" y="70.0" width="12.0" height="267.8" fill="#7fb8e0" fill-opacity="0.55" stroke="#2c6a9b" stroke-dasharray="3 2"/>
+<path d="M 175.9,389.7 L 175.9,354.7" stroke="#b0303a" stroke-width="3"/>
+<text x="181.9" y="385.7" fill="#b0303a">bico quente valvulado</text>
+<path d="M 35.0,170.0 L 371.9,170.0" stroke="#b0303a" stroke-dasharray="7 4"/>
+<text x="35.0" y="165.0" fill="#b0303a">plano de fechamento</text>
+<text x="362" y="70" fill="#2b2b2b">POTE 1800 ml — corte do molde</text>
+<text x="362" y="88" fill="#2b2b2b">contracao aplicada: 1.50%</text>
+<text x="362" y="106" fill="#2b2b2b">postico 212 x 151 x 220 mm</text>
+<text x="362" y="124" fill="#2b2b2b">porta-molde 302 x 452 mm, 2 cav</text>
+<text x="362" y="142" fill="#2b2b2b">altura de molde 663 mm</text>
+<text x="362" y="160" fill="#2b2b2b">abertura minima 454 mm</text>
+<text x="362" y="178" fill="#2b2b2b">fechamento 119 tf</text>
+<text x="362" y="196" fill="#2b2b2b">5 circuitos + 4 bubblers no macho</text>
+<text x="362" y="214" fill="#2b2b2b"></text>
+<text x="362" y="232" fill="#2b2b2b">laranja = peca   azul = aco   </text>
+<text x="362" y="250" fill="#2b2b2b">cinza claro = cavidade  escuro = macho</text>
+</svg>
