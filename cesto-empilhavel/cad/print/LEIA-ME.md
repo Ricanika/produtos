@@ -5,11 +5,14 @@ do projeto, 200 × 250 × 130 mm, envelope real 204 × 241 × 132,5 mm).
 
 | arquivo | bico | camada | filamento | tempo |
 |---|---|---|---|---|
-| `cesto-P-petg.gcode` | 0,4 mm | 0,30 mm | **207 g** | **14 h 32 min** |
+| `cesto-P-petg-bico04.gcode` | 0,4 mm | 0,30 mm | **207 g** | **14 h 32 min** |
 | `cesto-P-petg-bico06.gcode` | 0,6 mm | 0,40 mm | 219 g | **8 h 04 min** |
 
-Os `.ini` do lado são os perfis completos: carregue no PrusaSlicer
-(`File → Import → Import Config`) e refatie para a sua máquina em um clique.
+**Para imprimir você usa UM arquivo só: o `.gcode` do seu bico.** Os dois são
+a mesma peça, fatiada de dois jeitos — escolha pelo bico que está na máquina.
+Os `perfil-*.ini` não vão para a impressora: são a receita, para carregar no
+PrusaSlicer (`File → Import → Import Config`) e refatiar se a sua cama ou a
+sua máquina forem diferentes.
 
 ## ANTES DE IMPRIMIR — três coisas
 
