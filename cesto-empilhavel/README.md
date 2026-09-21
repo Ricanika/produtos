@@ -1080,5 +1080,11 @@ cad/friso.py       o friso em U na aba, com a trava medida nos 4 sentidos
 cad/abertura.py    tres angulos de abertura no perfil, e a folha abertura.png
 cad/limpo.py       a rodada de acabamento: traseira, pe da frente e planta
 cad/listras.py     bolinhas vs listras e a tabela de onde o peso esta
+cad/visor3d.html   visor 3D interativo (artifact): o solido embutido em 654 KB
+                   de binario e o desenho em WebGL2 escrito na propria pagina,
+                   sem biblioteca externa -- gera-se dele os quatro modos
+                   (peca, encaixadas, empilhadas, acopladas)
+cad/print/         gcode em PETG nos bicos 0,4 e 0,6, os perfis .ini e o
+                   LEIA-ME com o que a impressao nao reproduz
 cad/cesto-aba.step/.stl    a peca da arquitetura da aba (12 graus de saida)
 ```
