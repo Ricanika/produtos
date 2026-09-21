@@ -585,7 +585,13 @@ da parede da bandeja num canto, onde o pote de cima tem raio e quase não apoia.
   vira SKU "topo da pilha", não versão modular. E é peça comprada, contra zero peça da bandeja-vertedor.
 - **Copinho dosador** (o do porta-sabão em pó ref. 008) — descartado a pedido.
 
-### 6.5 Processo do aro de TPE
+### 6.5 Vedação tipo Tupperware — estudo, não implementado
+
+Pedido de referência: "a vedação do pote da Tupperware é incrível, queria algo similar".
+O mecanismo foi levantado e orçado na **seção 13**. Decisão de 21/09/2026: **fica como estudo**,
+a linha segue com a tampa PE da revisão 6 como está.
+
+### 6.6 Processo do aro de TPE
 **Não há bi-injeção no parque**: o aro é peça injetada à parte e montada, ou comprada pronta. Peso
 2,6 g, seção 2,8 × 2,2 mm, perímetro 383 mm. Recotar o Karinprene 45 (dureza 45 shore), sem compra
 desde 2022.
@@ -735,3 +741,81 @@ invade 0,2 mm a parede no modelo — é justamente a interferência.
 
 O corte do visualizador é onde se vê a vedação: o plug descendo dentro do pote e o aro trabalhando
 contra a parede.
+
+
+---
+
+## 13. Estudo de referência — a vedação da Tupperware
+
+> **Status: não implementado.** Levantado em 21/09/2026 a pedido, orçado, e deixado registrado.
+> A linha continua com a tampa PE da revisão 6. Números reproduzíveis em
+> `estudos/vedacao-tupperware.py`.
+
+### 13.1 O que a patente diz
+
+A patente original é a **US2487400A**, de Earl Tupper, depositada em 1947 e concedida em
+08/11/1949 — **expirada há mais de 60 anos, princípio em domínio público**. O título já entrega
+metade: *"Open mouth container and **nonsnap** type of closure therefor"*.
+
+Três coisas fazem a vedação, e só uma é a que todo mundo comenta:
+
+1. **Canal em U que engole a borda.** A tampa tem *"an upwardly directed and inverted U-shaped
+   annular groove extending from the periphery"*; o pote tem a borda em **cordão** (*"double
+   annular beads, outer annular beads, and inner annular beads"*). O cordão entra no canal e as
+   duas paredes o apertam de faces opostas — *"a seal is effected between the engaging walls of
+   the closure imposing **opposite pressures**"*. **Dois contatos radiais em faces opostas da
+   mesma parede**, não junta achatada.
+2. **É nonsnap.** Sem trava; segura por atrito no canal. É o mesmo requisito que o Ricardo deu na
+   primeira mensagem — "sem trava, liso".
+3. **O burp.** Expulsar o ar deixa o interior abaixo da atmosfera e a tampa flexível é sugada.
+
+**Ressalva de método:** não consegui abrir o texto integral da patente — o proxy de saída desta
+sessão bloqueia `patents.google.com`, `justia`, `freepatentsonline` e a Wikipédia. As citações
+acima vieram de resumos de busca, **não do documento original**. Conferir antes de virar
+especificação.
+
+### 13.2 O que não dá para copiar, e por quê
+
+**O burp está fora, e o motivo é estrutural.** A tampa da Tupperware é uma membrana de PEBD mole.
+A nossa **carrega o pote de cima**: o piso da bandeja é o plano modular e tem de ser um datum
+rígido. Membrana e datum são requisitos opostos. Dá para copiar a geometria da vedação; o sistema
+inteiro, não.
+
+### 13.3 Por que não sai de graça como saiu a garra
+
+Na revisão 6 a sobretampa não custou nada ao pote porque o lábio da aba já era o ressalto de que a
+garra precisava. Aqui não:
+
+- o **topo da borda é plano** (4,40 mm/lado de mesa lisa): não há cordão em pé para o canal agarrar;
+- a **canaleta em U que o pote já tem** (1,84 mm/lado, entre o corpo em 139,6 e o lábio em 143,3)
+  **abre para baixo** — uma tampa que desce de cima não alcança.
+
+### 13.4 Os dois caminhos, com número
+
+| | **A — só na tampa** | **B — canal de faces opostas** |
+|---|---|---|
+| Muda o pote? | **Não** | **Sim**: cordão de 1,0 × 2,2 mm em pé no topo da borda, nos 4 moldes de corpo |
+| Vedação | 2 selos **em série**: lábio no furo + cordão/garra por fora | 2 selos em **faces opostas** do mesmo cordão |
+| Arranque reto (PEAD) | 4,3 kgf com 0,30 mm de interferência | 5,1 kgf com 0,20 mm |
+| Descascando um canto | 0,7 kgf | 0,8 kgf |
+| Depende do deck ficar plano? | Não — a reação fecha no aro do piso da bandeja | Não — as forças se fecham dentro do canal |
+
+**Caminho A** resolveria de quebra o beco da revisão 6. Lá o lábio de vedação no furo não coube
+porque a fenda de 0,95 mm ao lado da parede do poço era fina demais para o macho. **Pendurando o
+lábio na aresta do piso da bandeja** (z = −3,50) em vez de ao lado da parede, a fenda some: sobra
+um lábio de **3,6 × 0,60 mm com 0,30 mm de interferência** contra o furo, e a reação fecha no
+próprio anel do piso — um aro em compressão, que é rígido no plano dele.
+
+**Caminho B** é o mecanismo da patente do jeito dela, e é o único que dá o *"opposite pressures"*.
+Preço: a borda muda nos quatro moldes de corpo, e o 2,4 L já é o mais caro do escopo.
+
+**Em PEBD os dois caminhos dão 0,6–0,9 kgf** — mole demais para segurar. Mais um voto no PEAD
+(seção 6.1.6).
+
+### 13.5 Liberdade de operação
+
+A US2487400 está expirada, mas o campo é povoado de patentes posteriores sobre geometrias
+específicas de cordão e nervura — US5356026 (*Double seal container*), EP0283630 (*rim bead with
+an engaging region formed inwardly and below it*), WO2008048406 (*double bead sealing system*).
+**Antes de abrir molde com qualquer um dos dois caminhos, busca de liberdade de operação é etapa
+real, não formalidade.**

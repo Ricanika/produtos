@@ -30,7 +30,13 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
    Dois pontos abertos: a retenção depende da rigidez do deck (o aro da saia dá 3 gf, então pede
    elemento finito ou protótipo), e a **tampa de teca não pode ser o plug de parede fina** — em
    maciço, precisa do poço da bandeja usinado ou não empilha.
-8. **(revisão 5)** O pote tinha ficado largo e muito arredondado em relação ao render de
+8. **(estudo, 21/09/2026 — não implementado)** Pedido de referência à vedação da Tupperware.
+   Mecanismo levantado: canal em U na tampa que engole um cordão da borda, apertando-o de
+   **faces opostas** (US2487400, de 1949, expirada, "nonsnap"). O burp não dá para copiar — a
+   tampa deles é membrana, a nossa é datum de empilhamento. Dois caminhos orçados (com e sem
+   mexer no molde do corpo), 4,3 e 5,1 kgf de arranque. **Decisão: fica como estudo**, seção 13
+   do README. A linha segue na revisão 6.
+9. **(revisão 5)** O pote tinha ficado largo e muito arredondado em relação ao render de
    referência. Corrigido para **frente estreita e pote fundo, canto R10** — escolhido de propósito
    o caminho que mantém altura, módulo, curso de abertura e classe de injetora. Custou **+17,6 g**
    de resina nos quatro corpos e deixou a face comprida do 2,4 L **3,8× mais flexível** (única
