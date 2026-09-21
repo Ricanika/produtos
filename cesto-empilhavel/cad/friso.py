@@ -21,9 +21,9 @@ COR, CINZ = (0.93, 0.44, 0.13), (0.55, 0.63, 0.72)
 def main():
     M.set_draft(12.0)
     p, _ = M.cesto(aba=True)
-    yr = M.PES[1][0]
+    yr = M.PES[0][0]
     cx = Pos(M.LARG / 2 - 11.5, yr + M.DESLOC, 128.0) * \
-        Box(40.0, 44.0, 28.0)
+        Box(40.0, 46.0, 28.0)
     export_stl(p & cx, os.path.join(DEST, "fr-a.stl"))
     export_stl((Pos(0, M.DESLOC, 130.0) * p) & cx, os.path.join(DEST, "fr-b.stl"))
     ma = trimesh.load(os.path.join(DEST, "fr-a.stl"))
@@ -51,7 +51,7 @@ def main():
     for i, (arq, tit, sub) in enumerate((
             ("friso-so.png", "a aba, com o friso",
              "três pernas de 1,2 × 2,5 mm · o resto do rim continua plano"),
-            ("friso-det.png", "o pé de trás pousado nele",
+            ("friso-det.png", "o pé da frente pousado nele",
              "o piso do pé (laranja) encosta nas três pernas"))):
         ax = fig.add_axes([0.02 + i * 0.33, 0.10, 0.31, 0.74])
         ax.imshow(np.asarray(Image.open(os.path.join(DEST, arq))))

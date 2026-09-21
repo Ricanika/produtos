@@ -34,6 +34,18 @@ def seg(m, y, dz=0.0):
     return out
 
 
+def seg_x(m, x, dy=0.0, dz=0.0):
+    """Segmentos do corte em x (plano y-z) -- e nele que a canetinha aparece,
+    porque ela mora na parede de TRAS."""
+    s = mesh_plane(m, plane_normal=[1, 0, 0], plane_origin=[x, 0, 0])
+    if s is None or len(s) == 0:
+        return np.zeros((0, 2, 2))
+    out = s[:, :, [1, 2]].copy()
+    out[:, :, 0] += dy
+    out[:, :, 1] += dz
+    return out
+
+
 def desenha(ax, segs, cor, lw=1.6, alpha=1.0):
     for a, b in segs:
         ax.plot([a[0], b[0]], [a[1], b[1]], color=cor, lw=lw, alpha=alpha,
@@ -57,8 +69,7 @@ def main(pn):
         p, _ = M.cesto(aba=True)
         export_stl(p, arq)
     m = trimesh.load(arq)
-    yc = M.PES[0][0]          # pe da frente
-    yr = M.PES[1][0]          # encaixe de tras
+    yc = M.PES[0][0]          # pe da frente (o unico)
     hx = M.LARG / 2           # plano da junta: tudo em x e relativo a ele
 
     fig, axs = plt.subplots(1, 3, figsize=(17.4, 7.4), facecolor=FUNDO)
@@ -110,19 +121,18 @@ def main(pn):
     fig.text(0.5, 0.942, "cortes tirados do sólido · cinza = peça de baixo, "
              "laranja = peça de cima", ha="center", va="top", fontsize=10,
              color=GRIS)
-    # --- 3: o encaixe de tras e o pino na aba ----------------------------
+    # --- 3: a canetinha, no corte em x = 0 -------------------------------
     ax = axs[2]
-    ypino = yr + DESLOC - M.PES[1][1] / 2 - M.FRISO_F - M.FRISO_T / 2
-    desenha(ax, seg(m, yr + DESLOC), "#aab4c2", lw=1.0)
-    desenha(ax, seg(m, ypino), CINZ)
-    desenha(ax, seg(m, yr, PASSO_E), NOVO)
-    ax.set_xlim(hx - 20, hx + 9); ax.set_ylim(117, 143)
-    ax.set_title("O ENCAIXE DE TRÁS · o friso na aba", fontsize=12,
+    desenha(ax, seg_x(m, 0.0), CINZ)
+    desenha(ax, seg_x(m, 0.0, DESLOC, PASSO_E), NOVO)
+    ax.set_xlim(88, 132); ax.set_ylim(116, 145)
+    ax.set_title("A CANETINHA · corte no meio da traseira", fontsize=12,
                  color=TINTA, weight="bold", pad=14)
-    ax.text(hx - 19, 142.5, "friso de 2,5 mm na aba (cinza) encostado no piso do pé "
-            "(laranja):\ntrês pernas em U prendem o pé em y nos dois sentidos "
-            "e para fora.\nCom o friso dos dois lados, x fica preso também — "
-            "o andar\nfica POSICIONADO, não só apoiado.",
+    ax.text(89, 144, "a canetinha (laranja) pousa na aba de trás. Ela projeta "
+            "só\n%.1f mm da parede e o cone a alcança em z = %.0f mm, onde ela "
+            "se\napaga — por isso ela NÃO abre recorte na aba, e o encaixe\n"
+            "continua em 46,9 mm." % (M.can_y0() - (M.PROF / 2 - M.ALT * M.TAN),
+                                      M.can_ztopo()),
             fontsize=8.4, color=TINTA, va="top", ha="left")
 
     fig.subplots_adjust(top=0.855, bottom=0.03, left=0.015, right=0.985)

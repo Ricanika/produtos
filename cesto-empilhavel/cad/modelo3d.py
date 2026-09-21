@@ -42,7 +42,7 @@ RHO = 0.905e-3            # g/mm3 - PP copolimero
 # O P estava girado: o lado MAIOR e o comprimento (Y, frente-fundo) e a
 # ABERTURA fica na LARGURA (X, os 200 mm). Os pes vao nas faces de 215 mm.
 LARG   = 200.0            # X - largura da boca: e nela que fica a abertura
-PROF   = 215.0            # Y - comprimento (o lado maior)
+PROF   = 250.0            # Y - comprimento (o lado maior)
 ALT    = 130.0            # Z - altura
 DRAFT  = 3.5              # graus por lado: saida de molde e folga de encaixe
 
@@ -130,16 +130,33 @@ ABA_W, ABA_T = 10.0, 2.5      # largura e espessura da aba
 ABA_F = 2.0                   # folga do recorte alem do pe
 NERV_P = 24.0                 # profundidade do pe em x (>20,6: encosta na parede)
 NERV_T = 1.6                  # parede do pe da frente
-DESLOC = 14.0                 # deslocamento em y que troca ENCAIXAR por EMPILHAR
+# Deslocamento em y que troca ENCAIXAR por EMPILHAR. 14 mm nao serve mais:
+# com um pe por lateral o friso passou para o pe da FRENTE, cujo recorte na
+# aba e mais largo (meia-boca 9,25 mm), e a perna do friso caia DENTRO do
+# recorte -- o pe da peca encaixada batia nela e o encaixe subia para 73,4 mm.
+# Minimo = meia-boca + L/2 + folga + espessura = 9,25 + 5 + 0,3 + 1,2 = 15,75.
+DESLOC = 17.0
 
 # DOIS pes por lateral (pedido de 18/09; o do meio saiu):
 #   frente -- o pe que sustenta, na altura do rasgo curvado da silhueta
 #   tras   -- o ENCAIXE: nervura fina, com o pino da referencia na aba
 # (yc, L em y, parede, saida em y, face externa no piso, tem pino na aba)
+# Um pe por lateral, na frente, com o friso. Atras nao tem pe: tem a
+# CANETINHA, um friso curvo unico na sola da base (pedido de 21/09).
 PES = (
-    (-43.0, 10.0, 1.6, 0.045, LARG / 2 - ABA_W + 3.0, False),
-    (42.0, 8.0, 1.2, 0.032, LARG / 2 - ABA_W + 5.5, True),
+    (-58.0, 10.0, 1.6, 0.045, LARG / 2 - ABA_W + 3.0, True),
 )
+
+# --- CANETINHA: o terceiro apoio, na sola da base atras ---------------------
+# Uma so, no meio da parede de tras. Ela substitui os dois pes de tras: com os
+# dois pes da frente forma um TRIPE, que e mais estavel que quatro apoios
+# amontoados no meio do comprimento.
+CAN_L = 20.0                  # largura em x
+CAN_T = 1.2                   # parede (ela e oca, como os pes)
+CAN_KX = 0.032                # saida das faces em x
+CAN_D = 24.0                  # profundidade em y
+CAN_P = 2.2                   # expoente do perfil curvo -- ver can_perfil()
+CAN_B = 4.0                   # apoio sobre a aba de tras
 # Regra de cada pe: saida em y >= parede/passo_encaixe, senao a boca da
 # cavidade nunca engole a lingua. A 46,9 mm de passo: 0,034 para 1,6 mm de
 # parede e 0,026 para 1,2. Em x vale a mesma coisa com NERV_KX.
@@ -496,6 +513,68 @@ def _pes_cavidade():
     return out
 
 
+def can_y0():
+    """y da face externa da canetinha no piso.
+
+    Ela pousa na aba de TRAS, e o deslocamento do empilhamento tambem e em y:
+    a canetinha tem de nascer DESLOC mm mais para dentro para, deslocada,
+    cair em cima da aba (y de PROF/2 - ABA_W a PROF/2).
+    """
+    return PROF / 2 - ABA_W + CAN_B - DESLOC
+
+
+def can_perfil(oy, z0, z1, n=28):
+    """Perfil curvo da face externa: y0 no piso, acelerando para PROF/2.
+
+    CAN_P > 1 (concavo) e o que faz a canetinha FUNCIONAR, e a primeira
+    tentativa com CAN_P < 1 (convexo) falhou por isto: a canetinha pousa na
+    aba de TRAS, e o deslocamento do empilhamento tambem e em y -- deslocar
+    nao tira o pe de cima de cima do recorte, porque o recorte ocupa a mesma
+    faixa em y que a propria aba. Medido: 2 apoios em vez de 3, e o encaixe
+    subiu de 46,9 para 73,4 mm.
+
+    Com a curva concava a canetinha sobe devagar, o CONE a alcanca em z ~ 46
+    mm e ela se apaga na parede -- ou seja, ela nunca chega a cota do rim e
+    NAO abre recorte nenhum na aba. A peca encaixada passa a cota do rim da
+    de baixo com a canetinha ainda em y = 113,8 mm, dentro da borda interna
+    da aba (115). E a silhueta continua crescendo para cima em todo o
+    percurso: nenhuma contra-saida.
+    """
+    y0 = can_y0() - oy
+    y1 = PROF / 2 - oy
+    zs = np.linspace(z0, z1, n)
+    return [(y0 + (y1 - y0) * (z / ALT) ** CAN_P, z) for z in zs]
+
+
+def can_ztopo():
+    """Cota onde o cone alcanca a canetinha e ela se apaga na parede.
+
+    Acima disso ela nao tem material, e a cavidade dela nao precisa (nem
+    deve) subir mais: se subisse, abriria recorte na aba de tras.
+    """
+    for z in np.arange(0.0, ALT, 0.5):
+        y = can_y0() + (PROF / 2 - can_y0()) * (z / ALT) ** CAN_P
+        if y + 1.0 <= PROF / 2 - ALT * TAN + TAN * z - T_PAREDE:
+            return float(z)
+    return ALT
+
+
+def _canetinha(oy=0.0, ox=0.0, z0=0.0, z1=None):
+    """Bloco da canetinha: perfil curvo em y-z cortado por um prisma em x."""
+    if z1 is None:
+        z1 = can_ztopo()
+    fora = can_perfil(oy, z0, z1)
+    dentro = [(y - CAN_D, z) for y, z in reversed(fora)]
+    by = extrude(Plane.YZ * make_face(Polyline(*fora, *dentro, close=True)),
+                 LARG, both=True)
+    h0 = CAN_L / 2 - ox + CAN_KX * z0
+    h1 = CAN_L / 2 - ox + CAN_KX * z1
+    q = [(-h0, z0), (h0, z0), (h1, z1), (-h1, z1)]
+    bx = extrude(Plane.XZ * make_face(Polyline(*q, close=True)),
+                 PROF, both=True)
+    return by & bx
+
+
 def friso_x0():
     """Face interna do friso: o limite que o encaixe no impoe.
 
@@ -803,7 +882,9 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
     # fora, e o passo empilhado fica exatamente a altura: 130 mm.
     if aba:
         p += _pes_nervura(env)
+        p += _canetinha(z1=can_ztopo() + 2.0) - env
         p -= _pes_cavidade()
+        p -= _canetinha(oy=CAN_T, ox=CAN_T, z0=CAN_T)
         p += _frisos()
         for yc in aco_y():
             p += _cauda2(1, yc) - env          # macho na direita

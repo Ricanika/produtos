@@ -674,6 +674,58 @@ empilhamento. `cad/abertura.py` desenha as três (folha `abertura.png`):
 | **52 mm (hoje)** | **42 mm** | **z = 78 mm** | **163 mm** |
 | 68 mm | 26 mm | z = 62 mm | 147 mm |
 
+#### 250 mm de comprimento, e a canetinha no lugar dos pés de trás
+
+Largura fica em 200 mm, comprimento vai a **250 mm**, e os dois pés de trás
+saem: no lugar deles, **uma canetinha curvada única na sola da base, atrás**.
+Com os dois pés da frente ela forma um **tripé** — mais estável que quatro
+apoios amontoados no meio do comprimento.
+
+| | medido |
+|---|---|
+| encaixa (mesma frente) | **46,9 mm** — 12 peças em 648 mm |
+| empilha (desloca 17 mm) | **130,0 mm**, 0,000 mm³ a 130,0 exatos |
+| apoios | **3 (tripé) · 141 mm²** — canetinha 80, pés 30 cada |
+| friso trava o andar | y ± e x ± a partir de 0,6 mm |
+| acopla | trava a partir de 0,6 mm, solta levantando 15 mm |
+| peso / capacidade | **169,2 g / 4,41 L** (era 155,6 g / 3,68 L) |
+| envelope | 204 × 241 × 132,5 mm |
+
+**A canetinha, e por que a curva é CONCAVA.** A primeira tentativa usou o
+mesmo perfil dos pés — uma rampa que sobe até o rim. Ela não funcionou, e a
+medição disse o porquê: a canetinha pousa na aba de **trás**, e o
+deslocamento do empilhamento também é em y. Deslocar não tira o pé de cima de
+cima do recorte, porque **o recorte ocupa a mesma faixa em y que a própria
+aba**. Resultado: 2 apoios em vez de 3, e o encaixe subiu de 46,9 para
+**73,4 mm**.
+
+A solução é a curva ao contrário:
+
+> y(z) = y₀ + (PROF/2 − y₀) · (z/ALT)^2,2
+
+Com o expoente **maior que 1** a canetinha sobe devagar — projeta só
+**4,6 mm** da parede no piso — e o **cone a alcança em z = 42 mm**, onde ela
+se apaga na parede. Ou seja, ela nunca chega à cota do rim e **não abre
+recorte nenhum na aba**. A peça encaixada passa pela cota do rim da de baixo
+com a canetinha ainda em y = 112,5 mm, dentro da borda interna da aba (115).
+E a silhueta continua crescendo para cima em todo o percurso: nenhuma
+contra-saída, nenhuma gaveta.
+
+`y₀ = PROF/2 − ABA_W + CAN_B − DESLOC` amarra a canetinha ao deslocamento: ela
+nasce DESLOC mm mais para dentro para, deslocada, cair exatamente sobre a aba.
+
+**O deslocamento subiu de 14 para 17 mm**, e isso foi medido, não escolhido:
+com um pé por lateral o friso passou para o pé da **frente**, cujo recorte na
+aba é mais largo (meia-boca de 9,25 mm), e a perna do friso caía **dentro** do
+recorte — o pé da peça encaixada batia nela. O mínimo é
+`meia-boca + L/2 + folga + espessura = 15,75 mm`.
+
+Com o comprimento em 250 mm o trecho reto da lateral virou **[−71, 81,4] mm**,
+e o pé da frente pôde ir para y = **−58** (era −43). O braço do tripé ficou:
+pés em y = −58 e canetinha em y = +119, ou seja **177 mm de base** numa peça
+de 250 — contra os 85 mm de antes. As caudas de acoplamento foram para
+**−27 e +74**, 101 mm de braço.
+
 ### 4.3 Acoplado — as três canaletas
 
 O pedido foi uma **canaleta de ponta a ponta na lateral, macho de um lado e
