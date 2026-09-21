@@ -61,11 +61,56 @@ primeira camada é o que decide o resultado.
 `filament_cost = 120` R$/kg é palpite — troque pelo seu e o PrusaSlicer
 recalcula (hoje dá R$ 24,79 por peça no bico 0,4).
 
-## Se a impressora for Anycubic (erro 10133)
+## Anycubic Kobra 3 / S1 / 3 Max — `cesto-P-petg-anycubic.gcode`
 
-**Não use os `.gcode` desta pasta.** Eles saíram do PrusaSlicer com um perfil
-Marlin genérico, e as Anycubic novas (Kobra 3 / 3 Max / 3 Combo / S1 / X)
-**validam o arquivo** e recusam o que não veio do Anycubic Slicer Next:
+**É este o arquivo para essas máquinas.** O erro que os `.gcode` genéricos dão:
+
+> CODE 10133 — The file is missing necessary commands. *"If you don't use the
+> recommended slicing software or the recommended parameters, or delete
+> necessary commands such as Start G-code by mistake, the printer will report
+> this error."* — wiki.anycubic.com/en/error-codes/10133-code
+
+O comando que faltava é **`G9111`**, o macro de partida da própria Anycubic
+(ele faz homing, aquecimento e nivelamento por dentro). A firmware valida o
+arquivo antes de imprimir e recusa quem não o tem.
+
+Não inventei o cabeçalho: peguei o start/end do **perfil de Anycubic do
+OrcaSlicer**, que é mantido por quem conhece a máquina. Os três modelos novos
+usam exatamente a mesma linha, e é por isso que **um arquivo serve nos três**:
+
+| modelo | cama | flavor | start |
+|---|---|---|---|
+| Kobra 3 | 255 × 255 × 260 | klipper | `G9111 bedTemp= extruderTemp=` |
+| Kobra S1 | 250 × 250 × 250 | klipper | idem |
+| Kobra 3 Max | 426 × 420 × 501 | klipper | idem |
+
+Fatiado na cama do **menor** dos três (S1, 250 × 250) e centrado nela, então
+vale nos outros dois. O que mudou em relação ao perfil genérico:
+
+- `gcode_flavor = klipper` (não Marlin)
+- cama 250 × 250, peça centrada em (125, 125)
+- `thumbnails = 230x110 PNG` — é a miniatura que aparece na tela
+- brim de 4 para **2 mm**: a peça tem 241 mm em y e sobram só 4,8 mm de folga
+- `M900` (pressure advance) **omitido de propósito**: está no perfil da Kobra 3
+  mas não no da S1, e um valor errado estraga o canto
+- sem purga manual e sem `G28` no start — quem faz isso é o `G9111`
+
+Conferido no arquivo gerado: `G9111 bedTemp=80 extruderTemp=245` na linha 16,
+miniatura embutida, E relativo com `G92 E0` por camada, suporte só entre
+z 0,3 e 5,1 mm, tudo dentro de 250 × 250 × 250 (x 10…227, y 4,8…245, z até
+132,6) e só comandos que o Klipper conhece — G1/G21/G90/G91/G92 e
+M83/M84/M104/M106/M107/M109/M117/M140/M190/M400. Nenhum M205, M900 ou M420.
+
+**O que eu não pude testar:** a máquina. Se o 10133 insistir, o conserto
+determinístico é você me mandar **qualquer** gcode que a sua impressora aceite
+(uma peça de teste fatiada no Anycubic Slicer Next serve) — eu transplanto o
+cabeçalho exato dela e devolvo o arquivo.
+
+## Os outros `.gcode` desta pasta
+
+Os `cesto-P-petg-bico04/06.gcode` saíram com perfil **Marlin genérico** e
+cama de 300 × 300: servem para Prusa, Ender, Bambu e afins, e **não** para as
+Anycubic novas, que recusam o arquivo com:
 
 > CODE 10133 — The file is missing necessary commands, which may cause
 > printing errors. *"If you don't use the recommended slicing software or the
