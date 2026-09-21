@@ -1030,5 +1030,6 @@ cad/cortes.py      cortes 2D no eixo do pe, tirados do solido com
                    trimesh.mesh_plane, e a folha cortes.png
 cad/friso.py       o friso em U na aba, com a trava medida nos 4 sentidos
 cad/abertura.py    tres angulos de abertura no perfil, e a folha abertura.png
+cad/limpo.py       a rodada de acabamento: traseira, pe da frente e planta
 cad/cesto-aba.step/.stl    a peca da arquitetura da aba (12 graus de saida)
 ```
