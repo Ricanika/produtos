@@ -13,7 +13,8 @@ saem duas versoes do 600 ml:
 
 As areas de contato sao MEDIDAS na malha, nao digitadas: numero fixo aqui ja
 ficou defasado uma vez, quando o footprint mudou de 121,2 para 139,7 mm.
-  tampa.stl                a mesma da producao (imprime de cabeca para baixo).
+  tampa.stl                perfil plug (o da tampa de teca). Imprime invertida.
+  tampa-pe.stl             sobretampa de encaixe externo, 100% PE.
 
 Uso:  python3 gera-3d-impressao.py
 """
@@ -61,6 +62,12 @@ def main():
     print(f"pote-600-fundoplano.stl  {len(c2.tris):5d} tri | altura {H:.1f} mm | "
           f"contato na mesa {contato(c2.tris):6.0f} mm2 "
           f"({contato(c2.tris)/contato(c.tris):.0f}x) -> imprime facil")
+
+    tp = g.tampa_pe(SEG)
+    g.grava_stl(os.path.join(out, 'tampa-pe.stl'), tp.tris, 'tampa-pe')
+    inv_pe = [[(v[0], -v[1], -v[2]) for v in tri] for tri in tp.tris]
+    print(f"tampa-pe.stl             {len(tp.tris):5d} tri | altura 10,8 mm | "
+          f"contato {contato(tp.tris):5.0f} mm2 de pe, {contato(inv_pe):5.0f} mm2 invertida")
 
     t = g.tampa(SEG)
     g.grava_stl(os.path.join(out, 'tampa.stl'), t.tris, 'tampa')

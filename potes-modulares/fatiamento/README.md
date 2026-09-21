@@ -21,6 +21,13 @@ Leva ~23 s. Precisa de `prusa-slicer` 2.7.2 e `pip install trimesh numpy pillow`
 | `2_pote600_q010.gcode` | corpo 600 ml | 0,10 mm | 89,3 g | 20 h 17 |
 | `3_tampa_r020.gcode`   | tampa      | 0,20 mm | 44,4 g | 5 h 21 |
 | `4_pote600_r020.gcode` | corpo 600 ml | 0,20 mm | 93,2 g | 12 h 00 |
+| `5_tampa_pe_r020.gcode` | **tampa PE** | 0,20 mm | 54,8 g | 6 h 33 |
+
+A **tampa PE** (arquivo 5) é a sobretampa de encaixe externo da revisão 6. Imprime **em pé**
+(saia para baixo: 1.262 mm² de contato contra 950 invertida), com suporte da mesa sob o deck e o
+piso da bandeja. **Ressalva importante:** PETG é muito mais rígido que PEAD. O protótipo serve para
+conferir **encaixe e cotas**, não a **força de abrir** — e há risco real de trincar a garra ao
+encaixar. Se trincar, não é erro de projeto, é o material errado para esse teste.
 
 **Para o primeiro protótipo, imprima o par 0,20 mm (3 e 4).** Ele resolve a mesma
 pergunta — se o plugue da tampa entra e atrita na parede do pote — em 17 h em vez de

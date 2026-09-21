@@ -1,6 +1,6 @@
 # Linha Potes Retangulares Modulares em PP
 
-**Status:** estudo de viabilidade técnica · **Revisão 5** · 17/09/2026
+**Status:** estudo de viabilidade técnica · **Revisão 6** · 21/09/2026
 **Origem:** evolução do Projeto 115 do ERP ("Conjunto Potes Modular") · **Planta:** Nitron – Fábrica (CODPLP 1)
 
 Linha retangular em PP transparente, **parede reta com cantos arredondados**, quatro litragens
@@ -10,6 +10,23 @@ combinação empilhada chega à altura do maior.
 Todos os números de máquina, matéria-prima, custo e ferramental saíram do Sankhya, não de
 estimativa de catálogo. Fontes citadas em cada seção.
 
+> **Revisão 6 — o que mudou:** a linha passa de três tampas para **duas** — teca com chanfro e
+> aro de TPE, e **PE 100%**. A tampa PE deixa de ser um plug e passa a **fechar por fora**: uma saia
+> desce por fora da borda e uma garra engata sob o lábio da aba em U. Como a aba já existia desde a
+> revisão 3 para enrijecer a boca, **o pote não mudou uma cota sequer** — o lábio já dava 3,04 mm/lado
+> de ressalto e a garra só precisa de 0,80.
+>
+> Isso me obriga a corrigir o julgamento das revisões 2 a 5: eu recomendava PP contra PE, mas
+> aquilo era **contra um PE em forma de plug**, e nessa forma continuava certo. Como sobretampa sem
+> aro, três dos quatro argumentos caem (seção 6.0). Fica de pé o mais sério: PE é compra residual.
+>
+> Resina recomendada: **PEAD HA 7260 IF 20 a R$ 9,34/kg** — grau de injeção declarado e mais barato
+> que o próprio PP RP 141. Tampa de 27,6 g a R$ 0,26.
+>
+> Dois pontos ficaram abertos e estão registrados: a rigidez do deck contra rotação da saia, que
+> pede elemento finito ou protótipo (6.1.5), e a **tampa de teca, que não pode ser o plug de parede
+> fina desenhado para injeção** e precisa do poço da bandeja usinado, senão não empilha (6.2).
+>
 > **Revisão 5 — o que mudou:** o desenho voltou para a proporção da referência conceitual. O pote
 > estava **largo e muito arredondado** (121,2 × 93,2 com canto R18); agora é **frente estreita e
 > pote fundo** (139,7 × 79,8) com **canto R10**. Altura, módulo, passo, curso de abertura e altura
@@ -48,8 +65,11 @@ estimativa de catálogo. Fontes citadas em cada seção.
 | Litragens 600 / 1200 / 1800 / 2400 ml | **Viável e exatas** — a parede reta elimina o conflito com o passo |
 | Parede reta com cantos arredondados | **Viável** com 0,5°/lado e R10 — custa aninhamento no frete (seção 3.2) |
 | Tampa única para os 4 tamanhos | **Viável** — já é prática da casa (ref. 321-T serve três alturas) |
-| Vedação da tampa | **Refeita na revisão 4**: plug com aro de TPE radial contra a parede, sem trava (seção 5) |
-| Tampa PE **ou** PP com canaleta de TPE | **Recomendado PP randômico RP 141 + canaleta** (seção 6) |
+| Vedação da tampa de teca | **Refeita na revisão 4**: plug com aro de TPE radial contra a parede, sem trava (seção 5) |
+| Vedação da tampa PE | **Cordão axial + garra** sob o lábio da aba — fecha por fora, sem aro (seção 6.1) |
+| Retenção da garra num retângulo | **Decisão aberta**: o aro da saia dá 3 gf; quem segura é o deck (seção 6.1.5) |
+| Tampa de teca empilhar | **Ponto em aberto**: precisa do poço da bandeja usinado no maciço (seção 6.2) |
+| Tampa PE 100%, fechando por fora | **Viável** — PEAD HA 7260, 27,6 g, R$ 0,26 (seção 6.1) |
 | Injeção dos 4 corpos no parque atual | **Cabe no que já temos**, sem máquina nova |
 | Confirmação documental de curso/extração | **Bloqueio de dado**: ficha das injetoras vazia (seção 4.4) |
 | Rigidez da face comprida com R10 | **Decisão aberta**: face do 2,4 L ficou 3,8× mais flexível (seção 3.3) |
@@ -354,47 +374,157 @@ plug .......................... desce até 12 mm abaixo da borda, dentro do pote
 O pé do pote de cima tem que pousar no piso **junto à parede da bandeja** — que agora é a parede do
 plug. A carga desce plug → borda → parede do pote.
 
-## 6. As três tampas — PE ou PP?
+## 6. As duas tampas
 
-**Recomendação: PP randômico RP 141, com plug e aro de TPE radial.**
+A linha passou de **três tampas para duas**: **teca com chanfro + aro de TPE** e **PE 100%**. A
+tampa PP dosadora sai do escopo, e com ela o bico vertedor (registrado em 6.4, parado).
 
-| | Tampa PE | **Tampa PP + aro TPE** |
+O que muda de verdade não é o número: é que **a tampa PE agora fecha por FORA**. As duas tampas
+passam a usar princípios opostos na mesma borda — a teca é um *plug* que desce por dentro e veda
+radialmente contra a parede; a PE é uma *sobretampa* que desce por fora e engata sob o lábio da aba.
+
+### 6.0 Onde eu estava errado sobre o PE
+
+As revisões 2 a 5 recomendavam PP contra PE. **Aquele julgamento era sobre um PE em forma de plug**,
+e nessa forma ele estava certo: um plug de PE relaxa e larga o aro de TPE que deveria manter
+comprimido. Como **sobretampa sem aro**, três dos quatro argumentos caem:
+
+| Argumento contra o PE (rev. 4) | Vale para a sobretampa? |
+|---|---|
+| "o plug de PE relaxa e perde a interferência de 0,20 mm" | **Não** — não há plug nem aro. Quem segura é uma garra que é **trava geométrica**, não força elástica: mesmo relaxado, o PE não passa de volta pelo lábio. |
+| "PEBD flui a frio e cede sob o pote carregado" | **Reduzido** — a carga do pote de cima entra pela repisa e desce direto na borda do pote de baixo, 2,5 mm de caminho. A tensão de contato fica em ~12 kPa, três ordens de grandeza abaixo do que faz PE fluir. E o PEAD tem 5× o módulo do PEBD. |
+| "material misto atrapalha a reciclagem" | **Continua valendo.** Pote PP + tampa PE é mistura. Contra: a tampa de teca já é material misto de qualquer jeito. |
+| "PE é compra residual e viraria contrato novo" | **Continua valendo, e é o item mais sério** — ver 6.1.5. |
+
+O que **não** muda: a sobretampa não é hermética. É fechamento de **pó e aroma**, para grão e
+farofa. Não prometer estanqueidade de líquido com o pote deitado.
+
+### 6.1 Tampa PE — fecha por fora
+
+#### 6.1.1 A borda já tinha o ressalto
+
+A aba em U foi desenhada na revisão 3 para enrijecer a boca reta. O lábio descendente dela, de 1,20
+mm de espessura, cria sem querer **3,04 mm por lado de ressalto** sobre o corpo, com a face inferior
+em z = −5,10 (z = 0 no plano da borda). É exatamente o degrau de que uma sobretampa precisa. **Não
+foi preciso mudar nada no pote** — nem uma cota, nem o molde do corpo.
+
+#### 6.1.2 Cotas
+
+```
+lábio da aba (pote) ...... 145,7 mm, face inferior em z = −5,10
+saia, face interna ....... 146,2 mm   folga de 0,25 mm/lado sobre o lábio
+saia, face externa ....... 148,8 mm   parede 1,30 mm
+garra, face interna ...... 144,1 mm   avança 1,05 -> ENGATE de 0,80 mm/lado
+topo da garra ............ z = −5,00  0,10 mm de PRÉ-CARGA: puxa o deck contra a borda
+aba de pega .............. 151,8 mm   1,5 mm/lado no pé da saia, em z = −5,80 a −7,00
+cordão de vedação ........ 0,35 mm de altura, em 139,4 mm, na face inferior do deck
+bandeja .................. vão 131,9 mm (o MESMO da tampa plug) recebe o pé de 130,9
+repisa ................... z = +3,80, apoia o anel do degrau do pote de cima
+altura total ............. 10,80 mm | footprint 151,8 × 91,9 mm | 27,6 g em PEAD
+```
+
+#### 6.1.3 O que veda, e por que aqui um cordão axial funciona
+
+Um **cordão de 0,35 mm** na face inferior do deck, apertado contra o topo da borda pela pré-carga
+da garra. É vedação **axial** — exatamente o que a seção 5 descartou para a tampa plug. A diferença
+é decisiva:
+
+- na tampa plug **não há trava**, então a força de fechamento teria de vir do próprio material ao
+  longo de 413 mm de perímetro: 32 kgf permanentes. Inviável;
+- aqui **a garra é a trava**, e ela é um aro contínuo a 3 mm do cordão. O deck não precisa ficar
+  plano para o cordão vedar — ele é prensado localmente entre a garra (que puxa para baixo em
+  146 mm) e o topo da borda (que empurra para cima em 139 mm). Funciona como tampa de garrafa.
+
+O cordão conforma na primeira fechada, que é como toda tampa de PE se acomoda.
+
+#### 6.1.4 O empilhamento continua exato — e ganha um apoio
+
+O piso da bandeja fica em **z = −2,00**, igual ao da tampa plug: o passo segue sendo 60n exato.
+
+A novidade é a **repisa em z = +3,80**. Com o pé assentado no piso, o anel do degrau do pote de
+cima chega em z = +4,00 — ou seja, a repisa fica **0,20 mm abaixo dele, de propósito**. Se fosse o
+contrário, o anel tocaria primeiro e o passo viraria 60n + 0,20. Assim o pé continua sendo quem
+define o passo, e a repisa entra só como **batente**, assim que o piso fletir 0,20 mm. É a resposta
+para a ressalva da seção 5.1 ("o pé apoia num anel de 1,15 mm de largura"): agora, sob carga, o
+apoio passa a ser um anel de 2,5 mm de largura descarregando direto na borda do pote de baixo.
+
+#### 6.1.5 Os três números que decidem a resina
+
+**A garra sai por arraste, sem gaveta.** O perímetro da garra (435,6 mm) tem de abrir até o da saia
+(442,2 mm) para sair do macho: **1,51% de deformação de aro**. PE arrasta 5–8%. Folgado —
+placa impulsora, molde de duas placas.
+
+**O engate muda com a temperatura, e é aí que o PEAD ganha.** PE dilata mais que PP, então o engate
+afrouxa no quente:
+
+| | −40 °C | 20 °C | +40 °C |
+|---|---|---|---|
+| **PEAD** (α ≈ 150 µm/m·K) | 0,95 mm | **0,80 mm** | **0,65 mm** |
+| PEBD (α ≈ 200 µm/m·K) | 1,09 mm | 0,80 mm | 0,51 mm |
+
+**O aro da saia não segura nada.** Abrir o painel reto da face comprida (120 mm) os 0,80 mm do
+engate custa **3 gf em PEAD e 1 gf em PEBD** — nada. Num pote redondo a saia seguraria por tração
+de aro; num retângulo de 120 mm de lado reto, não segura. **Quem segura é o deck**: para a saia
+abrir, o deck tem de sair da borda, e ele está apoiado nela numa faixa contínua de 4,4 mm.
+
+Esse é o ponto que **não dá para fechar no papel**. A rigidez do deck contra rotação da saia pede
+elemento finito ou protótipo. O protótipo já está fatiado (`fatiamento/saida/5_tampa_pe_r020.gcode`),
+com a ressalva de que PETG é muito mais rígido que PE: serve para conferir encaixe e cotas, **não**
+a força de abrir.
+
+#### 6.1.6 Resina: PEAD HA 7260, não PEBD
+
+| | PEBD PB 608 | **PEAD HA 7260 / HDM520 IF 20** |
 |---|---|---|
-| Peso / resina | 23,1 g · R$ 0,26 | **23,4 g · R$ 0,22 + aro 2,0 g** |
-| Vedação | plug em PE relaxa e perde a interferência | **plug rígido mantém o aro comprimido** |
-| Empilhamento | PEBD **flui a frio** (creep): cede sob carga permanente | PP copolímero segura a carga |
-| Cadeia de resina | PEBD: **500 kg comprados em 12 meses** | PP RP 141: **299 t/ano já em casa** |
-| Reciclagem | pote PP + tampa PE = material misto | **mono-material**, o aro sai na mão |
-| Aro de TPE | não resolve: PEBD relaxa e solta a compressão | **o mesmo aro nas três tampas** |
-| Moldes | 3 (PE + PP dosadora + aro) | 3 (PP hermética + PP dosadora + aro) |
+| Preço (compra 24 m) | R$ 11,10/kg | **R$ 9,34/kg** |
+| Comprado em 12 m | 0,5 t | 1,1 t |
+| Grau de injeção | não declarado no cadastro | **IF 20 declarado** |
+| Módulo | ~200 MPa | ~1000 MPa |
+| Engate a +40 °C | 0,51 mm | **0,65 mm** |
+| Custo da tampa (27,6 g) | R$ 0,31 | **R$ 0,26** |
 
-Os quatro argumentos que decidem:
+**Vai PEAD HA 7260.** É grau de injeção declarado, é **a resina mais barata da casa depois do
+moído** — mais barata que o próprio PP RP 141 (R$ 9,55) — e o módulo maior é aliado tanto no
+empilhamento quanto na retenção da garra.
 
-1. **Empilhamento é o produto.** A linha inteira existe para empilhar — a tampa é peça estrutural.
-   PEBD tem fluência a frio muito maior que PP: sob um 2,4 L carregado, a tampa PE cede com o tempo.
-2. **O plug precisa ser rígido.** Ele mantém o aro comprimido contra a parede. Em PEBD o plug
-   relaxa e a interferência de 0,20 mm some com o tempo — a vedação vai embora sozinha. PP segura.
-3. **O aro de TPE se paga.** Com a vedação radial, o **mesmo aro serve as três tampas** — padrão,
-   dosadora e teca — e o molde amortiza em toda a linha. (Eu tinha derrubado este argumento na
-   revisão 3, quando a tampa vedava com lábio de PP; com o plug ele volta a valer.)
-4. **Suprimentos.** PEBD é compra residual e viraria contrato novo por causa de uma tampa. O PP
-   randômico RP 141 já entra 299 t/ano e é mais barato (R$ 9,54/kg).
+**O risco do PEAD é empeno.** Contração de 2–4% contra 1,5–3% do PEBD, num deck plano de
+148 × 89 mm. Deck plano grande em PEAD empena se o resfriamento for desigual. Mitigação de projeto:
+a repisa e o degrau já quebram o painel em dois anéis, o que ajuda. Mitigação de processo:
+refrigeração equilibrada nas duas metades e não tirar quente. **Confirmar no primeiro try-out.**
 
-Ressalvas honestas: a tampa PP precisa de **aba de alavanca bem resolvida** no design, que é o que
-permite descascar em vez de puxar reto; e tem que ser **copolímero** (CP 141), não homopolímero, por causa de impacto
-em baixa temperatura — e é aí que o randômico RP 141 resolve melhor que o homopolímero (ver 6.2).
-O custo por peça fica empatado (R$ 0,23 + aro contra R$ 0,28), então a decisão é técnica, não de custo.
+**A compra é o item aberto de verdade.** Hoje entram 1,1 t/ano de PEAD, em compras avulsas. Uma
+linha a 200 mil tampas/ano pede **5,5 t/ano** — cinco vezes o volume atual, e vira contrato.
+E há uma lacuna de dado: `AD_FICHATECNICA` tem **14 registros com `CODMP` nulo em todos**, então o
+ERP **não consegue dizer se a casa já injetou PE**. Mesma natureza do bloqueio da seção 4.4.
 
-**Se ainda assim quiserem PE**, ele funciona como versão econômica de linha de entrada — mas aí
-sem promessa de hermeticidade e com a tampa marcada como "não recebe pote carregado em cima".
+### 6.2 Tampa de teca — e um ponto em aberto
 
-### 6.1 Tampa de teca
+Cadeia própria: teca em tora e ripa serrada (CODPROD 6759), planta **WOOD** (CNC RXK2513,
+moldureira, lixadeiras, prensa de alta frequência) e a **Teak Brazil**. Tampa de madeira já é
+produto corrente com FSC 100%. Sem molde — programa de CNC e gabarito. Usa o aro de TPE em
+canaleta usinada, com chanfro na aresta de cima.
+
+**O ponto em aberto:** o perfil do plug em `stl/tampa.stl` foi desenhado para **injeção** — saia de
+1,50 mm de parede descendo 12 mm. Isso não se faz em madeira: em teca, uma parede de 1,5 mm com 12 mm
+de altura lasca. A tampa de teca tem de ser um **plug maciço**, e aí duas coisas mudam:
+
+1. o bloco maciço precisa do **poço da bandeja usinado** (131,9 × 72,0 × 2,0 mm de profundidade),
+   senão **a tampa de teca não empilha** — e empilhar é o produto;
+2. madeira maciça de 130 mm de largura trabalha com a umidade no sentido transversal. A canaleta do
+   aro tem de ser dimensionada com essa movimentação, ou a compressão de 0,20 mm some no inverno.
+
+Isso não estava no estudo e não é detalhe de acabamento: decide se a linha empilha com as duas
+tampas ou só com a PE.
+
+
 Cadeia própria: teca em tora e ripa serrada (CODPROD 6759), planta **WOOD** (CNC RXK2513,
 moldureira, lixadeiras, prensa de alta frequência) e a empresa **Teak Brazil**. Tampa de madeira já
 é produto corrente com FSC 100%. Sem molde — programa de CNC e gabarito. Usa o mesmo aro de TPE,
 alojado em canaleta usinada.
 
-### 6.2 Qual PP na tampa — as três famílias
+### 6.3 Qual PP na tampa — as três famílias — PARADO
+
+> Não há mais tampa em PP na linha. Fica registrado porque a correção sobre as famílias de PP > (heterofásico é opaco e não aceita dobradiça viva) vale para qualquer peça futura.
 
 "Copolímero" não é uma coisa só, e a diferença muda a tampa. As três famílias que a casa já compra:
 
@@ -420,7 +550,9 @@ por exemplo, não tem aba nenhuma). Para a linha toda, RP 141.
 
 Tampa em RP 141: 24,5 g → **R$ 0,23**.
 
-### 6.3 O bico da tampa de líquidos
+### 6.4 O bico da tampa de líquidos — PARADO
+
+> A tampa dosadora saiu do escopo quando a linha passou a ter duas tampas. O estudo fica > registrado porque o conceito não depende dela: se voltar uma terceira tampa, é daqui que parte.
 
 Requisito: prático, que não suje, sem copinho dosador e sem peça cara. E ainda tem que respeitar o
 plano modular — nada pode passar acima dele, senão o pote de cima não assenta.
@@ -453,7 +585,7 @@ da parede da bandeja num canto, onde o pote de cima tem raio e quase não apoia.
   vira SKU "topo da pilha", não versão modular. E é peça comprada, contra zero peça da bandeja-vertedor.
 - **Copinho dosador** (o do porta-sabão em pó ref. 008) — descartado a pedido.
 
-### 6.4 Processo do aro de TPE
+### 6.5 Processo do aro de TPE
 **Não há bi-injeção no parque**: o aro é peça injetada à parte e montada, ou comprada pronta. Peso
 2,6 g, seção 2,8 × 2,2 mm, perímetro 383 mm. Recotar o Karinprene 45 (dureza 45 shore), sem compra
 desde 2022.
@@ -479,8 +611,9 @@ Preços reais de compra dos últimos 12 meses (`TGFITE`/`TGFCAB`):
 | Corpo 1,2 L | 73,0 g | R$ 0,81 |
 | Corpo 1,8 L | 105,8 g | R$ 1,17 |
 | Corpo 2,4 L | 142,5 g | R$ 1,58 |
-| Tampa PP RP 141 | 23,4 g | R$ 0,22 |
-| Aro de TPE | 2,0 g | a cotar |
+| **Tampa PE (PEAD HA 7260)** | **27,6 g** | **R$ 0,26** |
+| Tampa de teca (plug) | — | CNC, sem resina |
+| Aro de TPE (só na teca) | 2,0 g | a cotar |
 
 Só matéria-prima. Transformação entra pelo custo do PCP; a tampa de teca, pelo custo da WOOD.
 
@@ -493,8 +626,12 @@ arredondado também. Metade vem do ASP, metade do raio.
 
 ## 8. Ferramental
 
-Escopo: **4 moldes de corpo + 2 moldes de tampa (padrão e dosadora) + 1 molde de aro de TPE
-= 7 ferramentas.** A tampa de teca não usa molde; o aro serve só a ela.
+Escopo na revisão 6: **4 moldes de corpo + 1 molde de tampa PE + 1 molde de aro de TPE
+= 6 ferramentas** — uma a menos que na revisão 5, porque a tampa PP dosadora saiu do escopo. A
+tampa de teca não usa molde (CNC); o aro serve só a ela.
+
+O molde da tampa PE é **de duas placas, extração por placa impulsora, sem gaveta**: a garra é um
+undercut de 1,51% de deformação de aro, que o PE arrasta com folga (seção 6.1.5).
 
 Referências dos próprios orçamentos com a MR Plastic Mould (`AD_ORCAMENTO`, USD): corpo lixeira
 12 L / 380 t = 36.900 · 284-U / 280 t = 20.100 · 214-U / 250 t = 18.900 · corpo 026 / 120 t = 6.300 ·
@@ -564,8 +701,8 @@ Memória de cálculo: `calculo-modular.py`.
 
 ## 12. Modelo 3D
 
-`gera-3d.py` constrói o sólido a partir das mesmas cotas e escreve seis STL em `stl/`:
-os quatro corpos, a tampa e o aro de TPE. O visualizador interativo remonta a malha a partir
+`gera-3d.py` constrói o sólido a partir das mesmas cotas e escreve **sete** STL em `stl/`:
+os quatro corpos, a tampa plug (perfil da teca), a **tampa PE** e o aro de TPE. O visualizador interativo remonta a malha a partir
 da mesma receita de anéis, bandas e tampos (`perfis.json`), então desenho e STL não divergem.
 
 **Como o sólido é construído:** cada peça é uma casca fechada feita de seções de retângulo com
@@ -576,9 +713,15 @@ seguinte e tampos em leque fecham as pontas.
 
 | Verificação | Resultado |
 |---|---|
-| Volume assinado positivo nas seis peças | sólido fechado e orientado para fora |
-| Cavidade × capacidade nominal | 605,0 / 1204,2 / 1806,4 / 2410,0 ml contra 600 / 1200 / 1800 / 2400 — dentro de 0,8% |
-| Peso da malha × `calculo-modular.py` | 45,2 / 71,4 / 102,5 / 137,4 g nos corpos e 26,1 g na tampa — dentro de 3% nas seis peças |
+| Volume assinado positivo **e normais consistentes** nas sete peças | sólido fechado e orientado para fora |
+| Cavidade × capacidade nominal | 603,2 / 1203,2 / 1803,9 / 2405,3 ml contra 600 / 1200 / 1800 / 2400 — dentro de 0,6% |
+| Peso da malha × `calculo-modular.py` | 46,5 / 74,3 / 107,3 / 144,4 g nos corpos, 22,9 g na tampa plug e 27,6 g na tampa PE — dentro de 5% |
+
+**A checagem de normais entrou na revisão 6, e entrou porque falhou.** A tampa PE saiu com o piso da
+bandeja invertido: a malha ficou **estanque**, o volume assinado devolveu um número plausível
+(17,5 g) e nada acusou. O volume real era 27,6 g — 58% a mais. Volume assinado sozinho não detecta
+normal invertida; `normais_consistentes()` confere que toda aresta aparece uma vez em cada sentido,
+e agora o gerador **aborta** se alguma peça falhar.
 
 A folga de 0,7% na cavidade é a poligonal de 12 segmentos por canto, não erro de cota
 (`--seg 24` reduz). `verifica-malha.js` roda o construtor do visualizador fora do navegador e

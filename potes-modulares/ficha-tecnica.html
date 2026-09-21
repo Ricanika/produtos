@@ -114,9 +114,12 @@
 
   <header class="cartucho">
     <div class="cartucho-top">
-      <p class="eyebrow">Nitron · Estudo de viabilidade · Projeto 115 · Revisão 5</p>
+      <p class="eyebrow">Nitron · Estudo de viabilidade · Projeto 115 · Revisão 6</p>
       <h1>Potes retangulares modulares</h1>
       <p class="sub">Parede reta com cantos arredondados, quatro litragens de mantimento, três tampas e um só bocal. Empilhados em qualquer combinação, chegam à altura do maior. Geometria, encaixe, alocação de injetora e custo conferidos contra produção, compras e cadastro no ERP.</p>
+      <div class="rev">
+        <b>Revisão 6 —</b> a linha passa de três tampas para <strong>duas</strong>: teca com chanfro e aro de TPE, e <strong>PE 100%</strong>. A tampa PE deixa de ser plug e passa a <strong>fechar por fora</strong> — uma saia desce por fora da borda e uma garra engata sob o lábio da aba em U. Como a aba já existia desde a revisão 3 para enrijecer a boca, <strong>o pote não mudou uma cota sequer</strong>. Isso me obriga a corrigir o julgamento das revisões 2 a 5: eu recomendava PP contra PE, mas aquilo era contra um PE em forma de <em>plug</em>, e nessa forma continuava certo (seção 04).
+      </div>
       <div class="rev">
         <b>Revisão 5 —</b> o desenho voltou para a proporção da referência: <strong>frente estreita e pote fundo</strong> (139,7 × 79,8 em vez de 121,2 × 93,2) e <strong>canto R10 em vez de R18</strong>. Altura, módulo, curso de abertura e classe de injetora não mudam. Veio com duas correções de erro meu: a área projetada era <strong>125 cm², não 139</strong> — o que devolve o 600 ml para a classe de 160 t; e o pé embutido estava <strong>fixo no código</strong>, sendo uma medida derivada da bandeja da tampa. E um custo: a face comprida do 2,4 L ficou <strong>3,8× mais flexível</strong> (seção 03).
       </div>
@@ -126,7 +129,7 @@
       <div class="campo"><div class="k">Módulo</div><div class="v">60 mm</div></div>
       <div class="campo"><div class="k">Footprint (aba)</div><div class="v">145,7 × 85,8 mm</div></div>
       <div class="campo"><div class="k">Saída / canto</div><div class="v">0,5° · R10</div></div>
-      <div class="campo"><div class="k">Tampa</div><div class="v">PP RP 141</div></div>
+      <div class="campo"><div class="k">Tampas</div><div class="v">Teca + PE</div></div>
     </div>
   </header>
 
@@ -407,145 +410,133 @@
   </section>
 
   <section>
-    <div class="section-head"><span class="n">04</span><h2>PE ou PP?</h2></div>
+    <div class="section-head"><span class="n">04</span><h2>As duas tampas</h2></div>
+    <p class="lede">Duas tampas com <strong>princípios opostos na mesma borda</strong>. A de teca é um <em>plug</em>: desce por dentro e o aro de TPE veda radialmente contra a parede. A de PE é uma <em>sobretampa</em>: desce por fora e engata sob o lábio da aba em U. O pote serve as duas sem mudar uma cota.</p>
 
     <div class="veredito">
-      <span class="status s-ok">Recomendação</span>
-      <h3>PP randômico RP 141, com plug e aro de TPE radial</h3>
-      <p>O custo por peça empata (R$ 0,22 + aro contra R$ 0,26), então a decisão é técnica. E tecnicamente o PP ganha em tudo que importa nesta linha — principalmente porque <strong>a tampa aqui é peça estrutural</strong>, não fechamento.</p>
+      <span class="status s-ok">Tampa PE</span>
+      <h3>PEAD HA 7260 IF 20 — 27,6 g, R$ 0,26</h3>
+      <p>A aba em U foi desenhada na revisão 3 para enrijecer a boca reta. O lábio descendente dela cria, sem querer, <strong>3,04 mm por lado de ressalto</strong> — e a garra só precisa de 0,80. O molde do corpo não muda.</p>
     </div>
-
-    <div class="tabela-wrap">
-      <table>
-        <thead><tr><th></th><th>Tampa PE</th><th>Tampa PP + aro TPE</th></tr></thead>
-        <tbody>
-          <tr><td>Peso / resina</td><td class="num">23,1 g · R$ 0,26</td><td class="num">23,4 g · R$ 0,22 + aro 2,0 g</td></tr>
-          <tr><td>Vedação</td><td class="num">plug em PE relaxa e solta o aro</td><td class="num">plug rígido mantém o aro comprimido</td></tr>
-          <tr><td>Sob carga permanente</td><td class="num">PEBD flui a frio (creep)</td><td class="num">PP copolímero segura</td></tr>
-          <tr><td>Cadeia de resina</td><td class="num">500 kg em 12 meses</td><td class="num">299 t/ano já em casa</td></tr>
-          <tr><td>Reciclagem</td><td class="num">material misto</td><td class="num">mono-material</td></tr>
-          <tr><td>Aro de TPE</td><td class="num">não resolve: o plug relaxa</td><td class="num">o mesmo aro nas três tampas</td></tr>
-          <tr><td>Moldes</td><td class="num">3</td><td class="num">3</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="cards" style="margin-top:26px">
-      <div class="card">
-        <div class="faixa" style="background:var(--cota)"></div>
-        <div class="tipo">Argumento 1</div>
-        <h3>Empilhamento é o produto</h3>
-        <p>A linha inteira existe para empilhar — a tampa carrega peso. PEBD tem fluência a frio muito maior que PP: sob um 2,4 L carregado, a tampa PE cede com o tempo.</p>
-      </div>
-      <div class="card">
-        <div class="faixa" style="background:var(--cota)"></div>
-        <div class="tipo">Argumento 2</div>
-        <h3>A parede reta tira a vantagem do PE</h3>
-        <p>A virtude da tampa PE é vedar esticando sobre a borda. Com parede reta a borda tem pouca geometria para agarrar — precisaria de ressalto de encaixe de qualquer jeito.</p>
-      </div>
-      <div class="card">
-        <div class="faixa" style="background:var(--cota)"></div>
-        <div class="tipo">Argumento 3</div>
-        <h3>O aro se paga na linha toda</h3>
-        <p>Com a vedação radial, o <strong>mesmo aro serve as três tampas</strong> — padrão, dosadora e teca — e o molde amortiza em toda a linha. Eu tinha derrubado este argumento na revisão 3, quando a tampa vedava com lábio de PP; com o plug ele volta a valer.</p>
-      </div>
-      <div class="card">
-        <div class="faixa" style="background:var(--cota)"></div>
-        <div class="tipo">Argumento 4</div>
-        <h3>Suprimentos</h3>
-        <p>PEBD é compra residual (500 kg/ano) e viraria contrato novo por causa de uma tampa. O PP randômico RP 141 já entra 299 t/ano — e é o mais barato dos três, a R$ 9,54/kg.</p>
-      </div>
-    </div>
-
-    <div class="notas" style="margin-top:26px">
-      <div class="nota">
-        <h3>Ressalvas honestas</h3>
-        <p>A tampa precisa de <strong>aba de alavanca bem resolvida</strong>, que é o que permite descascar em vez de puxar reto. E tem que ser <strong>randômico RP 141</strong>, não homopolímero — ver a tabela das três famílias abaixo. Se ainda assim quiserem PE, ele serve como versão econômica de entrada, sem promessa de hermeticidade e marcada como “não recebe pote carregado em cima”.</p>
-      </div>
-      <div class="nota">
-        <h3>A teca continua sendo o diferencial</h3>
-        <p>Cadeia própria: teca em tora e ripa serrada, planta WOOD com CNC e moldureira, e a Teak Brazil. Tampa de madeira já é produto corrente com <strong>FSC 100%</strong>. Sem molde — programa de CNC. Usa o mesmo aro de TPE em canaleta usinada.</p>
-      </div>
-    </div>
-
-    <h3 style="margin-top:38px;font-size:21px">As três famílias de PP — e qual vai na tampa</h3>
-    <p class="lede" style="margin-top:10px">“Copolímero” não é uma coisa só, e a diferença muda a tampa. A recomendação anterior de CP 141 estava imprecisa: ele é <strong>heterofásico</strong>, sai leitoso e não aceita dobradiça viva.</p>
-    <div class="tabela-wrap">
-      <table>
-        <thead><tr><th>Família</th><th>O que é</th><th>Comporta-se</th><th>Grades em casa</th><th>Compra 12 m</th></tr></thead>
-        <tbody>
-          <tr><td class="tam">Homopolímero</td><td>só propeno</td><td class="num">rígido e transparente, quebradiço no frio</td><td class="num">H 105 · H 103</td><td class="num">R$ 11,06 · R$ 9,90</td></tr>
-          <tr class="destaque"><td class="tam">Randômico</td><td>2–6% de eteno espalhado na cadeia</td><td class="num">transparente, brilhante, tolerante</td><td class="num">RP 141 (299 t) · RP 340 S</td><td class="num">R$ 9,54 · R$ 17,00</td></tr>
-          <tr><td class="tam">Heterofásico</td><td>fase de borracha dispersa dentro</td><td class="num">impacto altíssimo, porém opaco</td><td class="num">CP 141 (109 t)</td><td class="num">R$ 10,52</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p style="margin-top:12px;font-size:13.5px;color:var(--ink-2)"><strong>Vai RP 141 randômico.</strong> Transparente como o corpo; aceita dobradiça viva (o heterofásico não aceita — a fase de borracha impede a orientação molecular que dá vida à dobradiça); e é o mais barato dos três, com 299 t/ano já entrando. O heterofásico continua servindo para tampa colorida sem dobradiça, como a de teca.</p>
-
-    <h3 style="margin-top:38px;font-size:21px">O bico: a bandeja é o vertedor</h3>
-    <p class="lede" style="margin-top:10px">Sem copinho, sem pump, sem bico saliente — nada pode passar do plano modular. A saída é reaproveitar a bandeja que a modularidade já obriga a tampa a ter: ela vira a bacia anti-gota. <strong>Zero peça adicional e nenhuma gaveta no molde.</strong></p>
 
     <div class="desenho">
-      <svg viewBox="0 0 700 300" role="img" aria-label="Vista de topo da tampa mostrando a bandeja com furo de vazão no canto, entalhe na parede, caimento do piso e aba com dobradiça viva">
+      <svg viewBox="0 0 760 400" role="img" aria-label="Corte ampliado do encaixe da tampa PE: a saia desce por fora da borda e a garra engata sob o labio da aba em U">
         <defs>
-          <marker id="seta2" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--cota)"/></marker>
+          <pattern id="hpe" width="5" height="5" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="0" y2="5" stroke="var(--pp)" stroke-width="1" opacity=".5"/>
+          </pattern>
         </defs>
-        <rect x="60" y="50" width="250" height="195" rx="40" ry="40" fill="var(--sheet)" stroke="var(--verde)" stroke-width="2"/>
-        <rect x="74" y="64" width="222" height="167" rx="30" ry="30" fill="var(--glass)" stroke="var(--verde)" stroke-width="1.4"/>
-        <path d="M 96 64 L 78 82" stroke="var(--sheet)" stroke-width="6"/>
-        <path d="M 96 64 L 78 82" stroke="var(--cota)" stroke-width="2"/>
-        <path d="M 99 57 L 66 90" stroke="var(--cota)" stroke-width="2" stroke-dasharray="4 3"/>
-        <rect x="92" y="80" width="54" height="34" rx="12" ry="12" fill="var(--paper)" stroke="var(--cota)" stroke-width="1.6"/>
-        <path d="M 146 84 L 186 84 L 186 110 L 146 110" fill="none" stroke="var(--cota)" stroke-width="1.2" stroke-dasharray="5 4"/>
-        <text x="166" y="101" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--cota)">aba</text>
-        <g stroke="var(--cota)" stroke-width="1.3" marker-end="url(#seta2)" opacity=".8">
-          <path d="M 230 180 L 150 112"/><path d="M 150 200 L 122 130"/><path d="M 255 105 L 165 92"/>
+        <path d="M 8.5 262.0 L 67.5 262.0 L 67.5 175.0 L 102.7 175.0 L 122.2 209.5 L 194.2 209.5 L 194.2 319.0 L 216.7 319.0 L 216.7 337.0 L 174.7 337.0 L 159.0 323.5 L 159.0 307.0 L 174.7 307.0 L 174.7 232.0 L 127.5 232.0 L 123.7 237.2 L 120.0 232.0 L 105.0 232.0 L 85.5 197.5 L 85.5 284.5 L 8.5 284.5 Z" fill="var(--verde)" opacity=".55"/>
+        <path d="M 8.5 262.0 L 67.5 262.0 L 67.5 175.0 L 102.7 175.0 L 122.2 209.5 L 194.2 209.5 L 194.2 319.0 L 216.7 319.0 L 216.7 337.0 L 174.7 337.0 L 159.0 323.5 L 159.0 307.0 L 174.7 307.0 L 174.7 232.0 L 127.5 232.0 L 123.7 237.2 L 120.0 232.0 L 105.0 232.0 L 85.5 197.5 L 85.5 284.5 L 8.5 284.5 Z" fill="none" stroke="var(--verde)" stroke-width="1.6"/>
+        <path d="M 105.0 232.0 L 171.0 232.0 L 171.0 308.5 L 153.0 308.5 L 153.0 256.0 L 126.0 256.0 L 126.0 367.0 L 105.0 367.0 L 105.0 367.0 Z" fill="url(#hpe)" stroke="var(--pp)" stroke-width="1.8"/>
+        <text x="52" y="358" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">POTE DE BAIXO</text>
+        <path d="M 60.0 262.0 L 60.0 172.0 L 118.6 172.0 L 118.6 89.5 L 8.5 89.5 L 8.5 262.0 Z" fill="url(#hpe)" stroke="var(--pp)" stroke-width="1.8"/>
+        <text x="52" y="103" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">POTE DE CIMA</text>
+        <text x="52" y="307" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--verde)">TAMPA PE</text>
+        <g stroke="var(--cota)" stroke-width=".9" fill="none">
+          <path d="M 171.0 308.5 L 336 308.5 L 346 68.0"/>
+          <path d="M 123.7 237.2 L 336 237.2 L 346 128.0"/>
+          <path d="M 216.7 328.0 L 336 328.0 L 346 188.0"/>
+          <path d="M 67.5 262.0 L 336 262.0 L 346 248.0"/>
+          <path d="M 93.0 175.0 L 336 175.0 L 346 308.0"/>
         </g>
-        <text x="185" y="205" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)">caimento 2–3° para o furo</text>
-        <text x="185" y="262" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)">VISTA DE TOPO DA TAMPA · 130,7 × 102,8 mm</text>
-
-        <g font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink-2)">
-          <text x="380" y="70" fill="var(--cota)" font-size="12">1 · furo de vazão no canto</text>
-          <text x="380" y="88">≈ 25 × 15 mm, encostado na parede da bandeja</text>
-          <text x="380" y="116" fill="var(--cota)" font-size="12">2 · entalhe de 12–15 mm na parede</text>
-          <text x="380" y="134">o canto R10 já faz a curva — não se molda bico nenhum</text>
-          <text x="380" y="162" fill="var(--cota)" font-size="12">3 · lábio de corte de 0,4 mm</text>
-          <text x="380" y="180">quebra o filme: a gota se solta em vez de escorrer pelo pote</text>
-          <text x="380" y="208" fill="var(--cota)" font-size="12">4 · piso com caimento para o furo</text>
-          <text x="380" y="226">o que respinga volta para dentro do pote pelo mesmo furo</text>
-          <text x="380" y="254" fill="var(--cota)" font-size="12">5 · aba com dobradiça viva, rente ao piso</text>
-          <text x="380" y="272">não veda (quem veda é o lábio da tampa) — só barra poeira e cheiro</text>
+        <g fill="var(--cota)">
+          <circle cx="171.0" cy="308.5" r="3"/>
+          <circle cx="123.7" cy="237.2" r="3"/>
+          <circle cx="216.7" cy="328.0" r="3"/>
+          <circle cx="67.5" cy="262.0" r="3"/>
+          <circle cx="93.0" cy="175.0" r="3"/>
         </g>
+        <g font-family="IBM Plex Mono, monospace" font-size="12">
+          <text x="352" y="72" fill="var(--cota)">GARRA</text>
+          <text x="352" y="87" font-size="11" fill="var(--ink-2)">engata 0.80 mm sob o lábio da aba</text>
+          <text x="352" y="101" font-size="10.5" fill="var(--muted)">o lábio já existia para enrijecer a boca</text>
+          <text x="352" y="132" fill="var(--cota)">CORDÃO</text>
+          <text x="352" y="147" font-size="11" fill="var(--ink-2)">aperta 0.35 mm contra o topo da borda</text>
+          <text x="352" y="161" font-size="10.5" fill="var(--muted)">a garra dá 0.10 mm de pré-carga</text>
+          <text x="352" y="192" fill="var(--cota)">ABA DE PEGA</text>
+          <text x="352" y="207" font-size="11" fill="var(--ink-2)">é por onde se descasca um canto</text>
+          <text x="352" y="252" fill="var(--cota)">PISO DA BANDEJA</text>
+          <text x="352" y="267" font-size="11" fill="var(--ink-2)">z = −2,00 — o plano modular</text>
+          <text x="352" y="312" fill="var(--cota)">REPISA</text>
+          <text x="352" y="327" font-size="11" fill="var(--ink-2)">z = +3,80, batente do anel do pote de cima</text>
+          <text x="352" y="341" font-size="10.5" fill="var(--muted)">0,20 mm abaixo dele: nunca define o passo</text>
+        </g>
+        <text x="46" y="30" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--muted)">CORTE NA BORDA · escala 15:1 · só a metade direita</text>
       </svg>
       <div class="legenda">
-        <span><i class="swatch" style="background:var(--glass);border-color:var(--verde)"></i> bandeja (plano modular)</span>
-        <span><i class="swatch" style="background:var(--paper);border-color:var(--cota)"></i> furo de vazão</span>
-        <span class="mono">tudo sai no sentido de abertura do molde</span>
+        <span><i class="swatch" style="background:var(--glass);border-color:var(--pp)"></i> corpo PP</span>
+        <span><i class="swatch" style="background:var(--verde);border-color:var(--verde)"></i> tampa PE</span>
+        <span class="mono">cotas reais · geradas de calculo-modular.py</span>
       </div>
     </div>
+
+    <h3 style="margin-top:34px">Onde eu estava errado sobre o PE</h3>
+    <p>As revisões 2 a 5 recomendavam PP contra PE. <strong>Aquele julgamento era sobre um PE em forma de plug</strong>, e nessa forma estava certo: um plug de PE relaxa e larga o aro de TPE que deveria manter comprimido. Como sobretampa sem aro, três dos quatro argumentos caem.</p>
+    <div class="tabela-wrap">
+      <table>
+        <thead><tr><th>Argumento contra o PE (rev. 4)</th><th>Vale para a sobretampa?</th></tr></thead>
+        <tbody>
+          <tr><td>“o plug de PE relaxa e perde a interferência”</td><td class="num"><strong>Não</strong> — a garra é trava geométrica, não força elástica</td></tr>
+          <tr><td>“PEBD flui a frio sob o pote carregado”</td><td class="num">Reduzido — a carga desce pela repisa direto na borda, ~12 kPa</td></tr>
+          <tr><td>“material misto atrapalha a reciclagem”</td><td class="num"><strong>Continua valendo</strong></td></tr>
+          <tr class="destaque"><td>“PE é compra residual e vira contrato novo”</td><td class="num"><strong>Continua valendo — é o item mais sério</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:34px">Os três números que decidem</h3>
+    <div class="notas">
+      <div class="nota">
+        <h3>Sai por arraste, sem gaveta</h3>
+        <p>O perímetro da garra (435,6 mm) tem de abrir até o da saia (442,2) para sair do macho: <strong>1,51% de deformação de aro</strong>. PE arrasta 5–8%. Molde de duas placas, extração por placa impulsora.</p>
+      </div>
+      <div class="nota">
+        <h3>O engate afrouxa no quente</h3>
+        <p>PE dilata mais que PP. A +40 °C o engate de 0,80 mm cai para <strong>0,65 mm em PEAD</strong> e 0,51 em PEBD. É o primeiro motivo para preferir PEAD.</p>
+      </div>
+      <div class="nota">
+        <span class="status s-alerta">Decisão aberta</span>
+        <h3>O aro da saia não segura nada</h3>
+        <p>Abrir o painel reto da face comprida (120 mm) os 0,80 mm do engate custa <strong>3 gf</strong>. Num pote redondo a saia seguraria por tração de aro; num retângulo, não. <strong>Quem segura é o deck</strong>, apoiado na borda numa faixa contínua de 4,4 mm — e isso pede elemento finito ou protótipo.</p>
+      </div>
+    </div>
+
+    <div class="tabela-wrap" style="margin-top:26px">
+      <table>
+        <thead><tr><th>Resina para a tampa PE</th><th>PEBD PB 608</th><th>PEAD HA 7260 IF 20</th></tr></thead>
+        <tbody>
+          <tr><td>Preço (compra 24 m)</td><td class="num">R$ 11,10/kg</td><td class="num">R$ 9,34/kg</td></tr>
+          <tr><td>Comprado em 12 m</td><td class="num">0,5 t</td><td class="num">1,1 t</td></tr>
+          <tr><td>Grau de injeção</td><td class="num">não declarado no cadastro</td><td class="num">IF 20 declarado</td></tr>
+          <tr><td>Engate a +40 °C</td><td class="num">0,51 mm</td><td class="num">0,65 mm</td></tr>
+          <tr class="destaque"><td>Custo da tampa (27,6 g)</td><td class="num">R$ 0,31</td><td class="num"><strong>R$ 0,26</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:12px;font-size:13.5px;color:var(--ink-2)"><strong>Vai PEAD HA 7260</strong> — grau de injeção declarado e <strong>a resina mais barata da casa depois do moído</strong>, mais barata que o próprio PP RP 141 (R$ 9,55). Risco a confirmar no try-out: PEAD contrai 2–4% e <strong>deck plano de 148 × 89 mm empena</strong> se o resfriamento for desigual. E a compra: 200 mil tampas/ano pedem <strong>5,5 t</strong> contra 1,1 t hoje.</p>
 
     <div class="notas" style="margin-top:26px">
       <div class="nota">
-        <h3>Por que não suja</h3>
-        <p>O lábio de corte solta a gota na saída e o caimento devolve o resto para dentro. O que respinga cai <strong>na bandeja</strong>, não na face do pote — e some pelo furo quando você apoia o pote de volta.</p>
+        <h3>O que a tampa PE não promete</h3>
+        <p>Não é hermética. É fechamento de <strong>pó e aroma</strong>, para grão e farofa. A hermeticidade fica com a tampa de teca e seu aro de TPE.</p>
       </div>
       <div class="nota">
-        <h3>Por que continua empilhando</h3>
-        <p>A aba fecha rente ao piso da bandeja, que é o plano modular. O entalhe tira um pedaço da parede num canto — justamente onde o pote de cima tem raio R10 e quase não apoia.</p>
+        <span class="status s-alerta">Ponto em aberto</span>
+        <h3>A tampa de teca não pode ser este plug</h3>
+        <p>O perfil do plug foi desenhado para injeção: parede de 1,50 mm descendo 12 mm. Em teca isso lasca. A tampa de madeira tem de ser <strong>maciça</strong>, e aí precisa do <strong>poço da bandeja usinado</strong> (131,9 × 72,0 × 2,0 mm) — senão <strong>a tampa de teca não empilha</strong>, e empilhar é o produto.</p>
       </div>
       <div class="nota">
-        <h3>Alternativas descartadas</h3>
-        <p><strong>Pump comprada:</strong> a casa já compra a válvula (CODPROD 10085) do porta-detergente 545/553 — serve para versão de pia, mas passa muito do plano modular e vira SKU “topo da pilha”. <strong>Copinho dosador</strong> (ref. 008): fora, a pedido. <strong>Bico moldado em poço fundo:</strong> encarece a ferramenta e não resolve a gota melhor que o lábio de corte.</p>
+        <h3>Ferramental: uma a menos</h3>
+        <p>4 moldes de corpo + 1 de tampa PE + 1 de aro de TPE = <strong>6 ferramentas</strong>, contra 7 na revisão 5. A tampa dosadora saiu do escopo; a de teca é CNC.</p>
       </div>
     </div>
-  </section>
 
-  <section>
     <div class="section-head"><span class="n">05</span><h2>Validação nas injetoras</h2></div>
     <p class="lede">Os quatro corpos têm a mesma área projetada (125 cm², já com a aba da borda) e pedem 115 a 137 t com duas cavidades. <strong>Correção da revisão 4:</strong> ali estava 139 cm² e 129–153 t, número que não saía do cálculo. <strong>O que decide a máquina não é tonelagem, é profundidade</strong>. A prova de que o parque aguenta não é catálogo: é peça de geometria equivalente rodando hoje.</p>
 
     <div class="maquinas">
-      <div class="maq"><span class="cap">600 ml</span><span class="classe">200 t</span>
+      <div class="maq"><span class="cap">600 ml</span><span class="classe">160 t</span>
         <span class="lista"><b>INJ 41, 43–46 (160 t)</b> · 115 t · curso 136 mm · molde 252 mm
           <span class="prova">equivalente: pote hermético peq. 176-C, ciclo medido 16,7 s</span></span></div>
       <div class="maq"><span class="cap">1,2 L</span><span class="classe">200 t</span>

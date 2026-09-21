@@ -1,6 +1,6 @@
 # Potes retangulares modulares em PP — resumo para retomar em outro chat
 
-**Projeto 115 do ERP (Nitron) · Revisão 5 · 17/09/2026**
+**Projeto 115 do ERP (Nitron) · Revisão 6 · 21/09/2026**
 Branch: `claude/serene-johnson-ja8az8` · pasta `potes-modulares/`
 
 Este arquivo é auto-contido: cole ele num chat novo e o contexto está todo aqui.
@@ -12,15 +12,25 @@ Este arquivo é auto-contido: cole ele num chat novo e o contexto está todo aqu
 Linha nova de potes retangulares em PP transparente, inspirada num render de referência
 (potes com tampa de teca e tampa verde). Requisitos que o Ricardo deu, na ordem em que apareceram:
 
-1. **Três tipos de tampa:** teca com vedação em TPE · PE · PP para sabão líquido/amaciante
-   (serve também para farofa, cereais).
+1. **Tampas.** Começou em três (teca com TPE · PE · PP dosadora) e **na revisão 6 caiu para
+   duas: teca com chanfro + aro de TPE, e PE 100%**. A dosadora saiu do escopo.
 2. **Quatro litragens.** Começou em 500 ml / 1 L / 1,5 L / 2 L e **mudou para 600 / 1200 / 1800 /
    2400 ml** (pacote de mantimento).
 3. **Modular:** empilhando os menores, tem que chegar exatamente na altura do maior.
 4. **Parede reta**, não conada, com cantos arredondados.
 5. **Sem trava**, acabamento liso.
 6. Validar tudo contra o parque de injetoras real (via MCP Sankhya / Nitron).
-7. **(revisão 5)** O pote tinha ficado largo e muito arredondado em relação ao render de
+7. **(revisão 6)** A tampa PE **fecha por fora**: saia por fora da borda, garra engatando sob o
+   lábio da aba em U. Princípio oposto ao plug da teca, na mesma borda, **sem mudar uma cota do
+   pote** — o lábio já dava 3,04 mm/lado de ressalto e a garra usa 0,80. Resina **PEAD HA 7260
+   IF 20 a R$ 9,34/kg** (a mais barata da casa depois do moído), tampa de 27,6 g a R$ 0,26.
+   Vedação por **cordão axial de 0,35 mm** no deck, prensado pela pré-carga de 0,10 mm da garra —
+   axial funciona aqui porque a garra é uma trava contínua a 3 mm do cordão, o que não existia na
+   tampa plug. Fechamento de pó e aroma, **não hermético**.
+   Dois pontos abertos: a retenção depende da rigidez do deck (o aro da saia dá 3 gf, então pede
+   elemento finito ou protótipo), e a **tampa de teca não pode ser o plug de parede fina** — em
+   maciço, precisa do poço da bandeja usinado ou não empilha.
+8. **(revisão 5)** O pote tinha ficado largo e muito arredondado em relação ao render de
    referência. Corrigido para **frente estreita e pote fundo, canto R10** — escolhido de propósito
    o caminho que mantém altura, módulo, curso de abertura e classe de injetora. Custou **+17,6 g**
    de resina nos quatro corpos e deixou a face comprida do 2,4 L **3,8× mais flexível** (única

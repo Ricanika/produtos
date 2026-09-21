@@ -32,6 +32,7 @@ Uso:  python3 calculo-modular.py
 import math
 
 RHO_PP, RHO_TPE = 0.905e-3, 1.10e-3
+RHO_PE = 0.950e-3   # PEAD HA 7260; PEBD seria 0.922e-3
 ASP     = 1.75      # footprint: comprimento / largura (frente estreita, pote fundo)
 R_EXT   = 10.0      # raio de canto externo (mm)
 M       = 60.0      # modulo: 600 ml por modulo
@@ -53,6 +54,26 @@ PRES    = {1: 0.42, 2: 0.45, 3: 0.48, 4: 0.50}   # t/cm2 de fechamento
 CICLO   = {1: 17, 2: 21, 3: 25, 4: 29}           # s
 OVERLAP = 2.0       # quanto a tampa passa do corpo, por lado
 ESP_TAMPA = 1.5
+
+
+# ---------------------------------------------------------------------------
+# TAMPA PE - fecha por FORA (sobretampa de encaixe)
+# ---------------------------------------------------------------------------
+# Principio oposto ao da tampa de teca: ali um plug desce DENTRO e veda radial
+# contra a parede; aqui uma saia desce por FORA e uma garra engata embaixo do
+# labio da aba em U. A mesma borda serve as duas - o labio descendente, que
+# existia para enrijecer a boca, ja e o ressalto de engate.
+PE_FOLGA_SAIA = 0.25   # folga radial entre a saia e a face externa do labio
+PE_PAR_SAIA   = 1.30   # parede da saia
+PE_GARRA      = 1.05   # quanto a garra avanca para dentro, a partir da saia
+PE_GARRA_H    = 1.10   # altura da garra
+PE_PRECARGA   = 0.10   # a saia e 0,10 mm mais curta -> puxa o deck contra a borda
+PE_DECK       = 1.50   # espessura do deck, da repisa e do piso da bandeja
+PE_POCO_PAR   = 1.20   # parede do poco da bandeja
+PE_FOLGA_REP  = 0.20   # folga da repisa ao anel do degrau do pote de cima
+PE_CORDAO     = 0.35   # altura do cordao de vedacao no deck
+PE_ABA_PEGA   = 1.50   # aba de pega no pe da saia, por lado
+PE_ABA_T      = 1.20
 
 
 def pe_l(ext_l):
@@ -246,6 +267,93 @@ def main():
         print(f"  {p['cap']:>5} ml | face comprida {pl_l:.1f}x{alt:.0f} -> {rl:4.2f}x  | "
               f"face curta {pl_w:.1f}x{alt:.0f} -> {rw:4.2f}x  | "
               f"parede p/ igualar a face comprida {t_ok:.2f} mm (hoje {p['w']:.2f})")
+
+    # ---- TAMPA PE, fecha por FORA -------------------------------------------
+    labio = p0['ext_l'] + 2 * ABA_W                  # face externa do labio
+    labio_w = labio - (p0['ext_l'] - p0['ext_w'])
+    saia_in  = labio + 2 * PE_FOLGA_SAIA
+    saia_out = saia_in + 2 * PE_PAR_SAIA
+    garra_in = saia_in - 2 * PE_GARRA
+    engate   = (labio - garra_in) / 2                # quanto a garra pega do labio
+    aba_out  = saia_out + 2 * PE_ABA_PEGA
+    z_labio  = -(ABA_T + LIP_H)                      # face inferior do labio
+    z_pe_saia = (z_labio + PE_PRECARGA) - PE_GARRA_H - 0.90   # pe da saia
+    h_tampa  = (4.00 - PE_FOLGA_REP) - z_pe_saia
+
+    print("\n" + "=" * 78)
+    print("TAMPA PE - fecha por FORA (sobretampa de encaixe), 100% PE, sem aro")
+    print("=" * 78)
+    print(f"  A borda ja tinha o ressalto: o labio desce ate z={z_labio:.2f} e sobra "
+          f"{(labio - (p0['ext_l'] - 2 * (ABA_T + LIP_H) * math.tan(math.radians(SAIDA)))) / 2:.2f} mm/lado")
+    print(f"  sobre o corpo. A garra so precisa pegar a face inferior dele.\n")
+    print(f"  saia:     interna {saia_in:.1f} x {saia_in - (p0['ext_l'] - p0['ext_w']):.1f}  "
+          f"(folga {PE_FOLGA_SAIA:.2f}/lado sobre o labio de {labio:.1f})")
+    print(f"            externa {saia_out:.1f} x {saia_out - (p0['ext_l'] - p0['ext_w']):.1f}  "
+          f"parede {PE_PAR_SAIA:.2f}")
+    print(f"  garra:    avanca {PE_GARRA:.2f} -> face interna {garra_in:.1f}; "
+          f"ENGATE {engate:.2f} mm/lado sob o labio")
+    print(f"            topo da garra em z={z_labio + PE_PRECARGA:.2f}: {PE_PRECARGA:.2f} mm de "
+          f"precarga puxando o deck contra a borda")
+    print(f"  aba de pega: {aba_out:.1f} x {aba_out - (p0['ext_l'] - p0['ext_w']):.1f} "
+          f"no pe da saia ({PE_ABA_PEGA:.1f} mm/lado)")
+    print(f"  bandeja:  vao {bandeja:.1f} (mesmo da tampa plug) recebe o pe de {PE_L:.1f}")
+    print(f"  repisa:   z=+{4.00 - PE_FOLGA_REP:.2f}, apoia o anel do degrau do pote de cima")
+    print(f"            (o anel chega em z=+4,00 com o pe assentado -> {PE_FOLGA_REP:.2f} mm de folga:")
+    print(f"             quem define o passo continua sendo o PE no piso, nao a repisa)")
+    print(f"  altura total da tampa {h_tampa:.2f} mm | footprint maximo "
+          f"{aba_out:.1f} x {aba_out - (p0['ext_l'] - p0['ext_w']):.1f} mm "
+          f"(+{(aba_out - labio) / 2:.2f}/lado sobre a aba do pote)")
+
+    # extracao por arraste: a garra e um undercut no macho
+    p_saia  = perim(saia_in, saia_in - (p0['ext_l'] - p0['ext_w']), R_EXT + (saia_in - p0['ext_l']) / 2)
+    p_garra = perim(garra_in, garra_in - (p0['ext_l'] - p0['ext_w']), R_EXT + (garra_in - p0['ext_l']) / 2)
+    eps = (p_saia - p_garra) / p_garra
+    print(f"\n  Extracao por arraste (a garra e undercut no macho):")
+    print(f"    perimetro da garra {p_garra:.1f} -> da saia {p_saia:.1f} mm  =>  "
+          f"deformacao de aro {100 * eps:.2f}%")
+    print(f"    PE suporta 5-8% no arraste; {100 * eps:.2f}% e folgado. "
+          f"Placa impulsora, sem gaveta.")
+
+    # dilatacao diferencial PE x PP: o engate muda com a temperatura
+    print(f"\n  O engate muda com a temperatura (PE dilata mais que PP):")
+    for nome, a_pe in (("PEAD", 150e-6), ("PEBD", 200e-6)):
+        for dT in (-40, 40):
+            d = (a_pe - 100e-6) * labio * dT / 2
+            print(f"    {nome} a {dT:+3d} °C -> engate {engate - d:.2f} mm/lado "
+                  f"({'aperta' if d < 0 else 'afrouxa'} {abs(d):.2f})")
+
+    # o painel reto nao segura: prova com o modelo de viga
+    for nome, E in (("PEAD", 1000.0), ("PEBD", 200.0)):
+        r_saia = R_EXT + (saia_out - p0['ext_l']) / 2
+        b = saia_out - 2 * r_saia                    # painel plano da face comprida
+        h_util = abs(z_labio - PE_GARRA_H - 0.90)    # altura da saia
+        I = h_util * PE_PAR_SAIA ** 3 / 12
+        F = 48 * E * I * engate / b ** 3
+        print(f"\n  {nome}: abrir o painel reto da face comprida ({b:.0f} mm) os {engate:.2f} mm "
+              f"do engate custa {F * 1000 / 9.81:.0f} gf")
+
+    print(f"    => o aro da saia NAO segura nada. Quem segura e o DECK: para a saia abrir,")
+    print(f"       o deck tem de sair da borda, e ele esta apoiado nela em "
+          f"{(labio - (p0['ext_l'] - 2 * W_BORDA)) / 2:.1f} mm de faixa continua.")
+    print(f"       Dimensionar isso de verdade pede elemento finito ou prototipo.")
+
+    # peso e custo
+    area_deck = area(saia_out, saia_out - (p0['ext_l'] - p0['ext_w']), R_EXT + (saia_out - p0['ext_l']) / 2)
+    area_poco = area(bandeja, bandeja - (p0['ext_l'] - p0['ext_w']), R_EXT + (bandeja - p0['ext_l']) / 2)
+    h_saia = abs(z_labio - PE_GARRA_H - 0.90)
+    vol = (area_deck * PE_DECK                                   # deck + repisa + piso
+           + p_saia * h_saia * PE_PAR_SAIA                       # saia
+           + p_saia * PE_GARRA_H * PE_GARRA                      # garra
+           + perim(aba_out, aba_out - (p0['ext_l'] - p0['ext_w']),
+                   R_EXT + (aba_out - p0['ext_l']) / 2) * PE_ABA_PEGA * PE_ABA_T
+           + perim(bandeja, bandeja - (p0['ext_l'] - p0['ext_w']),
+                   R_EXT + (bandeja - p0['ext_l']) / 2) * 5.80 * PE_POCO_PAR)
+    print(f"\n  Peso {vol * RHO_PE:.1f} g por placas+perimetros; a MALHA de gera-3d.py da"
+          f" 27,6 g\n  e e ela que vale  |  PEAD HA 7260 a R$ 9,34/kg -> "
+          f"R$ {vol * RHO_PE * 9.34 / 1000:.2f}   "
+          f"(PEBD PB 608 a R$ 11,10 -> R$ {vol * 0.922e-3 * 11.10 / 1000:.2f})")
+    print(f"  Comparar: tampa plug em PP RP 141 {peso_tampa:.1f} g R$ "
+          f"{peso_tampa * 9.54 / 1000:.2f} + aro {aro:.1f} g")
 
     print("\nMantimento:")
     for p in potes:

@@ -54,6 +54,19 @@ ARO_SOBRA  = 1.20              # quanto o aro sobra da face do plug -> 0,2 mm de
 # aro de TPE
 ARO_SEC = (2.8, 2.2)
 
+# tampa PE - fecha por FORA (sobretampa de encaixe). z = 0 no plano da borda.
+PE_FOLGA_SAIA = 0.25           # folga radial da saia sobre o labio da aba
+PE_PAR_SAIA   = 1.30           # parede da saia
+PE_GARRA      = 1.05           # avanco da garra para dentro -> 0,80 de engate
+PE_GARRA_H    = 1.10           # altura da garra
+PE_PRECARGA   = 0.10           # saia mais curta: puxa o deck contra a borda
+PE_DECK       = 1.50           # espessura de deck, repisa e piso
+PE_POCO_PAR   = 1.20           # parede do poco da bandeja
+PE_FOLGA_REP  = 0.20           # folga da repisa ao anel do pote de cima
+PE_CORDAO     = 0.35           # altura do cordao de vedacao
+PE_ABA_PEGA   = 1.50           # aba de pega no pe da saia, por lado
+PE_ABA_T      = 1.20
+
 # Pe embutido: DERIVADO da bandeja da tampa, nunca digitado.
 #   boca = EXT_L - 2*W_BORDA | plug = boca - 2*PLUG_FOLGA
 #   bandeja = plug - 2*PLUG_PAR | pe = bandeja - 1,0
@@ -215,6 +228,72 @@ def tampa(seg):
     return c
 
 
+def tampa_pe(seg):
+    """Tampa 100% PE que fecha por FORA. z = 0 no plano da borda do pote.
+
+    Principio oposto ao da tampa de teca. La um plug desce DENTRO e o aro de TPE
+    veda radial contra a parede. Aqui uma SAIA desce por fora e uma GARRA engata
+    sob o labio da aba em U - o mesmo labio que ja existia para enrijecer a boca.
+    Uma borda, dois jeitos de fechar.
+
+    Sem aro: o que veda e um cordao de 0,35 mm na face inferior do deck, apertado
+    contra o topo da borda pela precarga da garra. Cordao axial num retangulo so
+    funciona porque a garra e um aro continuo a 3 mm dele - o deck nao precisa
+    ficar plano para o cordao vedar, ao contrario do que aconteceria num plug.
+
+    A repisa em z=+3,80 apoia o anel do degrau do pote de cima, que chega em
+    +4,00 quando o pe esta assentado. Os 0,20 mm de folga sao de proposito: quem
+    define o passo modular continua sendo o pe no piso da bandeja, nunca a
+    repisa. Se fosse o contrario o passo viraria 60n + 0,20.
+    """
+    labio   = EXT_L + 2 * ABA_W                 # face externa do labio
+    boca    = EXT_L - 2 * W_BORDA
+    bandeja = boca - 2 * PLUG_FOLGA - 2 * PLUG_PAR   # mesmo vao da tampa plug
+    poco    = bandeja + 2 * PE_POCO_PAR
+    saia_i  = labio + 2 * PE_FOLGA_SAIA
+    saia_o  = saia_i + 2 * PE_PAR_SAIA
+    garra_i = saia_i - 2 * PE_GARRA
+    aba_o   = saia_o + 2 * PE_ABA_PEGA
+    z_lab   = -(ABA_T + LIP_H)                  # face inferior do labio: -5,10
+    z_gar   = z_lab + PE_PRECARGA               # topo da garra: -5,00
+    z_rep   = 4.00 - PE_FOLGA_REP               # repisa: +3,80
+    z_pe    = z_gar - PE_GARRA_H - 0.90         # pe da saia: -7,00
+
+    c = Casca(seg)
+    B0  = c.add(-2.00,           bandeja)       # piso da bandeja = plano modular
+    B1  = c.add(z_rep,           bandeja)       # parede do poco, face interna
+    B2  = c.add(z_rep,           poco + 2.3)    # repisa: apoia o anel do pote de cima
+    B3  = c.add(PE_DECK,         poco + 4.9)    # rampa ate o nivel do deck
+    B4  = c.add(PE_DECK,         saia_o)        # topo do deck
+    B5  = c.add(z_pe + PE_ABA_T, saia_o)        # face externa da saia
+    B6  = c.add(z_pe + PE_ABA_T, aba_o)         # aba de pega
+    B7  = c.add(z_pe,            aba_o)
+    B8  = c.add(z_pe,            saia_i)        # face inferior da aba
+    B9  = c.add(z_gar - PE_GARRA_H, garra_i)    # chanfro de entrada da garra
+    B10 = c.add(z_gar,           garra_i)       # face interna da garra
+    B11 = c.add(z_gar,           saia_i)        # TOPO DA GARRA: engata no labio
+    B12 = c.add(0.0,             saia_i)        # face interna da saia
+    B13 = c.add(0.0,             labio - 5.8)   # face inferior do deck, na borda
+    B14 = c.add(-PE_CORDAO,      labio - 6.3)   # cordao de vedacao
+    B15 = c.add(0.0,             labio - 6.8)
+    B16 = c.add(0.0,             boca)          # deck apoiado ate a aresta da boca
+    B17 = c.add(z_rep - PE_DECK, poco)          # rampa por baixo
+    B18 = c.add(-2.00 - PE_DECK, poco)          # parede externa do poco desce
+    # o perfil e percorrido do interior para fora pelo TOPO e volta pelo fundo -
+    # sentido oposto ao de corpo(), que sobe pela face externa. As bandas saem
+    # invertidas para a normal apontar para fora (conferido pelo volume assinado).
+    for a, b in ((B1,B0),(B2,B1),(B3,B2),(B4,B3),(B5,B4),(B6,B5),(B7,B6),(B8,B7),
+                 (B9,B8),(B10,B9),(B11,B10),(B12,B11),(B13,B12),(B14,B13),
+                 (B15,B14),(B16,B15),(B17,B16),(B18,B17)):
+        c.banda(a, b)
+    # as BANDAS invertem (sentido do percurso), os TAMPOS nao: um piso aponta
+    # para cima em qualquer percurso. Inverter os dois deixou a malha estanque
+    # porem com normais inconsistentes - e volume assinado nao acusa isso.
+    c.cap(B0, True)                             # piso da bandeja, por cima
+    c.cap(B18, False)                           # face inferior do piso
+    return c
+
+
 def aro(seg):
     """Aro de TPE alojado na canaleta do plug.
 
@@ -237,6 +316,25 @@ def aro(seg):
     c.banda(A2, A3)
     c.banda(A3, A0)
     return c
+
+
+def normais_consistentes(tris):
+    """Toda aresta tem de aparecer uma vez em cada sentido.
+
+    Volume assinado NAO detecta normais invertidas: uma malha estanque com um
+    tampo ao contrario continua fechada e ainda devolve um volume, so que
+    errado. Foi exatamente o que aconteceu com a tampa PE - 17,5 g em vez de
+    27,6 g - e so apareceu quando a malha foi aberta noutro programa.
+    """
+    from collections import Counter
+    e = Counter()
+    for a, b, c in tris:
+        for p, q in ((a, b), (b, c), (c, a)):
+            e[(p, q)] += 1
+    for (p, q), n in e.items():
+        if n != 1 or e.get((q, p), 0) != 1:
+            return False
+    return True
 
 
 def volume_assinado(tris):
@@ -293,12 +391,14 @@ def main():
     os.makedirs(out, exist_ok=True)
 
     perfis = {'seg': seg, 'pecas': {}}
+    checar = []
     for n in (1, 2, 3, 4):
         c, H = corpo(n, seg)
         nome = f'pote-{n * 600}'
         grava_stl(os.path.join(out, nome + '.stl'), c.tris, nome)
         perfis['pecas'][nome] = dict(loops=c.loops, bands=c.bands, caps=c.caps,
                                     H=H, passo=n * M, cap=n * 600)
+        checar.append((nome, c))
         vcav = cavidade(n, seg) / 1000.0
         vmat = volume_assinado(c.tris) / 1000.0
         print(f'{nome:<12} altura {H:6.1f} mm | {len(c.tris):5d} tri | '
@@ -308,23 +408,40 @@ def main():
     t = tampa(seg)
     grava_stl(os.path.join(out, 'tampa.stl'), t.tris, 'tampa')
     perfis['pecas']['tampa'] = dict(loops=t.loops, bands=t.bands, caps=t.caps)
+    checar.append(('tampa', t))
     print(f'{"tampa":<12} {"":13} | {len(t.tris):5d} triangulos')
+
+    tp = tampa_pe(seg)
+    grava_stl(os.path.join(out, 'tampa-pe.stl'), tp.tris, 'tampa-pe')
+    perfis['pecas']['tampa-pe'] = dict(loops=tp.loops, bands=tp.bands, caps=tp.caps)
+    print(f'{"tampa-pe":<12} {"":13} | {len(tp.tris):5d} triangulos | '
+          f'peso da malha {volume_assinado(tp.tris) / 1000.0 * 0.950:6.1f} g (PEAD)')
+
+    checar.append(('tampa-pe', tp))
 
     a = aro(seg)
     grava_stl(os.path.join(out, 'aro-tpe.stl'), a.tris, 'aro-tpe')
     perfis['pecas']['aro'] = dict(loops=a.loops, bands=a.bands, caps=a.caps)
+    checar.append(('aro-tpe', a))
     print(f'{"aro-tpe":<12} {"":13} | {len(a.tris):5d} triangulos')
 
     with open(os.path.join(base, 'perfis.json'), 'w') as f:
         json.dump(perfis, f, separators=(',', ':'))
     print('\nSTL em', out)
     print('perfis.json com', sum(len(p['loops']) for p in perfis['pecas'].values()), 'aneis')
+    ruim = [nome for nome, c in checar
+            if not normais_consistentes(c.tris) or volume_assinado(c.tris) <= 0]
+    print('\nNormais consistentes e volume positivo nas %d pecas: %s'
+          % (len(checar), 'OK' if not ruim else 'FALHOU EM ' + ', '.join(ruim)))
+    if ruim:
+        sys.exit(1)
+
     print('\nConferencias que a malha faz sozinha:')
-    print('  - volume assinado positivo em todas as pecas (solido fechado e')
-    print('    orientado para fora);')
+    print('  - volume assinado positivo E normais consistentes (volume assinado')
+    print('    sozinho nao acusa tampo invertido - ver normais_consistentes());')
     print('  - cavidade dentro de 0,7% da capacidade nominal - a folga e a')
     print('    poligonal de 12 segmentos por canto, nao erro de cota;')
-    print('  - peso da malha dentro de 3% de calculo-modular.py nas seis pecas.')
+    print('  - peso da malha dentro de 5% de calculo-modular.py nas sete pecas.')
 
 
 if __name__ == '__main__':
