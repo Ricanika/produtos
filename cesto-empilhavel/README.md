@@ -769,6 +769,54 @@ friso (4,29 mm em vez de 5,00), e a trava voltou: **2,04 mm³**.
 Peso **170,3 g**, capacidade 4,41 L. Encaixe 46,9 e empilhamento 130,0
 inalterados (0,000 mm³ a 130,0 exatos).
 
+#### Bolinhas → listras verticais (e onde o peso realmente está)
+
+Mesma casca, mesmas curvas, mesma estrutura: muda **só o vazado**. Cada listra
+é um estádio vertical de 10 mm de largura com as pontas em R5, e as faixas
+seguem as bordas — na frente elas param no arco da silhueta, na lateral
+encurtam acompanhando o chanfro de topo, em vez de serem descartadas.
+
+**170,3 g → 157,1 g** (−13,2 g, −7,8%). Encaixe 46,9 mm, empilhamento 130,0 mm
+e acoplamento **inalterados** (o vazado não toca em nenhuma feição funcional:
+ele mora em z de 40 a 111, e os pés são somados depois dele).
+
+#### O que a varredura ensinou
+
+| variante | peso |
+|---|---|
+| w9 · p15 · 3 faixas | 163,2 g |
+| w11 · p15 · 3 faixas | 162,5 g |
+| w9 · p13 · 3 faixas | 163,3 g |
+| **w10 · p15 · 2 faixas** | **157,1 g** |
+| w10 · p14 · 2 faixas · banda 32 | 154,6 g |
+
+**O que pesa não é a largura nem o passo da listra — é o número de faixas.**
+Cada faixa a mais é uma nervura horizontal de 8 mm dando a volta na peça
+inteira: de 3 para 2 faixas saem 6,1 g. Mexer na largura de 9 para 11 mm rende
+0,7 g (e ainda tira colunas, porque a margem de canto cresce). Duas faixas é o
+mínimo razoável: a nervura do meio é o que segura a parede contra embarrigar
+sob a pilha.
+
+#### Onde o peso está — medido por faixa de altura
+
+| | peso | % |
+|---|---|---|
+| pés + saia (z 0–5) | 2,8 g | 2% |
+| **chapa do fundo (5–7)** | **51,3 g** | **33%** |
+| banda cega do pé (7–40) | 30,6 g | 19% |
+| parede vazada (40–111) | 40,3 g | 26% |
+| faixa do rim + aba (111–133) | 32,1 g | 20% |
+
+A parede vazada é só **26%** da peça — é por isso que otimizar listra dá pouco.
+A **chapa do fundo é 33% e está intacta**: o vazado nunca chegou nela. Vazar o
+fundo (como as cestas da referência do cliente fazem) é a única alavanca de
+peso que sobra de verdade, e é decisão do cliente porque muda a função de
+conter. As outras duas: a banda cega de 33 mm no pé da parede (19%) e a faixa
+do rim de 3,2 mm (20%), que é onde mora a aba e o acoplamento.
+
+Arquivos: `cad/listras.py` (folha `listras.png`); `VAZADO = "listra"` ou
+`"bolinha"` em `modelo3d.py` alterna os dois desenhos.
+
 ### 4.3 Acoplado — as três canaletas
 
 O pedido foi uma **canaleta de ponta a ponta na lateral, macho de um lado e
@@ -1031,5 +1079,6 @@ cad/cortes.py      cortes 2D no eixo do pe, tirados do solido com
 cad/friso.py       o friso em U na aba, com a trava medida nos 4 sentidos
 cad/abertura.py    tres angulos de abertura no perfil, e a folha abertura.png
 cad/limpo.py       a rodada de acabamento: traseira, pe da frente e planta
+cad/listras.py     bolinhas vs listras e a tabela de onde o peso esta
 cad/cesto-aba.step/.stl    a peca da arquitetura da aba (12 graus de saida)
 ```

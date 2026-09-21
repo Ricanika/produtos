@@ -208,6 +208,22 @@ BANDA   = 40.0            # faixa cega no pe da parede
 FOLGA_S = 9.0             # folga entre furo e a silhueta (laterais)
 FOLGA_F = 6.0             # idem na frente, onde a borda e o arco da silhueta
 
+# --- LISTRAS VERTICAIS ------------------------------------------------------
+# Substituem as bolinhas (pedido de 21/09): mesma casca, mesmas curvas, mesma
+# estrutura -- muda so o vazado. Uma listra tira mais area que a bolinha que
+# ela substitui, entao a peca sai mais leve sem mexer em parede nenhuma.
+VAZADO = "listra"         # "listra" ou "bolinha" (o desenho antigo)
+LIS_W = 10.0              # largura da listra, no plano da parede
+LIS_P = 15.0              # passo entre listras (web de 5 mm entre elas)
+LIS_H = 28.0              # altura ALVO da listra (o numero de faixas sai dela)
+# Medido: o que pesa nao e a largura nem o passo da listra, e o NUMERO DE
+# FAIXAS -- cada faixa a mais e uma nervura horizontal de LIS_WEB dando a
+# volta na peca inteira. De 3 faixas para 2 sai 6,1 g; mexer na largura de 9
+# para 11 mm rende 0,7 g (e tira colunas). Duas faixas e o minimo razoavel:
+# a nervura do meio e o que segura a parede contra embarrigar sob a pilha.
+LIS_WEB = 8.0             # nervura horizontal entre as faixas
+LIS_MIN = 12.0            # listra menor que isso e descartada
+
 TAN = np.tan(np.radians(DRAFT))
 BASE_X = LARG - 2 * ALT * TAN
 BASE_Y = PROF - 2 * ALT * TAN
@@ -256,15 +272,24 @@ def y_frente(x, z):
     return -(h / 2 - r + np.sqrt(max(r * r - dx * dx, 0.0)))
 
 
-def cabe_na_frente(x, z, d, folga):
-    """O furo da frente respeita a borda arqueada?
+def z_livre_frente(x, meia, folga):
+    """Cota maxima que um vazado da frente pode ocupar, na coluna x.
 
-    Avalia no topo do furo e no x dele mais proximo do meio, que e onde a
-    borda esta mais BAIXA (no meio z_silhueta vale ~89 mm, nas pontas ~118).
+    Avalia no x da coluna mais proximo do meio, que e onde a borda arqueada
+    esta mais BAIXA (no meio z_silhueta vale ~89 mm, nas pontas ~118). E essa
+    cota que as listras seguem: em vez de descartar a listra que tromba na
+    borda, ela e ENCURTADA ate caber -- o desenho acompanha a curva.
     """
-    zt = z + d / 2
-    xs = np.sign(x) * max(abs(x) - d / 2, 0.0)
-    return zt + folga <= z_silhueta(y_frente(xs, zt))
+    xs = np.sign(x) * max(abs(x) - meia, 0.0)
+    z = ALT
+    for _ in range(12):                      # y_frente depende de z: itera
+        z = z_silhueta(y_frente(xs, z)) - folga
+    return z
+
+
+def cabe_na_frente(x, z, d, folga):
+    """O furo redondo da frente respeita a borda arqueada?"""
+    return z + d / 2 <= z_livre_frente(x, d / 2, folga)
 
 
 def z_silhueta(y):
@@ -280,6 +305,32 @@ def filas(z_topo=None):
     n = int((z_topo - BANDA) // PASSO) + 1
     ds = np.linspace(D_TOPO, D_BASE, n)
     return [(z_topo - i * PASSO, float(ds[i])) for i in range(n)]
+
+
+def listras(z_topo=None):
+    """Faixas (z0, z1) das listras, entre BANDA e z_topo.
+
+    O numero de faixas sai da altura alvo, nao o contrario: assim a frente
+    (que tem menos altura util, por causa do arco da borda) fica com listras
+    da MESMA altura das laterais, so em menos faixas. O pe da parede (BANDA)
+    continua cego.
+    """
+    z_topo = Z_TOPO if z_topo is None else z_topo
+    n = max(int(round((z_topo - BANDA + LIS_WEB) / (LIS_H + LIS_WEB))), 1)
+    h = (z_topo - BANDA - (n - 1) * LIS_WEB) / n
+    return [(BANDA + i * (h + LIS_WEB), BANDA + i * (h + LIS_WEB) + h)
+            for i in range(n)]
+
+
+def _listra(w, z0, z1, plano, comp):
+    """Uma listra: estadio vertical de w x (z1-z0), no plano dado.
+
+    plano=Plane.XZ corta na direcao y (frente e fundo); Plane.YZ corta na
+    direcao x (laterais). O raio das pontas e w/2 -- nenhum canto vivo, que e
+    o que o cliente pediu para todo o resto da peca tambem.
+    """
+    sk = RectangleRounded(w, z1 - z0, w / 2 - 0.001)
+    return Pos(0, 0, (z0 + z1) / 2) * extrude(plano * sk, comp, both=True)
 
 
 def grade(extensao, passo):
@@ -802,33 +853,66 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
     p = p & extrude(Plane.YZ * silhueta(), LARG / 2 + 30, both=True)
 
     # --- vazado ---
-    # Colunas calculadas UMA vez, com a margem do maior diametro, para que
-    # todas as fileiras usem as mesmas colunas e o reticulado alinhe.
-    fl = filas(z_topo)
-    z_ref = fl[0][0]
-    cols_fundo = grade(secao(z_ref, T_RIM)[0] - D_TOPO - 30, PASSO)
-    cols_lat = grade(secao(z_ref, T_RIM)[1] - D_TOPO - 30, PASSO)
-
-    furos, n = [], 0
-    for z, d in fl:
+    # Colunas calculadas UMA vez, na cota mais BAIXA do campo (onde a parede
+    # e mais estreita), para que todas as faixas usem as mesmas colunas.
+    if VAZADO == "listra":
+        cols_fundo = grade(secao(BANDA, T_RIM)[0] - LIS_W - 30, LIS_P)
+        cols_lat = grade(secao(BANDA, T_RIM)[1] - LIS_W - 30, LIS_P)
+        fl_lat = listras(z_topo)
+        # a frente tem menos altura util: o arco da borda manda
+        zf = min(z_livre_frente(x, LIS_W / 2, FOLGA_F) for x in cols_fundo)
+        fl_fr = listras(zf)
+        furos, n = [], 0
         for x in cols_fundo:
-            # frente e fundo furados SEPARADAMENTE: o mesmo cilindro varando
-            # os dois obriga a aceitar o furo cortado pela borda da frente
-            # (as "meias bolas"). Separados, so a frente perde os furos que
-            # tromba na borda -- o fundo, que vai ate o rim, fica cheio.
-            furos.append(Pos(x, 95.0, z) * Rot(90, 0, 0)
-                         * Cylinder(d / 2, 70.0))            # parede do fundo
-            n += 1
-            if cabe_na_frente(x, z, d, FOLGA_F):
-                furos.append(Pos(x, -95.0, z) * Rot(90, 0, 0)
-                             * Cylinder(d / 2, 70.0))        # parede da frente
+            lim = z_livre_frente(x, LIS_W / 2, FOLGA_F)
+            for z0, z1 in fl_lat:                          # parede do fundo
+                furos.append(Pos(x, 95.0, 0)
+                             * _listra(LIS_W, z0, z1, Plane.XZ, 35.0))
                 n += 1
-        for y in cols_lat:                                   # laterais
-            if z + d / 2 + FOLGA_S > z_silhueta(y):
-                continue
-            furos.append(Pos(0, y, z) * Rot(0, 90, 0) * Cylinder(d / 2, LARG + 60))
-            n += 2
-    p -= furos
+            for z0, z1 in fl_fr:                           # parede da frente
+                zt = min(z1, lim)
+                if zt - z0 < LIS_MIN:
+                    continue
+                furos.append(Pos(x, -95.0, 0)
+                             * _listra(LIS_W, z0, zt, Plane.XZ, 35.0))
+                n += 1
+        for y in cols_lat:                                 # laterais
+            # o chanfro de topo come a lateral perto da frente: a listra e
+            # ENCURTADA ate caber, entao o desenho acompanha a diagonal
+            lim = z_silhueta(y - LIS_W / 2) - FOLGA_S
+            for z0, z1 in fl_lat:
+                zt = min(z1, lim)
+                if zt - z0 < LIS_MIN:
+                    continue
+                furos.append(Pos(0, y, 0) * _listra(
+                    LIS_W, z0, zt, Plane.YZ, (LARG + 60) / 2))
+                n += 2
+        p -= furos
+    else:
+        fl = filas(z_topo)
+        z_ref = fl[0][0]
+        cols_fundo = grade(secao(z_ref, T_RIM)[0] - D_TOPO - 30, PASSO)
+        cols_lat = grade(secao(z_ref, T_RIM)[1] - D_TOPO - 30, PASSO)
+        furos, n = [], 0
+        for z, d in fl:
+            for x in cols_fundo:
+                # frente e fundo furados SEPARADAMENTE: o mesmo cilindro
+                # varando os dois obriga a aceitar o furo cortado pela borda
+                # da frente (as "meias bolas").
+                furos.append(Pos(x, 95.0, z) * Rot(90, 0, 0)
+                             * Cylinder(d / 2, 70.0))
+                n += 1
+                if cabe_na_frente(x, z, d, FOLGA_F):
+                    furos.append(Pos(x, -95.0, z) * Rot(90, 0, 0)
+                                 * Cylinder(d / 2, 70.0))
+                    n += 1
+            for y in cols_lat:
+                if z + d / 2 + FOLGA_S > z_silhueta(y):
+                    continue
+                furos.append(Pos(0, y, z) * Rot(0, 90, 0)
+                             * Cylinder(d / 2, LARG + 60))
+                n += 2
+        p -= furos
 
     # --- acoplamento lateral -------------------------------------------------
     yc0, yc1 = (48.0, 84.0) if estrutura else Y_CAN
