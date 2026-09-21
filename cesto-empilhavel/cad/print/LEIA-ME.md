@@ -60,3 +60,52 @@ primeira camada é o que decide o resultado.
 
 `filament_cost = 120` R$/kg é palpite — troque pelo seu e o PrusaSlicer
 recalcula (hoje dá R$ 24,79 por peça no bico 0,4).
+
+## Se a impressora for Anycubic (erro 10133)
+
+**Não use os `.gcode` desta pasta.** Eles saíram do PrusaSlicer com um perfil
+Marlin genérico, e as Anycubic novas (Kobra 3 / 3 Max / 3 Combo / S1 / X)
+**validam o arquivo** e recusam o que não veio do Anycubic Slicer Next:
+
+> CODE 10133 — The file is missing necessary commands, which may cause
+> printing errors. *"If you don't use the recommended slicing software or the
+> recommended parameters, or delete necessary commands such as Start G-code by
+> mistake, the printer will report this error."*
+> — wiki.anycubic.com/en/error-codes/10133-code
+
+Não dá para consertar remendando o cabeçalho: a firmware é Klipper e o start
+correto chama macros da própria máquina. Um cabeçalho forjado pode ser aceito
+e a impressora partir **sem homing e sem aquecer** — pior que o erro.
+
+O caminho é fatiar o `cad/cesto-aba.stl` no **Anycubic Slicer Next**, com o
+perfil da máquina, e reproduzir lá os parâmetros abaixo.
+
+| parâmetro | valor | por quê |
+|---|---|---|
+| material | PETG · 240 °C · mesa 80 °C | 245 na 1ª camada |
+| altura de camada | 0,30 mm (bico 0,4) | 0,40 se o bico for 0,6 |
+| paredes | 3 perímetros | a parede do CAD tem 1,4 mm |
+| preenchimento | 100% | só as regiões grossas (rim 3,2 mm, saia 4 mm) |
+| topo / fundo | 4 camadas | a chapa do fundo tem 2 mm |
+| brim | **2 mm, só externo** | ver cama, abaixo |
+| ventoinha | 40–60%, desligada nas 3 primeiras | PETG |
+| perímetro externo | 25 mm/s | PETG |
+
+**Suporte — é o ponto que mais importa.** A chapa do fundo fica 5 mm acima do
+piso, então esse vão de 145 × 195 mm precisa de suporte. Mas o suporte
+automático quer encher o cesto inteiro de torre: medido no PrusaSlicer, **260 g
+de suporte para 196 g de peça**, e 16 h a mais. Ligue suporte **"apenas na
+mesa" (on build plate only)** e confira a pré-visualização: se aparecer torre
+DENTRO do cesto, use um *support blocker* cobrindo o interior acima de z = 6 mm.
+O suporte certo é uma laje de 5 mm embaixo da chapa e nada mais.
+
+**A cama.** A peça é 204 × 241 mm:
+
+| modelo | cabe? | sobra |
+|---|---|---|
+| Kobra 3 / S1 (250 × 250) | cabe | 46 mm em x, **9,1 mm em y** |
+| Kobra 3 Max (420 × 420) | cabe folgado | — |
+| Kobra 2 / Neo (220 × 220) | **não cabe** | faltam 21 mm em y |
+
+Nos 250 × 250 sobram só 4,5 mm de cada lado em y — por isso brim de 2 mm e
+skirt desligado. Girar não resolve (a cama é quadrada) e girar 45° piora.
