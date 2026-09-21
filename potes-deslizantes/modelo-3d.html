@@ -92,6 +92,7 @@
   <div class="toggles">
     <button id="tCorte" type="button" aria-pressed="false">Corte pela metade</button>
     <button id="tZoom" type="button" aria-pressed="false">Zoom na borda</button>
+    <button id="tEnc" type="button" aria-pressed="false">Tampa de encaixe</button>
     <button id="tDos" type="button" aria-pressed="false">Tampa dosadora</button>
     <button id="tBico" type="button" aria-pressed="false">Tirar o copo</button>
     <button id="tPilha" type="button" aria-pressed="false">Pote empilhado</button>
@@ -106,7 +107,7 @@
   <div class="legend">
     <span><i style="background:#8FA6B4"></i>corpo em PP</span>
     <span><i style="background:#2F4B5C"></i>trilho da came <b style="color:var(--ink)">(fêmea)</b></span>
-    <span><i style="background:#C9761F"></i>gancho <b style="color:var(--ink)">(macho)</b></span>
+    <span><i style="background:#C9761F"></i>gancho / lábio do estalo</span>
     <span><i style="background:#9A3D22"></i>lábio de TPE</span>
     <span><i style="background:#B6C3CB"></i>tampa</span>
     <span><i style="background:#3F7D6A"></i>copo (peça separada)</span>
@@ -139,6 +140,42 @@ projetista.</p>
   </ol>
   <p>Para abrir, o caminho inverso: a came <em>levanta</em> a tampa enquanto ela sai. Isso
   quebra a sucção sozinho — não existe o "briga com o pote para tirar a tampa".</p>
+</section>
+
+<section class="col">
+  <p class="eyebrow">Terceira família</p>
+  <h2>Bordinha de 2 mm e tampa de estalo</h2>
+  <p>Aperte <strong>Tampa de encaixe</strong>. O corpo ganha um <strong>rebordo oco</strong> de
+  2,0 mm de projeção e 7,0 mm de altura em toda a borda; a tampa abraça esse rebordo e o lábio
+  estala por baixo dele. O aro de TPE trabalha <strong>radialmente contra a face externa do
+  rebordo</strong> — o abraço que prende é o mesmo que veda.</p>
+  <p>A altura do rebordo não foi escolha estética: <strong>é ela que define quanto a saia pode
+  flexionar</strong>, e portanto quanto o lábio pode engatar sem passar dos 2% de deformação que
+  o PP suporta em ciclagem.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Rebordo</th><th>Engate máx.</th><th>Abrir um canto</th><th>Arrancar reto</th><th>Queda</th></tr></thead>
+    <tbody>
+      <tr><td>4,0 mm</td><td class="n">0,23</td><td class="n">5,7 kgf</td><td class="n">78 kgf</td><td class="n">24 cm</td></tr>
+      <tr><td>5,0 mm</td><td class="n">0,32</td><td class="n">4,8 kgf</td><td class="n">66 kgf</td><td class="n">20 cm</td></tr>
+      <tr><td><strong>7,0 mm</strong></td><td class="n">0,56</td><td class="n"><strong>3,6 kgf</strong></td><td class="n">50 kgf</td><td class="n">15 cm</td></tr>
+      <tr><td>9,0 mm</td><td class="n">0,87</td><td class="n">2,9 kgf</td><td class="n">40 kgf</td><td class="n">12 cm</td></tr>
+      <tr><td>12,0 mm</td><td class="n">1,45</td><td class="n">2,3 kgf</td><td class="n">31 kgf</td><td class="n">9 cm</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>De cabeça para baixo passa com folga enorme</strong> — 19× de margem no 2,4 L,
+  73× no 600 ml. O pedido está atendido.</p>
+  <p><strong>Mas a queda é o limite honesto desta tampa: ~15 cm.</strong> E não dá para
+  consertar mexendo na cota. A razão entre arrancar reto e descascar um canto é
+  <strong>14×</strong>, e ela é geométrica — depende do perímetro, não da rigidez. Engrossar a
+  saia ou fechar o ângulo de retenção sobe as duas juntas: a queda melhora e abrir com a mão
+  piora na mesma proporção. Para segurar 0,75 m a face teria de ficar a ~68°, e aí abrir um
+  canto pediria mais de 15 kgf.</p>
+  <p class="note"><strong>É exatamente por isso que pote retangular hermético do mercado tem
+  trava</strong> — a trava desacopla as duas coisas, o estalo não. Comparando dentro do próprio
+  projeto: a tampa de came com ganchos segura 1,00 m porque a carga entra em esmagamento; o
+  estalo segura 15 cm porque a carga tem de ser absorvida por flexão. Não é defeito de
+  dimensionamento, é a natureza do fecho. O estalo é o fecho certo para 600 ml e 1,2 L e para
+  mantimento; a came é para o 2,4 L de líquido.</p>
 </section>
 
 <section class="col">
@@ -251,6 +288,10 @@ projetista.</p>
   var CURSO=24.0, RAMP_L=10.0, HOOK=14.0, HOOK_P=3.6, WING_T=1.8;
   var LID_L=ABA_L, LID_W=ABA_W, LID_R=ABA_R, SAIA_H=9.0;
   var SEAL=123.5, MODULO=60, DIF=POT_L-POT_W;
+  // ---- TERCEIRA FAMILIA: bordinha de 2 mm + tampa de encaixe por estalo ----
+  var BOR_P=2.0, BOR_H=7.0, BOR_T=1.4, LAB_T2=1.2, ENGATE=0.55, FOLGA2=0.15;
+  var BOR_L=POT_L+2*BOR_P, BOR_W=POT_W+2*BOR_P, BOR_R=R+BOR_P;
+  var LID2_L=BOR_L+2*(FOLGA2+1.6), LID2_W=BOR_W+2*(FOLGA2+1.6), LID2_R=BOR_R+FOLGA2+1.6;
   // BICO COM COPO
   // BOCAL RENTE: sobe do piso da bandeja e PARA no plano da aba da tampa.
   var BX=-20, BI=20.0, BE=21.5;              // furo 40, externo 43
@@ -449,6 +490,27 @@ projetista.</p>
   tubo(BX, CUP_BI, CUP_BE, CUP_SK, function(){ return CUP_TOP; }, COR.copo,0.55,4,false);
   tubo(BX, 0, CUP_BI, CUP_TOP, function(){ return CUP_TOP+1.6; }, COR.copo,0.55,4,true);
 
+  // ---------------- CORPO COM BORDINHA (grupo 5) ----------------
+  chapa(PE_L,PE_W,R_PE, Zb, Zb+FUNDO, COR.corpo,0.30,5);
+  anel(PE_L,PE_W,R_PE, PE_L-2*WALL,PE_W-2*WALL,R_PE-WALL, Zb+FUNDO, Zb+PE_H, COR.corpo,0.30,5);
+  anel(POT_L,POT_W,R, PE_L-2*WALL,PE_W-2*WALL,R_PE-WALL, Zb+PE_H, Zb+PE_H+WALL, COR.corpo,0.30,5);
+  anel(POT_L,POT_W,R, MO_L,MO_W,MO_R, Zb+PE_H+WALL, -BOR_T, COR.corpo,0.30,5);
+  // a bordinha e um rebordo OCO: pele externa + face de cima. Solida teria 3,4 mm
+  // de parede e rechuparia; oca e straight-pull e nao rechupa.
+  anel(BOR_L,BOR_W,BOR_R, BOR_L-2*BOR_T,BOR_W-2*BOR_T,BOR_R-BOR_T, -BOR_H, -BOR_T, COR.corpo,0.42,5);
+  anel(BOR_L,BOR_W,BOR_R, MO_L,MO_W,MO_R, -BOR_T, 0, COR.corpo,0.42,5);
+
+  // ---------------- TAMPA DE ENCAIXE (grupo 6) ----------------
+  (function(){
+    var si=BOR_L+2*FOLGA2, sw=BOR_W+2*FOLGA2, sr=BOR_R+FOLGA2;   // face interna da saia
+    anel(LID2_L,LID2_W,LID2_R, BAN_E, BAN_E-DIF, 14, 0, PRATO, COR.tampa,0.45,6);
+    anel(BAN_E, BAN_E-DIF, 14, BAN_I, BAN_I-DIF, 13, -PENETRA, PRATO, COR.tampa,0.45,6);
+    chapa(BAN_I,BAN_I-DIF,13, -PENETRA, -RECESSO, COR.tampa,0.45,6);
+    anel(LID2_L,LID2_W,LID2_R, si,sw,sr, -BOR_H-LAB_T2, 0, COR.tampa,0.45,6);       // saia
+    anel(si,sw,sr, si-2*ENGATE, sw-2*ENGATE, sr-ENGATE, -BOR_H-LAB_T2, -BOR_H, COR.gancho,1,6); // labio
+    anel(si,sw,sr, si-2.4, sw-2.4, sr-1.2, -3.9, -1.5, COR.tpe,1,6);                // aro radial
+  })();
+
   // ---------------- POTE EMPILHADO (grupo 2) ----------------
   var mG=0.16;
   anel(POT_L,POT_W,R, MO_L,MO_W,MO_R, MODULO-POT_H, MODULO-ABA_T, COR.ghost,mG,2);
@@ -457,7 +519,8 @@ projetista.</p>
 
   // =============== cinemática ===============
   function camZ(t){ return t<=0 ? HOVER : (t>=RAMP_L ? 0 : HOVER*(1-t/RAMP_L)); }
-  var estado={t:0, z:HOVER, dx:-CURSO, pilha:false, corte:false, dos:false, bico:false};
+  var estado={t:0, z:HOVER, dx:-CURSO, pilha:false, corte:false, dos:false, bico:false,
+               enc:false, encZ:30};
 
   // =============== câmera e desenho ===============
   var az=-0.62, pol=0.62, dist=330, foco=1000, alvo=[0,0,-20], panx=0, pany=0;
@@ -492,12 +555,16 @@ projetista.</p>
   function grupos(){
     var L=[estado.dx,0,estado.z];
     return [[0,0,0], L, [0,0,0], L,
-            [L[0], L[1], L[2] + (estado.bico ? 45 : 0)]];
+            [L[0], L[1], L[2] + (estado.bico ? 45 : 0)],
+            [0,0,0], [0,0,estado.encZ]];
   }
   function visivel(f){
     if(f.g===2) return estado.pilha;
-    if(f.g===1) return !estado.dos;
-    if(f.g===3 || f.g===4) return estado.dos;
+    if(f.g===5) return estado.enc;          // corpo com bordinha
+    if(f.g===6) return estado.enc;          // tampa de encaixe
+    if(f.g===0) return !estado.enc;         // corpo com aba e trilhos
+    if(f.g===1) return !estado.enc && !estado.dos;
+    if(f.g===3 || f.g===4) return !estado.enc && estado.dos;
     return true;
   }
   function bbox(filtro){
@@ -593,6 +660,8 @@ projetista.</p>
     if(u<pousa){ var k=u/pousa; t=0; z=HOVER+(1-k)*46; fase=k<0.06?0:1; }
     else if(u<desliza){ t=CURSO*(u-pousa)/(desliza-pousa); z=camZ(t); fase=(HOVER-z)>0.98?3:2; }
     else { t=CURSO; z=0; fase=4; }
+    // tampa de encaixe: desce reto e estala no fim
+    estado.encZ = u >= 0.90 ? 0 : 30*(1-u/0.90);
     estado.t=t; estado.z=z; estado.dx=-(CURSO-t);
     var comp=Math.max(0,1.0-z);
     document.getElementById('rFase').textContent=FASES[fase];
@@ -653,6 +722,7 @@ projetista.</p>
     pol  = on ? 0.26 : 0.62;
     ajusta(on ? soMecanismo : null);
   });
+  botao('tEnc',function(on){ estado.enc=on; ajusta(zoomLigado()?soMecanismo:null); });
   botao('tDos',function(on){ estado.dos=on; ajusta(zoomLigado()?soMecanismo:null); });
   botao('tBico',function(on){ estado.bico=on; ajusta(zoomLigado()?soMecanismo:null); });
   botao('tPilha',function(on){ estado.pilha=on; ajusta(zoomLigado()?soMecanismo:null); });

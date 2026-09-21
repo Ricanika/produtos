@@ -404,6 +404,79 @@ tampa dosadora deixa de ser rente — é uma cota, não um redesenho.
 
 Não precisa. Furo de Ø40 — acima de ~20 mm o ar entra pelo próprio furo enquanto o líquido sai.
 
+## 8-bis. Terceira família: bordinha de 2 mm e tampa de estalo
+
+Outro tipo de fecho para a mesma linha. O corpo ganha um **rebordo oco** de 2,0 mm de projeção
+e **7,0 mm de altura** em toda a borda superior; a tampa abraça esse rebordo e o lábio estala
+por baixo dele. O aro de TPE trabalha **radialmente contra a face externa do rebordo** — o
+abraço que prende é o mesmo que veda.
+
+Memória de cálculo em `calculo-encaixe.py`.
+
+### A altura do rebordo é que manda, não a espessura
+
+A saia só flexiona no trecho que vai do prato até o lábio, e **esse trecho é a altura do
+rebordo**. Ela define quanto o lábio pode engatar sem passar dos 2% de deformação que o PP
+suporta em ciclagem.
+
+| Rebordo | Engate máx. | Abrir um canto | Arrancar reto | Queda |
+|---|---|---|---|---|
+| 4,0 mm | 0,23 mm | 5,7 kgf | 78 kgf | 24 cm |
+| 5,0 mm | 0,32 mm | 4,8 kgf | 66 kgf | 20 cm |
+| **7,0 mm** | **0,56 mm** | **3,6 kgf** | **50 kgf** | **15 cm** |
+| 9,0 mm | 0,87 mm | 2,9 kgf | 40 kgf | 12 cm |
+| 12,0 mm | 1,45 mm | 2,3 kgf | 31 kgf | 9 cm |
+
+Rebordo **baixo** dá saia curta, que é rígida: segura mais na queda mas custa mais para abrir.
+Rebordo alto faz o contrário. **Não existe altura que melhore as duas.**
+
+### De cabeça para baixo: passa com folga enorme
+
+| | Coluna de sabão | Margem |
+|---|---|---|
+| 600 ml | 0,67 kgf | 73× |
+| 1,2 L | 1,31 kgf | 37× |
+| 1,8 L | 1,96 kgf | 25× |
+| 2,4 L | 2,61 kgf | **19×** |
+
+O pedido está atendido. Quem veda é o aro; o estalo só precisa não deixar a tampa subir.
+
+### A queda é o limite honesto, e não dá para consertar na cota
+
+**~15 cm.** Acima disso a tampa sai.
+
+A razão entre *arrancar reto* e *descascar um canto* é **14×**, e ela é **geométrica** — depende
+do perímetro, não da rigidez. Engrossar a saia ou fechar o ângulo de retenção sobe as duas
+juntas: a queda melhora e abrir com a mão piora na mesma proporção. Para segurar 0,75 m a face
+teria de ficar a ~68°, e aí abrir um canto pediria mais de 15 kgf.
+
+**É exatamente por isso que pote retangular hermético do mercado tem trava** — a trava desacopla
+as duas coisas, o estalo não.
+
+| Dentro deste projeto | Segura |
+|---|---|
+| came com ganchos (carga em esmagamento) | **1,00 m** |
+| estalo na bordinha (carga em flexão) | **15 cm** |
+
+Não é defeito de dimensionamento, é a natureza do fecho. **O estalo é o fecho certo para o
+600 ml e o 1,2 L e para mantimento; a came é para o 2,4 L de líquido.**
+
+### Por que o aro é radial e não axial
+
+O prato da tampa **empena** sob pressão interna: 4,46 mm num prato de 1,5 mm apoiado, 0,28 mm
+num de 2,0 mm engastado. Aro axial perde contato no meio do lado longo quando isso acontece.
+Aro radial acompanha a parede — o rebordo não se move, e o aro está preso nele, não no prato.
+
+### Molde
+
+**Corpo: extração reta.** A face de baixo do rebordo olha para baixo e para fora. E o rebordo é
+**oco** (pele externa de 1,4 mm + face de cima), não maciço: maciço teria 3,4 mm de parede e
+rechuparia.
+
+**Tampa: extração reta também.** O lábio é contra-saída, mas a saia abre 0,55 mm para desmoldar,
+por arranque. A mesma flexão que faz o clique — e é justamente isso que explica fisicamente o
+limite de queda: a peça que desmolda flexionando também flexiona em serviço.
+
 ## 9. Patente — fazer a busca antes de mostrar para alguém
 
 Tampa deslizante existe (caixa de pão, estojo, alguns bentôs). Fecho por came existe. Junta de
@@ -456,7 +529,8 @@ Uma a menos que a linha 1, porque o aro moldado virou perfil extrudado.
 | Arquivo | O que é |
 |---|---|
 | `README.md` | este estudo |
-| `calculo-deslizante.py` | memória de cálculo: linha, vedação, came, detente, ganchos, queda, injeção |
+| `calculo-deslizante.py` | memória de cálculo da tampa de came: linha, vedação, detente, ganchos, queda, injeção |
+| `calculo-encaixe.py` | memória de cálculo da **terceira família**: bordinha de 2 mm + tampa de estalo |
 | `mecanismo-came.html` | cópia da página publicada: dois cortes interativos do curso de fechamento |
 | `modelo-3d.html` | cópia da página publicada: modelo 3D orbitável, com corte e a sequência animada |
 | `verifica-modelo-3d.js` | roda o motor do modelo 3D fora do navegador e confere que todos os estados desenham dentro do quadro |
