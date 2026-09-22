@@ -799,15 +799,17 @@ sob a pilha.
 
 #### Onde o peso está — medido por faixa de altura
 
+(remedido na peça atual, 168,4 g — três faixas de listra e tudo fechado)
+
 | | peso | % |
 |---|---|---|
-| pés + saia (z 0–5) | 2,8 g | 2% |
-| **chapa do fundo (5–7)** | **51,3 g** | **33%** |
-| banda cega do pé (7–40) | 30,6 g | 19% |
-| parede vazada (40–111) | 40,3 g | 26% |
-| faixa do rim + aba (111–133) | 32,1 g | 20% |
+| pés + saia (z 0–5) | 2,5 g | 1% |
+| **chapa do fundo (5–7)** | **51,7 g** | **31%** |
+| banda cega do pé (7–40) | 34,5 g | 20% |
+| parede vazada (40–111) | 47,6 g | 28% |
+| faixa do rim + aba (111–133) | 32,1 g | 19% |
 
-A parede vazada é só **26%** da peça — é por isso que otimizar listra dá pouco.
+A parede vazada é só **28%** da peça — é por isso que otimizar listra dá pouco.
 A **chapa do fundo é 33% e está intacta**: o vazado nunca chegou nela. Vazar o
 fundo (como as cestas da referência do cliente fazem) é a única alavanca de
 peso que sobra de verdade, e é decisão do cliente porque muda a função de
@@ -848,10 +850,10 @@ esvazia o pé nos 40 mm de baixo é uma **bolsa cega** aberta no piso,
 | parede abre em z = | 1,6 mm | **40 mm** |
 | passo encaixado | 46,80 mm | 46,80 mm |
 | passo empilhado | 130,00 mm | 130,00 mm |
-| peso em PP | 164,4 g | 167,7 g |
+| peso em PP | 165,1 g | 168,4 g |
 
-(os pesos absolutos são os da geometria de listra ATUAL — três faixas, que
-vieram depois; o delta da correção do pé é o mesmo +3,3 g)
+(os pesos absolutos são os da peça ATUAL — três faixas de listra e a tapa da
+frente, que vieram depois; o delta da correção do pé é o mesmo +3,3 g)
 
 Provado por interseção booleana: `cavidade ∩ parede (z<40) = 0`,
 `cavidade ∩ chapa = 0`, e o mesmo para a bolsa. Medindo a seção cota por cota,
@@ -923,7 +925,7 @@ listras continuar em **5 mm** — o ritmo do desenho não muda, só o vão.
 | nervura entre rasgos | 5 mm | 5 mm |
 | nº de rasgos | 65 | 135 |
 | área aberta total | 18.709 mm² | 12.892 mm² |
-| peso em PP | 160,3 g | **167,7 g** |
+| peso em PP | 161,0 g | **168,4 g** |
 
 **O achado que mudou a decisão: o peso quase não depende da largura do rasgo.**
 Estreitar a listra encurta o passo, entram mais colunas e a área aberta se
@@ -932,14 +934,14 @@ rasgos, que é custo de fecha-macho no molde):
 
 | W/P | rasgos | peso | área aberta |
 |---|---|---|---|
-| 8/13 | 111 | 166,6 g | 13.715 mm² |
-| 7/12 | 123 | 166,8 g | 13.575 mm² |
-| 6/13 | 123 | 169,1 g | 11.769 mm² |
-| **6/11** | **135** | **167,7 g** | **12.892 mm²** |
-| 6/10 | 145 | 166,4 g | 13.873 mm² |
-| 5/11 | 135 | 170,2 g | 10.889 mm² |
-| 5/9 | 167 | 167,1 g | 13.330 mm² |
-| 4/8 | 201 | 167,3 g | 13.187 mm² |
+| 8/13 | 111 | 167,3 g | 13.715 mm² |
+| 7/12 | 123 | 167,5 g | 13.575 mm² |
+| 6/13 | 123 | 169,8 g | 11.769 mm² |
+| **6/11** | **135** | **168,4 g** | **12.892 mm²** |
+| 6/10 | 145 | 167,1 g | 13.873 mm² |
+| 5/11 | 135 | 170,9 g | 10.889 mm² |
+| 5/9 | 167 | 167,8 g | 13.330 mm² |
+| 4/8 | 201 | 168,0 g | 13.187 mm² |
 
 3,8 g de espalhamento numa peça de 168 — e a variação segue a **área aberta**,
 não a largura. Quem pesa são duas outras coisas: o **número de faixas** (+7,4 g
@@ -948,7 +950,7 @@ peça inteira, o que também é o que segura a parede contra embarrigar sob a
 pilha) e a área aberta total. Logo o tamanho do rasgo é decisão de **função** —
 o que não pode passar por ele — e não de peso.
 
-Se quiser barrar também o que tem 5 mm: `5/9` custa o mesmo peso (167,1 g) e
+Se quiser barrar também o que tem 5 mm: `5/9` custa o mesmo peso (167,8 g) e
 sobe de 135 para 167 rasgos, 32 fecha-machos a mais. `4/8` já são 201.
 
 A frente fica com **duas** faixas em vez de três porque o arco da borda só
@@ -963,7 +965,56 @@ aba e do friso. Medido: encaixa 46,80 mm, empilha 130,00 mm, 0,0000 mm³.
 
 Arquivos: `cad/rasgos.py` (folha `rasgos.png`, com o rasgo em tamanho real e o
 gráfico peso × largura). `VAZADO = "nenhum"` em `modelo3d.py` constrói a peça
-de parede cheia (184,0 g), que é a referência para medir a área aberta.
+de parede cheia (184,7 g), que é a referência para medir a área aberta.
+
+#### O rasgo inferior frontal — e a lição de método
+
+"O rasgo inferior frontal ainda está ali, eu quero fechar ele tmb... aqui corre
+o risco dos produtos colocados nele escorrer e sair pelo buraco."
+
+Estava. O **chanfro do pé** (45°, `CHANFRO_PE = 36`) é a reta y = −89 − z; a
+parede externa é y = −(97,37 + 0,2126 z). Elas se cruzam em
+
+    z = (CHANFRO_PE − (PROF/2 − BASE_Y/2)) / (1 − tg θ) = 10,63 mm
+
+e **abaixo dessa cota o chanfro passa por dentro da parede e a apaga**. Como a
+chapa do fundo termina em z = 7, sobrava rasgo de **z 7,0 a 8,75 mm** (1,8 mm
+de altura) em 130 mm de frente = **237 mm²**, com a borda da chapa servindo de
+rampa para ele. E de 8,85 a 10,63 a parede sobrevivia como **lâmina de 0 a
+1,4 mm** — seção que não enche na injeção.
+
+**A lição.** Os testes anteriores não pegaram isso, e a razão é instrutiva: eu
+media a parede *contra a casca já recortada pela silhueta*, e achava zero de
+furo em toda a faixa de baixo. A referência tinha o mesmo rasgo — o chanfro
+come a parede nas duas — então a comparação não podia enxergar o que faltava.
+**Comparar contra uma referência que compartilha o defeito é não medir.**
+
+O teste que pega não usa referência nenhuma: de um ponto dentro do cesto, 720
+raios na horizontal; se um sai sem cruzar material, há caminho. Em z = 7,5 mm,
+**135 raios saíam, todos entre 236° e 304°** — o setor que aponta para a
+frente. Depois da correção: **zero, em todas as cotas de 7,5 a 39 mm**.
+
+**A tapa** é uma parede de `T_PAREDE` deitada sobre o plano do chanfro: a
+silhueta menos ela mesma deslocada `T_PAREDE/√2` em y e em z. Cortada por
+`fora`, ela **termina sozinha** onde o chanfro sai da casca — não há cota para
+acertar à mão, e se `CHANFRO_PE` mudar ela acompanha. Saída de molde: a face
+externa dela *é* o plano do chanfro, que já é a silhueta da peça; a interna é
+paralela, e subindo o vão só cresce.
+
+| | antes | depois |
+|---|---|---|
+| rasgo frontal | 237 mm² | **0 mm²** |
+| raios que escapam (z 7,5) | 135 de 720 | **0** |
+| parede em z = 7,5 | 0 mm | **2,18 mm** |
+| parede em z = 9,5 | 0,63 mm | **2,18 mm** |
+| peso em PP | 167,7 g | 168,4 g |
+
+Custa 0,7 g, e por dentro fica uma transição chanfrada de 3,6 mm no pé da
+parede da frente — que de quebra ajuda a varrer o cesto. Encaixe 46,80 e
+empilhamento 130,00 inalterados.
+
+Arquivos: `cad/frente.py` (folha `frente.png`, com o leque de raios em planta e
+o corte no pé da frente em zoom 1:1).
 
 ### 4.3 Acoplado — as três canaletas
 
@@ -1232,6 +1283,8 @@ cad/fechado.py     folha fechado.png: os dois furos do pe antes/depois, com
                    a chapa do fundo em planta tirada do solido
 cad/rasgos.py      folha rasgos.png: duas faixas -> tres, o rasgo em tamanho
                    real e a varredura peso x largura (o peso nao segue ela)
+cad/frente.py      folha frente.png: o rasgo inferior frontal, com o teste de
+                   RAIO (de dentro para fora, sem referencia) que o pegou
 cad/visor3d.py     regera a malha embutida e os numeros do visor3d.html a
                    partir do solido -- para o visor nao envelhecer calado
 cad/visor3d.html   visor 3D interativo (artifact): o solido embutido em 628 KB

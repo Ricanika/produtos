@@ -3,17 +3,18 @@
 Fatiado com PrusaSlicer 2.7.2 a partir de `cad/cesto-aba.stl` (o mesmo sólido
 do projeto, 200 × 250 × 130 mm, envelope real 204 × 241 × 132,5 mm).
 
-Refatiado em 22/09 duas vezes: depois de fechar os dois furos do pé (chapa do
-fundo inteira, parede cega até z = 40, bolsa cega sob o pé) e depois de pôr
-**três faixas de listra** com rasgo de 6 × 18,3 mm. Todo `.gcode` desta pasta
-é da peça atual. O tempo subiu ~50 min porque são 135 rasgos em vez de 65 —
+Refatiado em 22/09 três vezes, acompanhando as correções: os dois furos do pé
+(chapa do fundo inteira, parede cega até z = 40, bolsa cega sob o pé), as
+**três faixas de listra** com rasgo de 6 × 18,3 mm, e a **tapa do rasgo
+inferior frontal**. Todo `.gcode` desta pasta é da peça atual. O tempo subiu
+~50 min em relação à peça de duas faixas porque são 135 rasgos em vez de 65 —
 mais perímetro para contornar.
 
 | arquivo | bico | camada | filamento | tempo |
 |---|---|---|---|---|
-| `cesto-P-petg-anycubic.gcode` | 0,4 mm | 0,30 mm | **219 g** | **15 h 44 min** |
-| `cesto-P-petg-bico04.gcode` | 0,4 mm | 0,30 mm | 219 g | 15 h 44 min |
-| `cesto-P-petg-bico06.gcode` | 0,6 mm | 0,40 mm | 231 g | **8 h 39 min** |
+| `cesto-P-petg-anycubic.gcode` | 0,4 mm | 0,30 mm | **220 g** | **15 h 46 min** |
+| `cesto-P-petg-bico04.gcode` | 0,4 mm | 0,30 mm | 220 g | 15 h 47 min |
+| `cesto-P-petg-bico06.gcode` | 0,6 mm | 0,40 mm | 232 g | **8 h 40 min** |
 
 **Para imprimir você usa UM arquivo só: o `.gcode` do seu bico.** Os dois são
 a mesma peça, fatiada de dois jeitos — escolha pelo bico que está na máquina.

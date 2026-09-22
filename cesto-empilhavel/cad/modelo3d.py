@@ -660,6 +660,41 @@ def _pe_bolsa(env):
     return out
 
 
+def _tapa_frente(fora, sil):
+    """Fecha o RASGO INFERIOR FRONTAL: parede de T_PAREDE sobre o chanfro do pe.
+
+    O chanfro do pe (45 graus, CHANFRO_PE = 36) corta a casca na faixa de
+    baixo da frente. Ele passa POR DENTRO da parede ate z = 10,63 mm -- a
+    conta e (CHANFRO_PE - (PROF/2 - BASE_Y/2)) / (1 - TAN) -- de modo que
+    entre o topo da chapa do fundo (z = 7) e essa cota a parede da frente
+    simplesmente NAO EXISTE. Medido no solido em x = 0: em z = 7,5 e em
+    z = 8,0 nao ha material nenhum na frente. Um rasgo de ~3 mm de altura na
+    largura inteira da frente, com a borda da chapa servindo de RAMPA para
+    ele: exatamente por onde peca miuda escorre e sai (pedido de 22/09).
+
+    E ainda: de z = 8,85 a 10,63 a parede sobrevivia como LAMINA de 0 a
+    1,4 mm. Secao dessa ordem nao enche na injecao -- sairia rebarba ou falha,
+    nao parede.
+
+    A tapa e uma parede de T_PAREDE deitada SOBRE o plano do chanfro: a
+    silhueta menos ela mesma deslocada T_PAREDE na normal do chanfro (45
+    graus, logo T_PAREDE/raiz(2) em cada eixo). Intersectada com `fora` ela
+    TERMINA SOZINHA onde o chanfro sai da casca e a parede de verdade comeca
+    -- nao ha cota para acertar a mao, e se CHANFRO_PE mudar a tapa acompanha.
+
+    Saida de molde: a face externa dela E o proprio plano do chanfro, que ja e
+    a silhueta da peca; a interna e paralela, e subindo o vao interno so
+    cresce. Sai nos dois lados sem nada novo. Por dentro fica uma transicao
+    chanfrada de 3,6 mm no pe da parede da frente -- que de quebra ajuda a
+    varrer o cesto.
+    """
+    d = T_PAREDE / np.sqrt(2.0)
+    casca_sil = sil - Pos(0, d, d) * sil
+    faixa = Pos(0, -PROF / 2 + 20.0, (H_PE + 14.0) / 2) * Box(
+        LARG + 60, 40.0, 14.0 - H_PE)
+    return casca_sil & fora & faixa
+
+
 def _saia_tras():
     """Saia da parede de tras, descendo ate o piso RENTE a parede.
 
@@ -952,7 +987,10 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
         p += _colar() - extrude(interno, ALT + 10, taper=-DRAFT)
 
     # recorta pela silhueta: e isso que da a forma do STL de referencia
-    p = p & extrude(Plane.YZ * silhueta(), LARG / 2 + 30, both=True)
+    sil = extrude(Plane.YZ * silhueta(), LARG / 2 + 30, both=True)
+    p = p & sil
+    # ... e devolve a parede que o chanfro do pe tinha comido na frente
+    p += _tapa_frente(fora, sil)
 
     # --- vazado ---
     # Colunas calculadas UMA vez, na cota mais BAIXA do campo (onde a parede
