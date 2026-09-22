@@ -850,7 +850,7 @@ esvazia o pé nos 40 mm de baixo é uma **bolsa cega** aberta no piso,
 | parede abre em z = | 1,6 mm | **40 mm** |
 | passo encaixado | 46,80 mm | 46,80 mm |
 | passo empilhado | 130,00 mm | 130,00 mm |
-| peso em PP | 165,1 g | 168,4 g |
+| peso em PP | 165,7 g | 169,0 g |
 
 (os pesos absolutos são os da peça ATUAL — três faixas de listra e a tapa da
 frente, que vieram depois; o delta da correção do pé é o mesmo +3,3 g)
@@ -923,9 +923,9 @@ listras continuar em **5 mm** — o ritmo do desenho não muda, só o vão.
 | rasgo | 10 × 31,5 mm | **6 × 18,3 mm** |
 | vão por rasgo | 315 mm² | **110 mm²** — um terço |
 | nervura entre rasgos | 5 mm | 5 mm |
-| nº de rasgos | 65 | 135 |
-| área aberta total | 18.709 mm² | 12.892 mm² |
-| peso em PP | 161,0 g | **168,4 g** |
+| nº de rasgos | 61 | 123 |
+| área aberta total | 18.649 mm² | 12.445 mm² |
+| peso em PP | 161,1 g | **169,0 g** |
 
 **O achado que mudou a decisão: o peso quase não depende da largura do rasgo.**
 Estreitar a listra encurta o passo, entram mais colunas e a área aberta se
@@ -934,24 +934,24 @@ rasgos, que é custo de fecha-macho no molde):
 
 | W/P | rasgos | peso | área aberta |
 |---|---|---|---|
-| 8/13 | 111 | 167,3 g | 13.715 mm² |
-| 7/12 | 123 | 167,5 g | 13.575 mm² |
-| 6/13 | 123 | 169,8 g | 11.769 mm² |
-| **6/11** | **135** | **168,4 g** | **12.892 mm²** |
-| 6/10 | 145 | 167,1 g | 13.873 mm² |
-| 5/11 | 135 | 170,9 g | 10.889 mm² |
-| 5/9 | 167 | 167,8 g | 13.330 mm² |
-| 4/8 | 201 | 168,0 g | 13.187 mm² |
+| 8/13 | 111 | 166,3 g | 14.576 mm² |
+| 7/12 | 117 | 167,5 g | 13.628 mm² |
+| 6/13 | 111 | 170,5 g | 11.218 mm² |
+| **6/11** | **123** | **169,0 g** | **12.445 mm²** |
+| 6/10 | 139 | 166,9 g | 14.052 mm² |
+| 5/11 | 123 | 171,4 g | 10.503 mm² |
+| 5/9 | 167 | 166,7 g | 14.210 mm² |
+| 4/8 | 183 | 168,7 g | 12.634 mm² |
 
-3,8 g de espalhamento numa peça de 168 — e a variação segue a **área aberta**,
-não a largura. Quem pesa são duas outras coisas: o **número de faixas** (+7,4 g
+5,1 g de espalhamento numa peça de 169 — e a variação segue a **área aberta**,
+não a largura. Quem pesa são duas outras coisas: o **número de faixas** (+7,9 g
 de 2 para 3, porque cada faixa a mais é uma nervura de 8 mm dando a volta na
 peça inteira, o que também é o que segura a parede contra embarrigar sob a
 pilha) e a área aberta total. Logo o tamanho do rasgo é decisão de **função** —
 o que não pode passar por ele — e não de peso.
 
-Se quiser barrar também o que tem 5 mm: `5/9` custa o mesmo peso (167,8 g) e
-sobe de 135 para 167 rasgos, 32 fecha-machos a mais. `4/8` já são 201.
+Se quiser barrar também o que tem 5 mm: `5/9` custa o mesmo peso (166,7 g) e
+sobe de 123 para 167 rasgos, 44 fecha-machos a mais. `4/8` já são 183.
 
 A frente fica com **duas** faixas em vez de três porque o arco da borda só
 deixa 82,2 mm de altura útil ali; as faixas dela são recalculadas para
@@ -1007,7 +1007,7 @@ paralela, e subindo o vão só cresce.
 | raios que escapam (z 7,5) | 135 de 720 | **0** |
 | parede em z = 7,5 | 0 mm | **2,18 mm** |
 | parede em z = 9,5 | 0,63 mm | **2,18 mm** |
-| peso em PP | 167,7 g | 168,4 g |
+| peso em PP | 168,2 g | 169,0 g |
 
 Custa 0,7 g, e por dentro fica uma transição chanfrada de 3,6 mm no pé da
 parede da frente — que de quebra ajuda a varrer o cesto. Encaixe 46,80 e
@@ -1015,6 +1015,49 @@ empilhamento 130,00 inalterados.
 
 Arquivos: `cad/frente.py` (folha `frente.png`, com o leque de raios em planta e
 o corte no pé da frente em zoom 1:1).
+
+#### As colunas de listra da lateral, ancoradas no pé
+
+"Nas duas laterais, colado no pé, temos 3 buracos verticais que estão cortados,
+retire eles, e aproxime os outros 3 furos para mais próximo do pé."
+
+A grade de colunas da lateral vinha de `grade()`, **centrada em y = 0** — ela
+não sabia da existência do pé. Com passo de 11 mm e o pé em y = −58, duas
+colunas caíam em cima dele:
+
+| coluna | folga até a pegada do pé (no topo do campo) | |
+|---|---|---|
+| y = −55 | −9,99 mm | dentro do pé, escondida atrás dele |
+| y = −66 | −4,99 mm | **cortada pela aresta do pé** — a que o cliente viu |
+| y = −44 | +1,01 mm | lasca de 1 mm de parede |
+| y = −77 | +6,01 mm | a que ele pediu para aproximar |
+
+Note a assimetria: 6,01 mm de um lado do pé e 1,01 mm do outro. E aquele
+1,01 mm é justo onde o pé descarrega a pilha na casca — um ligamento de 1 mm
+de largura por 1,4 de espessura, que não é parede.
+
+A pegada do pé **cresce com z** (meia-largura `L/2 + ky·z`: 6,80 mm em z = 40 e
+9,99 mm em z = 111), então quem manda é a cota mais alta do campo. `cols_lateral()`
+gera as colunas **do pé para fora**, nos dois sentidos: a primeira de cada lado
+a `LIS_FOLGA_PE = 4` mm da pegada, e dali em diante passo `LIS_P`. Assim a
+nervura entre listras fica em `LIS_P − LIS_W` = 5 mm em toda a lateral e a folga
+até o pé é 4 mm **dos dois lados, por construção** — não há cota para acertar à
+mão, e se o pé mudar de posição ou de largura as colunas acompanham.
+
+| | antes | depois |
+|---|---|---|
+| colunas na lateral | 15 (−77 … +77) | 13 (−75 … +80) |
+| colunas cortadas pelo pé | 2 | **0** |
+| folga até o pé, lado da frente | 6,01 mm | **4,00 mm** |
+| folga até o pé, lado de trás | 1,01 mm | **4,00 mm** |
+| nº de rasgos | 135 | 123 |
+| peso em PP | 168,4 g | **169,0 g** |
+
+Encaixe 46,80 e empilhamento 130,00 inalterados — as listras moram na parede,
+entre z = 40 e 111, longe da aba, do friso e da chapa.
+
+Arquivos: `cad/colunas.py` (folha `colunas.png`, com o antes/depois no mesmo
+ponto de vista do print do cliente e a tabela de folgas).
 
 ### 4.3 Acoplado — as três canaletas
 
@@ -1285,6 +1328,13 @@ cad/rasgos.py      folha rasgos.png: duas faixas -> tres, o rasgo em tamanho
                    real e a varredura peso x largura (o peso nao segue ela)
 cad/frente.py      folha frente.png: o rasgo inferior frontal, com o teste de
                    RAIO (de dentro para fora, sem referencia) que o pegou
+
+cad/colunas.py     folha colunas.png: as colunas de listra da lateral antes e
+                   depois de serem ancoradas no pe, com a tabela de folgas
+
+O vazado da lateral: cols_lateral() gera as colunas ANCORADAS NO PE, nao numa
+grade centrada em y = 0 -- e o que garante nervura de 5 mm em toda a lateral
+e LIS_FOLGA_PE de folga ate a pegada do pe, dos dois lados.
 cad/visor3d.py     regera a malha embutida e os numeros do visor3d.html a
                    partir do solido -- para o visor nao envelhecer calado
 cad/visor3d.html   visor 3D interativo (artifact): o solido embutido em 628 KB

@@ -267,6 +267,15 @@ LIS_H = 18.0              # altura ALVO da listra (o numero de faixas sai dela)
 #   4/8     201   167,3 g   13187
 LIS_WEB = 8.0             # nervura horizontal entre as faixas
 LIS_MIN = 9.0             # listra menor que isso e descartada
+# FOLGA entre a listra e a PEGADA DO PE, na lateral. A grade global de
+# colunas (centrada em y = 0) nao sabia do pe e deixava duas colunas em cima
+# dele: uma CORTADA pela aresta -- o cliente viu e pediu para tirar (22/09) --
+# e outra escondida atras. E as duas vizinhas ficavam a distancias diferentes:
+# 6,0 mm de um lado e 1,01 mm do outro, uma lasca de parede justo onde o pe
+# descarrega na casca. Agora as colunas da lateral nascem DO PE para fora
+# (cols_lateral), entao a nervura fica em LIS_P - LIS_W em toda a lateral e a
+# folga ate o pe e esta, dos dois lados, por construcao.
+LIS_FOLGA_PE = 4.0
 
 TAN = np.tan(np.radians(DRAFT))
 BASE_X = LARG - 2 * ALT * TAN
@@ -375,6 +384,28 @@ def _listra(w, z0, z1, plano, comp):
     """
     sk = RectangleRounded(w, z1 - z0, w / 2 - 0.001)
     return Pos(0, 0, (z0 + z1) / 2) * extrude(plano * sk, comp, both=True)
+
+
+def cols_lateral():
+    """Colunas de listra da lateral, ANCORADAS NO PE em vez de em y = 0.
+
+    A pegada do pe cresce com z (meia-largura L/2 + ky*z), entao quem manda e
+    a cota mais ALTA do campo de listras -- e la que ele e mais largo. A
+    primeira coluna de cada lado fica a LIS_FOLGA_PE da pegada, e dali em
+    diante o passo e LIS_P ate acabar a lateral. O limite e o mesmo da grade
+    antiga, para o campo nao crescer por acidente.
+    """
+    yc, L, _, ky, _, _ = PES[0]
+    meia = L / 2 + ky * listras()[-1][1]          # pegada no topo do campo
+    d0 = meia + LIS_W / 2 + LIS_FOLGA_PE
+    lim = (secao(BANDA, T_RIM)[1] - LIS_W - 30) / 2
+    out = []
+    for s in (-1, 1):
+        y = yc + s * d0
+        while abs(y) <= lim:
+            out.append(y)
+            y += s * LIS_P
+    return sorted(out)
 
 
 def grade(extensao, passo):
@@ -1001,7 +1032,7 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
         n = 0
     elif VAZADO == "listra":
         cols_fundo = grade(secao(BANDA, T_RIM)[0] - LIS_W - 30, LIS_P)
-        cols_lat = grade(secao(BANDA, T_RIM)[1] - LIS_W - 30, LIS_P)
+        cols_lat = cols_lateral()
         fl_lat = listras(z_topo)
         # a frente tem menos altura util: o arco da borda manda
         zf = min(z_livre_frente(x, LIS_W / 2, FOLGA_F) for x in cols_fundo)
