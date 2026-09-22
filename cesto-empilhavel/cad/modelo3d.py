@@ -131,6 +131,18 @@ ABA_F = 2.0                   # folga do recorte alem do pe
 NERV_P = 24.0                 # profundidade do pe em x (>20,6: encosta na parede)
 NERV_T = 1.6                  # parede do pe da frente
 NERV_RC = 4.2                 # raio das pontas do pe em planta (bico redondo)
+# ALTURA EM QUE A CAVIDADE DO PE COMECA (pedido de 22/09: e o tamanho P, para
+# coisas miudas -- nada pode ter por onde cair).
+# A cavidade do pe e um bloco vertical e, subtraida da peca inteira, ela
+# tambem furava a CHAPA DO FUNDO (dois slots de 31,8 x 7,4 mm, 227 mm2 cada)
+# e abria a parede desde z = 1,6 -- dois caminhos do interior do cesto para a
+# mesa. Ela so e necessaria onde o pe da peca ENCAIXADA passa, ou seja de
+# z = passo_encaixe (46,8) para cima; abaixo disso nao serve para nada.
+# Em 40 mm, que e onde comeca a primeira faixa de listras: a chapa fica
+# inteira, a parede fica cega nos 33 mm acima do piso e, de dentro, a janela
+# nasce junto com o vazado -- 6,8 mm de sobra para a sola da peca de cima.
+Z_CAV = 40.0
+CAV_MEMB = 2.0                # membrana que separa a cavidade da bolsa de baixo
 # Deslocamento em y que troca ENCAIXAR por EMPILHAR. 14 mm nao serve mais:
 # com um pe por lateral o friso passou para o pe da FRENTE, cujo recorte na
 # aba e mais largo (meia-boca 9,25 mm), e a perna do friso caia DENTRO do
@@ -169,7 +181,19 @@ SAIA_B = 4.0                  # espessura da aresta de apoio
 # escorregar de volta para a posicao de encaixe, a perna em x prende para
 # fora. O rim continua plano em todo o resto.
 FRISO_H, FRISO_T = 2.5, 1.2   # altura acima da aba e espessura da paredinha
-FRISO_F = 0.3                 # folga entre o friso e o piso do pe
+# FOLGA do berco do friso. Era 0,3, e medindo o empilhamento em 22/09 isso
+# apareceu como defeito: em x a sobra entre o piso do pe e a perna do friso
+# ficava em 0,21 mm -- MENOS do que a tolerancia da propria injecao (±0,4 mm
+# em 200 mm de PP, 0,2%). Ou seja, na pratica as duas pecas podiam nem
+# assentar. Em 0,8 mm o berco continua travando (para escapar da aba o pe
+# precisa andar 3,1 mm, e para voltar a posicao de encaixe, 21 mm), e agora
+# ha folga de montagem.
+FRISO_F = 0.8
+# Saida das pernas do friso. Sem ela as pernas eram caixas de 0 grau: ruim
+# para o molde e, pior, o berco nao tinha boca -- entrava com a folga exata.
+# Com saida o friso fica mais estreito no alto, ou seja o berco ABRE para
+# cima: o pe da peca de cima cai num funil e se centra sozinho.
+FRISO_S = 8.0
 # ACOPLAMENTO na borda: cauda de andorinha em PLANTA no bordo da aba.
 # So e possivel por causa do encaixe raso: com passo de encaixe de 47 mm, tudo
 # o que estiver acima de ALT - (ALT - 47) = 47 mm do topo da peca de cima fica
@@ -560,19 +584,59 @@ def _pes_cavidade():
     """Cavidade interna do pe -- subtraida da PECA INTEIRA, nao do pe.
 
     Subtraida da peca toda ela faz tres coisas de uma vez:
-      1. esvazia o pe (casca de `t`), deixando so o piso de apoio embaixo;
+      1. esvazia o pe (casca de `t`) de Z_CAV para cima;
       2. vaza a parede atras do pe (janela de L - 2*t, escondida de fora pela
          propria face externa do pe);
       3. abre o recorte na aba por onde a lingua do pe de cima desce.
     Sem a janela (2) o piso do pe de cima bateria na parede da peca de baixo:
     ele nasce na parede e avanca mais de 20 mm para fora, tem de atravessa-la.
+
+    Comeca em Z_CAV e nao no piso: a janela (2) so e necessaria de z = passo
+    de encaixe para cima, que e onde o pe da peca de cima realmente passa.
+    Abaixo dali ela furava a chapa do fundo e a parede a troco de nada. O que
+    esvazia o pe la embaixo e _pe_bolsa(), por baixo.
+
+    A janela e a cavidade andam JUNTAS por necessidade geometrica, nao por
+    escolha: se a parede ficasse inteira, o macho que forma a cavidade seria
+    um dedo solto dentro do pe, e como o cone recua descendo (0,213/mm) mais
+    depressa do que a face externa do pe avanca (0,046/mm), esse dedo
+    ENGROSSA para baixo -- contra-saida, nao sai do molde. Por isso onde o pe
+    e oco a parede e vazada, e onde a parede e cega o pe e esvaziado de baixo.
     """
     out = None
     for sx in (-1, 1):
         for yc, L, t, ky, r00, _ in PES:
-            c = _pe_bloco(sx, yc, L, ky, r00, ox=t, oy=t, z0=t,
+            c = _pe_bloco(sx, yc, L, ky, r00, ox=t, oy=t, z0=Z_CAV,
                           rc=NERV_RC - t)
             out = c if out is None else out + c
+    return out
+
+
+def _pe_bolsa(env):
+    """Bolsa CEGA sob o pe, aberta no piso -- e ela que esvazia o pe la embaixo.
+
+    Com a cavidade comecando em Z_CAV o pe ficaria MACICO nos primeiros 40 mm:
+    22 x 10 mm de secao por 40 de altura, 8 g de PP em cada pe e uma secao
+    grossa que chuparia a face externa toda. Esta bolsa o esvazia.
+
+    E formada POR BAIXO, entao a secao nao pode diminuir descendo -- e as duas
+    faces do pe fecham para baixo (a externa recua 0,046/mm e a meia-largura
+    em y, 0,045/mm). A bolsa nao pode acompanha-las: a face externa dela e
+    VERTICAL (x = r00 - t) e a largura em y e CONSTANTE (L/2 - t). Assim a
+    parede do pe sai de t no piso e engrossa ate ~3,3 mm no teto da bolsa --
+    a mesma ordem do rim (T_RIM = 3,2), de modo que a secao mais grossa da
+    peca nao muda. Por dentro quem fecha a bolsa e a propria casca (- env).
+
+    CEGA por causa de CAV_MEMB: sobra uma membrana de 2 mm entre o teto da
+    bolsa e o piso da cavidade. E ela que garante que nao ha caminho nenhum
+    do interior do cesto para fora -- de dentro da peca a bolsa nao existe.
+    """
+    out = None
+    for sx in (-1, 1):
+        for yc, L, t, ky, r00, _ in PES:
+            b = _caixa(sx, 40.0, r00 - t, yc - (L / 2 - t), yc + (L / 2 - t),
+                       -1.0, Z_CAV - CAV_MEMB) - env
+            out = b if out is None else out + b
     return out
 
 
@@ -650,16 +714,22 @@ def _frisos():
             h = pe_apoio_h(L, r00, NERV_RC)
             ya = yc + DESLOC - h - FRISO_F              # face que o pe encosta
             yb = yc + DESLOC + h + FRISO_F
+            # a secao nominal e a da cota da aba (z = ALT); as pernas
+            # nascem 1 mm abaixo para soldar na aba e afinam subindo
+            g = np.tan(np.radians(FRISO_S))
             pernas = [
                 # perna em y: atravessa a aba, trava o deslocamento
-                _caixa(sx, x0, r00 + FRISO_F + FRISO_T,
-                       ya - FRISO_T, ya, ALT - 1, ALT + FRISO_H),
+                _caixa_s(sx, x0, r00 + FRISO_F + FRISO_T,
+                         ya - FRISO_T - g, ya + g, ALT - 1, ALT + FRISO_H,
+                         FRISO_S),
                 # perna em x: corre ao lado do pe, trava para fora
-                _caixa(sx, r00 + FRISO_F, r00 + FRISO_F + FRISO_T,
-                       ya - FRISO_T, yb + FRISO_T, ALT - 1, ALT + FRISO_H),
+                _caixa_s(sx, r00 + FRISO_F - g, r00 + FRISO_F + FRISO_T,
+                         ya - FRISO_T - g, yb + FRISO_T + g,
+                         ALT - 1, ALT + FRISO_H, FRISO_S),
                 # perna em y do outro lado: fecha o berco
-                _caixa(sx, x0, r00 + FRISO_F + FRISO_T,
-                       yb, yb + FRISO_T, ALT - 1, ALT + FRISO_H),
+                _caixa_s(sx, x0, r00 + FRISO_F + FRISO_T,
+                         yb - g, yb + FRISO_T + g, ALT - 1, ALT + FRISO_H,
+                         FRISO_S),
             ]
             for b in pernas:
                 out = b if out is None else out + b
@@ -750,6 +820,18 @@ def _caixa(sx, x0, x1, y0, y1, z0, z1):
     """Caixa no lado sx (+1 direita, -1 esquerda); x0/x1 sempre positivos."""
     return Pos(sx * (x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2) * \
         Box(x1 - x0, y1 - y0, z1 - z0)
+
+
+def _caixa_s(sx, x0, x1, y0, y1, z0, z1, s):
+    """Caixa com saida de `s` graus por face -- mais ESTREITA no alto.
+
+    A secao nominal e a de z0; em z1 ela perdeu tan(s)*(z1-z0) por face. Usada
+    nas pernas do friso: e o que transforma o berco num funil.
+    """
+    d = np.tan(np.radians(s)) * (z1 - z0)
+    return Pos(sx * (x0 + x1) / 2, (y0 + y1) / 2, z0) * extrude(
+        Rectangle(x1 - x0, y1 - y0), z1 - z0, taper=s) if d < min(
+        x1 - x0, y1 - y0) / 2 else _caixa(sx, x0, x1, y0, y1, z0, z1)
 
 
 def _macho(env, y0, y1, yg1=None):
@@ -958,6 +1040,7 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
         p += _pes_nervura(env)
         p += _saia_tras()
         p -= _pes_cavidade()
+        p -= _pe_bolsa(env)
         p += _frisos()
         for yc in aco_y():
             p += _cauda2(1, yc) - env          # macho na direita

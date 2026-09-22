@@ -38,6 +38,38 @@ def passo_xy(p, dy=0.0, lo=0.0, hi=145.0, tol=0.25):
     return hi
 
 
+def apoios(p, dy, passo, eps=0.3):
+    """As manchas de contato do andar de cima, medidas: baixa eps alem do
+    passo e cada solido da interseccao e um apoio. Area = volume / eps."""
+    try:
+        inter = p & (Pos(0, dy, passo - eps) * p)
+    except Exception:
+        return []
+    out = [(s.volume / eps, s.bounding_box())
+           for s in inter.solids() if s.volume > 0.005]
+    return sorted(out, key=lambda t: -t[0])
+
+
+def folga_friso(p, dy, passo, eixo):
+    """Quanto o andar de cima anda no eixo antes de o friso bater.
+
+    E o numero que importa para a MONTAGEM: folga pequena demais e a peca nem
+    assenta (a propria injecao varia ±0,4 mm em 200 mm de PP)."""
+    d = {"x": (1, 0), "y": (0, 1)}[eixo]
+    lo, hi = 0.0, 4.0
+    while hi - lo > 0.05:
+        mid = (lo + hi) / 2
+        try:
+            v = (p & (Pos(mid * d[0], dy + mid * d[1], passo) * p)).volume
+        except Exception:
+            v = 0.0
+        if v > 0.05:
+            hi = mid
+        else:
+            lo = mid
+    return hi
+
+
 def stl(s, nome):
     export_stl(s, os.path.join(DEST, nome))
     return trimesh.load(os.path.join(DEST, nome))
@@ -61,7 +93,13 @@ def main():
              for dz in (0.0, 8.0, 15.0)]
     print(f"peso {peso:.1f} g | cap {cap:.2f} L | encaixa {pn:.1f} | "
           f"empilha {pe:.1f} (dy {DESLOC:.0f})")
+    ap = apoios(p, DESLOC, pe)
+    a_tot = sum(a for a, _ in ap)
+    fx, fy = folga_friso(p, DESLOC, pe, "x"), folga_friso(p, DESLOC, pe, "y")
     print(f"trava {trava}\nsolta {solta}")
+    print(f"apoios {len(ap)} · {a_tot:.0f} mm2 · " +
+          " | ".join(f"{a:.0f}" for a, _ in ap))
+    print(f"folga do friso: x ±{fx:.2f} mm, y ±{fy:.2f} mm")
 
     # 1 - a peca
     render.salvar(render.render([(m, COR)], direcao=(-0.95, -1.25, -0.70),
@@ -94,7 +132,8 @@ def main():
                                 largura=1050),
                   os.path.join(DEST, "aba-torre.png"))
 
-    folha(peso, cap, pn, pe, n, trava, solta, hz, bb)
+    folha(peso, cap, pn, pe, n, trava, solta, hz, bb,
+          len(ap), a_tot, fx, fy)
 
 
 def imagem(fig, rect, arq, titulo=None, sub=None):
@@ -114,7 +153,8 @@ def imagem(fig, rect, arq, titulo=None, sub=None):
                 color=GRIS, linespacing=1.4)
 
 
-def folha(peso, cap, pn, pe, furos, trava, solta, hz, bb):
+def folha(peso, cap, pn, pe, furos, trava, solta, hz, bb,
+          n_ap, a_ap, fx, fy):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -151,9 +191,10 @@ def folha(peso, cap, pn, pe, furos, trava, solta, hz, bb):
               (f"empilha (desloca {DESLOC:.0f} mm)",
                f"{pe:.1f} mm".replace(".", ",")),
               ("deslocamento p/ empilhar", f"{M.DESLOC:.0f} mm"),
-              ("apoios na aba", "3 (tripé) · 417 mm²"),
+              ("apoios na aba", f"{n_ap} (tripé) · {a_ap:.0f} mm²"),
               ("trava lateral a partir de", "0,6 mm"),
-              ("friso trava o andar em", "y ± e x ± · 0,6 mm"),
+              ("folga de montagem do friso",
+               f"x ±{fx:.1f} · y ±{fy:.1f} mm".replace(".", ",")),
               ("solta levantando", "15 mm"),
               ("peso", f"{peso:.1f} g".replace(".", ",")),
               ("capacidade", f"{cap:.2f} L".replace(".", ",")),

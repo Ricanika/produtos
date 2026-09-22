@@ -817,6 +817,87 @@ do rim de 3,2 mm (20%), que é onde mora a aba e o acoplamento.
 Arquivos: `cad/listras.py` (folha `listras.png`); `VAZADO = "listra"` ou
 `"bolinha"` em `modelo3d.py` alterna os dois desenhos.
 
+#### Os dois furos do pé, fechados — e um teorema de molde
+
+Pedido de 22/09: "é o tamanho P, ou seja, a usabilidade dele é para coisas
+pequenas, miúdas — portanto tanto o furo da base do pé quanto o furo da
+frente, na parte inferior colada com a base, precisam ser fechados".
+
+Os dois furos eram **o mesmo sólido**. A cavidade do pé é um bloco vertical e,
+subtraída da peça inteira, ela não esvaziava só o pé:
+
+| | medido |
+|---|---|
+| slots na chapa do fundo | 2 × 31,8 × 7,4 mm = **194 mm² de furo** |
+| a parede abria em | **z = 1,6 mm** — rente ao piso |
+
+Eram dois caminhos do interior do cesto direto para a mesa. Qualquer coisa
+miúda apoiada no fundo saía pelo slot da chapa; o que entrasse pela janela da
+parede descia dentro do pé e saía por baixo.
+
+**A correção.** A janela na parede só é necessária onde o pé da peça
+ENCAIXADA passa, isto é de `z = passo de encaixe` (46,8 mm) para cima. Abaixo
+dali ela furava a chapa e a parede a troco de nada. Então `Z_CAV = 40` (a cota
+onde começa a primeira faixa de listras, para o desenho não brigar), e o que
+esvazia o pé nos 40 mm de baixo é uma **bolsa cega** aberta no piso,
+`_pe_bolsa()`, separada da cavidade por uma membrana de 2 mm.
+
+| | antes | depois |
+|---|---|---|
+| furo na chapa do fundo | 194 mm² | **0 mm²** |
+| parede abre em z = | 1,6 mm | **40 mm** |
+| passo encaixado | 46,77 mm | 46,77 mm |
+| passo empilhado | 130,00 mm | 130,00 mm |
+| peso em PP | 157,1 g | 160,3 g |
+
+Provado por interseção booleana: `cavidade ∩ parede (z<40) = 0`,
+`cavidade ∩ chapa = 0`, e o mesmo para a bolsa. Medindo a seção cota por cota,
+todo o material que falta abaixo de 40 mm é **exatamente** a bolsa (224 mm² em
+z = 12, 201 em 20, 172 em 30) e nada mais.
+
+**O teorema que apareceu no caminho.** Com dois postiços que saem em +z e −z
+não existe pé oco COM sola fechada. Quem forma a cavidade do pé só chega lá de
+cima, pela janela; se a parede fosse inteira, esse macho seria um dedo solto
+dentro do pé, e como o cone recua 0,213 mm/mm descendo enquanto a face externa
+do pé só avança 0,046, o dedo **engrossa para baixo** — contra-saída. Pela
+outra via, uma bolsa puxada de baixo tem de ser mais larga no piso, então não
+pode ter chapa por cima dela. Logo: **onde o pé é oco a parede é vazada, e onde
+a parede é cega o pé é esvaziado por baixo.**
+
+O preço é a sola: nos 40 mm de baixo ela deixa de ser chapa e vira **coroa**,
+como o fundo de um balde. Apoio de cada pé na aba: 22,7 → **13,2 mm²**. Tripé
+completo 364 + 13 + 13 = **390 mm²** de contato de face plana. Numa coluna de
+4 com 1 kg em cada, o pé pega 11,6 N: pressão de contato 0,88 MPa contra ~30 de
+escoamento do PP (34×), e a aba flete 0,03 mm trabalhando a 5,5 MPa (5×).
+
+#### O empilhamento: a dúvida do cliente estava certa pelo motivo certo
+
+"Pela minha conta, o empilhamento talvez não funcione, medi a distância dos
+pés com o apoio e aparentemente não vai dar certo."
+
+O número que ele mediu existe: **o pé cobre só 3,1 mm dos 10 mm de aba**, e
+cobre a borda INTERNA dela — a ponta do lábio em balanço, não a raiz apoiada
+na parede (que começa em x = 96,25). Mas o empilhamento fecha: passo
+**exatamente na altura, 130,00 mm, com 0,0000 mm³ de interferência**, tripé de
+390 mm², e as contas acima dão 34× e 5× de folga.
+
+O que **não** fechava era outra coisa, que só apareceu ao medir: a folga de
+montagem do berço do friso era de **0,21 mm em x** — menos que a tolerância da
+própria injeção (±0,4 mm em 200 mm de PP, 0,2%). Na prática as duas peças
+podiam nem assentar. Duas correções:
+
+- `FRISO_F` 0,3 → **0,8 mm**: a folga medida vai para ±0,91 mm em x e ±1,22 em
+  y, e o berço continua travando — para escapar da aba o pé precisa andar
+  3,1 mm, e para voltar à posição de encaixe, 21 mm.
+- `FRISO_S = 8°` de saída nas pernas do friso. Eram caixas de 0 grau: ruim para
+  o molde e, pior, o berço não tinha boca. Com saída o friso afina no alto, ou
+  seja o **berço abre para cima** — o pé cai num funil e se centra sozinho.
+
+Arquivos: `cad/fechado.py` (folha `fechado.png`, com a chapa do fundo em planta
+antes/depois tirada do próprio sólido). `cad/aba.py` passou a **medir** os
+apoios e a folga do friso em vez de trazê-los digitados na tabela, que já
+tinham envelhecido calados uma vez.
+
 ### 4.3 Acoplado — as três canaletas
 
 O pedido foi uma **canaleta de ponta a ponta na lateral, macho de um lado e
@@ -1080,7 +1161,11 @@ cad/friso.py       o friso em U na aba, com a trava medida nos 4 sentidos
 cad/abertura.py    tres angulos de abertura no perfil, e a folha abertura.png
 cad/limpo.py       a rodada de acabamento: traseira, pe da frente e planta
 cad/listras.py     bolinhas vs listras e a tabela de onde o peso esta
-cad/visor3d.html   visor 3D interativo (artifact): o solido embutido em 654 KB
+cad/fechado.py     folha fechado.png: os dois furos do pe antes/depois, com
+                   a chapa do fundo em planta tirada do solido
+cad/visor3d.py     regera a malha embutida e os numeros do visor3d.html a
+                   partir do solido -- para o visor nao envelhecer calado
+cad/visor3d.html   visor 3D interativo (artifact): o solido embutido em 628 KB
                    de binario e o desenho em WebGL2 escrito na propria pagina,
                    sem biblioteca externa -- gera-se dele os quatro modos
                    (peca, encaixadas, empilhadas, acopladas)
