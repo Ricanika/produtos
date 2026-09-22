@@ -1,0 +1,7 @@
+
+# STLs intermediarios das folhas de validacao: sao regeraveis rodando o
+# proprio script (fechado.py, listras.py, rasgos.py) e pesam ~5 MB cada.
+# So cesto-aba.stl -- a peca -- e versionado.
+fechado-*.stl
+lis-*.stl
+rasgo-*.stl

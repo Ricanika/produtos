@@ -36,18 +36,45 @@ def vg(x, casas=1):
 
 
 def empacota(m):
-    """Solda os vertices, quantiza em uint16 e devolve o base64."""
-    m = m.copy()
-    m.merge_vertices()
-    v, f = np.asarray(m.vertices, float), np.asarray(m.faces, np.uint32)
-    if len(v) > 65535:
-        raise SystemExit(f"{len(v)} vertices: nao cabe em indice uint16")
+    """Quantiza em uint16, solda no proprio grid e devolve o base64.
+
+    A ORDEM importa. Quantizar depois de soldar deixa triangulos-estilete
+    (que o OCC gera aos montes) achatados a espessura zero: a normal deles
+    passa a ser lixo, o extrator de arestas da pagina ve angulo diedro alto
+    onde a parede e plana e desenha uma teia de linhas de triangulacao sobre a
+    peca. Aconteceu: a malha de 3 faixas tem 110 mil faces e a teia apareceu.
+
+    Aqui: quantiza primeiro, solda os vertices que cairam NO MESMO ponto do
+    grid, e so entao descarta as faces que degeneraram (indice repetido ou
+    area nula). Assim nenhum triangulo sobrevive com normal invertida.
+    """
+    v, f = np.asarray(m.vertices, float), np.asarray(m.faces, np.int64)
     mn, mx = v.min(0), v.max(0)
     esc = np.where(mx > mn, (mx - mn) / 65535.0, 1.0)
     q = np.rint((v - mn) / esc).astype(np.uint16)
-    buf = struct.pack("<6f2I", *mn, *esc, len(v), len(f))
-    buf += q.tobytes() + f.astype(np.uint16).tobytes()
-    print(f"malha: {len(v)} vertices, {len(f)} faces, {len(buf)/1024:.0f} kB "
+
+    # solda no grid: vertices identicos depois de quantizar viram um so
+    uniq, inv = np.unique(q, axis=0, return_inverse=True)
+    f = inv[f]
+
+    # degeneradas: indice repetido, ou area nula depois de soldar
+    vivo = (f[:, 0] != f[:, 1]) & (f[:, 1] != f[:, 2]) & (f[:, 0] != f[:, 2])
+    pos = mn + uniq.astype(float) * esc
+    a, b, c = pos[f[:, 0]], pos[f[:, 1]], pos[f[:, 2]]
+    area = np.linalg.norm(np.cross(b - a, c - a), axis=1) / 2.0
+    vivo &= area > 1e-4
+    n_fora = int((~vivo).sum())
+    f = f[vivo]
+
+    if len(uniq) > 65535:
+        raise SystemExit(
+            f"{len(uniq)} vertices depois de soldar: nao cabe em indice "
+            f"uint16. Ou se baixa a resolucao do STL (export_stl tolerance), "
+            f"ou decodifica() na pagina passa a ler indice uint32.")
+    buf = struct.pack("<6f2I", *mn, *esc, len(uniq), len(f))
+    buf += uniq.tobytes() + f.astype(np.uint16).tobytes()
+    print(f"malha: {len(uniq)} vertices, {len(f)} faces "
+          f"({n_fora} degeneradas fora), {len(buf)/1024:.0f} kB "
           f"(STL {os.path.getsize(STL)/1024:.0f} kB) · resolucao "
           f"{esc.max():.4f} mm")
     return base64.b64encode(buf).decode("ascii")

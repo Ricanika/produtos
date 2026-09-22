@@ -846,9 +846,12 @@ esvazia o pé nos 40 mm de baixo é uma **bolsa cega** aberta no piso,
 |---|---|---|
 | furo na chapa do fundo | 194 mm² | **0 mm²** |
 | parede abre em z = | 1,6 mm | **40 mm** |
-| passo encaixado | 46,77 mm | 46,77 mm |
+| passo encaixado | 46,80 mm | 46,80 mm |
 | passo empilhado | 130,00 mm | 130,00 mm |
-| peso em PP | 157,1 g | 160,3 g |
+| peso em PP | 164,4 g | 167,7 g |
+
+(os pesos absolutos são os da geometria de listra ATUAL — três faixas, que
+vieram depois; o delta da correção do pé é o mesmo +3,3 g)
 
 Provado por interseção booleana: `cavidade ∩ parede (z<40) = 0`,
 `cavidade ∩ chapa = 0`, e o mesmo para a bolsa. Medindo a seção cota por cota,
@@ -897,6 +900,70 @@ Arquivos: `cad/fechado.py` (folha `fechado.png`, com a chapa do fundo em planta
 antes/depois tirada do próprio sólido). `cad/aba.py` passou a **medir** os
 apoios e a folga do friso em vez de trazê-los digitados na tabela, que já
 tinham envelhecido calados uma vez.
+
+#### Três faixas de listra, e o rasgo em um terço
+
+Pedido de 22/09, a última alteração de forma: "os rasgos verticais, temos duas
+linhas, eu quero deixar com 3 linhas, ou seja os rasgos verticais ficarão
+menores... esse produto é para organizar peças pequenas, tem um perigo dos
+produtos saírem por esses rasgos atuais, então preciso diminuir a altura e
+largura desses buracos".
+
+O número de faixas não é digitado: sai da altura-alvo `LIS_H`, e `listras()`
+recalcula a altura real para as faixas preencherem exatamente o campo entre
+`BANDA` (40) e `z_topo` (111). Com `LIS_H = 18` dá n = 3 e altura real de
+18,33 mm. Largura 10 → **6 mm**, e o passo 15 → **11**, para a nervura entre
+listras continuar em **5 mm** — o ritmo do desenho não muda, só o vão.
+
+| | antes | depois |
+|---|---|---|
+| faixas | 2 | **3** |
+| rasgo | 10 × 31,5 mm | **6 × 18,3 mm** |
+| vão por rasgo | 315 mm² | **110 mm²** — um terço |
+| nervura entre rasgos | 5 mm | 5 mm |
+| nº de rasgos | 65 | 135 |
+| área aberta total | 18.709 mm² | 12.892 mm² |
+| peso em PP | 160,3 g | **167,7 g** |
+
+**O achado que mudou a decisão: o peso quase não depende da largura do rasgo.**
+Estreitar a listra encurta o passo, entram mais colunas e a área aberta se
+mantém. Varredura das oito combinações com 3 faixas (peso em PP e nº de
+rasgos, que é custo de fecha-macho no molde):
+
+| W/P | rasgos | peso | área aberta |
+|---|---|---|---|
+| 8/13 | 111 | 166,6 g | 13.715 mm² |
+| 7/12 | 123 | 166,8 g | 13.575 mm² |
+| 6/13 | 123 | 169,1 g | 11.769 mm² |
+| **6/11** | **135** | **167,7 g** | **12.892 mm²** |
+| 6/10 | 145 | 166,4 g | 13.873 mm² |
+| 5/11 | 135 | 170,2 g | 10.889 mm² |
+| 5/9 | 167 | 167,1 g | 13.330 mm² |
+| 4/8 | 201 | 167,3 g | 13.187 mm² |
+
+3,8 g de espalhamento numa peça de 168 — e a variação segue a **área aberta**,
+não a largura. Quem pesa são duas outras coisas: o **número de faixas** (+7,4 g
+de 2 para 3, porque cada faixa a mais é uma nervura de 8 mm dando a volta na
+peça inteira, o que também é o que segura a parede contra embarrigar sob a
+pilha) e a área aberta total. Logo o tamanho do rasgo é decisão de **função** —
+o que não pode passar por ele — e não de peso.
+
+Se quiser barrar também o que tem 5 mm: `5/9` custa o mesmo peso (167,1 g) e
+sobe de 135 para 167 rasgos, 32 fecha-machos a mais. `4/8` já são 201.
+
+A frente fica com **duas** faixas em vez de três porque o arco da borda só
+deixa 82,2 mm de altura útil ali; as faixas dela são recalculadas para
+preencher essa altura (17,08 mm cada), o que desalinha a nervura horizontal na
+quina em 1,25 mm — medi as duas leituras e renderizei: é indistinguível, e a
+alternativa (usar as faixas da lateral e deixar a segunda ser cortada pelo
+arco coluna a coluna) dá exatamente os mesmos 135 rasgos e o mesmo peso.
+
+Encaixe e empilhamento não mudam — os rasgos moram na parede, longe do pé, da
+aba e do friso. Medido: encaixa 46,80 mm, empilha 130,00 mm, 0,0000 mm³.
+
+Arquivos: `cad/rasgos.py` (folha `rasgos.png`, com o rasgo em tamanho real e o
+gráfico peso × largura). `VAZADO = "nenhum"` em `modelo3d.py` constrói a peça
+de parede cheia (184,0 g), que é a referência para medir a área aberta.
 
 ### 4.3 Acoplado — as três canaletas
 
@@ -1163,6 +1230,8 @@ cad/limpo.py       a rodada de acabamento: traseira, pe da frente e planta
 cad/listras.py     bolinhas vs listras e a tabela de onde o peso esta
 cad/fechado.py     folha fechado.png: os dois furos do pe antes/depois, com
                    a chapa do fundo em planta tirada do solido
+cad/rasgos.py      folha rasgos.png: duas faixas -> tres, o rasgo em tamanho
+                   real e a varredura peso x largura (o peso nao segue ela)
 cad/visor3d.py     regera a malha embutida e os numeros do visor3d.html a
                    partir do solido -- para o visor nao envelhecer calado
 cad/visor3d.html   visor 3D interativo (artifact): o solido embutido em 628 KB

@@ -236,17 +236,37 @@ FOLGA_F = 6.0             # idem na frente, onde a borda e o arco da silhueta
 # Substituem as bolinhas (pedido de 21/09): mesma casca, mesmas curvas, mesma
 # estrutura -- muda so o vazado. Uma listra tira mais area que a bolinha que
 # ela substitui, entao a peca sai mais leve sem mexer em parede nenhuma.
-VAZADO = "listra"         # "listra" ou "bolinha" (o desenho antigo)
-LIS_W = 10.0              # largura da listra, no plano da parede
-LIS_P = 15.0              # passo entre listras (web de 5 mm entre elas)
-LIS_H = 28.0              # altura ALVO da listra (o numero de faixas sai dela)
-# Medido: o que pesa nao e a largura nem o passo da listra, e o NUMERO DE
-# FAIXAS -- cada faixa a mais e uma nervura horizontal de LIS_WEB dando a
-# volta na peca inteira. De 3 faixas para 2 sai 6,1 g; mexer na largura de 9
-# para 11 mm rende 0,7 g (e tira colunas). Duas faixas e o minimo razoavel:
-# a nervura do meio e o que segura a parede contra embarrigar sob a pilha.
+VAZADO = "listra"         # "listra", "bolinha" (o desenho antigo) ou "nenhum"
+# TRES FAIXAS e rasgo pequeno (pedido de 22/09): "esse produto e para
+# organizar pecas pequenas, tem um perigo dos produtos sairem por esses rasgos
+# atuais". O rasgo era 10 x 31,5 mm = 315 mm2 de vao por listra; agora e
+# 6 x 18,3 = 110 mm2, um terco, e nada com mais de 6 mm passa.
+# A NERVURA entre listras fica em 5 mm, igual a de antes (LIS_P - LIS_W): o
+# ritmo do desenho e a proporcao de fecha-macho no molde nao mudam, so o
+# tamanho do vao.
+LIS_W = 6.0               # largura da listra, no plano da parede
+LIS_P = 11.0              # passo entre listras (nervura de 5 mm entre elas)
+LIS_H = 18.0              # altura ALVO da listra (o numero de faixas sai dela)
+# Medido: o que pesa nao e a largura da listra, e o NUMERO DE FAIXAS -- cada
+# faixa a mais e uma nervura horizontal de LIS_WEB dando a volta na peca
+# inteira -- e a AREA ABERTA total. De 2 faixas para 3 entram 7,4 g (160,3
+# -> 167,7, medido nesta largura). Ja a
+# largura sai quase de graca, porque estreitar a listra encurta o passo e
+# entram mais colunas: 8/13, 7/12, 6/11, 6/10 e 5/9 pesam todas entre 166,4 e
+# 167,7 g. Ou seja: o tamanho do rasgo e decisao de FUNCAO, nao de peso.
+# Varredura completa (3 faixas, com a area aberta e o numero de furos, que e
+# custo de fecha-macho no molde):
+#   W/P    furos   peso     aberto
+#   8/13    111   166,6 g   13715 mm2
+#   7/12    123   166,8 g   13575
+#   6/13    123   169,1 g   11769
+#   6/11    135   167,7 g   12892   <- escolhido: mantem a nervura de 5 mm
+#   6/10    145   166,4 g   13873
+#   5/11    135   170,2 g   10889
+#   5/9     167   167,1 g   13330   <- se quiser barrar tambem o que tem 5 mm
+#   4/8     201   167,3 g   13187
 LIS_WEB = 8.0             # nervura horizontal entre as faixas
-LIS_MIN = 12.0            # listra menor que isso e descartada
+LIS_MIN = 9.0             # listra menor que isso e descartada
 
 TAN = np.tan(np.radians(DRAFT))
 BASE_X = LARG - 2 * ALT * TAN
@@ -937,7 +957,11 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
     # --- vazado ---
     # Colunas calculadas UMA vez, na cota mais BAIXA do campo (onde a parede
     # e mais estreita), para que todas as faixas usem as mesmas colunas.
-    if VAZADO == "listra":
+    if VAZADO == "nenhum":
+        # parede cheia: e a referencia para medir a AREA ABERTA do vazado
+        # (volume cheio menos volume vazado, sobre a espessura da parede)
+        n = 0
+    elif VAZADO == "listra":
         cols_fundo = grade(secao(BANDA, T_RIM)[0] - LIS_W - 30, LIS_P)
         cols_lat = grade(secao(BANDA, T_RIM)[1] - LIS_W - 30, LIS_P)
         fl_lat = listras(z_topo)

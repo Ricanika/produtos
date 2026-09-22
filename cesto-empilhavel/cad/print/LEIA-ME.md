@@ -1,17 +1,19 @@
 # Impressão 3D em PETG — Cesto Mini Organizador P
 
 Fatiado com PrusaSlicer 2.7.2 a partir de `cad/cesto-aba.stl` (o mesmo sólido
-do projeto, 200 × 250 × 130 mm, envelope real 204 × 241 × 132,8 mm).
+do projeto, 200 × 250 × 130 mm, envelope real 204 × 241 × 132,5 mm).
 
-Refatiado em 22/09, depois de fechar os dois furos do pé: a peça mudou (chapa
-do fundo inteira, parede cega até z = 40, bolsa cega sob o pé), então todo
-`.gcode` desta pasta é da peça nova.
+Refatiado em 22/09 duas vezes: depois de fechar os dois furos do pé (chapa do
+fundo inteira, parede cega até z = 40, bolsa cega sob o pé) e depois de pôr
+**três faixas de listra** com rasgo de 6 × 18,3 mm. Todo `.gcode` desta pasta
+é da peça atual. O tempo subiu ~50 min porque são 135 rasgos em vez de 65 —
+mais perímetro para contornar.
 
 | arquivo | bico | camada | filamento | tempo |
 |---|---|---|---|---|
-| `cesto-P-petg-anycubic.gcode` | 0,4 mm | 0,30 mm | **210 g** | **14 h 55 min** |
-| `cesto-P-petg-bico04.gcode` | 0,4 mm | 0,30 mm | 210 g | 14 h 56 min |
-| `cesto-P-petg-bico06.gcode` | 0,6 mm | 0,40 mm | 222 g | **8 h 19 min** |
+| `cesto-P-petg-anycubic.gcode` | 0,4 mm | 0,30 mm | **219 g** | **15 h 44 min** |
+| `cesto-P-petg-bico04.gcode` | 0,4 mm | 0,30 mm | 219 g | 15 h 44 min |
+| `cesto-P-petg-bico06.gcode` | 0,6 mm | 0,40 mm | 231 g | **8 h 39 min** |
 
 **Para imprimir você usa UM arquivo só: o `.gcode` do seu bico.** Os dois são
 a mesma peça, fatiada de dois jeitos — escolha pelo bico que está na máquina.
@@ -105,11 +107,11 @@ vale nos outros dois. O que mudou em relação ao perfil genérico:
   mas não no da S1, e um valor errado estraga o canto
 - sem purga manual e sem `G28` no start — quem faz isso é o `G9111`
 
-Conferido no arquivo gerado: `G9111 bedTemp=80 extruderTemp=245` na linha 190
+Conferido no arquivo gerado: `G9111 bedTemp=80 extruderTemp=245` na linha 189
 (logo depois da miniatura), miniatura de 230 × 110 conferida byte a byte
 (cabeçalho PNG válido, dimensões reais 230 × 110, tamanho declarado igual ao
-real), E relativo com `G92 E0` por camada, suporte só entre z 0,3 e 5,1 mm,
-tudo dentro de 250 × 250 × 250 (x 10…227, y 4,8…245, z até 132,6) e só
+real), E relativo com `G92 E0` por camada, suporte só entre z 0,3 e 4,9 mm,
+tudo dentro de 250 × 250 × 250 (x 10…227, y 4,8…245, z até 132,8) e só
 comandos que o Klipper conhece — G1/G21/G90/G91/G92 e
 M83/M84/M104/M106/M107/M109/M117/M140/M190/M400. Nenhum M205, M900 ou M420.
 
