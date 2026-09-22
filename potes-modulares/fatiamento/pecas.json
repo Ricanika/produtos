@@ -7,13 +7,13 @@
  "saida": "prep",
  "pecas": [
   {
-   "nome": "tampa",
-   "stl": "../stl/impressao/tampa.stl",
+   "nome": "tampa_pe",
+   "stl": "../stl/impressao/tampa-pe.stl",
    "flip": true
   },
   {
-   "nome": "tampa_pe",
-   "stl": "../stl/impressao/tampa-pe.stl"
+   "nome": "tampa_teca",
+   "stl": "../stl/impressao/tampa-teca.stl"
   },
   {
    "nome": "pote600_fundoplano",

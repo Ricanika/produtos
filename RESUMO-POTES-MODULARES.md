@@ -1,6 +1,6 @@
 # Potes retangulares modulares em PP — resumo para retomar em outro chat
 
-**Projeto 115 do ERP (Nitron) · Revisão 6 · 21/09/2026**
+**Projeto 115 do ERP (Nitron) · Revisão 7 · 22/09/2026**
 Branch: `claude/serene-johnson-ja8az8` · pasta `potes-modulares/`
 
 Este arquivo é auto-contido: cole ele num chat novo e o contexto está todo aqui.
@@ -20,7 +20,22 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
 4. **Parede reta**, não conada, com cantos arredondados.
 5. **Sem trava**, acabamento liso.
 6. Validar tudo contra o parque de injetoras real (via MCP Sankhya / Nitron).
-7. **(revisão 6)** A tampa PE **fecha por fora**: saia por fora da borda, garra engatando sob o
+7. **(revisão 7 — mudança de arquitetura, a partir de referência física)** Saem a **aba em U**, o
+   **pé embutido** e a garra da tampa. Entram o **colar de borda** (liso, arredondado em cima,
+   sobressaindo 3,50 mm/lado, cuja face de baixo é a aresta de engate), o **rodapé reto** para IML
+   e **6 abas de trava** na tampa. As duas tampas passam a usar **o mesmo filete de TPE** (objetivo
+   desde a revisão 4). A teca vira **placa maciça de 8 mm com friso** — e o ponto em aberto de como
+   ela empilharia some, porque **o topo da placa é o plano modular**.
+   **A conta que quase não fechou:** sem pé, quem desce na bandeja é o fundo reto do pote de cima,
+   e ele tem de caber na boca. Precisa de 3,70 mm/lado, o colar paga 4,00 — **folga de 0,30 mm**.
+   **O que custou:** medida máxima de 145,7 para 154,8 mm; área projetada 125 → 146 cm², e com isso
+   o 600 ml **perde a classe de 160 t** e volta para 200 t. E apareceu um número novo: **a tampa
+   come volume útil** — a teca leva 115 ml do pote de 600, 19% (decisão em aberto: rotular por
+   borda ou re-resolver).
+   **Três erros pegos por verificação, não por leitura:** filete 0,40 mm aquém da boca (não vedaria
+   nada), metade das abas espelhada no visualizador (volume negativo cancelando as outras), e o STL
+   saindo com Y para cima em vez de Z. Nenhum deles é acusado por volume assinado ou normais.
+8. **(revisão 6)** A tampa PE **fecha por fora**: saia por fora da borda, garra engatando sob o
    lábio da aba em U. Princípio oposto ao plug da teca, na mesma borda, **sem mudar uma cota do
    pote** — o lábio já dava 3,04 mm/lado de ressalto e a garra usa 0,80. Resina **PEAD HA 7260
    IF 20 a R$ 9,34/kg** (a mais barata da casa depois do moído), tampa de 27,6 g a R$ 0,26.
@@ -30,13 +45,13 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
    Dois pontos abertos: a retenção depende da rigidez do deck (o aro da saia dá 3 gf, então pede
    elemento finito ou protótipo), e a **tampa de teca não pode ser o plug de parede fina** — em
    maciço, precisa do poço da bandeja usinado ou não empilha.
-8. **(estudo, 21/09/2026 — não implementado)** Pedido de referência à vedação da Tupperware.
+9. **(estudo, 21/09/2026 — não implementado)** Pedido de referência à vedação da Tupperware.
    Mecanismo levantado: canal em U na tampa que engole um cordão da borda, apertando-o de
    **faces opostas** (US2487400, de 1949, expirada, "nonsnap"). O burp não dá para copiar — a
    tampa deles é membrana, a nossa é datum de empilhamento. Dois caminhos orçados (com e sem
    mexer no molde do corpo), 4,3 e 5,1 kgf de arranque. **Decisão: fica como estudo**, seção 13
    do README. A linha segue na revisão 6.
-9. **(revisão 5)** O pote tinha ficado largo e muito arredondado em relação ao render de
+10. **(revisão 5)** O pote tinha ficado largo e muito arredondado em relação ao render de
    referência. Corrigido para **frente estreita e pote fundo, canto R10** — escolhido de propósito
    o caminho que mantém altura, módulo, curso de abertura e classe de injetora. Custou **+17,6 g**
    de resina nos quatro corpos e deixou a face comprida do 2,4 L **3,8× mais flexível** (única
@@ -46,16 +61,16 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
 
 ## 2. A linha, como está fechada
 
-**Corpo 139,7 × 79,8 mm · 145,7 × 85,8 mm na aba da borda · canto R10 · saída 0,5°/lado ·
+**Colar da borda 148,6 × 84,9 mm · corpo 141,6 × 77,9 mm (reto até o fundo) · canto R10 · saída 0,5°/lado ·
 módulo 60 mm · fundo 2,0 mm igual nos quatro · parede da borda 1,40 mm igual nos quatro ·
-pé embutido 130,9 × 71,0 mm igual nos quatro (derivado da bandeja da tampa, não escolhido)**
+SEM pé embutido: rodapé reto para IML · colar de 5,0 mm sobressaindo 3,50 mm/lado**
 
 | Tamanho | Altura corpo | Passo | Parede | Peso corpo | Resina (PP a R$ 11,06/kg) |
 |---|---|---|---|---|---|
-| 600 ml | 62,0 mm | 60 | 1,15 mm | 45,4 g | R$ 0,50 |
-| 1,2 L | 122,0 mm | 120 | 1,20 mm | 73,0 g | R$ 0,81 |
-| 1,8 L | 182,0 mm | 180 | 1,30 mm | 105,8 g | R$ 1,17 |
-| 2,4 L | 242,0 mm | 240 | 1,40 mm | 142,5 g | R$ 1,58 |
+| 600 ml | 62,0 mm | 60 | 1,15 mm | 47,0 g | R$ 0,52 |
+| 1,2 L | 122,0 mm | 120 | 1,20 mm | 74,6 g | R$ 0,83 |
+| 1,8 L | 182,0 mm | 180 | 1,30 mm | 107,4 g | R$ 1,19 |
+| 2,4 L | 242,0 mm | 240 | 1,40 mm | 144,1 g | R$ 1,59 |
 
 Empilhamento confere: `600×4` = `1,2 L×2` = `600+600+1,2 L` = `600+1,8 L` = `2,4 L` = 240 mm.
 

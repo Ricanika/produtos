@@ -13,8 +13,8 @@ saem duas versoes do 600 ml:
 
 As areas de contato sao MEDIDAS na malha, nao digitadas: numero fixo aqui ja
 ficou defasado uma vez, quando o footprint mudou de 121,2 para 139,7 mm.
-  tampa.stl                perfil plug (o da tampa de teca). Imprime invertida.
-  tampa-pe.stl             sobretampa de encaixe externo, 100% PE.
+  tampa-pe.stl             tampa com trava, 6 abas. Imprime em pe.
+  tampa-teca.stl           placa macica - so para conferir encaixe (em teca e CNC).
 
 Uso:  python3 gera-3d-impressao.py
 """
@@ -27,6 +27,11 @@ g = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(g)
 
 SEG = 24          # o dobro do padrao: canto mais liso no prototipo
+
+
+def altura(tris):
+    zs = [v[2] for t in tris for v in t]
+    return max(zs) - min(zs)
 
 
 def contato(tris, tol=1e-6):
@@ -66,19 +71,20 @@ def main():
     tp = g.tampa_pe(SEG)
     g.grava_stl(os.path.join(out, 'tampa-pe.stl'), tp.tris, 'tampa-pe')
     inv_pe = [[(v[0], -v[1], -v[2]) for v in tri] for tri in tp.tris]
-    print(f"tampa-pe.stl             {len(tp.tris):5d} tri | altura 10,8 mm | "
-          f"contato {contato(tp.tris):5.0f} mm2 de pe, {contato(inv_pe):5.0f} mm2 invertida")
+    print(f"tampa-pe.stl             {len(tp.tris):5d} tri | altura {altura(tp.tris):.1f} mm | "
+          f"contato {contato(tp.tris):5.0f} mm2 de pe, {contato(inv_pe):5.0f} mm2 invertida"
+          f" -> IMPRIME INVERTIDA (de pe apoia so na ponta das 6 abas)")
 
-    t = g.tampa(SEG)
-    g.grava_stl(os.path.join(out, 'tampa.stl'), t.tris, 'tampa')
-    inv = [[(v[0], -v[1], -v[2]) for v in tri] for tri in t.tris]
-    print(f"tampa.stl                {len(t.tris):5d} tri | altura 13,5 mm | "
-          f"contato {contato(t.tris):5.0f} mm2 de pe, {contato(inv):5.0f} mm2 "
-          f"invertida -> imprime invertida, suporte so no poco da bandeja")
+    tc = g.tampa_teca(SEG)
+    g.grava_stl(os.path.join(out, 'tampa-teca.stl'), tc.tris, 'tampa-teca')
+    inv = [[(v[0], -v[1], -v[2]) for v in tri] for tri in tc.tris]
+    print(f"tampa-teca.stl           {len(tc.tris):5d} tri | altura {altura(tc.tris):.1f} mm | "
+          f"contato {contato(tc.tris):5.0f} mm2 de pe, {contato(inv):5.0f} mm2 invertida"
+          f" -> placa macica, tanto faz; em producao e CNC em teca")
 
     print(f"\nem {out}")
-    print("O aro de TPE nao se imprime em FDM. Para o prototipo, use O-ring de "
-          "seccao 2,0 mm cortado e colado, ou corda de silicone de 2 mm.")
+    print("O filete de TPE nao se imprime em FDM. Para o prototipo, use corda de "
+          "silicone de 1,4 mm cortada no comprimento e colada de topo.")
 
 
 if __name__ == '__main__':
