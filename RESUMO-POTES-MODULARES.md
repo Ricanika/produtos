@@ -1,6 +1,6 @@
 # Potes retangulares modulares em PP — resumo para retomar em outro chat
 
-**Projeto 115 do ERP (Nitron) · Revisão 8 · 23/09/2026**
+**Projeto 115 do ERP (Nitron) · Revisão 9 · 23/09/2026**
 Branch: `claude/serene-johnson-ja8az8` · pasta `potes-modulares/`
 
 Este arquivo é auto-contido: cole ele num chat novo e o contexto está todo aqui.
@@ -12,15 +12,37 @@ Este arquivo é auto-contido: cole ele num chat novo e o contexto está todo aqu
 Linha nova de potes retangulares em PP transparente, inspirada num render de referência
 (potes com tampa de teca e tampa verde). Requisitos que o Ricardo deu, na ordem em que apareceram:
 
-1. **Tampas.** Começou em três (teca com TPE · PE · PP dosadora) e **na revisão 6 caiu para
-   duas: teca com chanfro + aro de TPE, e PE 100%**. A dosadora saiu do escopo.
+1. **Tampas.** Começou em três (teca com TPE · PE · PP dosadora), **na revisão 6 caiu para duas**
+   (teca com chanfro + aro de TPE, e PE 100%) e **na revisão 9 voltou a três**: entrou a **tampa de
+   correr, com bico aberto em U** (item 8 abaixo).
 2. **Quatro litragens.** Começou em 500 ml / 1 L / 1,5 L / 2 L e **mudou para 600 / 1200 / 1800 /
    2400 ml** (pacote de mantimento).
 3. **Modular:** empilhando os menores, tem que chegar exatamente na altura do maior.
 4. **Parede reta**, não conada, com cantos arredondados.
 5. **Sem trava**, acabamento liso.
 6. Validar tudo contra o parque de injetoras real (via MCP Sankhya / Nitron).
-7. **(revisão 8 — a borda, a partir do STL de referência `REF_231.stl`)** O Ricardo mandou um STL
+7. **(revisão 9 — a terceira tampa)** Pedido do Ricardo: *"uma tampa de correr com outro aro de
+   TPE... colocar na tampa mesmo um bico mas não fechado e sim aberto tipo 'U' e não 'O' para poder
+   escorrer o líquido"*. Base: a tampa de PP — mesmo plug, mesmo filete, as mesmas duas travas.
+   **Mecanismo (escolha dele):** *gaveta na tampa* — painel que corre em trilhos num bolso no piso
+   da bandeja e fecha a janela por baixo. É o único que não passa acima do plano modular nem aberto.
+   **Cotas:** janela **22 × 46 mm** (1004 mm² de passagem) no lado curto · bico de **46 mm, a mesma
+   largura da janela** · gaveta 30 × 60 × **1,80 mm**, curso **24 mm** · 2º aro Ø1,20 de TPE com
+   0,35 mm de sobra (**2,7 kgf** para correr) · canal com piso em +1,20 e paredes até +4,00
+   (2,80 mm úteis, aberto em cima) · lábio de corte de 0,40 na ponta.
+   **Duas coisas que a conta decidiu contra a minha intuição:** (a) eu preferia o **canto**, e a
+   posição foi medida — canto dá 626 mm² e 17,8 mm de travessia contra 1004 mm² e zero no lado
+   curto; (b) eu tinha desenhado o **bico mais estreito que a janela e chamado isso de virtude** —
+   o Ricardo corrigiu ("o bico precisa ocupar a mesma largura da janela, pra não vazar o produto"),
+   e está certo: hoje `bico >= janela` é verificação automática.
+   **O erro que quase passou:** a primeira rota do líquido **cortava o friso do filete** (começa em
+   −3,00 na face do plug) — a tampa pareceria certa e não vedaria, mesmo de gaveta fechada. Rota
+   nova em dois trechos: rampa de **18°** e vertedouro de **49°** com 3,20 mm. Virou teste.
+   **O que ainda falta (CAD):** batentes de fim de curso da gaveta e puxador.
+   **No gerador:** anéis passaram a poder vir como lista de **pontos livres** e `banda()` pula o
+   quadrilátero de largura zero — é o que permite furo, entalhe e rampa. A tampa de correr é uma
+   casca de **gênero 1**. São **dez** peças agora, todas a 0,00% do STL.
+8. **(revisão 8 — a borda, a partir do STL de referência `REF_231.stl`)** O Ricardo mandou um STL
    com um pote e uma tampa em escala 1:10 (a parede medida, 0,113 mm, é o que fixa a escala) e
    pediu: **manter alturas, larguras, comprimentos e o raio de canto**, e refazer a **borda
    superior do corpo** e a **tampa de PP**, pegando dali o **layout de tampa e travas**.
@@ -45,7 +67,7 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
    corpos — 146 é a silhueta do **deck da tampa**. O corpo tem 134.
    **O que NÃO piorou, contra a minha expectativa:** o aninhamento a vazio. A 0,5° a pilha de seis
    2,4 L continua em 1044 mm (−28%) — quem manda ali é a saída, não a borda.
-8. **(revisão 7 — mudança de arquitetura, a partir de referência física)** Saem a **aba em U**, o
+9. **(revisão 7 — mudança de arquitetura, a partir de referência física)** Saem a **aba em U**, o
    **pé embutido** e a garra da tampa. Entram o **colar de borda** (liso, arredondado em cima,
    sobressaindo 3,50 mm/lado, cuja face de baixo é a aresta de engate), o **rodapé reto** para IML
    e **6 abas de trava** na tampa. As duas tampas passam a usar **o mesmo filete de TPE** (objetivo
@@ -60,7 +82,7 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
    **Três erros pegos por verificação, não por leitura:** filete 0,40 mm aquém da boca (não vedaria
    nada), metade das abas espelhada no visualizador (volume negativo cancelando as outras), e o STL
    saindo com Y para cima em vez de Z. Nenhum deles é acusado por volume assinado ou normais.
-9. **(revisão 6)** A tampa PE **fecha por fora**: saia por fora da borda, garra engatando sob o
+10. **(revisão 6)** A tampa PE **fecha por fora**: saia por fora da borda, garra engatando sob o
    lábio da aba em U. Princípio oposto ao plug da teca, na mesma borda, **sem mudar uma cota do
    pote** — o lábio já dava 3,04 mm/lado de ressalto e a garra usa 0,80. Resina **PEAD HA 7260
    IF 20 a R$ 9,34/kg** (a mais barata da casa depois do moído), tampa de 27,6 g a R$ 0,26.
@@ -70,13 +92,13 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
    Dois pontos abertos: a retenção depende da rigidez do deck (o aro da saia dá 3 gf, então pede
    elemento finito ou protótipo), e a **tampa de teca não pode ser o plug de parede fina** — em
    maciço, precisa do poço da bandeja usinado ou não empilha.
-10. **(estudo, 21/09/2026 — não implementado)** Pedido de referência à vedação da Tupperware.
+11. **(estudo, 21/09/2026 — não implementado)** Pedido de referência à vedação da Tupperware.
    Mecanismo levantado: canal em U na tampa que engole um cordão da borda, apertando-o de
    **faces opostas** (US2487400, de 1949, expirada, "nonsnap"). O burp não dá para copiar — a
    tampa deles é membrana, a nossa é datum de empilhamento. Dois caminhos orçados (com e sem
    mexer no molde do corpo), 4,3 e 5,1 kgf de arranque. **Decisão: fica como estudo**, seção 13
    do README. A linha segue na revisão 6.
-11. **(revisão 5)** O pote tinha ficado largo e muito arredondado em relação ao render de
+12. **(revisão 5)** O pote tinha ficado largo e muito arredondado em relação ao render de
    referência. Corrigido para **frente estreita e pote fundo, canto R10** — escolhido de propósito
    o caminho que mantém altura, módulo, curso de abertura e classe de injetora. Custou **+17,6 g**
    de resina nos quatro corpos e deixou a face comprida do 2,4 L **3,8× mais flexível** (única
@@ -131,7 +153,7 @@ Exige polido A2 nas laterais (textura pediria saída extra), extração por **pl
 
 ---
 
-## 3. A tampa — chegou aqui depois de dois erros meus
+## 3. As tampas — chegaram aqui depois de dois erros meus
 
 ### Onde eu errei (não repetir)
 
@@ -156,6 +178,8 @@ filete de TPE .... corda de 1,40 mm, sobra 0,80 -> comprime 0,20 contra a parede
 plug desce ....... 8,0 mm        vão da bandeja ... 143,3, recebe o fundo de 141,67
 tampa de PP ...... 157,3 × 93,4 mm com as 2 travas. 24,5 g. R$ 0,23 + filete 0,9 g
 tampa de teca .... placa maciça 144,9 × 79,0 × 8,0 mm, 59 g, CNC, sem molde
+tampa de correr .. a mesma de PP + bolso, janela 22 x 46 e canal em U. 23,2 g
+                   + gaveta 2,8 g + 2o aro 0,2 g. Maxima 157,7 x 93,4 (labio do bico)
 ```
 
 | | O que segura | Força |
@@ -336,6 +360,8 @@ contra a geometria da revisão 7 e tem de reprovar — verificação que nunca d
    de vedação na embalagem.
 10. Reservar INJ 32 (380 t) para o try-out do 2,4 L.
 11. Decidir o rótulo: capacidade de borda (como está) ou re-resolver para capacidade útil.
+12. Decidir se a **tampa de correr** vira ferramenta agora ou depois do try-out das outras duas —
+    é molde novo, mais a gaveta e o 2º aro.
 
 ---
 

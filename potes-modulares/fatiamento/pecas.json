@@ -16,6 +16,16 @@
    "stl": "../stl/impressao/tampa-teca.stl"
   },
   {
+   "nome": "gaveta",
+   "stl": "../stl/impressao/gaveta.stl",
+   "flip": true
+  },
+  {
+   "nome": "tampa_correr",
+   "stl": "../stl/impressao/tampa-correr.stl",
+   "flip": true
+  },
+  {
    "nome": "pote600_fundoplano",
    "stl": "../stl/impressao/pote-600-fundoplano.stl"
   },

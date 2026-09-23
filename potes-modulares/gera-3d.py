@@ -86,6 +86,56 @@ def anel(L, R, n):
     return pts
 
 
+def contorno(L, W, R, seg, q, cx=0.0, cy=0.0, corte=None):
+    """Retangulo arredondado com pontos TAMBEM nos trechos retos.
+
+    anel() so poe vertice nos cantos: o lado reto e uma aresta unica, e nao ha
+    onde encaixar um entalhe. Aqui cada canto leva seg pontos e cada face reta
+    leva q; a face +X leva 3q, partida em y = -corte e +corte, para que as duas
+    bordas do entalhe do bico caiam EXATAMENTE em cima de vertices.
+
+    Devolve (pontos, mascara) - a mascara marca os pontos dentro do entalhe.
+    Ordem igual a de anel(): horario visto de cima.
+
+    Cuidado que ja custou uma rodada: nenhum ponto pode sair repetido. Os arcos
+    entram com a ponta inicial e SEM a final, e os trechos retos so com as
+    pontas que os arcos nao deram - senao aparece aresta de comprimento zero e
+    a checagem de normais reprova sem dizer por que.
+    """
+    hx, hy = L / 2 - R, W / 2 - R
+    if corte is None or corte >= hy:
+        corte = hy / 3.0
+    P, M = [], []
+
+    def arco(ax, ay, a0):
+        for k in range(seg):
+            a = math.radians(a0 + 90 * k / seg)
+            P.append((ax + R * math.cos(a), ay + R * math.sin(a))); M.append(False)
+
+    def reta(p0, p1, n, inc0=False, inc1=False, dentro=False):
+        for k in range(n):
+            t = (k / n) if inc0 else ((k + 1) / n if inc1 else (k + 1) / (n + 1))
+            P.append((p0[0] + (p1[0] - p0[0]) * t, p0[1] + (p1[1] - p0[1]) * t))
+            M.append(dentro)
+
+    arco(hx, hy, 0)
+    reta((hx, hy + R), (-hx, hy + R), q)
+    arco(-hx, hy, 90)
+    reta((-hx - R, hy), (-hx - R, -hy), q)
+    arco(-hx, -hy, 180)
+    reta((-hx, -hy - R), (hx, -hy - R), q)
+    arco(hx, -hy, 270)
+    reta((hx + R, -hy), (hx + R, -corte), q, inc1=True)   # termina EM -corte
+    M[-1] = True
+    reta((hx + R, -corte), (hx + R, corte), q, dentro=True)
+    reta((hx + R, corte), (hx + R, hy), q, inc0=True)     # comeca EM +corte
+    M[len(P) - q] = True
+
+    P = [(x + cx, y + cy) for x, y in P]
+    P.reverse(); M.reverse()
+    return P, M
+
+
 class Casca:
     def __init__(self, seg):
         self.seg = seg
@@ -96,24 +146,46 @@ class Casca:
         self.caps = []
         self.prismas = []          # travas: perfil extrudado, fora dos aneis
 
-    def add(self, z, L):
-        R = max(raio(L), 0.15)
-        self.loops.append(dict(z=z, L=L, W=largura(L), R=R))
+    def add(self, z, L, W=None, R=None, pts=None):
+        """Um anel. pts, quando dado, e a lista (x,y,z) ja pronta - e o que
+        permite furo, entalhe e rampa, que a regra (z, L) nao expressa."""
+        if pts is not None:
+            self.loops.append(dict(pts=[list(p) for p in pts]))
+            self.m = len(pts)
+        else:
+            R = max(raio(L) if R is None else R, 0.15)
+            self.loops.append(dict(z=z, L=L, W=largura(L) if W is None else W, R=R))
         return len(self.loops) - 1
 
     def _pts(self, i):
         lp = self.loops[i]
+        if 'pts' in lp:
+            return [tuple(p) for p in lp['pts']]
         # STL em Z PARA CIMA. (O visualizador remonta em Y para cima, que e a
         # convencao do three.js - a conversao fica la, nao aqui.)
         return [(x, y, lp['z']) for x, y in anel(lp['L'], lp['R'], self.seg)]
 
     def banda(self, a, b):
+        """Liga dois aneis. Quadrilatero de largura zero e PULADO.
+
+        Onde o entalhe come uma faixa inteira, dois aneis coincidem naquele
+        trecho. Emitir o quadrilatero ali cria triangulo de area zero e aresta
+        repetida, e a checagem de normais reprova. Pulado, a malha continua
+        fechada: a aresta passa a ser compartilhada pelas bandas de cima e de
+        baixo, uma em cada sentido.
+        """
         self.bands.append([a, b])
         A, B = self._pts(a), self._pts(b)
-        for k in range(self.m):
-            k2 = (k + 1) % self.m
-            self.tris.append((B[k], B[k2], A[k]))
-            self.tris.append((B[k2], A[k2], A[k]))
+        m = len(A)
+        for k in range(m):
+            k2 = (k + 1) % m
+            i0, i1 = A[k] == B[k], A[k2] == B[k2]
+            if i0 and i1:
+                continue
+            if not i0:
+                self.tris.append((B[k], B[k2], A[k]))
+            if not i1:
+                self.tris.append((B[k2], A[k2], A[k]))
 
     def cap(self, i, para_cima=True):
         """Tampo em leque. O leque inverte para a normal apontar para +z."""
@@ -374,7 +446,12 @@ def tampa_pp(seg):
     c.cap(D0, True)
     c.cap(D13, False)
 
-    # ---- as duas travas: prismas separados, embutidos 0,5 mm no deck ----
+    poe_travas(c)
+    return c
+
+
+def poe_travas(c):
+    """As duas travas de clipe. As duas tampas de PP usam as mesmas."""
     F, Tt = TRAVA_FOLGA, TRAVA_T
     Zc = -SAIA_H                                   # nivel da aresta de engate
     # A farpa e cotada a partir da face da borda NA ALTURA DA ARESTA, nao no
@@ -395,6 +472,174 @@ def tampa_pp(seg):
         c.tris += prisma(perfil, 'y', pos, TRAVA_LARG)
         c.prismas.append(dict(perfil=perfil, eixo='y', pos=pos,
                               comp=TRAVA_LARG, off=0.0))
+    return c
+
+
+# ---------------------------------------------------------------------------
+# TAMPA DE CORRER (revisao 9) - a que obrigou o gerador a aprender furo e
+# entalhe. Tudo o que toca o pote vem da tampa de PP: deck, plug, filete,
+# travas e o piso da bandeja em z=-2,00. O corpo nao muda.
+# ---------------------------------------------------------------------------
+_sc = importlib.util.spec_from_file_location('ccr', os.path.join(_BASE, 'calculo-correr.py'))
+ccr = importlib.util.module_from_spec(_sc)
+_sc.loader.exec_module(ccr)
+
+Q_RETO = 6          # pontos por trecho reto do contorno (o entalhe pede vertice)
+
+
+def _pos_correr():
+    """Onde ficam janela, bolso e calha na posicao A, tudo vindo do calculo."""
+    p = next(q for q in ccr.POSICOES if q['cod'] == 'curto')
+    g = ccr.geometria(p)
+    jan_cx = ccr.BANDEJA / 2 - g['rec']
+    return dict(g=g, bico_w=p['bico_w'], jan_cx=jan_cx,
+                jan_l=g['jan_d'], jan_w=g['jan_w'],
+                bol_cx=jan_cx - g['curso'] / 2,
+                bol_l=g['bolso_l'], bol_w=g['gav_w'] + 2 * ccr.GAV_FOLGA,
+                gav_l=g['gav_l'], gav_w=g['gav_w'])
+
+
+def tampa_correr(seg):
+    """Tampa de correr: bolso, janela, gaveta e calha em U aberta.
+
+    A casca e uma so, com FURO: comeca na borda de cima da janela, sobe pelo
+    bolso, cruza o piso da bandeja, sobe a parede (ou a rampa do bico), passa
+    por cima do deck, desce por fora, volta por baixo, desce o plug e fecha
+    subindo pela parede da janela. Topologicamente e uma rosca - genero 1,
+    que e o que um furo faz.
+
+    No trecho do ENTALHE tres aneis mudam de lugar: a parede do bolso vira
+    rampa, a parede da bandeja vira vertedouro, e o topo do deck desce de
+    PP_DECK para Z_SEL. Onde o entalhe come uma faixa inteira dois aneis
+    coincidem, e banda() pula o quadrilatero de largura zero.
+    """
+    P = _pos_correr()
+    q = Q_RETO
+    bw2 = P['bico_w'] / 2
+    ZM, ZB, ZS, ZT = ccr.Z_MOD, ccr.Z_BOLSO, ccr.Z_SEL, ccr.Z_TOPO
+    hb = CORPO_L * 0 + ccr.BANDEJA / 2          # parede da bandeja
+    hp = ccr.PLUG / 2
+    hd = ccr.DECK_O / 2
+    x_sel = hb + PP_PLUG_PAR + 2.0              # onde o vertedouro acaba
+    z_plug = ZM + (hp - hb) / (x_sel - hb) * (ZS - ZM)   # altura do vertedouro no plug
+    zf0, zf1 = -3.0, -3.0 - FILETE_D
+    bandeja, plug, deck_o = ccr.BANDEJA, ccr.PLUG, ccr.DECK_O
+    friso = plug - 2 * FRISO_PROF
+
+    c = Casca(seg)
+
+    def anelx(L, W, R, z, cx=0.0, corte=bw2, ent=None):
+        pts, msk = contorno(L, W, R, seg, q, cx, 0.0, corte)
+        out = []
+        for (x, y), m in zip(pts, msk):
+            out.append((ent[0], y, ent[1]) if (ent is not None and m) else (x, y, z))
+        return c.add(None, None, pts=out)
+
+    jan = dict(L=P['jan_l'], W=P['jan_w'], R=3.0, cx=P['jan_cx'], corte=None)
+    bol = dict(L=P['bol_l'], W=P['bol_w'], R=3.0, cx=P['bol_cx'])
+    ban = dict(L=bandeja, W=largura(bandeja), R=raio(bandeja))
+
+    A0  = anelx(z=ZB, **jan)                                   # borda da janela
+    A1  = anelx(z=ZB, **bol)                                   # piso do bolso
+    A2  = anelx(z=ZM, ent=(hb, ZM), **bol)                     # parede do bolso / RAMPA
+    A3  = anelx(z=ZM, ent=(hb, ZM), **ban)                     # piso da bandeja
+    A4  = anelx(z=PP_DECK, ent=(x_sel, ZS), **ban)             # parede / VERTEDOURO
+    A5  = anelx(deck_o, largura(deck_o), raio(deck_o), PP_DECK, ent=(hd, ZS))
+    A6  = anelx(deck_o, largura(deck_o), raio(deck_o), 0.0)
+    A7  = anelx(COLAR_L + 2 * TRAVA_FOLGA, largura(COLAR_L + 2 * TRAVA_FOLGA),
+                raio(COLAR_L + 2 * TRAVA_FOLGA), 0.0)
+    A8  = anelx(plug, largura(plug), raio(plug), 0.0, ent=(hp, z_plug))
+    A9  = anelx(plug, largura(plug), raio(plug), zf0)
+    A10 = anelx(friso, largura(friso), raio(friso), zf0)
+    A11 = anelx(friso, largura(friso), raio(friso), zf1)
+    A12 = anelx(plug, largura(plug), raio(plug), zf1)
+    A13 = anelx(plug, largura(plug), raio(plug), -PP_PLUG_H + 0.5)
+    A14 = anelx(plug - 1.0, largura(plug - 1.0), raio(plug - 1.0), -PP_PLUG_H)
+    A15 = anelx(bandeja, largura(bandeja), raio(bandeja), -PP_PLUG_H)
+    A16 = anelx(z=ZM - PP_DECK, **ban)
+    A17 = anelx(z=ZM - PP_DECK, **bol)
+    A18 = anelx(z=ZB - PP_DECK, **bol)
+    A19 = anelx(z=ZB - PP_DECK, **jan)
+    seq = [A0,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14,A15,A16,A17,A18,A19,A0]
+    for a, b in zip(seq, seq[1:]):
+        c.banda(b, a)
+
+    # ---- paredes da calha, dos dois lados: prismas fundidos ----
+    par = [(0.0, ZS), (ccr.BICO_PAR, ZS), (ccr.BICO_PAR, ZT), (0.0, ZT)]
+    x0, x1 = hb, hd + ccr.BICO_LIP
+    for pos in (bw2, -bw2):
+        for t in prisma(par, 'y', pos, x1 - x0):
+            c.tris.append(tuple((x + (x0 + x1) / 2, y, z) for x, y, z in t))
+        c.prismas.append(dict(perfil=par, eixo='y', pos=pos, comp=x1 - x0,
+                              off=(x0 + x1) / 2))
+
+    # ---- trilhos: pegam a gaveta por cima, nas duas laterais do bolso ----
+    tr = [(0.5, ZM), (0.5, ZM - ccr.TRILHO_T), (-ccr.TRILHO_L, ZM - ccr.TRILHO_T),
+          (-ccr.TRILHO_L, ZM)]
+    for pos in (P['bol_w'] / 2, -P['bol_w'] / 2):
+        for t in prisma(tr, 'y', pos, P['bol_l'] - 1.0):
+            c.tris.append(tuple((x + P['bol_cx'], y, z) for x, y, z in t))
+        c.prismas.append(dict(perfil=tr, eixo='y', pos=pos, comp=P['bol_l'] - 1.0,
+                              off=P['bol_cx']))
+
+    poe_travas(c)                       # as MESMAS travas da tampa de PP
+    return c
+
+
+def gaveta(seg):
+    """O painel que corre, com o friso do 2o aro na face de BAIXO.
+
+    Desenhado na posicao FECHADA: o topo dele e o plano modular.
+    """
+    P = _pos_correr()
+    q = Q_RETO
+    ZM = ccr.Z_MOD
+    zb = ZM - ccr.GAV_T
+    zg = zb + ccr.ARO2_PROF                      # teto do friso
+    go_l, go_w = P['jan_l'] + 4.0, P['jan_w'] + 4.0          # friso, face de fora
+    gi_l, gi_w = go_l - 2 * ccr.ARO2_D, go_w - 2 * ccr.ARO2_D
+    c = Casca(seg)
+
+    def anelx(L, W, z):
+        pts, _ = contorno(L, W, 3.0, seg, q, P['jan_cx'], 0.0, None)
+        return c.add(None, None, pts=[(x, y, z) for x, y in pts])
+
+    G0 = anelx(P['gav_l'], P['gav_w'], ZM)
+    G1 = anelx(P['gav_l'], P['gav_w'], zb)
+    G2 = anelx(go_l, go_w, zb)
+    G3 = anelx(go_l, go_w, zg)
+    G4 = anelx(gi_l, gi_w, zg)
+    G5 = anelx(gi_l, gi_w, zb)
+    c.cap(G0, True)
+    for a, b in ((G0,G1),(G1,G2),(G2,G3),(G3,G4),(G4,G5)):
+        c.banda(b, a)
+    c.cap(G5, False)
+    return c
+
+
+def aro2(seg):
+    """O 2o aro de TPE, na medida LIVRE: sobra ARO2_SOB do friso, e essa sobra
+    menos a folga de corrida e a interferencia. Como o filete, a malha se
+    sobrepoe de proposito."""
+    P = _pos_correr()
+    q = Q_RETO
+    zb = ccr.Z_MOD - ccr.GAV_T
+    zt = zb + ccr.ARO2_PROF
+    go_l, go_w = P['jan_l'] + 4.0, P['jan_w'] + 4.0
+    gi_l, gi_w = go_l - 2 * ccr.ARO2_D, go_w - 2 * ccr.ARO2_D
+    c = Casca(seg)
+
+    def anelx(L, W, z):
+        pts, _ = contorno(L, W, 3.0, seg, q, P['jan_cx'], 0.0, None)
+        return c.add(None, None, pts=[(x, y, z) for x, y in pts])
+
+    zl = zt - ccr.ARO2_D
+    B0 = anelx(gi_l, gi_w, zl)
+    B1 = anelx(go_l, go_w, zl)
+    B2 = anelx(go_l, go_w, zt)
+    B3 = anelx(gi_l, gi_w, zt)
+    for a, b in ((B0,B1),(B1,B2),(B2,B3),(B3,B0)):
+        c.banda(a, b)
     return c
 
 
@@ -503,6 +748,31 @@ def main():
     checar.append(('tampa-pp', tp))
     print(f'{"tampa-pp":<12} {"":13} | {len(tp.tris):5d} tri | {TRAVA_N} travas de '
           f'{TRAVA_LARG:.0f} mm | {volume_assinado(tp.tris) / 1000.0 * 0.905:5.1f} g em PP')
+
+    tc = tampa_correr(seg)
+    grava_stl(os.path.join(out, 'tampa-correr.stl'), tc.tris, 'tampa-correr')
+    perfis['pecas']['tampa-correr'] = dict(loops=tc.loops, bands=tc.bands, caps=tc.caps,
+                                           prismas=tc.prismas)
+    checar.append(('tampa-correr', tc))
+    print(f'{"tampa-correr":<12} {"":13} | {len(tc.tris):5d} tri | janela + calha em U | '
+          f'{volume_assinado(tc.tris) / 1000.0 * 0.905:5.1f} g em PP')
+
+    gv = gaveta(seg)
+    grava_stl(os.path.join(out, 'gaveta.stl'), gv.tris, 'gaveta')
+    perfis['pecas']['gaveta'] = dict(loops=gv.loops, bands=gv.bands, caps=gv.caps,
+                                     prismas=gv.prismas,
+                                     curso=_pos_correr()['g']['curso'])
+    checar.append(('gaveta', gv))
+    print(f'{"gaveta":<12} {"":13} | {len(gv.tris):5d} tri | painel que corre | '
+          f'{volume_assinado(gv.tris) / 1000.0 * 0.905:5.1f} g em PP')
+
+    a2 = aro2(seg)
+    grava_stl(os.path.join(out, 'aro2-tpe.stl'), a2.tris, 'aro2-tpe')
+    perfis['pecas']['aro2'] = dict(loops=a2.loops, bands=a2.bands, caps=a2.caps,
+                                   prismas=a2.prismas)
+    checar.append(('aro2-tpe', a2))
+    print(f'{"aro2-tpe":<12} {"":13} | {len(a2.tris):5d} tri | '
+          f'{volume_assinado(a2.tris) / 1000.0 * 1.10:5.1f} g em TPE')
 
     a = filete(seg)
     grava_stl(os.path.join(out, 'filete-tpe.stl'), a.tris, 'filete-tpe')

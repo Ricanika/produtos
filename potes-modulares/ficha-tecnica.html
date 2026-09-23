@@ -114,9 +114,12 @@
 
   <header class="cartucho">
     <div class="cartucho-top">
-      <p class="eyebrow">Nitron · Estudo de viabilidade · Projeto 115 · Revisão 8</p>
+      <p class="eyebrow">Nitron · Estudo de viabilidade · Projeto 115 · Revisão 9</p>
       <h1>Potes retangulares modulares</h1>
       <p class="sub">Parede reta com cantos arredondados, quatro litragens de mantimento, três tampas e um só bocal. Empilhados em qualquer combinação, chegam à altura do maior. Geometria, encaixe, alocação de injetora e custo conferidos contra produção, compras e cadastro no ERP.</p>
+      <div class="rev">
+        <b>Revisão 9 —</b> entra a <strong>terceira tampa</strong>: a de correr, com <strong>bico aberto em U</strong> para escorrer líquido. Ela parte da tampa de PP — mesmo plug, mesmo filete, as mesmas duas travas — e acrescenta um bolso no piso da bandeja, uma <strong>janela de 22 × 46 mm</strong> no lado curto, uma <strong>gaveta</strong> que corre 24 mm em trilhos e um <strong>2º aro de TPE</strong> no friso da face de baixo dela. O bico ocupa a <strong>mesma largura da janela</strong> — 46 mm: bico mais estreito que a janela derrama. Detalhe completo na <a href="https://claude.ai/artifact/TyYcT4idV1TEAu8Dy5FN7F">página da tampa de correr</a>.
+      </div>
       <div class="rev">
         <b>Revisão 8 —</b> a borda do corpo foi refeita a partir do STL de referência (REF_231, um pote e uma tampa em escala 1:10 — a parede medida, 0,113 mm, é o que fixa a escala). Entra a <strong>borda alta e oca</strong>: a parede sobe, abre num flare de 4 mm, sobe pela perna de dentro, vira o topo chato e desce por fora numa <strong>saia livre</strong> de 10 mm. A face de baixo da saia é a aresta de engate. A tampa de PP ganha <strong>duas travas de clipe</strong>, uma por lado comprido, cobrindo 58% do comprimento — o layout da referência. <strong>E isso corrigiu um erro sério da revisão 7</strong>, descrito na seção 02.
       </div>
@@ -135,7 +138,7 @@
       <div class="campo"><div class="k">Módulo</div><div class="v">60 mm</div></div>
       <div class="campo"><div class="k">Borda / corpo</div><div class="v">153,7 / 142,5 mm</div></div>
       <div class="campo"><div class="k">Saída / canto</div><div class="v">0,5° · R10</div></div>
-      <div class="campo"><div class="k">Tampas</div><div class="v">Teca + PP</div></div>
+      <div class="campo"><div class="k">Tampas</div><div class="v">Teca + 2 PP</div></div>
     </div>
   </header>
 
@@ -400,19 +403,19 @@
   </section>
 
   <section>
-    <div class="section-head"><span class="n">04</span><h2>As duas tampas</h2></div>
-    <p class="lede">Duas tampas, <strong>um só filete de TPE</strong>. A de PP passa a fechar com <strong>duas travas de clipe</strong>, uma por lado comprido, cobrindo 58% do comprimento — é o layout do STL de referência, e é o oposto das 6 abas de 18 mm da revisão 7.</p>
+    <div class="section-head"><span class="n">04</span><h2>As três tampas</h2></div>
+    <p class="lede">Três tampas, <strong>um só filete de TPE</strong> e um só bocal. A de PP passa a fechar com <strong>duas travas de clipe</strong>, uma por lado comprido, cobrindo 58% do comprimento — é o layout do STL de referência, e é o oposto das 6 abas de 18 mm da revisão 7.</p>
 
     <div class="tabela-wrap">
       <table>
-        <thead><tr><th></th><th>Teca</th><th>PP com 2 travas</th></tr></thead>
+        <thead><tr><th></th><th>Teca</th><th>PP com 2 travas</th><th>PP de correr</th></tr></thead>
         <tbody>
-          <tr><td>O que é</td><td class="num">placa maciça 144,9 × 79,0 × 8,0</td><td class="num">plug + deck + 2 travas de 89 mm</td></tr>
-          <tr class="destaque"><td>Vedação</td><td class="num">filete de TPE em friso usinado</td><td class="num">o <strong>mesmo</strong> filete, friso moldado</td></tr>
-          <tr><td>Retenção</td><td class="num">só atrito — 7,4 kgf reto</td><td class="num">trava geométrica: abrir exige 0,80 mm</td></tr>
-          <tr><td>Plano modular</td><td class="num">o topo da placa</td><td class="num">o piso da bandeja</td></tr>
-          <tr><td>Medida máxima</td><td class="num">144,9 × 79,0 mm</td><td class="num">157,3 × 93,4 mm</td></tr>
-          <tr><td>Peso / custo</td><td class="num">59 g em teca · CNC, sem molde</td><td class="num">24,5 g · R$ 0,23 em PP RP 141</td></tr>
+          <tr><td>O que é</td><td class="num">placa maciça 144,9 × 79,0 × 8,0</td><td class="num">plug + deck + 2 travas de 89 mm</td><td class="num">a de PP + bolso, janela e calha em U</td></tr>
+          <tr class="destaque"><td>Vedação</td><td class="num">filete de TPE em friso usinado</td><td class="num">o <strong>mesmo</strong> filete, friso moldado</td><td class="num">o mesmo filete <strong>+ 2º aro</strong> Ø1,20 na gaveta</td></tr>
+          <tr><td>Retenção</td><td class="num">só atrito — 7,4 kgf reto</td><td class="num">trava geométrica: abrir exige 0,80 mm</td><td class="num">as mesmas duas travas</td></tr>
+          <tr><td>Plano modular</td><td class="num">o topo da placa</td><td class="num">o piso da bandeja</td><td class="num">o piso da bandeja <em>e</em> o topo da gaveta</td></tr>
+          <tr><td>Medida máxima</td><td class="num">144,9 × 79,0 mm</td><td class="num">157,3 × 93,4 mm</td><td class="num">157,7 × 93,4 mm (o lábio do bico)</td></tr>
+          <tr><td>Peso / custo</td><td class="num">59 g em teca · CNC, sem molde</td><td class="num">24,5 g · R$ 0,23 em PP RP 141</td><td class="num">26,2 g nas três peças · molde novo</td></tr>
         </tbody>
       </table>
     </div>
@@ -449,6 +452,19 @@
         <span class="status s-alerta">Não resolvido</span>
         <h3>Os lados curtos não têm trava</h3>
         <p>Só os compridos. Como a vedação é radial, a boca tolera um pouco de levantamento sem perder contato — mas se o protótipo mostrar a tampa abrindo nos cantos, a resposta é uma terceira trava, ou o bombê da seção 03.</p>
+      </div>
+      <div class="nota">
+        <h3>Na de correr, o vertedouro é íngreme de propósito</h3>
+        <p>A calha não pode descer abaixo de z = 0 em cima da borda — ali a tampa <em>pousa</em> no pote — nem cortar o friso do filete, que começa em −3,00 na face do plug. Daí o caminho em dois trechos: rampa mansa de <strong>18°</strong> do fundo do bolso até o piso da bandeja, e vertedouro curto de <strong>49°</strong> e 3,20 mm até o piso da calha, em +1,20. A primeira versão cortava o friso: a tampa pareceria certa e <strong>não vedaria</strong>, mesmo de gaveta fechada.</p>
+      </div>
+      <div class="nota">
+        <h3>A gaveta não é dimensionada por flexão</h3>
+        <p>Com o 2,4 L cheio em cima, o painel de 30 × 60 flecha <strong>0,04 mm</strong>. Quem manda nos 1,80 mm de espessura é o friso do 2º aro na face de baixo — não a carga.</p>
+      </div>
+      <div class="nota">
+        <span class="status s-alerta">Não resolvido</span>
+        <h3>Faltam os batentes de fim de curso</h3>
+        <p>A gaveta corre 24 mm em trilhos, mas o que a impede de sair do bolso na ponta aberta ainda não está desenhado — nem o puxador. É CAD, como a fenda das travas.</p>
       </div>
       <div class="nota">
         <h3>A teca ganhou moldura</h3>
@@ -549,7 +565,7 @@
 
   <footer class="rodape">
     <p>Fontes no ERP: <span class="mono">TPRWCP</span> + <span class="mono">TPRCAP</span> (parque e tonelagem) · <span class="mono">TPRWCP.AD_CICLOATUAL</span> (ciclo ao vivo, 16/09/2026 12:11) · <span class="mono">TPRAPA→TPRIATV</span> (que peça roda em qual máquina, 24 meses) · <span class="mono">AD_FICHATECNICA</span> (ciclos de referência) · <span class="mono">AD_PROJETOS / AD_MOLDE / AD_ORCAMENTO</span> (Projeto 115 e benchmark de ferramental) · <span class="mono">TGFITE / TGFCAB</span> (preço real de resina e venda dos kits) · <span class="mono">TGFPRO</span> (linha modular atual, teca, TPE).</p>
-    <p style="margin-top:8px">Memória de cálculo da geometria, do encaixe e da capacidade: <span class="mono">potes-modulares/calculo-modular.py</span></p>
+    <p style="margin-top:8px">Memória de cálculo da geometria, do encaixe e da capacidade: <span class="mono">potes-modulares/calculo-modular.py</span> e, para a tampa de correr, <span class="mono">calculo-correr.py</span>.</p>
   </footer>
 
 </div>

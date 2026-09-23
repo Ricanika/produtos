@@ -15,6 +15,11 @@ As areas de contato sao MEDIDAS na malha, nao digitadas: numero fixo aqui ja
 ficou defasado uma vez, quando o footprint mudou de 121,2 para 139,7 mm.
   tampa-pp.stl             tampa de PP com 2 travas de clipe. Imprime em pe.
   tampa-teca.stl           placa macica - so para conferir encaixe (em teca e CNC).
+  tampa-correr.stl         a de correr, com a janela e a calha em U.
+  gaveta.stl               o painel que corre. E o par que mais precisa de
+                           prototipo: a folga de projeto e 0,25 mm por lado, e
+                           nenhuma FDM entrega isso sem ajuste - conte com
+                           lixar a gaveta ou reimprimir com escala.
 
 Uso:  python3 gera-3d-impressao.py
 """
@@ -82,9 +87,27 @@ def main():
           f"contato {contato(tc.tris):5.0f} mm2 de pe, {contato(inv):5.0f} mm2 invertida"
           f" -> placa macica, tanto faz; em producao e CNC em teca")
 
+    tr = g.tampa_correr(SEG)
+    g.grava_stl(os.path.join(out, 'tampa-correr.stl'), tr.tris, 'tampa-correr')
+    inv_tr = [[(v[0], -v[1], -v[2]) for v in tri] for tri in tr.tris]
+    print(f"tampa-correr.stl         {len(tr.tris):5d} tri | altura {altura(tr.tris):.1f} mm | "
+          f"contato {contato(tr.tris):5.0f} mm2 de pe, {contato(inv_tr):5.0f} mm2 invertida"
+          f" -> INVERTIDA, mas com SUPORTE: apoia so nas 2 paredes da calha e o"
+          f" deck fica 2,5 mm no ar")
+
+    gv = g.gaveta(SEG)
+    g.grava_stl(os.path.join(out, 'gaveta.stl'), gv.tris, 'gaveta')
+    inv_gv = [[(v[0], -v[1], -v[2]) for v in tri] for tri in gv.tris]
+    print(f"gaveta.stl               {len(gv.tris):5d} tri | altura {altura(gv.tris):.1f} mm | "
+          f"contato {contato(gv.tris):5.0f} mm2 de pe, {contato(inv_gv):5.0f} mm2 invertida"
+          f" -> INVERTIDA deixa o friso do 2o aro para cima, sem suporte")
+
     print(f"\nem {out}")
-    print("O filete de TPE nao se imprime em FDM. Para o prototipo, use corda de "
-          "silicone de 1,4 mm cortada no comprimento e colada de topo.")
+    print("O filete de TPE e o 2o aro nao se imprimem em FDM. Para o prototipo, use "
+          "corda de silicone de 1,4 mm (filete) e de 1,2 mm (2o aro), cortada no "
+          "comprimento e colada de topo.")
+    print("A gaveta corre com 0,25 mm de folga por lado - folga de INJECAO. Em FDM "
+          "ela vai sair apertada: imprima a gaveta a 99% em X e Y antes de lixar.")
 
 
 if __name__ == '__main__':

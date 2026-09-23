@@ -1,15 +1,39 @@
 # Linha Potes Retangulares Modulares em PP
 
-**Status:** estudo de viabilidade técnica · **Revisão 8** · 23/09/2026
+**Status:** estudo de viabilidade técnica · **Revisão 9** · 23/09/2026
 **Origem:** evolução do Projeto 115 do ERP ("Conjunto Potes Modular") · **Planta:** Nitron – Fábrica (CODPLP 1)
 
 Linha retangular em PP transparente, **parede reta com cantos arredondados**, quatro litragens
-(**600 ml · 1,2 L · 1,8 L · 2,4 L**), duas tampas e modularidade de empilhamento — qualquer
+(**600 ml · 1,2 L · 1,8 L · 2,4 L**), três tampas e modularidade de empilhamento — qualquer
 combinação empilhada chega à altura do maior.
 
 Todos os números de máquina, matéria-prima, custo e ferramental saíram do Sankhya, não de
 estimativa de catálogo. Fontes citadas em cada seção.
 
+> **Revisão 9 — a terceira tampa: de correr, com bico aberto em U.** Ela parte da tampa de PP
+> (mesmo plug, mesmo filete, as mesmas duas travas) e acrescenta quatro coisas: um **bolso** no piso
+> da bandeja, uma **janela** de 22 × 46 mm no lado curto, uma **gaveta** de 30 × 60 × 1,8 mm que
+> corre 24 mm em trilhos, e um **2º aro de TPE** (Ø1,20) no friso da face de baixo da gaveta.
+>
+> - **O bico é aberto, em U, não em O** — é o que o Ricardo pediu: canal com piso em +1,20 e paredes
+>   até +4,00, 2,80 mm de profundidade útil, aberto em cima para escorrer e para lavar.
+> - **O bico ocupa a mesma largura da janela, 46 mm.** Eu tinha desenhado um bico mais estreito e
+>   chamado isso de virtude; o Ricardo corrigiu, e está certo: produto que sai de uma janela de
+>   46 mm não entra num canal de 28. Hoje `bico >= janela` é verificação automática.
+> - **A gaveta é o plano modular.** O topo dela fica em −2,00, onde já estava o piso da bandeja, e o
+>   pote de cima continua pousando onde sempre pousou.
+> - **O vertedouro é íngreme de propósito.** O caminho do líquido tem dois trechos: rampa de **18°**
+>   do fundo do bolso ao piso da bandeja, e vertedouro de **49°** e 3,20 mm até o piso do canal. É
+>   assim porque o canal não pode descer abaixo de z = 0 em cima da borda (ali a tampa *pousa* no
+>   pote) nem cortar o friso do filete, que começa em −3,00. **A primeira versão cortava o friso**: a
+>   tampa pareceria certa e não vedaria, mesmo de gaveta fechada. Virou teste automático.
+> - **A posição foi medida, não escolhida no olho.** Três posições foram cotadas (lado curto, canto,
+>   lado comprido) com teste de caber de verdade; eu preferia o canto, e a conta derrubou — travessia
+>   de 17,8 mm e metade da área de passagem. Ficou o **lado curto**, 1004 mm² de vazão.
+> - O gerador passou a saber fazer **furo e entalhe** (anéis de pontos livres e banda que pula
+>   quadrilátero de largura zero), que é o que a tampa de correr exigia e o sistema de anéis não dava.
+>   São **dez** peças agora, todas batendo com o STL a 0,00% (seção 12).
+>
 > **Revisão 8 — a borda, a partir do STL de referência.** O Ricardo mandou `REF_231.stl`
 > (66 591 triângulos: um pote e uma tampa, em escala 1:10 — a parede medida, 0,113 mm, é o que
 > fixa a escala). As cotas da linha ficam como estavam; o que muda é a **borda superior do corpo**
@@ -423,20 +447,20 @@ módulo novo.
 
 ---
 
-## 6. As duas tampas
+## 6. As três tampas
 
-Duas tampas, **um só filete de TPE**. A de PP passa a fechar com **duas travas de clipe**, uma por
+Três tampas, **um só filete de TPE** e um só bocal. A de PP passa a fechar com **duas travas de clipe**, uma por
 lado comprido, cobrindo 58% do comprimento — é o layout do STL de referência, e é o oposto das
 6 abas de 18 mm da revisão 7.
 
-| | **Teca** | **PP com 2 travas** |
-|---|---|---|
-| O que é | placa maciça 144,9 × 79,0 × 8,0 mm | plug + deck + 2 travas de 89 mm |
-| Vedação | filete de TPE em friso usinado, radial | o **mesmo** filete, em friso moldado |
-| Retenção | **só atrito**: 7,4 kgf reto, 1,2 descascando | **trava geométrica**: sair exige abrir 0,80 mm |
-| Plano modular | o **topo da placa** é o plano | o piso da bandeja |
-| Medida máxima | 144,9 × 79,0 mm | 157,3 × 93,4 mm |
-| Peso / custo | 59 g em teca · CNC, sem molde | 24,5 g em RP 141 · R$ 0,23 |
+| | **Teca** | **PP com 2 travas** | **PP de correr** |
+|---|---|---|---|
+| O que é | placa maciça 144,9 × 79,0 × 8,0 mm | plug + deck + 2 travas de 89 mm | a de PP + bolso, janela e canal em U |
+| Vedação | filete de TPE em friso usinado, radial | o **mesmo** filete, em friso moldado | o mesmo filete **+ 2º aro** Ø1,20 na gaveta |
+| Retenção | **só atrito**: 7,4 kgf reto, 1,2 descascando | **trava geométrica**: sair exige abrir 0,80 mm | as mesmas duas travas |
+| Plano modular | o **topo da placa** é o plano | o piso da bandeja | o piso da bandeja *e* o topo da gaveta |
+| Medida máxima | 144,9 × 79,0 mm | 157,3 × 93,4 mm | 157,7 × 93,4 mm (o lábio do bico) |
+| Peso / custo | 59 g em teca · CNC, sem molde | 24,5 g em RP 141 · R$ 0,23 | 23,2 + 2,8 + 0,2 g nas três peças |
 
 **A tampa volta a ser PP.** Nas revisões 6 e 7 ela era PEAD HA 7260, escolhido por ser a resina mais
 barata da casa. Em PP RP 141 (R$ 9,55/kg contra 9,34) a tampa custa R$ 0,23 em vez de R$ 0,21 — dois
@@ -543,14 +567,66 @@ por exemplo, não tem aba nenhuma). Para a linha toda, RP 141.
 
 Tampa em RP 141: 24,5 g → **R$ 0,23**.
 
-### 6.4 O bico da tampa de líquidos — PARADO
+### 6.4 A tampa de correr, com bico em U — ENTREGUE na revisão 9
 
-> A tampa dosadora saiu do escopo quando a linha passou a ter duas tampas. O estudo fica > registrado porque o conceito não depende dela: se voltar uma terceira tampa, é daqui que parte.
+> Esta seção ficou **PARADA** desde a revisão 6, com a nota "se voltar uma terceira tampa, é daqui
+> que parte". Voltou. O que segue é o que a revisão 9 entregou, e no fim o que do estudo antigo
+> sobreviveu e o que não sobreviveu — porque metade dele estava errada.
 
 Requisito: prático, que não suje, sem copinho dosador e sem peça cara. E ainda tem que respeitar o
-plano modular — nada pode passar acima dele, senão o pote de cima não assenta.
+plano modular — nada pode passar acima dele, senão o pote de cima não assenta. O Ricardo acrescentou
+o que define a peça: **bico aberto em "U", não fechado em "O"**, para escorrer líquido.
 
-**Conceito recomendado: a bandeja é o vertedor.** A modularidade já obriga a tampa a ter uma bandeja
+**O mecanismo: gaveta na tampa.** Um painel que corre em trilhos dentro de um bolso no piso da
+bandeja, e que fecha a janela por baixo. Foi escolhido contra tampa de rosca e contra aba com
+dobradiça viva porque é o único que não passa acima do plano modular em nenhuma posição — nem
+aberto. As cotas saem de `calculo-correr.py`, que importa `calculo-modular.py`:
+
+| | cota | de onde vem |
+|---|---|---|
+| Janela | 22 × 46 mm, cantos R3 · **1004 mm²** de passagem | a maior que cabe no lado curto com o bolso inteiro dentro da bandeja |
+| Bico | **46 mm — a mesma largura da janela** | correção do Ricardo; hoje é verificação automática |
+| Gaveta | 30 × 60 × **1,80 mm**, curso **24 mm** | a espessura vem do friso do 2º aro, não da carga: com o 2,4 L cheio em cima ela flecha 0,04 mm |
+| 2º aro | Ø1,20 de TPE, sobra 0,35 mm do friso | **2,7 kgf** para correr, que é o atrito dele comprimido |
+| Canal | piso em +1,20, paredes até +4,00, lábio de 0,40 na ponta | 2,80 mm de profundidade útil, aberto em cima |
+| Caminho | rampa **18°** (6,0 mm de corrida) + vertedouro **49°** (3,20 mm) | o vertedouro é curto porque não pode cortar o friso do filete |
+
+**Por que o vertedouro é íngreme.** O canal não pode descer abaixo de z = 0 em cima da borda — ali a
+tampa *pousa* no pote — nem cortar o friso do filete, que começa em −3,00 na face do plug. A primeira
+versão que desenhei cortava o friso: a tampa pareceria certa e **não vedaria**, mesmo de gaveta
+fechada. Hoje `verifica-montagem.py` mede na malha que a parede do plug some acima do friso.
+
+**A posição foi medida.** Três posições cotadas com teste de caber de verdade — o bolso inteiro tem
+de ficar dentro da bandeja, com a gaveta aberta e fechada:
+
+| | lado curto (A) | canto (B) | lado comprido (C) |
+|---|---|---|---|
+| Janela | 22 × 46 mm | 19 × 34 mm | 24 × 70 mm |
+| Passagem | **1004 mm²** | 626 mm² | 1671 mm² |
+| Travessia do líquido | **0 mm** | 17,8 mm | 0 mm |
+
+Eu preferia o canto — parecia o lugar natural, e o R10 já fazia a curva do vertedor. A conta derrubou:
+metade da área e 17,8 mm de travessia. Ficou a **A**, escolha do Ricardo.
+
+**O que do estudo antigo sobreviveu:**
+
+- a bandeja como bacia anti-gota — o bolso faz esse papel;
+- o **lábio de corte de 0,40 mm** na ponta, que quebra o filme e solta a gota;
+- zero peça comprada, tudo no sentido de abertura do molde.
+
+**O que não sobreviveu, e por quê:**
+
+- **o furo no canto** — medido, perde para o lado curto (acima);
+- **a aba com dobradiça viva** — não fecha por baixo e não leva aro; a gaveta fecha e veda;
+- **"bico moldado dentro do poço: descartado"** — o estudo antigo dizia que não resolvia melhor que o
+  lábio. Estava errado: sem canal com paredes, o líquido que sai de uma janela de 46 mm espalha pela
+  face da tampa. É exatamente o ponto que o Ricardo levantou.
+
+**O que ainda falta (é CAD, não malha):** os **batentes de fim de curso** da gaveta e o puxador.
+
+**O estudo original, para registro:**
+
+*Conceito da revisão 6 — a bandeja é o vertedor.* A modularidade já obriga a tampa a ter uma bandeja
 rebaixada de 2,0 mm. Ela é reaproveitada como bacia anti-gota, sem peça nova:
 
 1. **Um furo de vazão no canto** da bandeja (≈ 25 × 15 mm), encostado na parede.
@@ -689,10 +765,12 @@ o de 1 kg de feijão — que era justamente o que a escala anterior (500/1000/15
 5. **Reabrir o Projeto 115** e renegociar com a MR Plastic Mould a partir da cotação aprovada.
 6. **Recotar o TPE Karinprene 45** — agora com volume das duas tampas.
 7. **Design da tampa**: a fenda que recorta as duas travas, a dobradiça sobre-centro (6.1.1), a
-   saia decorativa da referência, e a bandeja-vertedor na versão de líquidos (6.4).
+   saia decorativa da referência, e os batentes de fim de curso e o puxador da gaveta (6.4).
 8. **Moldflow do 2,4 L** (L/t 224) e estudo de extração da peça reta com a nervura do canal.
 9. **Try-out**: reservar INJ 32 (380 t) para o 2,4 L e INJ 25/24 (250 t) para o 1,8 L.
 10. **Decidir o rótulo**: capacidade de borda (como está) ou re-resolver para capacidade útil (5.6).
+11. **Decidir se a tampa de correr vira ferramenta agora** ou depois do try-out das outras duas: é
+    molde novo, mais a gaveta e o 2º aro, contra uma linha que hoje tem 6 ferramentas orçadas.
 
 ---
 
@@ -711,24 +789,36 @@ Memória de cálculo: `calculo-modular.py`.
 ## 12. Modelo 3D
 
 `gera-3d.py` constrói o sólido a partir das mesmas cotas — **importadas de `calculo-modular.py`, não
-copiadas** — e escreve **sete** STL em `stl/`: os quatro corpos, a placa de teca, a tampa de PP com
-as duas travas e o filete de TPE. O visualizador interativo remonta a malha a partir da mesma
-receita de anéis, bandas e tampos (`perfis.json`), então desenho e STL não divergem.
+copiadas** — e escreve **dez** STL em `stl/`: os quatro corpos, a placa de teca, a tampa de PP com as
+duas travas, a tampa de correr, a gaveta, o 2º aro e o filete de TPE. O visualizador interativo
+remonta a malha a partir da mesma receita de anéis, bandas e tampos (`perfis.json`), então desenho e
+STL não divergem.
 
 **Como o sólido é construído:** cada peça é uma casca fechada feita de seções de retângulo com
 cantos arredondados empilhadas em alturas diferentes; bandas de quadriláteros ligam um anel ao
 seguinte e tampos em leque fecham as pontas.
 
+**O que a revisão 9 acrescentou ao gerador: furo e entalhe.** A regra "(altura, comprimento)" não
+expressa uma janela nem uma rampa, e a tampa de correr precisa das duas. Um anel passou a poder vir
+como **lista de pontos livres** `(x, y, z)`, e `banda()` passou a **pular o quadrilátero de largura
+zero** — onde o entalhe come a faixa inteira, dois anéis coincidem naquele trecho, e emitir o
+quadrilátero ali criaria triângulo de área zero e reprovaria na checagem de normais. Pulado, a casca
+continua fechada: a aresta passa a ser compartilhada pelas bandas de cima e de baixo, uma em cada
+sentido. A tampa de correr é uma casca de **gênero 1** — uma rosca, que é o que um furo faz — feita
+de 20 anéis, mais os prismas do canal, dos trilhos e das duas travas.
+
 **Conferências que a malha faz sozinha** (saem no terminal a cada geração):
 
 | Verificação | Resultado |
 |---|---|
-| Volume assinado positivo **e normais consistentes** nas sete peças | casca fechada e orientada para fora |
+| Volume assinado positivo **e normais consistentes** nas dez peças | casca fechada e orientada para fora |
 | **Seção conexa em toda a altura** nos quatro corpos | o material de cada nível encosta no do nível seguinte |
 | Autoteste: o mesmo critério roda contra a geometria da **revisão 7** | tem de **reprovar** — e reprova |
 | Cavidade × capacidade nominal | 599,6 / 1199,3 / 1799,1 / 2398,9 ml contra 600 / 1200 / 1800 / 2400 — dentro de **0,07%** |
-| Peso da malha × `calculo-modular.py` | 52,9 / 80,8 / 113,8 / 150,9 g nos corpos, 59 g na teca, 24,5 g na tampa de PP |
-| Malha do visualizador × STL do Python | `verifica-malha.js`: 0,00% nas sete peças |
+| Peso da malha × `calculo-modular.py` | 52,9 / 80,8 / 113,8 / 150,9 g nos corpos, 59 g na teca, 24,5 g na tampa de PP, 23,2 na de correr |
+| Malha do visualizador × STL do Python | `verifica-malha.js`: 0,00% nas **dez** peças |
+| Montagem: pote × tampa × filete, medido por raio na malha | `verifica-montagem.py` — inclui, desde a revisão 9, **a janela é furo mesmo**, **a gaveta cobre a janela**, **o canal é aberto em cima** e **o vertedouro não corta o friso** |
+| A página inteira do visualizador, não só a malha | `verifica-pagina.js` monta as 16 combinações de vista × tampa com um three.js de mentira |
 
 **A verificação nova da revisão 8, e por que ela existe.** Na revisão 7 a boca media 144,95 mm e a
 face externa do corpo, 141,55: o colar era um anel de material entre 144,95 e 148,55 **pairando
@@ -757,7 +847,7 @@ plausível (17,5 g contra 27,6 reais). Foi ela que trouxe `normais_consistentes(
 **O que o modelo não é.** É malha, não sólido CAD: serve para conferir encaixe, empilhamento e
 volume, e para imprimir protótipo. **O molde precisa do CAD paramétrico do projetista.** Faltam no
 modelo: a **fenda de ~1 mm** que recorta as duas travas nos três lados livres, a saia decorativa da
-tampa que a referência mostra, e o furo e o entalhe do vertedor da seção 6.4. O filete está
+tampa que a referência mostra, e os batentes de fim de curso e o puxador da gaveta (6.4). O filete está
 desenhado na medida livre, e por isso invade 0,2 mm a boca no modelo — é justamente a interferência.
 
 O corte do visualizador é onde se vê a borda oca: o flare, a perna de dentro, o canal, a saia livre

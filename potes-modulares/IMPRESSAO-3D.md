@@ -2,10 +2,12 @@
 
 **Filamento:** Creality CR-PETG cinza · 1,75 mm · 1,0 kg · impressão 230–250 °C (do rótulo)
 **Impressora:** Anycubic Kobra 3 Max · bico 0,4 mm · mesa PEI texturizada
-**Peças:** `stl/impressao/` — corpo de 600 ml (duas versões) e tampa
+**Peças:** `stl/impressao/` — corpo de 600 ml (duas versões) e as três tampas
 
-> Não consegui gerar o G-code aqui — não há fatiador neste ambiente. O que vai abaixo é o
-> perfil para você aplicar no AnycubicSlicerNext (ou OrcaSlicer) e os STL já orientados.
+> **O G-code está pronto**, em `fatiamento/saida/` — seis arquivos, todos com o `G9111` que a
+> Kobra 3 Max exige e todos validados (`fatiamento/valida.py`). Reproduza tudo com
+> `bash fatiamento/gerar.sh`. O que vai abaixo é o perfil equivalente para o AnycubicSlicerNext
+> (ou OrcaSlicer), caso você prefira fatiar aí, e os STL já orientados.
 
 ---
 
@@ -95,38 +97,57 @@ Mesma peça, com a elevação de fundo zerada. **22× mais área de contato.** M
 
 - Posição: **natural, boca para cima.** Sem suporte.
 - Brim de 10 mm.
-- ~63 g de PETG, algo em torno de 4–5 h.
+- 94 g de PETG, 12 h 45 (camada 0,2) — `saida/3_pote600.gcode`.
 
 ### `pote-600-real.stl` — a peça como ela é
 O fundo rebaixado de 1,8 mm, apoiando no anel do pé. **Só imprima este depois que o outro sair
 bem** — é o teste de fogo da sua mesa. Brim de 10 mm obrigatório.
 
-### `tampa.stl`
-- Posição: **de cabeça para baixo** — a face de cima na mesa, o plug apontando para cima.
-  Contato de 2.727 mm² numa moldura de 6,9 mm; com brim, 6.897 mm².
-- **Suporte só dentro do poço da bandeja** (3,5 mm de profundidade): use "suporte apenas sobre a
-  mesa". É raso e sai fácil.
-- Sem suporte no plug — ele aponta para cima e não tem balanço.
-- ~31 g, cerca de 2 h.
+### `tampa-pp.stl` — a tampa com as duas travas
+- Posição: **invertida** — o deck na mesa, o plug apontando para cima. De pé ela apoiaria só na
+  ponta das 2 travas (**0 mm²**); invertida, **3.183 mm²**.
+- **Suporte de mesa E de peça.** No perfil: `--dont-support-bridges=0` (sem ele o fatiador recusa
+  suporte sob o poço da bandeja e entrega uma ponte livre no meio, sem avisar) e
+  `--support-material-buildplate-only=0` — com o padrão, o suporte para em z = 3,3 e a **prateleira
+  do gancho** (1,1 mm de balanço em 89 mm, a 11,5 mm de altura) sai no ar. Custa 2,8 g e 13 min, e é
+  justamente a feição que o protótipo existe para provar.
+- 51 g, 6 h 05 — `saida/1_tampa_pp.gcode`.
 
-**O aro de TPE não se imprime em FDM.** Para o protótipo use **O-ring de seção 2,0 mm** cortado no
-comprimento e colado com cianoacrilato, ou corda de silicone de 2 mm. Perímetro de vedação: 389 mm.
+### `tampa-correr.stl` + `gaveta.stl` — a terceira tampa (revisão 9)
+- **A tampa de correr é o pior caso da mesa.** Invertida ela apoia só nas **duas paredes da calha**
+  (18 mm²), porque a calha é mais alta que o deck, e o deck fica 2,5 mm no ar. Vai com suporte de
+  mesa e de peça e brim de 12 mm: 58 g e 7 h — **mais da metade é suporte**.
+- **A gaveta imprime invertida**, e aí o friso do 2º aro fica para cima, sem suporte nenhum: 4 g,
+  33 min. Painel de 1,8 mm, 9 camadas.
+- **A folga da gaveta é de injeção, 0,25 mm por lado.** Nenhuma FDM entrega isso: conte com lixar,
+  ou imprimir a gaveta a 99% em X e Y. Se ela correr *folgada* na primeira tentativa, desconfie da
+  impressão, não do projeto.
+
+**Nem o filete nem o 2º aro se imprimem em FDM.** Para o protótipo use corda de silicone de
+**1,4 mm** (filete, 438 mm de perímetro) e de **1,2 mm** (2º aro, 147 mm), cortada no comprimento e
+colada de topo com cianoacrilato.
 
 ---
 
 ## 4. O que conferir na peça impressa
 
 1. **Primeira camada:** linhas encostadas, sem vão. É o retrato de tudo.
-2. **Encaixe do plug na boca:** a folga de projeto é 1,00 mm por lado. Em FDM a parede sai ~0,1 mm
-   mais grossa que o nominal, então espere um pouco apertado. Se travar, o problema é a impressão,
-   não o projeto.
-3. **A canaleta de 0,6 mm não sai fiel em FDM** — com bico de 0,4 e camada de 0,2 ela vira um
-   sulco raso. Serve para posicionar o O-ring, não para medir a retenção. **A retenção do aro só se
-   testa em peça injetada.**
-4. **Empilhamento:** imprima dois corpos e uma tampa e confira o passo de 60 mm entre os pés.
+2. **Encaixe do plug na boca:** a folga de projeto é **0,60 mm por lado** (plug de 144,9 na boca de
+   146,1). Em FDM a parede sai ~0,1 mm mais grossa que o nominal, então espere um pouco apertado.
+   Se travar, o problema é a impressão, não o projeto.
+3. **O friso de 0,6 mm não sai fiel em FDM** — com bico de 0,4 e camada de 0,2 ele vira um sulco
+   raso. Serve para posicionar a corda de silicone, não para medir a retenção. **A retenção do
+   filete só se testa em peça injetada.**
+4. **Empilhamento:** imprima dois corpos e uma tampa e confira o passo de 60 mm entre os fundos.
    É a prova que importa.
-5. **Pé na bandeja:** o pé de 112,4 mm tem que entrar no vão de 113,4 mm da tampa com folga de
-   0,5 mm por lado. Em FDM isso vira ~0,3 mm. Se entrar justo demais, é a impressão.
+5. **O fundo reto na bandeja:** não há pé embutido desde a revisão 7 — quem desce na bandeja é o
+   **fundo do pote de cima**, 141,67 mm, no vão de 143,3 mm da tampa: 0,8 mm por lado. Em FDM isso
+   aperta. Se entrar justo demais, é a impressão.
+6. **A trava de clipe:** é a feição nova da revisão 8 e a razão do suporte de peça. O gancho tem de
+   passar 0,80 mm sob a face de baixo da saia da borda e travar. Se a prateleira do gancho saiu
+   caída, o suporte não subiu — confira o `--support-material-buildplate-only=0`.
+7. **A gaveta correndo:** com o 2º aro colado, ela tem de correr os 24 mm sem levantar e voltar a
+   selar a janela. É a única coisa da revisão 9 que só o protótipo responde.
 
 ---
 

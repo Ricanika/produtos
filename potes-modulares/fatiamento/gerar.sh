@@ -21,13 +21,23 @@ $P --brim-width 8  --dont-support-bridges=0 --support-material-buildplate-only=0
 # a placa de teca e macica: em PETG a 100% daria 111 g e 12 h. Ela so serve para
 # conferir encaixe - em producao e CNC em madeira. 15% de preenchimento basta.
 $P --brim-width 8 --fill-density=15% --layer-height 0.2 -o saida/2_tampa_teca.gcode prep/tampa_teca.stl
+# tampa de correr: tambem invertida, mas o caso dela e pior que o da tampa PP.
+# Invertida ela apoia SO nas duas paredes da calha - 18 mm2 -, porque a calha e
+# mais alta que o deck; o deck inteiro fica 2,5 mm no ar. Por isso vai com
+# suporte de mesa E de peca (--support-material-buildplate-only=0) e brim largo.
+$P --brim-width 12 --support-material --dont-support-bridges=0 --support-material-buildplate-only=0 --layer-height 0.2 -o saida/5_tampa_correr.gcode prep/tampa_correr.stl
+# a gaveta e um painel de 1,8 mm: invertida, o friso do 2o aro fica para CIMA e
+# nao precisa de suporte nenhum.
+$P --brim-width 6 --layer-height 0.2 -o saida/6_gaveta.gcode prep/gaveta.stl
 $P --brim-width 10                          --layer-height 0.2 -o saida/3_pote600.gcode    prep/pote600_fundoplano.stl
 $P --brim-width 10 --dont-support-bridges=0 --layer-height 0.1 -o saida/4_pote600_q010.gcode prep/pote600_fundoplano.stl
 
-for f in 1_tampa_pp 2_tampa_teca 3_pote600 4_pote600_q010; do
+for f in 1_tampa_pp 2_tampa_teca 3_pote600 4_pote600_q010 5_tampa_correr 6_gaveta; do
   case $f in
     1_tampa_pp)  src=prep/tampa_pp.stl ;;
     2_tampa_teca) src=prep/tampa_teca.stl ;;
+    5_tampa_correr) src=prep/tampa_correr.stl ;;
+    6_gaveta)    src=prep/gaveta.stl ;;
     *)           src=prep/pote600_fundoplano.stl ;;
   esac
   python3 miniatura.py saida/$f.gcode $src

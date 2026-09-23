@@ -69,9 +69,11 @@ GAV_PAREDE = 6.00    # vao entre a ponta da gaveta e a parede da bandeja:
 PUXADOR    = 6.00    # rebaixo para o dedo, no topo da gaveta
 
 # ---- o segundo aro ----
-ARO2_D     = 1.60    # corda do aro da gaveta
-ARO2_PROF  = 0.70    # profundidade do friso na face de baixo da gaveta
-ARO2_COMP  = 0.20    # interferencia axial quando a gaveta assenta
+ARO2_D     = 1.20    # corda do aro da gaveta
+ARO2_SOB   = 0.35    # quanto o aro sobra do friso
+ARO2_PROF  = ARO2_D - ARO2_SOB   # profundidade do friso, na face de baixo
+GAV_CORRE  = 0.15    # folga de corrida entre a gaveta e o fundo do bolso
+ARO2_COMP  = ARO2_SOB - GAV_CORRE   # interferencia axial quando a gaveta assenta
 CUNHA      = 2.50    # ultimos mm de curso em que a gaveta desce na rampa
 
 # ---- o bico em U ----
@@ -79,7 +81,7 @@ BICO_LIP   = 0.40    # labio de corte na ponta
 BICO_PAR   = 1.20    # parede da calha
 
 Z_MOD  = -cm.BASE_T                   # plano modular = piso da bandeja
-Z_BOLSO = Z_MOD - GAV_T - 0.15        # fundo do bolso, onde a gaveta corre
+Z_BOLSO = Z_MOD - GAV_T - GAV_CORRE   # fundo do bolso, onde a gaveta corre
 Z_SEL  = 1.20                         # piso da calha por cima da borda do pote
 Z_TOPO = 4.00                         # topo das paredes da calha, na ponta
 
@@ -285,6 +287,12 @@ def verifica():
     if GAV_T - ARO2_PROF < 0.8:
         falhas.append('sob o friso do 2o aro sobram so %.2f mm de gaveta'
                       % (GAV_T - ARO2_PROF))
+    if ARO2_SOB >= GAV_ALTURA + GAV_CORRE:
+        falhas.append('o aro sobra %.2f mm e a cunha so levanta %.2f: ele arrasta '
+                      'no fundo do bolso durante o curso'
+                      % (ARO2_SOB, GAV_ALTURA + GAV_CORRE))
+    if ARO2_COMP <= 0.05:
+        falhas.append('compressao do 2o aro de so %.2f mm' % ARO2_COMP)
     for p in POSICOES:
         g = geometria(p)
         if not cabe(g):
@@ -313,15 +321,16 @@ def autoteste():
 
     Verificacao que nunca disparou nao prova nada - foi a licao da revisao 8.
     """
-    global Z_SEL, Z_BOLSO, Z_TOPO, GAV_T, ARO2_PROF
-    guarda = (Z_SEL, Z_BOLSO, Z_TOPO, GAV_T, ARO2_PROF)
+    global Z_SEL, Z_BOLSO, Z_TOPO, GAV_T, ARO2_PROF, ARO2_SOB
+    guarda = (Z_SEL, Z_BOLSO, Z_TOPO, GAV_T, ARO2_PROF, ARO2_SOB)
     bico0 = POSICOES[0]['bico_w']
     casos = [('calha abaixo de z=0', 'Z_SEL', -0.5),
              ('calha em cima do friso', 'Z_SEL', -2.5),
              ('bolso raso', 'Z_BOLSO', -2.5),
              ('calha sem profundidade', 'Z_TOPO', 1.8),
              ('gaveta fina sob o friso', 'GAV_T', 1.2),
-             ('bico mais estreito que a janela', 'POS_BICO', 20.0)]
+             ('bico mais estreito que a janela', 'POS_BICO', 20.0),
+             ('aro arrastando no fundo do bolso', 'ARO2_SOB', 0.70)]
     ok = True
     for rot, nome, val in casos:
         if nome == 'POS_BICO':
@@ -331,7 +340,7 @@ def autoteste():
         if not verifica():
             print("  AUTOTESTE FALHOU: ninguem reprova '%s'" % rot)
             ok = False
-        Z_SEL, Z_BOLSO, Z_TOPO, GAV_T, ARO2_PROF = guarda
+        Z_SEL, Z_BOLSO, Z_TOPO, GAV_T, ARO2_PROF, ARO2_SOB = guarda
         POSICOES[0]['bico_w'] = bico0
     return ok
 
@@ -355,7 +364,8 @@ def main():
     print(f"  trilhos ......... 2, avancam {TRILHO_L:.2f} mm sobre a gaveta, "
           f"{TRILHO_T:.2f} mm de espessura")
     print(f"  folga ........... {GAV_FOLGA:.2f} mm/lado nos trilhos")
-    print(f"  2o aro de TPE ... corda de {ARO2_D:.2f} mm em friso de {ARO2_PROF:.2f} mm")
+    print(f"  2o aro de TPE ... corda de {ARO2_D:.2f} mm em friso de {ARO2_PROF:.2f} mm, "
+          f"sobra {ARO2_SOB:.2f}")
     print(f"                    na face de BAIXO da gaveta - viaja com ela, nao arrasta")
     print(f"  cunha ........... nos ultimos {CUNHA:.2f} mm de curso a gaveta desce "
           f"{GAV_ALTURA:.2f} mm")
