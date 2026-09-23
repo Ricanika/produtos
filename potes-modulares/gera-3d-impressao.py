@@ -13,7 +13,7 @@ saem duas versoes do 600 ml:
 
 As areas de contato sao MEDIDAS na malha, nao digitadas: numero fixo aqui ja
 ficou defasado uma vez, quando o footprint mudou de 121,2 para 139,7 mm.
-  tampa-pe.stl             tampa com trava, 6 abas. Imprime em pe.
+  tampa-pp.stl             tampa de PP com 2 travas de clipe. Imprime em pe.
   tampa-teca.stl           placa macica - so para conferir encaixe (em teca e CNC).
 
 Uso:  python3 gera-3d-impressao.py
@@ -68,12 +68,12 @@ def main():
           f"contato na mesa {contato(c2.tris):6.0f} mm2 "
           f"({contato(c2.tris)/contato(c.tris):.0f}x) -> imprime facil")
 
-    tp = g.tampa_pe(SEG)
-    g.grava_stl(os.path.join(out, 'tampa-pe.stl'), tp.tris, 'tampa-pe')
-    inv_pe = [[(v[0], -v[1], -v[2]) for v in tri] for tri in tp.tris]
-    print(f"tampa-pe.stl             {len(tp.tris):5d} tri | altura {altura(tp.tris):.1f} mm | "
-          f"contato {contato(tp.tris):5.0f} mm2 de pe, {contato(inv_pe):5.0f} mm2 invertida"
-          f" -> IMPRIME INVERTIDA (de pe apoia so na ponta das 6 abas)")
+    tp = g.tampa_pp(SEG)
+    g.grava_stl(os.path.join(out, 'tampa-pp.stl'), tp.tris, 'tampa-pe')
+    inv_pp = [[(v[0], -v[1], -v[2]) for v in tri] for tri in tp.tris]
+    print(f"tampa-pp.stl             {len(tp.tris):5d} tri | altura {altura(tp.tris):.1f} mm | "
+          f"contato {contato(tp.tris):5.0f} mm2 de pe, {contato(inv_pp):5.0f} mm2 invertida"
+          f" -> IMPRIME INVERTIDA (de pe apoia so na ponta das 2 travas)")
 
     tc = g.tampa_teca(SEG)
     g.grava_stl(os.path.join(out, 'tampa-teca.stl'), tc.tris, 'tampa-teca')

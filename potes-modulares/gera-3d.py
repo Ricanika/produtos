@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """
-Gera os STL da linha - REVISAO 7 (borda lisa com colar, trava, rodape reto).
+Gera os STL da linha - REVISAO 8 (borda alta e oca, trava de clipe, tampa PP).
+
+AS COTAS VEM DE calculo-modular.py
+  Nada de constante repetida. Na revisao 7 este arquivo tinha a propria copia
+  das cotas e elas ja tinham divergido uma vez. Aqui o modulo e importado.
 
 COMO A CASCA E FEITA
   Cada peca e uma casca fechada de secoes de retangulo com cantos arredondados
@@ -8,59 +12,51 @@ COMO A CASCA E FEITA
   seguinte e tampos em leque fecham as pontas. O raio de cada anel sai da regra
   de curva paralela: deslocar a secao de d para dentro tira d do raio.
 
-DUAS ARMADILHAS JA PAGAS
+TRES ARMADILHAS JA PAGAS
   1. anel() sai em sentido HORARIO visto de cima. Se sair anti-horario, o
      volume assinado vem negativo.
   2. Volume assinado NAO detecta normal invertida: uma casca estanque com um
      tampo ao contrario continua fechada e ainda devolve um numero. Por isso
      normais_consistentes() confere que toda aresta aparece uma vez em cada
      sentido, e main() aborta se falhar.
+  3. Nem uma coisa nem outra detecta SOLIDO DESCONECTADO. Era o caso da
+     revisao 7: a boca (144,95) era mais larga que a face externa do corpo
+     (141,55), entao o colar era um anel de material pairando sobre o corpo,
+     e as duas superficies horizontais em z_col se cancelavam. Malha estanque,
+     normais certas, volume plausivel - e a peca solta. Por isso agora existe
+     secao_conexa(), que percorre a altura e confere que o material de uma
+     altura encosta no da seguinte.
 
 Uso:  python3 gera-3d.py [--seg 12]      (--seg = pontos por canto)
 """
-import json, math, struct, sys, os
+import importlib.util, json, math, struct, sys, os
 
-# ---- cotas da linha (iguais as de calculo-modular.py) ----
-COLAR_L, COLAR_W = 148.6, 84.9   # medida MAXIMA da peca (face externa do colar)
-R_EXT   = 10.0                   # raio de canto externo, no colar
-M       = 60.0                   # modulo
-SAIDA   = 0.50                   # graus por lado
-BASE_T  = 2.00                   # espessura do fundo (igual nos quatro)
-COLAR_H = 5.00                   # altura do colar
-REB     = 3.50                   # quanto o colar sobressai do corpo, por lado
-W_BORDA = 1.80                   # parede na faixa do colar
-ARRED   = 0.50                   # arredondamento da aresta de cima da borda
-CHANF_B = 0.40                   # chanfro de entrada da boca
-WALL    = {1: 1.15, 2: 1.20, 3: 1.30, 4: 1.40}
-ELEV    = {1: 2.96, 2: 3.90, 3: 2.92, 4: 0.00}   # elevacao do fundo
+_BASE = os.path.dirname(os.path.abspath(__file__))
+_spec = importlib.util.spec_from_file_location('cm', os.path.join(_BASE, 'calculo-modular.py'))
+cm = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(cm)
 
-# ---- vedacao, comum as duas tampas ----
-PLUG_FOLGA = 0.60
-FRISO_PROF = 0.60
-FILETE_D   = 1.40
-FILETE_SOB = 0.80
-BANDEJA_FE = 0.50
+POTES = cm.linha(cm.footprint())
+COLAR_L, COLAR_W = POTES[0]['colar_l'], POTES[0]['colar_w']
+CORPO_L = POTES[0]['corpo_l']
+BOCA    = POTES[0]['boca']
+R_EXT, M, T, BASE_T = cm.R_EXT, cm.M, cm.T, cm.BASE_T
+BORDA_H, FLARE, SAIA_H, TOPO_T = cm.BORDA_H, cm.FLARE, cm.SAIA_H, cm.TOPO_T
+W_SAIA, CANAL, W_IN, W_BORDA = cm.W_SAIA, cm.CANAL, cm.W_IN, cm.W_BORDA
+ARRED, CHANF = cm.ARRED, cm.CHANF
+WALL = cm.WALL
+ELEV = {p['n']: p['elev'] for p in POTES}
 
-# ---- tampa PE com trava ----
-PE_DECK     = 1.50
-PE_PLUG_PAR = 0.80
-PE_ABA_FORA = 3.10          # quanto o deck passa da face do colar, por lado
-PE_PLUG_H   = 6.00          # quanto o plug desce abaixo do plano da borda
-ABA_N       = 6
-ABA_LARG    = 18.0
-ABA_T       = 1.00
-ABA_FOLGA   = 0.30          # folga da aba sobre a face do colar
-ABA_FARPA   = 1.85          # quanto a farpa avanca para dentro da face do colar
-ABA_Z0      = 0.50          # topo da aba, dentro do deck (garante fusao)
-ABA_Z1      = -11.00        # ponta do rabo
+PLUG_FOLGA, FRISO_PROF = cm.PLUG_FOLGA, cm.FRISO_PROF
+FILETE_D, FILETE_SOB = cm.FILETE_D, cm.FILETE_SOB
+PP_DECK, PP_DECK_FORA = cm.PP_DECK, cm.PP_DECK_FORA
+PP_PLUG_PAR, PP_PLUG_H = cm.PP_PLUG_PAR, cm.PP_PLUG_H
+TRAVA_N, TRAVA_T, TRAVA_FOLGA = cm.TRAVA_N, cm.TRAVA_T, cm.TRAVA_FOLGA
+TRAVA_FARPA, TRAVA_RABO, TRAVA_BULGE = cm.TRAVA_FARPA, cm.TRAVA_RABO, cm.TRAVA_BULGE
+TRAVA_LARG = cm.TRAVA_FRAC * COLAR_L
+TECA_ESP = cm.TECA_ESP
 
-# ---- tampa de teca ----
-TECA_ESP = 8.0
-
-T   = math.tan(math.radians(SAIDA))
 DLW = COLAR_L - COLAR_W
-BOCA = COLAR_L - 2 * W_BORDA
-CORPO_L = COLAR_L - 2 * REB
 
 
 def largura(L):
@@ -98,7 +94,7 @@ class Casca:
         self.loops = []
         self.bands = []
         self.caps = []
-        self.prismas = []          # abas de trava: perfil extrudado, fora dos aneis
+        self.prismas = []          # travas: perfil extrudado, fora dos aneis
 
     def add(self, z, L):
         R = max(raio(L), 0.15)
@@ -120,8 +116,7 @@ class Casca:
             self.tris.append((B[k2], A[k2], A[k]))
 
     def cap(self, i, para_cima=True):
-        """Tampo em leque. O leque inverte para a normal apontar para +z:
-        num prisma, o tampo de cima tem de valer +A.h/3 no volume assinado."""
+        """Tampo em leque. O leque inverte para a normal apontar para +z."""
         self.caps.append([i, 1 if para_cima else 0])
         P = self._pts(i)
         c = (sum(p[0] for p in P) / len(P), sum(p[1] for p in P) / len(P), P[0][2])
@@ -133,9 +128,9 @@ class Casca:
 def prisma(perfil, eixo, pos, comp):
     """Solido fechado extrudado de um perfil (d, z) ao longo de um lado.
 
-    perfil: lista fechada de (d, z), d medido para FORA a partir da face do
-    colar. eixo: 'x' (lado curto) ou 'y' (lado comprido). pos: a coordenada da
-    face do colar nesse lado, com sinal. comp: largura da aba.
+    perfil: lista fechada de (d, z), d medido para FORA a partir da face
+    externa da borda. eixo: 'x' (lado curto) ou 'y' (lado comprido). pos: a
+    coordenada dessa face, com sinal. comp: largura da trava.
     """
     n = len(perfil)
     s = 1.0 if pos > 0 else -1.0
@@ -145,12 +140,10 @@ def prisma(perfil, eixo, pos, comp):
     A = [P(d, z, -comp / 2) for d, z in perfil]
     B = [P(d, z, +comp / 2) for d, z in perfil]
     tris = []
-    # paredes laterais
     for k in range(n):
         k2 = (k + 1) % n
         tris.append((A[k], A[k2], B[k]))
         tris.append((A[k2], B[k2], B[k]))
-    # tampos das duas pontas, em leque
     ca = (sum(p[0] for p in A) / n, sum(p[1] for p in A) / n, sum(p[2] for p in A) / n)
     cb = (sum(p[0] for p in B) / n, sum(p[1] for p in B) / n, sum(p[2] for p in B) / n)
     for k in range(n):
@@ -163,60 +156,144 @@ def prisma(perfil, eixo, pos, comp):
 
 
 def corpo(n_mod, seg):
-    """Um pote. z=0 no plano de apoio (o fundo, que agora e RETO).
+    """Um pote. z=0 no plano de apoio (o fundo reto).
 
-    De cima para baixo a peca SO ESTREITA: colar -> corpo -> fundo. Nenhuma
-    contra-saida, nenhuma gaveta. O rebaixo onde a trava engata nao e uma
-    canaleta: e a face de baixo do colar.
+    A BORDA, de baixo para cima: a parede sobe reta ate z_body, abre num tronco
+    de cone (FLARE) ate a perna de dentro, que sobe e faz a boca; no topo a
+    faixa chata liga a perna a SAIA, que desce por fora deixando um canal. A
+    face de baixo da saia - W_SAIA mm - e a aresta onde a trava engata.
+
+    Por fora, descendo, a peca so estreita (saia -> perna -> corpo -> fundo) e
+    por dentro tambem (boca -> corpo): nenhuma contra-saida.
     """
     w, elev = WALL[n_mod], ELEV[n_mod]
     H = n_mod * M + BASE_T
-    z_col = H - COLAR_H
+    z_body = H - BORDA_H - FLARE
+    z_bord = H - BORDA_H
     piso = BASE_T + elev
-    corpo_z = lambda z: CORPO_L - 2 * (z_col - z) * T      # corpo, face externa
-    colar_z = lambda z: COLAR_L - 2 * (H - z) * T          # colar, face externa
-    boca_z  = lambda z: BOCA - 2 * (H - z) * T             # furo
+    corpo_z = lambda z: CORPO_L - 2 * (z_body - z) * T
+    boca_z  = lambda z: BOCA - 2 * (H - z) * T
+    colar_z = lambda z: COLAR_L - 2 * (H - z) * T
+    skirt_i = lambda z: colar_z(z) - 2 * W_SAIA
+    leg_o   = lambda z: boca_z(z) + 2 * W_IN
 
     c = Casca(seg)
-    L0  = c.add(0.0,            corpo_z(0.0))                 # aresta do fundo
-    L1  = c.add(z_col,          CORPO_L)                      # topo do corpo
-    L2  = c.add(z_col,          colar_z(z_col))               # ARESTA DE ENGATE
-    L3  = c.add(H - ARRED,      COLAR_L)                      # face externa do colar
-    L4  = c.add(H,              COLAR_L - 2 * ARRED)          # aresta de cima, arredondada
-    L5  = c.add(H,              BOCA + 2 * CHANF_B)           # chanfro de entrada
-    L6  = c.add(H - CHANF_B,    BOCA)                         # furo
-    L7  = c.add(z_col,          boca_z(z_col))                # furo no fim do colar
-    L8  = c.add(z_col,          CORPO_L - 2 * w)              # degrau interno
-    L9  = c.add(piso,           corpo_z(piso) - 2 * w)        # piso interno
-    for a, b in ((L0,L1),(L1,L2),(L2,L3),(L3,L4),(L4,L5),(L5,L6),(L6,L7),
-                 (L7,L8),(L8,L9)):
+    A0  = c.add(0.0,          corpo_z(0.0))          # aresta do fundo
+    A1  = c.add(z_body,       CORPO_L)               # topo da parede reta
+    A2  = c.add(z_bord,       leg_o(z_bord))         # topo do flare
+    A3  = c.add(H - TOPO_T,   leg_o(H - TOPO_T))     # teto do canal, lado de dentro
+    A4  = c.add(H - TOPO_T,   skirt_i(H - TOPO_T))   # teto do canal, lado de fora
+    A5  = c.add(H - SAIA_H,   skirt_i(H - SAIA_H))   # face interna da saia, embaixo
+    A6  = c.add(H - SAIA_H,   colar_z(H - SAIA_H))   # ARESTA DE ENGATE
+    A7  = c.add(H - ARRED,    colar_z(H - ARRED))    # face externa da saia
+    A8  = c.add(H,            COLAR_L - 2 * ARRED)   # aresta de cima, arredondada
+    A9  = c.add(H,            BOCA + 2 * CHANF)      # faixa chata do topo
+    A10 = c.add(H - CHANF,    BOCA)                  # chanfro de entrada da boca
+    A11 = c.add(z_bord,       boca_z(z_bord))        # fim da boca
+    A12 = c.add(z_body,       CORPO_L - 2 * w)       # pe do flare, por dentro
+    A13 = c.add(piso,         corpo_z(piso) - 2 * w) # piso interno
+    for a, b in ((A0,A1),(A1,A2),(A2,A3),(A3,A4),(A4,A5),(A5,A6),(A6,A7),(A7,A8),
+                 (A8,A9),(A9,A10),(A10,A11),(A11,A12),(A12,A13)):
         c.banda(a, b)
-    c.cap(L9, True)                                           # piso, por cima
+    c.cap(A13, True)
     if elev >= 0.05:
-        L10 = c.add(elev, corpo_z(elev) - 2 * w)              # face de baixo do piso
-        L11 = c.add(0.0,  corpo_z(0.0) - 2 * w)               # face interna do rodape
-        c.cap(L10, False)
-        c.banda(L10, L11)
-        c.banda(L11, L0)
+        A14 = c.add(elev, corpo_z(elev) - 2 * w)     # face de baixo do piso
+        A15 = c.add(0.0,  corpo_z(0.0) - 2 * w)      # face interna do rodape
+        c.cap(A14, False)
+        c.banda(A14, A15)
+        c.banda(A15, A0)
     else:
-        L11 = c.add(0.0, corpo_z(0.0) - 2 * w)
-        c.cap(L11, False)
-        c.banda(L11, L0)
+        A15 = c.add(0.0, corpo_z(0.0) - 2 * w)
+        c.cap(A15, False)
+        c.banda(A15, A0)
     return c, H
+
+
+def secao_conexa(n_mod, passo=0.25):
+    """Confere que o material de cada altura encosta no da altura seguinte.
+
+    Foi isto que faltou na revisao 7. Em cada z o corpo e uma coroa (ou duas,
+    na faixa do canal). Se a coroa de um nivel nao tem intersecao radial com a
+    do nivel de baixo, a peca esta partida ali.
+    """
+    w, elev = WALL[n_mod], ELEV[n_mod]
+    H = n_mod * M + BASE_T
+    z_body, z_bord = H - BORDA_H - FLARE, H - BORDA_H
+    piso = BASE_T + elev
+    corpo_z = lambda z: CORPO_L - 2 * (z_body - z) * T
+    boca_z  = lambda z: BOCA - 2 * (H - z) * T
+    colar_z = lambda z: COLAR_L - 2 * (H - z) * T
+
+    def coroas(z):
+        """Lista de (r_int, r_ext) em meia-largura, no meio de um lado."""
+        if z <= piso:
+            return [(0.0, corpo_z(z) / 2)]
+        if z <= z_body:
+            return [(corpo_z(z) / 2 - w, corpo_z(z) / 2)]
+        if z <= z_bord:                                  # flare
+            f = (z - z_body) / FLARE
+            ext = (CORPO_L + (boca_z(z_bord) + 2 * W_IN - CORPO_L) * f) / 2
+            return [(ext - w, ext)]
+        out = [(boca_z(z) / 2, boca_z(z) / 2 + W_IN)]    # perna de dentro
+        if z >= H - SAIA_H:                              # + saia, com o canal
+            if z >= H - TOPO_T:
+                return [(boca_z(z) / 2, colar_z(z) / 2)]
+            out.append((colar_z(z) / 2 - W_SAIA, colar_z(z) / 2))
+        return out
+
+    z = 0.0
+    ruim = []
+    while z + passo <= H:
+        a, b = coroas(z), coroas(z + passo)
+        for (i0, i1) in a:
+            if not any(min(i1, j1) - max(i0, j0) > 1e-6 for (j0, j1) in b):
+                ruim.append(z)
+                break
+        z += passo
+    return ruim
+
+
+def autoteste_conexao():
+    """Uma checagem que nunca disparou nao prova nada.
+
+    Reconstroi aqui a geometria da REVISAO 7 - colar macico de 5 mm cuja boca
+    (144,95) era mais larga que a face externa do corpo (141,55) - e exige que
+    o mesmo criterio de secao_conexa() a reprove.
+    """
+    H, colar_l, corpo_l, boca, colar_h, w = 62.0, 148.55, 141.55, 144.95, 5.0, 1.15
+    t = math.tan(math.radians(0.5))
+    z_col = H - colar_h
+
+    def coroas7(z):
+        if z <= 2.0:
+            return [(0.0, (corpo_l - 2 * (z_col - z) * t) / 2)]
+        if z <= z_col:
+            e = (corpo_l - 2 * (z_col - z) * t) / 2
+            return [(e - w, e)]
+        return [((boca - 2 * (H - z) * t) / 2, (colar_l - 2 * (H - z) * t) / 2)]
+
+    z, achou = 0.0, False
+    while z + 0.25 <= H:
+        a, b = coroas7(z), coroas7(z + 0.25)
+        for (i0, i1) in a:
+            if not any(min(i1, j1) - max(i0, j0) > 1e-6 for (j0, j1) in b):
+                achou = True
+        z += 0.25
+    return achou
 
 
 def cavidade(n_mod, seg):
     """Fecha so a cavidade interna, para conferir a capacidade na malha."""
     w, elev = WALL[n_mod], ELEV[n_mod]
     H = n_mod * M + BASE_T
-    z_col = H - COLAR_H
+    z_body, z_bord = H - BORDA_H - FLARE, H - BORDA_H
     piso = BASE_T + elev
-    corpo_z = lambda z: CORPO_L - 2 * (z_col - z) * T
+    corpo_z = lambda z: CORPO_L - 2 * (z_body - z) * T
     boca_z  = lambda z: BOCA - 2 * (H - z) * T
     c = Casca(seg)
     K0 = c.add(piso,   corpo_z(piso) - 2 * w)
-    K1 = c.add(z_col,  CORPO_L - 2 * w)
-    K2 = c.add(z_col,  boca_z(z_col))
+    K1 = c.add(z_body, CORPO_L - 2 * w)
+    K2 = c.add(z_bord, boca_z(z_bord))
     K3 = c.add(H,      BOCA)
     c.cap(K0, False)
     for a, b in ((K0,K1),(K1,K2),(K2,K3)):
@@ -228,24 +305,24 @@ def cavidade(n_mod, seg):
 def tampa_teca(seg):
     """Placa macica de teca com friso na face lateral. z=0 no plano da borda.
 
-    O topo da placa fica BASE_T abaixo da borda: e ele o plano modular, e o
-    fundo reto do pote de cima pousa direto nele. Nao ha poco a usinar - era o
-    ponto em aberto da revisao 6.
+    O topo da placa fica BASE_T abaixo do topo da borda: e ele o plano modular,
+    e o fundo reto do pote de cima pousa direto nele. Com a borda de 12 mm a
+    madeira aparece emoldurada, 2 mm abaixo do aro.
     """
     plug = BOCA - 2 * PLUG_FOLGA
     friso = plug - 2 * FRISO_PROF
     z_top = -BASE_T
     z_bot = z_top - TECA_ESP
-    zf0, zf1 = z_top - 3.0, z_top - 3.0 - FILETE_D   # faixa do friso
+    zf0, zf1 = z_top - 3.0, z_top - 3.0 - FILETE_D
 
     c = Casca(seg)
-    P0 = c.add(z_top, plug)          # topo: o plano modular
+    P0 = c.add(z_top, plug)
     P1 = c.add(zf0,   plug)
-    P2 = c.add(zf0,   friso)         # friso
+    P2 = c.add(zf0,   friso)
     P3 = c.add(zf1,   friso)
     P4 = c.add(zf1,   plug)
     P5 = c.add(z_bot + 0.6, plug)
-    P6 = c.add(z_bot, plug - 1.2)    # quebra-canto embaixo
+    P6 = c.add(z_bot, plug - 1.2)
     for a, b in ((P1,P0),(P2,P1),(P3,P2),(P4,P3),(P5,P4),(P6,P5)):
         c.banda(a, b)
     c.cap(P0, True)
@@ -253,65 +330,71 @@ def tampa_teca(seg):
     return c
 
 
-def tampa_pe(seg):
-    """Tampa PP/PE com trava. z=0 no plano da borda do pote.
+def tampa_pp(seg):
+    """Tampa de PP com DUAS travas de clipe. z=0 no plano do topo da borda.
+
+    O layout veio do STL de referencia: duas travas largas, uma por lado
+    COMPRIDO, cobrindo 58% do comprimento, com gancho e rabo para o dedo.
 
     Tres coisas, cada uma com uma funcao so:
-      - o PLUG desce na boca, leva o MESMO friso e o MESMO filete da teca, e
-        veda radial;
-      - a BANDEJA (piso 2,0 mm abaixo da borda) recebe o fundo reto do pote de
+      - o PLUG desce na boca, leva o friso e o filete, e veda RADIAL;
+      - a BANDEJA (piso 2,0 mm abaixo do topo) recebe o fundo reto do pote de
         cima e e o plano modular;
-      - as ABAS engatam sob o colar e dao a forca de fechamento que a teca nao
-        tem. O filete so veda; quem segura e a trava.
+      - as TRAVAS engatam sob a aresta da saia e dao a forca de fechamento.
+
+    O que a malha nao tem: a saia decorativa continua que a referencia mostra,
+    interrompida pelas duas fendas das travas. Aqui o deck passa da borda e as
+    travas penduram dele - e o que ja era assim na revisao 7.
     """
     plug = BOCA - 2 * PLUG_FOLGA
     friso = plug - 2 * FRISO_PROF
-    bandeja = plug - 2 * PE_PLUG_PAR
-    deck_o = COLAR_L + 2 * PE_ABA_FORA
-    z_pf = -PE_PLUG_H
+    bandeja = plug - 2 * PP_PLUG_PAR
+    deck_o = COLAR_L + 2 * PP_DECK_FORA
+    z_pf = -PP_PLUG_H
     zf0, zf1 = -3.0, -3.0 - FILETE_D
 
     c = Casca(seg)
-    D0  = c.add(-BASE_T,        bandeja)        # piso da bandeja = plano modular
-    D1  = c.add(PE_DECK,        bandeja)        # parede da bandeja sobe
-    D2  = c.add(PE_DECK,        deck_o)         # topo do deck
-    D3  = c.add(0.0,            deck_o)         # face externa do deck
-    D4  = c.add(0.0,            COLAR_L + 2 * ABA_FOLGA)   # face de baixo do deck
-    D5  = c.add(0.0,            plug)           # apoia na borda e entra na boca
-    D6  = c.add(zf0,            plug)
-    D7  = c.add(zf0,            friso)          # friso do filete
-    D8  = c.add(zf1,            friso)
-    D9  = c.add(zf1,            plug)
-    D10 = c.add(z_pf + 0.5,     plug)
-    D11 = c.add(z_pf,           plug - 1.0)     # ponta do plug, com quebra-canto
-    D12 = c.add(z_pf,           bandeja)        # face interna do plug
-    D13 = c.add(-BASE_T - PE_DECK, bandeja)     # face de baixo do piso
+    D0  = c.add(-BASE_T,       bandeja)                       # plano modular
+    D1  = c.add(PP_DECK,       bandeja)
+    D2  = c.add(PP_DECK,       deck_o)                        # topo do deck
+    D3  = c.add(0.0,           deck_o)                        # face externa
+    D4  = c.add(0.0,           COLAR_L + 2 * TRAVA_FOLGA)
+    D5  = c.add(0.0,           plug)                          # pousa na borda
+    D6  = c.add(zf0,           plug)
+    D7  = c.add(zf0,           friso)
+    D8  = c.add(zf1,           friso)
+    D9  = c.add(zf1,           plug)
+    D10 = c.add(z_pf + 0.5,    plug)
+    D11 = c.add(z_pf,          plug - 1.0)
+    D12 = c.add(z_pf,          bandeja)
+    D13 = c.add(-BASE_T - PP_DECK, bandeja)
     for a, b in ((D1,D0),(D2,D1),(D3,D2),(D4,D3),(D5,D4),(D6,D5),(D7,D6),(D8,D7),
                  (D9,D8),(D10,D9),(D11,D10),(D12,D11),(D13,D12)):
         c.banda(a, b)
     c.cap(D0, True)
     c.cap(D13, False)
 
-    # ---- abas de trava: prismas separados, 0,5 mm dentro do deck ----
-    perfil = [(ABA_FOLGA, ABA_Z0),
-              (ABA_FOLGA, -COLAR_H),
-              (-ABA_FARPA, -COLAR_H - 0.6),
-              (ABA_FOLGA, -COLAR_H - 1.6),
-              (ABA_FOLGA, ABA_Z1),
-              (ABA_FOLGA + ABA_T, ABA_Z1),
-              (ABA_FOLGA + ABA_T, ABA_Z0)]
-    meia_l, meia_w = COLAR_L / 2, COLAR_W / 2
-    postos = [('y',  meia_w,  34.0), ('y',  meia_w, -34.0),
-              ('y', -meia_w,  34.0), ('y', -meia_w, -34.0),
-              ('x',  meia_l,   0.0), ('x', -meia_l,  0.0)]
-    for eixo, pos, off in postos[:ABA_N]:
-        tris = prisma(perfil, eixo, pos, ABA_LARG)
-        if eixo == 'y':
-            c.tris += [tuple((x + off, y, z) for x, y, z in t) for t in tris]
-        else:
-            c.tris += [tuple((x, y + off, z) for x, y, z in t) for t in tris]
-        c.prismas.append(dict(perfil=perfil, eixo=eixo, pos=pos,
-                              comp=ABA_LARG, off=off))
+    # ---- as duas travas: prismas separados, embutidos 0,5 mm no deck ----
+    F, Tt = TRAVA_FOLGA, TRAVA_T
+    Zc = -SAIA_H                                   # nivel da aresta de engate
+    # A farpa e cotada a partir da face da borda NA ALTURA DA ARESTA, nao no
+    # topo: em SAIA_H mm a saida ja estreitou a borda em SAIA_H*tan(0,5°), e
+    # cotar do topo entregaria 0,67 mm de engate em vez dos 0,80 pedidos.
+    # Nenhuma checagem de malha acusa isso - so a conferencia de montagem.
+    FA = TRAVA_FARPA + SAIA_H * T
+    perfil = [(F,                    PP_DECK - 0.5),
+              (F,                    Zc),
+              (-FA,                  Zc),          # prateleira do gancho
+              (-FA,                  Zc - 0.50),
+              (F + 0.20,             Zc - 1.70),   # rampa de entrada
+              (F + TRAVA_BULGE,      Zc - TRAVA_RABO),
+              (F + TRAVA_BULGE + Tt, Zc - TRAVA_RABO + 0.9),
+              (F + Tt,               Zc - 0.80),
+              (F + Tt,               PP_DECK - 0.5)]
+    for pos in (COLAR_W / 2, -COLAR_W / 2):
+        c.tris += prisma(perfil, 'y', pos, TRAVA_LARG)
+        c.prismas.append(dict(perfil=perfil, eixo='y', pos=pos,
+                              comp=TRAVA_LARG, off=0.0))
     return c
 
 
@@ -339,13 +422,7 @@ def filete(seg):
 
 
 def normais_consistentes(tris):
-    """Toda aresta tem de aparecer uma vez em cada sentido.
-
-    Volume assinado NAO detecta normais invertidas: uma malha estanque com um
-    tampo ao contrario continua fechada e ainda devolve um volume, so que
-    errado. Foi o que aconteceu com a tampa PE na revisao 6 - 17,5 g em vez de
-    27,6 - e so apareceu quando a malha foi aberta noutro programa.
-    """
+    """Toda aresta tem de aparecer uma vez em cada sentido."""
     from collections import Counter
     e = Counter()
     for a, b, c in tris:
@@ -385,12 +462,15 @@ def main():
     seg = 12
     if '--seg' in sys.argv:
         seg = int(sys.argv[sys.argv.index('--seg') + 1])
-    base = os.path.dirname(os.path.abspath(__file__))
-    out = os.path.join(base, 'stl')
+    out = os.path.join(_BASE, 'stl')
     os.makedirs(out, exist_ok=True)
+
+    print(f'cotas de calculo-modular.py: borda {COLAR_L:.1f} x {COLAR_W:.1f} | '
+          f'corpo {CORPO_L:.1f} | boca {BOCA:.1f} | borda {BORDA_H:.0f} + flare {FLARE:.0f} mm')
 
     perfis = {'seg': seg, 'pecas': {}}
     checar = []
+    partido = []
     for n in (1, 2, 3, 4):
         c, H = corpo(n, seg)
         nome = f'pote-{n * 600}'
@@ -399,6 +479,9 @@ def main():
                                      prismas=c.prismas,
                                      H=H, passo=n * M, cap=n * 600)
         checar.append((nome, c))
+        ruim = secao_conexa(n)
+        if ruim:
+            partido.append((nome, ruim[0], ruim[-1]))
         vcav = cavidade(n, seg) / 1000.0
         vmat = volume_assinado(c.tris) / 1000.0
         print(f'{nome:<12} altura {H:6.1f} mm | {len(c.tris):5d} tri | '
@@ -407,26 +490,29 @@ def main():
 
     t = tampa_teca(seg)
     grava_stl(os.path.join(out, 'tampa-teca.stl'), t.tris, 'tampa-teca')
-    perfis['pecas']['tampa-teca'] = dict(loops=t.loops, bands=t.bands, caps=t.caps, prismas=t.prismas)
+    perfis['pecas']['tampa-teca'] = dict(loops=t.loops, bands=t.bands, caps=t.caps,
+                                         prismas=t.prismas)
     checar.append(('tampa-teca', t))
     print(f'{"tampa-teca":<12} {"":13} | {len(t.tris):5d} tri | placa macica, '
-          f'{volume_assinado(t.tris) / 1000.0 * 0.65:5.0f} g em teca')
+          f'{volume_assinado(t.tris) / 1000.0 * cm.RHO_TECA * 1000:5.0f} g em teca')
 
-    tp = tampa_pe(seg)
-    grava_stl(os.path.join(out, 'tampa-pe.stl'), tp.tris, 'tampa-pe')
-    perfis['pecas']['tampa-pe'] = dict(loops=tp.loops, bands=tp.bands, caps=tp.caps, prismas=tp.prismas)
-    checar.append(('tampa-pe', tp))
-    print(f'{"tampa-pe":<12} {"":13} | {len(tp.tris):5d} tri | com {ABA_N} abas | '
-          f'{volume_assinado(tp.tris) / 1000.0 * 0.905:5.1f} g em PP')
+    tp = tampa_pp(seg)
+    grava_stl(os.path.join(out, 'tampa-pp.stl'), tp.tris, 'tampa-pp')
+    perfis['pecas']['tampa-pp'] = dict(loops=tp.loops, bands=tp.bands, caps=tp.caps,
+                                       prismas=tp.prismas)
+    checar.append(('tampa-pp', tp))
+    print(f'{"tampa-pp":<12} {"":13} | {len(tp.tris):5d} tri | {TRAVA_N} travas de '
+          f'{TRAVA_LARG:.0f} mm | {volume_assinado(tp.tris) / 1000.0 * 0.905:5.1f} g em PP')
 
     a = filete(seg)
     grava_stl(os.path.join(out, 'filete-tpe.stl'), a.tris, 'filete-tpe')
-    perfis['pecas']['filete'] = dict(loops=a.loops, bands=a.bands, caps=a.caps, prismas=a.prismas)
+    perfis['pecas']['filete'] = dict(loops=a.loops, bands=a.bands, caps=a.caps,
+                                     prismas=a.prismas)
     checar.append(('filete-tpe', a))
     print(f'{"filete-tpe":<12} {"":13} | {len(a.tris):5d} tri | '
           f'{volume_assinado(a.tris) / 1000.0 * 1.10:5.1f} g em TPE')
 
-    with open(os.path.join(base, 'perfis.json'), 'w') as f:
+    with open(os.path.join(_BASE, 'perfis.json'), 'w') as f:
         json.dump(perfis, f, separators=(',', ':'))
 
     ruim = [nome for nome, cc in checar
@@ -434,11 +520,22 @@ def main():
     print('\nSTL em', out)
     print('Normais consistentes e volume positivo nas %d pecas: %s'
           % (len(checar), 'OK' if not ruim else 'FALHOU EM ' + ', '.join(ruim)))
-    if ruim:
+    if partido:
+        for nome, z0, z1 in partido:
+            print(f'SOLIDO PARTIDO em {nome}: sem contato entre z={z0:.2f} e {z1:.2f}')
+    else:
+        print('Secao conexa em toda a altura nos 4 corpos: OK '
+              '(era o erro da revisao 7)')
+    if autoteste_conexao():
+        print('Autoteste: o mesmo criterio REPROVA a geometria da revisao 7. OK')
+    else:
+        print('Autoteste FALHOU: o criterio nao pega nem o erro conhecido.')
         sys.exit(1)
-    print('\nAs abas de trava sao prismas separados que entram 0,5 mm no deck, para')
-    print('fundirem no fatiador. O volume conta esses 0,5 mm duas vezes: ~54 mm3,')
-    print('0,2%% da tampa.')
+    if ruim or partido:
+        sys.exit(1)
+    print(f'\nAs travas sao prismas separados que entram 0,5 mm no deck, para')
+    print(f'fundirem no fatiador. Na peca injetada elas sao recortadas por uma')
+    print(f'fenda de ~1 mm nos tres lados livres - a malha nao mostra a fenda.')
 
 
 if __name__ == '__main__':

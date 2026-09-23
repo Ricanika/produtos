@@ -49,7 +49,7 @@ function volSTL(caminho){
 }
 const ARQ = {'pote-600':'pote-600','pote-1200':'pote-1200','pote-1800':'pote-1800',
              'pote-2400':'pote-2400','tampa-teca':'tampa-teca',
-             'tampa-pe':'tampa-pe','filete':'filete-tpe'};
+             'tampa-pp':'tampa-pp','filete':'filete-tpe'};
 const DIR = process.argv[2] || 'stl';
 const py = {};
 for (const k of Object.keys(ARQ)) py[k] = volSTL(`${DIR}/${ARQ[k]}.stl`);

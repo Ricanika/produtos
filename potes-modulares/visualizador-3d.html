@@ -68,7 +68,7 @@
   <header>
     <p class="eyebrow">Nitron · Projeto 115 · modelo paramétrico</p>
     <h1>Potes modulares em 3D</h1>
-    <p class="sub"><strong>Revisão 7.</strong> A aba em U saiu; no lugar dela a borda ganhou um <strong>colar</strong> de 3,5 mm por lado, liso e arredondado em cima, cuja face de baixo é a aresta onde a trava engata. O pé embutido saiu também: o rodapé é <strong>reto</strong>, seção constante do colar até o fundo, para o IML. Colar 148,6 × 84,9 mm, corpo 141,6 × 77,9, canto R10, módulo 60 mm. As <strong>duas tampas levam o mesmo filete de TPE</strong> vedando radialmente na boca — a de PP/PE ganha 6 abas de trava, a de teca segura por atrito. Abra o <strong>corte</strong>.</p>
+    <p class="sub"><strong>Revisão 8.</strong> A borda passou a ser <strong>alta e oca</strong>, como no STL de referência: a parede abre num flare, sobe pela perna de dentro, vira o topo chato e desce por fora numa <strong>saia livre</strong> de 10 mm. A face de baixo da saia é a aresta onde a trava engata — e como a saia é livre, é material de verdade. Borda 153,7 × 87,8 mm, corpo reto 142,5 × 76,6, canto R10, módulo 60 mm. A tampa de PP ganhou <strong>duas travas de clipe</strong>, uma por lado comprido, cobrindo 58% do comprimento — o layout da referência. Abra o <strong>corte</strong>.</p>
   </header>
 
   <div class="barra">
@@ -84,7 +84,7 @@
     <div class="grupo">
       <span class="k">Tampa</span>
       <div class="botoes" id="g-tampa">
-        <button data-t="pe" aria-pressed="true">PP/PE com trava</button>
+        <button data-t="pp" aria-pressed="true">PP com 2 travas</button>
         <button data-t="teca" aria-pressed="false">Teca (placa)</button>
         <button data-t="off" aria-pressed="false">Sem</button>
       </div>
@@ -110,11 +110,11 @@
   <div class="infos">
     <div class="info">
       <h3>O que a malha já provou</h3>
-      <p>A cavidade de cada pote fica a menos de <strong>0,06%</strong> da capacidade nominal. O gerador confere volume assinado <em>e</em> normais consistentes nas sete peças — volume assinado sozinho não acusa tampo invertido. Na revisão 7 o verificador pegou mais duas: metade das abas de trava entrava <strong>espelhada</strong> no visualizador (volume negativo, cancelando as outras três), e o filete estava desenhado <strong>0,40 mm aquém da boca</strong> — não vedaria nada, e nenhuma checagem de malha acusaria.</p>
+      <p>A cavidade de cada pote fica a menos de <strong>0,07%</strong> da capacidade nominal. O gerador confere volume assinado, normais consistentes <em>e</em>, desde esta revisão, <strong>seção conexa</strong>. Foi essa terceira que faltava: na revisão 7 a boca (144,95) era mais larga que a face externa do corpo (141,55), então o colar era um anel de material <strong>pairando sobre o corpo</strong> — malha estanque, normais certas, volume plausível e a peça solta. A checagem nova é rodada contra a própria geometria da revisão 7 a cada execução, e tem de reprovar: verificação que nunca disparou não prova nada.</p>
     </div>
     <div class="info">
       <h3>O que este modelo não é</h3>
-      <p>É malha, não sólido CAD. Serve para conferir encaixe, empilhamento e volume, e para imprimir protótipo. <strong>O molde precisa do CAD paramétrico do projetista.</strong> Faltam no modelo: a aba de alavanca para abrir, o chanfro de entrada da boca, o furo e o entalhe do vertedor. O aro está desenhado na medida livre, e por isso invade 0,2 mm a parede — é a interferência.</p>
+      <p>É malha, não sólido CAD. Serve para conferir encaixe, empilhamento e volume, e para imprimir protótipo. <strong>O molde precisa do CAD paramétrico do projetista.</strong> Faltam no modelo: a <strong>fenda de ~1 mm</strong> que recorta as duas travas nos três lados livres, a saia decorativa da tampa, o furo e o entalhe do vertedor. O filete está desenhado na medida livre, e por isso invade 0,2 mm a boca — é a interferência.</p>
     </div>
     <div class="info">
       <h3>Arquivos</h3>
@@ -126,12 +126,12 @@
     <table>
       <thead><tr><th>Peça</th><th>Altura</th><th>Passo</th><th>Cavidade na malha</th><th>Alvo</th><th>Peso da malha</th><th>Triângulos</th></tr></thead>
       <tbody>
-        <tr><td class="tam">600 ml</td><td class="num">62,0 mm</td><td class="num">60</td><td class="num">599,9 ml</td><td class="num">600</td><td class="num">47,1 g</td><td class="num">1152</td></tr>
-        <tr><td class="tam">1,2 L</td><td class="num">122,0 mm</td><td class="num">120</td><td class="num">1200,0 ml</td><td class="num">1200</td><td class="num">74,9 g</td><td class="num">1152</td></tr>
-        <tr><td class="tam">1,8 L</td><td class="num">182,0 mm</td><td class="num">180</td><td class="num">1800,5 ml</td><td class="num">1800</td><td class="num">108,0 g</td><td class="num">1152</td></tr>
-        <tr><td class="tam">2,4 L</td><td class="num">242,0 mm</td><td class="num">240</td><td class="num">2401,2 ml</td><td class="num">2400</td><td class="num">145,2 g</td><td class="num">1056</td></tr>
+        <tr><td class="tam">600 ml</td><td class="num">62,0 mm</td><td class="num">60</td><td class="num">599,6 ml</td><td class="num">600</td><td class="num">52,9 g</td><td class="num">1536</td></tr>
+        <tr><td class="tam">1,2 L</td><td class="num">122,0 mm</td><td class="num">120</td><td class="num">1199,3 ml</td><td class="num">1200</td><td class="num">80,8 g</td><td class="num">1536</td></tr>
+        <tr><td class="tam">1,8 L</td><td class="num">182,0 mm</td><td class="num">180</td><td class="num">1799,1 ml</td><td class="num">1800</td><td class="num">113,8 g</td><td class="num">1536</td></tr>
+        <tr><td class="tam">2,4 L</td><td class="num">242,0 mm</td><td class="num">240</td><td class="num">2398,9 ml</td><td class="num">2400</td><td class="num">150,9 g</td><td class="num">1440</td></tr>
         <tr><td class="tam">Tampa teca</td><td class="num">8,0 mm</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">59 g em teca</td><td class="num">672</td></tr>
-        <tr><td class="tam">Tampa PP/PE</td><td class="num">12,5 mm</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">21,7 g + 6 abas</td><td class="num">1512</td></tr>
+        <tr><td class="tam">Tampa PP</td><td class="num">17,5 mm</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">24,5 g com 2 travas</td><td class="num">1416</td></tr>
         <tr><td class="tam">Filete TPE</td><td class="num">1,4 mm</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">0,9 g</td><td class="num">384</td></tr>
       </tbody>
     </table>
@@ -145,7 +145,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
-  var DATA = {"seg":12,"pecas":{"pote-600":{"loops":[{"z":0.0,"L":140.6051370718535,"W":76.90513707185352,"R":6.0025685359267555},{"z":57.0,"L":141.6,"W":77.9,"R":6.5},{"z":57.0,"L":148.5127313220924,"W":84.81273132209242,"R":9.956365661046206},{"z":61.5,"L":148.6,"W":84.9,"R":10.0},{"z":62.0,"L":147.6,"W":83.9,"R":9.5},{"z":62.0,"L":145.8,"W":82.10000000000002,"R":8.600000000000009},{"z":61.6,"L":145.0,"W":81.30000000000001,"R":8.200000000000003},{"z":57.0,"L":144.9127313220924,"W":81.21273132209242,"R":8.156365661046209},{"z":57.0,"L":139.29999999999998,"W":75.6,"R":5.349999999999994},{"z":4.96,"L":138.3917076003378,"W":74.69170760033782,"R":4.895853800168908},{"z":2.96,"L":138.3568001291748,"W":74.6568001291748,"R":4.878400064587396},{"z":0.0,"L":138.3051370718535,"W":74.6051370718535,"R":4.85256853592675}],"bands":[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[10,11],[11,0]],"caps":[[9,1],[10,0]],"prismas":[],"H":62.0,"passo":60.0,"cap":600},"pote-1200":{"loops":[{"z":0.0,"L":139.55791293696242,"W":75.85791293696244,"R":5.478956468481215},{"z":117.0,"L":141.6,"W":77.9,"R":6.5},{"z":117.0,"L":148.5127313220924,"W":84.81273132209242,"R":9.956365661046206},{"z":121.5,"L":148.6,"W":84.9,"R":10.0},{"z":122.0,"L":147.6,"W":83.9,"R":9.5},{"z":122.0,"L":145.8,"W":82.10000000000002,"R":8.600000000000009},{"z":121.6,"L":145.0,"W":81.30000000000001,"R":8.200000000000003},{"z":117.0,"L":144.9127313220924,"W":81.21273132209242,"R":8.156365661046209},{"z":117.0,"L":139.2,"W":75.5,"R":5.299999999999997},{"z":5.9,"L":137.2608899768934,"W":73.5608899768934,"R":4.3304449884467004},{"z":3.9,"L":137.22598250573034,"W":73.52598250573035,"R":4.312991252865174},{"z":0.0,"L":137.15791293696242,"W":73.45791293696243,"R":4.278956468481212}],"bands":[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[10,11],[11,0]],"caps":[[9,1],[10,0]],"prismas":[],"H":122.0,"passo":120.0,"cap":1200},"pote-1800":{"loops":[{"z":0.0,"L":138.51068880207137,"W":74.81068880207138,"R":4.955344401035688},{"z":177.0,"L":141.6,"W":77.9,"R":6.5},{"z":177.0,"L":148.5127313220924,"W":84.81273132209242,"R":9.956365661046206},{"z":181.5,"L":148.6,"W":84.9,"R":10.0},{"z":182.0,"L":147.6,"W":83.9,"R":9.5},{"z":182.0,"L":145.8,"W":82.10000000000002,"R":8.600000000000009},{"z":181.6,"L":145.0,"W":81.30000000000001,"R":8.200000000000003},{"z":177.0,"L":144.9127313220924,"W":81.21273132209242,"R":8.156365661046209},{"z":177.0,"L":139.0,"W":75.30000000000001,"R":5.200000000000003},{"z":4.92,"L":135.99656118113245,"W":72.29656118113246,"R":3.6982805905662275},{"z":2.92,"L":135.96165370996943,"W":72.26165370996944,"R":3.6808268549847156},{"z":0.0,"L":135.91068880207138,"W":72.21068880207139,"R":3.6553444010356912}],"bands":[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[10,11],[11,0]],"caps":[[9,1],[10,0]],"prismas":[],"H":182.0,"passo":180.0,"cap":1800},"pote-2400":{"loops":[{"z":0.0,"L":137.46346466718032,"W":73.76346466718033,"R":4.431732333590162},{"z":237.0,"L":141.6,"W":77.9,"R":6.5},{"z":237.0,"L":148.5127313220924,"W":84.81273132209242,"R":9.956365661046206},{"z":241.5,"L":148.6,"W":84.9,"R":10.0},{"z":242.0,"L":147.6,"W":83.9,"R":9.5},{"z":242.0,"L":145.8,"W":82.10000000000002,"R":8.600000000000009},{"z":241.6,"L":145.0,"W":81.30000000000001,"R":8.200000000000003},{"z":237.0,"L":144.9127313220924,"W":81.21273132209242,"R":8.156365661046209},{"z":237.0,"L":138.79999999999998,"W":75.1,"R":5.099999999999994},{"z":2.0,"L":134.69837213834336,"W":70.99837213834337,"R":3.0491860691716823},{"z":0.0,"L":134.6634646671803,"W":70.96346466718032,"R":3.0317323335901563}],"bands":[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[10,0]],"caps":[[9,1],[10,0]],"prismas":[],"H":242.0,"passo":240.0,"cap":2400},"tampa-teca":{"loops":[{"z":-2.0,"L":143.8,"W":80.10000000000002,"R":7.6000000000000085},{"z":-5.0,"L":143.8,"W":80.10000000000002,"R":7.6000000000000085},{"z":-5.0,"L":142.60000000000002,"W":78.90000000000003,"R":7.000000000000014},{"z":-6.4,"L":142.60000000000002,"W":78.90000000000003,"R":7.000000000000014},{"z":-6.4,"L":143.8,"W":80.10000000000002,"R":7.6000000000000085},{"z":-9.4,"L":143.8,"W":80.10000000000002,"R":7.6000000000000085},{"z":-10.0,"L":142.60000000000002,"W":78.90000000000003,"R":7.000000000000014}],"bands":[[1,0],[2,1],[3,2],[4,3],[5,4],[6,5]],"caps":[[0,1],[6,0]],"prismas":[]},"tampa-pe":{"loops":[{"z":-2.0,"L":142.20000000000002,"W":78.50000000000003,"R":6.800000000000011},{"z":1.5,"L":142.20000000000002,"W":78.50000000000003,"R":6.800000000000011},{"z":1.5,"L":154.79999999999998,"W":91.1,"R":13.099999999999994},{"z":0.0,"L":154.79999999999998,"W":91.1,"R":13.099999999999994},{"z":0.0,"L":149.2,"W":85.5,"R":10.299999999999997},{"z":0.0,"L":143.8,"W":80.10000000000002,"R":7.6000000000000085},{"z":-3.0,"L":143.8,"W":80.10000000000002,"R":7.6000000000000085},{"z":-3.0,"L":142.60000000000002,"W":78.90000000000003,"R":7.000000000000014},{"z":-4.4,"L":142.60000000000002,"W":78.90000000000003,"R":7.000000000000014},{"z":-4.4,"L":143.8,"W":80.10000000000002,"R":7.6000000000000085},{"z":-5.5,"L":143.8,"W":80.10000000000002,"R":7.6000000000000085},{"z":-6.0,"L":142.8,"W":79.10000000000002,"R":7.1000000000000085},{"z":-6.0,"L":142.20000000000002,"W":78.50000000000003,"R":6.800000000000011},{"z":-3.5,"L":142.20000000000002,"W":78.50000000000003,"R":6.800000000000011}],"bands":[[1,0],[2,1],[3,2],[4,3],[5,4],[6,5],[7,6],[8,7],[9,8],[10,9],[11,10],[12,11],[13,12]],"caps":[[0,1],[13,0]],"prismas":[{"perfil":[[0.3,0.5],[0.3,-5.0],[-1.85,-5.6],[0.3,-6.6],[0.3,-11.0],[1.3,-11.0],[1.3,0.5]],"eixo":"y","pos":42.45,"comp":18.0,"off":34.0},{"perfil":[[0.3,0.5],[0.3,-5.0],[-1.85,-5.6],[0.3,-6.6],[0.3,-11.0],[1.3,-11.0],[1.3,0.5]],"eixo":"y","pos":42.45,"comp":18.0,"off":-34.0},{"perfil":[[0.3,0.5],[0.3,-5.0],[-1.85,-5.6],[0.3,-6.6],[0.3,-11.0],[1.3,-11.0],[1.3,0.5]],"eixo":"y","pos":-42.45,"comp":18.0,"off":34.0},{"perfil":[[0.3,0.5],[0.3,-5.0],[-1.85,-5.6],[0.3,-6.6],[0.3,-11.0],[1.3,-11.0],[1.3,0.5]],"eixo":"y","pos":-42.45,"comp":18.0,"off":-34.0},{"perfil":[[0.3,0.5],[0.3,-5.0],[-1.85,-5.6],[0.3,-6.6],[0.3,-11.0],[1.3,-11.0],[1.3,0.5]],"eixo":"x","pos":74.3,"comp":18.0,"off":0.0},{"perfil":[[0.3,0.5],[0.3,-5.0],[-1.85,-5.6],[0.3,-6.6],[0.3,-11.0],[1.3,-11.0],[1.3,0.5]],"eixo":"x","pos":-74.3,"comp":18.0,"off":0.0}]},"filete":{"loops":[{"z":-4.4,"L":142.60000000000002,"W":78.90000000000003,"R":7.000000000000014},{"z":-4.4,"L":145.40000000000003,"W":81.70000000000005,"R":8.40000000000002},{"z":-3.0,"L":145.40000000000003,"W":81.70000000000005,"R":8.40000000000002},{"z":-3.0,"L":142.60000000000002,"W":78.90000000000003,"R":7.000000000000014}],"bands":[[0,1],[1,2],[2,3],[3,0]],"caps":[],"prismas":[]}}};
+  var DATA = {"seg":12,"pecas":{"pote-600":{"loops":[{"z":0.0,"L":141.66996423059925,"W":75.811408131771,"R":4.0},{"z":46.0,"L":142.47283606734905,"W":76.6142799685208,"R":4.401435918374901},{"z":50.0,"L":148.66051940362107,"W":82.80196330479282,"R":7.495277586510909},{"z":60.6,"L":148.84552900078515,"W":82.9869729019569,"R":7.58778238509295},{"z":60.6,"L":151.24552900078513,"W":85.38697290195688,"R":8.787782385092939},{"z":52.0,"L":151.09542687478407,"W":85.23687077595582,"R":8.71273132209241},{"z":52.0,"L":153.49542687478407,"W":87.63687077595583,"R":9.912731322092412},{"z":60.8,"L":153.64901974790143,"W":87.79046364907319,"R":9.989527758651093},{"z":62.0,"L":151.26996423059924,"W":85.411408131771,"R":8.799999999999997},{"z":62.0,"L":147.26996423059924,"W":81.411408131771,"R":6.799999999999997},{"z":61.4,"L":146.06996423059925,"W":80.21140813177101,"R":6.200000000000003},{"z":50.0,"L":145.86051940362105,"W":80.00196330479281,"R":6.095277586510903},{"z":46.0,"L":140.17283606734904,"W":74.3142799685208,"R":3.251435918374895},{"z":5.742417330152468,"L":139.47019086427844,"W":73.61163476545019,"R":2.900113316839594},{"z":3.7424173301524677,"L":139.4352833931154,"W":73.57672729428717,"R":2.882659581258082},{"z":0.0,"L":139.36996423059924,"W":73.51140813177099,"R":2.8499999999999943}],"bands":[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[12,13],[14,15],[15,0]],"caps":[[13,1],[14,0]],"prismas":[],"H":62.0,"passo":60.0,"cap":600},"pote-1200":{"loops":[{"z":0.0,"L":140.6227400957082,"W":74.76418399687995,"R":3.4763879325544735},{"z":106.0,"L":142.47283606734905,"W":76.6142799685208,"R":4.401435918374901},{"z":110.0,"L":148.66051940362107,"W":82.80196330479282,"R":7.495277586510909},{"z":120.6,"L":148.84552900078515,"W":82.9869729019569,"R":7.58778238509295},{"z":120.6,"L":151.24552900078513,"W":85.38697290195688,"R":8.787782385092939},{"z":112.0,"L":151.09542687478407,"W":85.23687077595582,"R":8.71273132209241},{"z":112.0,"L":153.49542687478407,"W":87.63687077595583,"R":9.912731322092412},{"z":120.8,"L":153.64901974790143,"W":87.79046364907319,"R":9.989527758651093},{"z":122.0,"L":151.26996423059924,"W":85.411408131771,"R":8.799999999999997},{"z":122.0,"L":147.26996423059924,"W":81.411408131771,"R":6.799999999999997},{"z":121.4,"L":146.06996423059925,"W":80.21140813177101,"R":6.200000000000003},{"z":110.0,"L":145.86051940362105,"W":80.00196330479281,"R":6.095277586510903},{"z":106.0,"L":140.07283606734904,"W":74.2142799685208,"R":3.201435918374898},{"z":6.422538500727164,"L":138.334837384462,"W":72.47628128563375,"R":2.3324365769313715},{"z":4.422538500727164,"L":138.29992991329897,"W":72.44137381447072,"R":2.3149828413498597},{"z":0.0,"L":138.2227400957082,"W":72.36418399687994,"R":2.2763879325544707}],"bands":[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[12,13],[14,15],[15,0]],"caps":[[13,1],[14,0]],"prismas":[],"H":122.0,"passo":120.0,"cap":1200},"pote-1800":{"loops":[{"z":0.0,"L":139.57551596081714,"W":73.7169598619889,"R":2.952775865108947},{"z":166.0,"L":142.47283606734905,"W":76.6142799685208,"R":4.401435918374901},{"z":170.0,"L":148.66051940362107,"W":82.80196330479282,"R":7.495277586510909},{"z":180.6,"L":148.84552900078515,"W":82.9869729019569,"R":7.58778238509295},{"z":180.6,"L":151.24552900078513,"W":85.38697290195688,"R":8.787782385092939},{"z":172.0,"L":151.09542687478407,"W":85.23687077595582,"R":8.71273132209241},{"z":172.0,"L":153.49542687478407,"W":87.63687077595583,"R":9.912731322092412},{"z":180.8,"L":153.64901974790143,"W":87.79046364907319,"R":9.989527758651093},{"z":182.0,"L":151.26996423059924,"W":85.411408131771,"R":8.799999999999997},{"z":182.0,"L":147.26996423059924,"W":81.411408131771,"R":6.799999999999997},{"z":181.4,"L":146.06996423059925,"W":80.21140813177101,"R":6.200000000000003},{"z":170.0,"L":145.86051940362105,"W":80.00196330479281,"R":6.095277586510903},{"z":166.0,"L":139.87283606734906,"W":74.01427996852081,"R":3.1014359183749036},{"z":5.190381620265881,"L":137.06610750918443,"W":71.20755141035619,"R":1.6980716392925927},{"z":3.190381620265881,"L":137.03120003802138,"W":71.17264393919314,"R":1.6806179037110667},{"z":0.0,"L":136.97551596081715,"W":71.1169598619889,"R":1.65277586510895}],"bands":[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[12,13],[14,15],[15,0]],"caps":[[13,1],[14,0]],"prismas":[],"H":182.0,"passo":180.0,"cap":1800},"pote-2400":{"loops":[{"z":0.0,"L":138.5282918259261,"W":72.66973572709784,"R":2.4291637976634206},{"z":226.0,"L":142.47283606734905,"W":76.6142799685208,"R":4.401435918374901},{"z":230.0,"L":148.66051940362107,"W":82.80196330479282,"R":7.495277586510909},{"z":240.6,"L":148.84552900078515,"W":82.9869729019569,"R":7.58778238509295},{"z":240.6,"L":151.24552900078513,"W":85.38697290195688,"R":8.787782385092939},{"z":232.0,"L":151.09542687478407,"W":85.23687077595582,"R":8.71273132209241},{"z":232.0,"L":153.49542687478407,"W":87.63687077595583,"R":9.912731322092412},{"z":240.8,"L":153.64901974790143,"W":87.79046364907319,"R":9.989527758651093},{"z":242.0,"L":151.26996423059924,"W":85.411408131771,"R":8.799999999999997},{"z":242.0,"L":147.26996423059924,"W":81.411408131771,"R":6.799999999999997},{"z":241.4,"L":146.06996423059925,"W":80.21140813177101,"R":6.200000000000003},{"z":230.0,"L":145.86051940362105,"W":80.00196330479281,"R":6.095277586510903},{"z":226.0,"L":139.67283606734904,"W":73.8142799685208,"R":3.001435918374895},{"z":2.0000000000000426,"L":135.7631992970891,"W":69.90464319826086,"R":1.0466175332449268},{"z":0.0,"L":135.72829182592608,"W":69.86973572709783,"R":1.029163797663415}],"bands":[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[12,13],[14,0]],"caps":[[13,1],[14,0]],"prismas":[],"H":242.0,"passo":240.0,"cap":2400},"tampa-teca":{"loops":[{"z":-2.0,"L":144.86996423059927,"W":79.01140813177102,"R":5.6000000000000085},{"z":-5.0,"L":144.86996423059927,"W":79.01140813177102,"R":5.6000000000000085},{"z":-5.0,"L":143.66996423059928,"W":77.81140813177103,"R":5.000000000000014},{"z":-6.4,"L":143.66996423059928,"W":77.81140813177103,"R":5.000000000000014},{"z":-6.4,"L":144.86996423059927,"W":79.01140813177102,"R":5.6000000000000085},{"z":-9.4,"L":144.86996423059927,"W":79.01140813177102,"R":5.6000000000000085},{"z":-10.0,"L":143.66996423059928,"W":77.81140813177103,"R":5.000000000000014}],"bands":[[1,0],[2,1],[3,2],[4,3],[5,4],[6,5]],"caps":[[0,1],[6,0]],"prismas":[]},"tampa-pp":{"loops":[{"z":-2.0,"L":143.26996423059927,"W":77.41140813177103,"R":4.800000000000011},{"z":1.5,"L":143.26996423059927,"W":77.41140813177103,"R":4.800000000000011},{"z":1.5,"L":157.26996423059924,"W":91.411408131771,"R":11.799999999999997},{"z":0.0,"L":157.26996423059924,"W":91.411408131771,"R":11.799999999999997},{"z":0.0,"L":154.26996423059924,"W":88.411408131771,"R":10.299999999999997},{"z":0.0,"L":144.86996423059927,"W":79.01140813177102,"R":5.6000000000000085},{"z":-3.0,"L":144.86996423059927,"W":79.01140813177102,"R":5.6000000000000085},{"z":-3.0,"L":143.66996423059928,"W":77.81140813177103,"R":5.000000000000014},{"z":-4.4,"L":143.66996423059928,"W":77.81140813177103,"R":5.000000000000014},{"z":-4.4,"L":144.86996423059927,"W":79.01140813177102,"R":5.6000000000000085},{"z":-7.5,"L":144.86996423059927,"W":79.01140813177102,"R":5.6000000000000085},{"z":-8.0,"L":143.86996423059927,"W":78.01140813177102,"R":5.1000000000000085},{"z":-8.0,"L":143.26996423059927,"W":77.41140813177103,"R":4.800000000000011},{"z":-3.5,"L":143.26996423059927,"W":77.41140813177103,"R":4.800000000000011}],"bands":[[1,0],[2,1],[3,2],[4,3],[5,4],[6,5],[7,6],[8,7],[9,8],[10,9],[11,10],[12,11],[13,12]],"caps":[[0,1],[13,0]],"prismas":[{"perfil":[[0.3,1.0],[0.3,-10.0],[-0.8,-10.0],[-0.8,-10.5],[0.5,-11.7],[1.8,-16.0],[2.8,-15.1],[1.3,-10.8],[1.3,1.0]],"eixo":"y","pos":43.9057040658855,"comp":89.12857925374756,"off":0.0},{"perfil":[[0.3,1.0],[0.3,-10.0],[-0.8,-10.0],[-0.8,-10.5],[0.5,-11.7],[1.8,-16.0],[2.8,-15.1],[1.3,-10.8],[1.3,1.0]],"eixo":"y","pos":-43.9057040658855,"comp":89.12857925374756,"off":0.0}]},"filete":{"loops":[{"z":-4.4,"L":143.66996423059928,"W":77.81140813177103,"R":5.000000000000014},{"z":-4.4,"L":146.4699642305993,"W":80.61140813177104,"R":6.40000000000002},{"z":-3.0,"L":146.4699642305993,"W":80.61140813177104,"R":6.40000000000002},{"z":-3.0,"L":143.66996423059928,"W":77.81140813177103,"R":5.000000000000014}],"bands":[[0,1],[1,2],[2,3],[3,0]],"caps":[],"prismas":[]}}};
   var cv = document.getElementById('cena');
   if (typeof THREE === 'undefined') {
     cv.outerHTML = '<div class="erro">O visualizador 3D não conseguiu carregar a biblioteca de renderização.<br>O modelo continua disponível nos arquivos STL do repositório.</div>';
@@ -238,7 +238,6 @@
     tampaPP: mat({color:0x6f8266, transparent:true, opacity:0.92, roughness:0.38, metalness:0,
                 clearcoat:0.5, side:THREE.DoubleSide}),
     tampaTeca: mat({color:0xb0793f, roughness:0.62, metalness:0, clearcoat:0.25, side:THREE.DoubleSide}),
-    tampaPE: mat({color:0x6f8266, transparent:true, opacity:0.92, roughness:0.40, metalness:0, clearcoat:0.5, side:THREE.DoubleSide}),
     aro: mat({color:0xc25e3a, roughness:0.85, metalness:0, side:THREE.DoubleSide})
   };
 
@@ -260,20 +259,20 @@
     var H = DATA.pecas[nome].H;
     if (tampa !== 'off'){
       // a tampa PE e outra peca: fecha por FORA. A teca usa o perfil plug e leva o aro.
-      var ehPE = (tampa === 'pe');
-      var t = new THREE.Mesh(ehPE ? G['tampa-pe'] : G['tampa-teca'],
-                             ehPE ? MAT.tampaPE : MAT.tampaTeca);
+      var ehPP = (tampa === 'pp');
+      var t = new THREE.Mesh(ehPP ? G['tampa-pp'] : G['tampa-teca'],
+                             ehPP ? MAT.tampaPP : MAT.tampaTeca);
       t.position.y = H; t.renderOrder = 3; g.add(t);
       // o MESMO filete nas duas tampas; na teca o friso e mais fundo (2,0 mm)
       if (aro){ var a = new THREE.Mesh(G.filete, MAT.aro);
-                a.position.y = H - (ehPE ? 0 : 2.0); a.renderOrder = 4; g.add(a); }
+                a.position.y = H - (ehPP ? 0 : 2.0); a.renderOrder = 4; g.add(a); }
     }
     g.position.set(x, y, 0);
     return g;
   }
 
   var NOMES = ['pote-600','pote-1200','pote-1800','pote-2400'];
-  var vista = 'linha', tampa = 'pe', aro = true;
+  var vista = 'linha', tampa = 'pp', aro = true;
   var alvo = new THREE.Vector3(0,120,0);
 
   function monta(){
@@ -286,7 +285,7 @@
       NOMES.forEach(function(n, i){ pivo.add(pote(n, (i - 1.5) * 150, 0, tampa, aro)); });
       alvo.set(0, 120, 0);
       t.textContent = 'A linha';
-      d.textContent = '600 · 1200 · 1800 · 2400 ml — colar 148,6 × 84,9 mm, corpo 141,6 × 77,9, rodapé reto para IML';
+      d.textContent = '600 · 1200 · 1800 · 2400 ml — borda 153,7 × 87,8 mm, corpo reto 142,5 × 76,6, rodapé reto para IML';
     } else if (vista === 'pilha'){
       [0, 60, 120, 180].forEach(function(y){ pivo.add(pote('pote-600', -100, y, tampa, aro)); });
       pivo.add(pote('pote-2400', 100, 0, tampa, aro));
@@ -301,26 +300,26 @@
       var base = new THREE.Mesh(G['pote-1200'], MAT.corpo); base.renderOrder = 2; pivo.add(base);
       var H = DATA.pecas['pote-1200'].H;
       if (tampa !== 'off'){
-        var ehPE2 = (tampa === 'pe');
-        var tm = new THREE.Mesh(ehPE2 ? G['tampa-pe'] : G['tampa-teca'],
-                                ehPE2 ? MAT.tampaPE : MAT.tampaTeca);
+        var ehPP2 = (tampa === 'pp');
+        var tm = new THREE.Mesh(ehPP2 ? G['tampa-pp'] : G['tampa-teca'],
+                                ehPP2 ? MAT.tampaPP : MAT.tampaTeca);
         tm.position.y = H + sep; tm.renderOrder = 3; pivo.add(tm);
         if (aro){ var ar = new THREE.Mesh(G.filete, MAT.aro);
-                  ar.position.y = H + sep * 0.55 - (ehPE2 ? 0 : 2.0); ar.renderOrder = 4; pivo.add(ar); }
+                  ar.position.y = H + sep * 0.55 - (ehPP2 ? 0 : 2.0); ar.renderOrder = 4; pivo.add(ar); }
       }
       var cima = new THREE.Mesh(G['pote-600'], MAT.corpo);
       cima.position.y = 120 + sep * 2; cima.renderOrder = 2; pivo.add(cima);
       alvo.set(0, 120 + sep, 0);
       if (vista === 'encaixe'){
         t.textContent = 'Encaixe explodido';
-        d.textContent = tampa === 'pe'
-          ? 'pote de 1,2 L · filete de TPE no friso do plug · tampa com 6 abas · fundo RETO do pote de cima. Sem pé embutido: quem desce na bandeja é o próprio fundo, de 140,6 mm.'
+        d.textContent = tampa === 'pp'
+          ? 'pote de 1,2 L · filete de TPE no friso do plug · tampa de PP com 2 travas de 89 mm · fundo RETO do pote de cima. Quem desce na bandeja é o próprio fundo, de 140,6 mm.'
           : 'pote de 1,2 L · filete de TPE no friso · placa de teca · fundo RETO do pote de cima. O topo da placa, 2,0 mm abaixo da borda, é o plano modular.';
       } else {
         t.textContent = 'Corte';
-        d.textContent = tampa === 'pe'
-          ? 'o plug desce na boca com o filete de TPE num friso, comprimindo 0,20 mm contra a PAREDE. As 6 abas engatam 1,85 mm sob o colar e dão a força de fechamento. Piso da bandeja 2,0 mm abaixo da borda: o plano modular.'
-          : 'a placa de teca leva o MESMO filete, num friso 2,0 mm mais fundo. Sem trava: segura só pelo atrito do filete, 7,3 kgf. O topo da placa é o plano modular, e o fundo reto do pote de cima pousa direto nele.';
+        d.textContent = tampa === 'pp'
+          ? 'a borda é um caixão OCO: a parede abre no flare, sobe pela perna de dentro, vira o topo chato e desce por fora numa saia livre. A face de baixo da saia, 1,20 mm, é a aresta — e como a saia é livre, é material de verdade. O gancho da trava avança 0,80 mm nela. O plug leva o filete de TPE, comprimindo 0,20 mm contra a PAREDE da boca.'
+          : 'a placa de teca leva o MESMO filete, num friso 2,0 mm mais fundo. Sem trava: segura só pelo atrito do filete, 7,4 kgf. Com a borda de 12 mm a madeira fica emoldurada, 2,0 mm abaixo do aro — e é esse topo o plano modular.';
       }
     }
   }

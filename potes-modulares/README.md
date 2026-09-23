@@ -1,88 +1,57 @@
 # Linha Potes Retangulares Modulares em PP
 
-**Status:** estudo de viabilidade técnica · **Revisão 7** · 22/09/2026
+**Status:** estudo de viabilidade técnica · **Revisão 8** · 23/09/2026
 **Origem:** evolução do Projeto 115 do ERP ("Conjunto Potes Modular") · **Planta:** Nitron – Fábrica (CODPLP 1)
 
 Linha retangular em PP transparente, **parede reta com cantos arredondados**, quatro litragens
-(**600 ml · 1,2 L · 1,8 L · 2,4 L**), três tampas e modularidade de empilhamento — qualquer
+(**600 ml · 1,2 L · 1,8 L · 2,4 L**), duas tampas e modularidade de empilhamento — qualquer
 combinação empilhada chega à altura do maior.
 
 Todos os números de máquina, matéria-prima, custo e ferramental saíram do Sankhya, não de
 estimativa de catálogo. Fontes citadas em cada seção.
 
-> **Revisão 7 — mudança de arquitetura.** A partir de uma referência física (pote hermético de
-> travas), o corpo foi refeito. **Três coisas saíram do projeto:** a aba em U da borda, o pé
-> embutido, e a garra da tampa PE — que engatava justamente na aba. Entram:
+> **Revisão 8 — a borda, a partir do STL de referência.** O Ricardo mandou `REF_231.stl`
+> (66 591 triângulos: um pote e uma tampa, em escala 1:10 — a parede medida, 0,113 mm, é o que
+> fixa a escala). As cotas da linha ficam como estavam; o que muda é a **borda superior do corpo**
+> e a **tampa de PP**.
 >
-> - **Colar de borda.** A borda superior fica lisa, com a aresta de cima arredondada em 0,5 mm.
->   Na lateral ela sobressai **3,50 mm por lado** sobre o corpo. A face de baixo desse colar é a
->   **aresta de engate** da trava: 3,46 mm de encosto. Não é canaleta — é degrau.
-> - **Rodapé reto.** O pé embutido saiu. O corpo é seção constante de 141,6 × 77,9 mm do colar até
->   o fundo, com 0,5°/lado, **sem degrau nenhum** — que é o que o IML pede para assentar o rótulo.
-> - **Travas na tampa.** 6 abas de 18 × 1,00 mm com farpa, engatando sob o colar. Cada uma fecha
->   com ~2 kgf; as seis seguram 12 kgf.
-> - **Um filete de TPE para as duas tampas.** A de teca é uma **placa maciça de 8 mm** com friso na
->   face lateral; a de PP/PE tem o mesmo friso no plug. Objetivo perseguido desde a revisão 4,
->   fechado aqui.
+> **O que foi medido na referência:**
 >
-> **O que quase não sobreviveu:** sem pé embutido, quem desce na bandeja da tampa passa a ser o
-> **fundo reto do pote de cima** — e ele tem de caber dentro da boca. É essa conta que dimensiona o
-> colar (seção 3.2), e ela só fecha com 3,50 mm de rebaixo, com **0,30 mm de folga**. Se o rebaixo
-> fosse 2,6 mm a linha não empilharia.
+> | | referência (×10) | o que virou aqui |
+> |---|---|---|
+> | corpo | 129,1 × 197,6 × 56,3 mm | fica o da linha: 142,5 × 76,6, alturas 62/122/182/242 |
+> | borda | 17,3 mm de altura (31% do pote), sobressai 9,6 mm/lado | 12,0 mm + flare de 4,0, sobressai 5,60 mm/lado |
+> | topo da borda | faixa chata de 4,3 mm, raio 2,5 fora e 1,9 dentro | faixa chata de 2,0 mm, raio 1,2 fora e chanfro 0,6 dentro |
+> | travas | **2**, uma por lado comprido, 115,9 mm = **58%** do comprimento | 2, uma por lado comprido, 89 mm = 58% |
+> | gancho | pega 19,5 mm abaixo do topo da tampa; rabo desce até 39 | pega a 10 mm; rabo até 16 |
 >
-> **O que a revisão custou:** o colar cresceu de 145,7 para **154,8 mm** na medida máxima (o deck da
-> tampa), e apareceu um número que nenhuma revisão anterior tinha olhado — **a tampa plug come
-> volume útil**: a de teca leva 115 ml do 600 ml, 19% (seção 5.6).
+> - **Borda alta e OCA.** A parede sobe reta, abre num **flare** de 4 mm, sobe pela **perna de
+>   dentro** (1,40 mm, é ela que faz a boca), vira a **faixa chata do topo** e desce por fora numa
+>   **saia livre** (1,20 mm) até 10 mm abaixo do topo. Entre a saia e a perna fica um **canal** de
+>   1,20 mm, aberto para baixo. A face de baixo da saia — um anel horizontal de 1,20 mm — é a
+>   **aresta de engate**.
+> - **Duas travas de clipe**, uma por lado comprido, 89 mm cada, com gancho e rabo para o dedo.
+>   Cada uma pede 2,0 kgf para fechar e 1,2 kgf no dedo para abrir.
+> - **Tampa em PP** (era PEAD na revisão 6-7). Volta a ser monomaterial com o corpo.
 >
-> **Duas correções pegas por verificação, não por leitura:** o filete estava desenhado **0,40 mm
-> aquém da boca** (não vedaria nada) e metade das abas entrava **espelhada** no visualizador
-> (volume negativo, cancelando as outras três). Nenhuma checagem de malha acusa isso; foi o
-> confronto entre cálculo, malha e montagem (seção 12).
+> **O erro da revisão 7 que a referência revelou.** Na revisão 7 a boca media 144,95 mm e a face
+> externa do corpo, 141,55. O colar era então um anel de material entre 144,95 e 148,55
+> **pairando sobre um corpo que ia só até 141,55** — as duas seções não se encostavam em lugar
+> nenhum. A malha fechava porque as duas superfícies horizontais em `z_col` se cancelavam: volume
+> assinado plausível, normais consistentes, e **a peça em dois pedaços**. Impresso, o colar sairia
+> solto. Foi ter de construir a borda como casca de verdade que trouxe isso à tona; agora
+> `gera-3d.py` tem `secao_conexa()`, e um autoteste que a roda contra a geometria da revisão 7 a
+> cada execução — ela **tem** de reprovar (seção 12).
 >
-> **Revisão 6 — o que mudou:** a linha passa de três tampas para **duas** — teca com chanfro e
-> aro de TPE, e **PE 100%**. A tampa PE deixa de ser um plug e passa a **fechar por fora**: uma saia
-> desce por fora da borda e uma garra engata sob o lábio da aba em U. Como a aba já existia desde a
-> revisão 3 para enrijecer a boca, **o pote não mudou uma cota sequer** — o lábio já dava 3,04 mm/lado
-> de ressalto e a garra só precisa de 0,80.
+> **O que a revisão custou:** a borda oca precisa de 3,80 mm de largura (saia 1,20 + canal 1,20 +
+> perna 1,40) contra 1,80 de uma parede só. Pelo orçamento de largura (seção 3.2) isso empurra o
+> rebaixo de 3,50 para **5,60 mm**, e como o módulo fixa a seção interna, a diferença sai do
+> footprint: a medida máxima do corpo vai de **148,6 × 84,9 para 153,7 × 87,8 mm**, o peso do
+> 600 ml de 47,0 para **52,9 g**, e a área projetada de 125 para **134 cm²**.
 >
-> Isso me obriga a corrigir o julgamento das revisões 2 a 5: eu recomendava PP contra PE, mas
-> aquilo era **contra um PE em forma de plug**, e nessa forma continuava certo. Como sobretampa sem
-> aro, três dos quatro argumentos caem (seção 6.0). Fica de pé o mais sério: PE é compra residual.
->
-> Resina recomendada: **PEAD HA 7260 IF 20 a R$ 9,34/kg** — grau de injeção declarado e mais barato
-> que o próprio PP RP 141. Tampa de 27,6 g a R$ 0,26.
->
-> Dois pontos ficaram abertos e estão registrados: a rigidez do deck contra rotação da saia, que
-> pede elemento finito ou protótipo (6.1.5), e a **tampa de teca, que não pode ser o plug de parede
-> fina desenhado para injeção** e precisa do poço da bandeja usinado, senão não empilha (6.2).
->
-> **Revisão 5 — o que mudou:** o desenho voltou para a proporção da referência conceitual. O pote
-> estava **largo e muito arredondado** (121,2 × 93,2 com canto R18); agora é **frente estreita e
-> pote fundo** (139,7 × 79,8) com **canto R10**. Altura, módulo, passo, curso de abertura e altura
-> de molde não mudam — foi escolhido de propósito o caminho que não mexe na injetora.
->
-> Três coisas vieram junto, duas delas correções de erro meu:
->
-> 1. **A área projetada era 125 cm², não 139.** O número da revisão 4 não saía do cálculo. Com
->    125 cm² o 600 ml usa 72% de uma injetora de 160 t e **volta para a classe de 160 t** em vez de
->    disputar as 200 t com o 1,2 L (seção 4.1).
-> 2. **O pé embutido estava fixo no código em 112,4 mm** e foi o único número que quebrou com a
->    troca de footprint — virou um degrau de 13 mm. Ele nunca foi uma escolha: sai da bandeja da
->    tampa, que sai da boca. Agora é derivado (`pe_l()` em `calculo-modular.py`).
-> 3. **Custa 17,6 g de resina e rigidez na face comprida** — a única conta em que a revisão 5 é
->    pior que a 4. Está medida na seção 3.3, e é a decisão que sobrou em aberto.
->
-> **Revisão 4:** a vedação passa a ser **radial**, do jeito certo: a tampa tem um
-> *plug* que desce dentro do pote e leva o aro de TPE numa canaleta, trabalhando contra a **parede**.
-> Sem trava e sem saia externa — a tampa fica lisa. Some a força permanente de fechamento; o que
-> resta é 1,0 kgf para abrir descascando um canto. Pé de 113,0 para 112,4 mm.
->
-> **Revisão 3:** refez a vedação da revisão 2 (que não fechava) com um lábio de PP moldado na tampa,
-> e acrescentou a **aba em U** na borda, que dá rigidez ao lado reto. O lábio foi substituído pelo
-> plug na revisão 4; a aba ficou.
->
-> **Revisão 2:** escala migrou de 500/1000/1500/2000 para 600/1200/1800/2400 ml (pacote de
-> mantimento); parede deixou de ser conada e passou a reta com R18 de canto.
+> **Terceira correção de número publicado:** a revisão 7 publicava **146 cm²** de área projetada
+> para os quatro corpos — mas 146 é a silhueta do **deck da tampa**, um retângulo cheio maior que
+> a peça. O corpo tem 134 cm². Cada peça agora usa a sua.
 
 ---
 
@@ -92,17 +61,17 @@ estimativa de catálogo. Fontes citadas em cada seção.
 |---|---|
 | Modularidade de empilhamento | **Viável** — passo único de 60 mm |
 | Litragens 600 / 1200 / 1800 / 2400 ml | **Viável e exatas** — a parede reta elimina o conflito com o passo |
-| Parede reta com cantos arredondados | **Viável** com 0,5°/lado e R10 — custa aninhamento no frete (seção 3.4) |
-| Rodapé reto para IML | **Viável** — seção constante do colar ao fundo, sem degrau |
-| Trava na borda, nas duas tampas | **Só na de PP/PE.** Teca é placa maciça com friso: segura por atrito |
-| Capacidade útil com a tampa fechada | **Decisão aberta**: 485 ml no pote de 600 de borda (seção 5.6) |
+| Parede reta com cantos arredondados | **Viável** com 0,5°/lado e R10 na borda — o aninhamento a vazio **não piorou** (seção 3.4) |
+| Rodapé reto para IML | **Viável** — seção constante do flare ao fundo, 46 mm no 600 ml |
+| Trava na borda, nas duas tampas | **Só na de PP.** Teca é placa maciça com friso: segura por atrito |
+| Capacidade útil com a tampa fechada | **Decisão aberta**: 486 ml no pote de 600 de borda (seção 5.6) |
 | Tampa única para os 4 tamanhos | **Viável** — já é prática da casa (ref. 321-T serve três alturas) |
 | Vedação das duas tampas | **Um filete de TPE** em friso, radial contra a boca, 0,20 mm de compressão (seção 5) |
 | Tampa de teca empilhar | **Resolvido na revisão 7**: o topo da placa É o plano modular, sem poço a usinar |
-| Tampa com trava | **Viável** — 6 abas em PP RP 141, 21,7 g, R$ 0,21 + filete |
+| Tampa com trava | **Viável** — 2 travas de clipe em PP RP 141, 24,5 g, R$ 0,23 + filete |
 | Injeção dos 4 corpos no parque atual | **Cabe no que já temos**, sem máquina nova |
 | Confirmação documental de curso/extração | **Bloqueio de dado**: ficha das injetoras vazia (seção 4.4) |
-| Rigidez da face comprida | **Melhorou**: o painel caiu de 119,7 para 128,6 mm mas o colar substitui a aba como aro de boca (seção 3.3) |
+| Rigidez da face comprida | **600 ml 2,4× mais rígido, 2,4 L 12% mais flexível** — a borda alta encurta a parede e alarga o painel (seção 3.3) |
 
 ---
 
@@ -124,22 +93,38 @@ estimativa de catálogo. Fontes citadas em cada seção.
 
 ## 3. Geometria
 
-**Colar da borda 148,6 × 84,9 mm** (medida máxima do corpo) · **corpo 141,6 × 77,9 mm**, reto do
-colar até o fundo · canto **R10** · saída **0,5°/lado** · módulo **60 mm**
-Colar com **5,0 mm de altura**, sobressaindo **3,50 mm/lado** · aresta de cima arredondada em
-**0,5 mm** · boca **145,0 mm** (parede da borda 1,80) · fundo **2,0 mm igual nos quatro**
-**Sem pé embutido: rodapé reto, para IML.**
+**Medida máxima do corpo 153,7 × 87,8 mm** (face externa da saia da borda) · **corpo reto
+142,5 × 76,6 mm** · canto **R10** na borda · saída **0,5°/lado** · módulo **60 mm**
+**Borda 12,0 mm de altura + flare de 4,0 mm**, sobressaindo **5,60 mm/lado** · boca **146,1 mm** ·
+fundo **2,0 mm igual nos quatro** · **rodapé reto, para IML**
 
-| Tamanho | Altura total | Passo | Corpo no topo | Fundo externo | Elev. fundo | Parede | Volume | Peso |
+A borda, camada por camada (seção no meio de um lado, por lado):
+
+| | cota | o que é |
+|---|---|---|
+| face externa | 153,7 mm, reta, 0,5°/lado, do topo até −10,0 | o que a mão pega e a tampa cobre |
+| faixa chata do topo | 2,00 mm de largura útil | raio 1,20 por fora, chanfro 0,60 na boca |
+| saia externa | parede 1,20 mm, desce 10,0 mm | **ponta livre** — é o que torna a aresta material |
+| canal | 1,20 mm de largura, 8,6 mm de profundidade | nervura de aço de 7,2:1 no molde |
+| perna de dentro | parede 1,40 mm | faz a boca de 146,1 mm |
+| **aresta de engate** | face de baixo da saia, **1,20 mm/lado**, a 10,0 mm do topo | o gancho avança 0,80 mm nela |
+| flare | abre 3,20 mm/lado em 4,0 mm = 39° da vertical | liga a parede reta à perna |
+
+| Tamanho | Altura total | Passo | Corpo reto | Fundo externo | Elev. fundo | Parede | Volume | Peso |
 |---|---|---|---|---|---|---|---|---|
-| 600 ml | 62,0 mm | 60 mm | 141,6 × 77,9 | 140,56 | 2,96 mm | 1,15 mm | 600 ml | 47,0 g |
-| 1,2 L | 122,0 mm | 120 mm | 141,6 × 77,9 | 139,51 | 3,90 mm | 1,20 mm | 1200 ml | 74,6 g |
-| 1,8 L | 182,0 mm | 180 mm | 141,6 × 77,9 | 138,46 | 2,92 mm | 1,30 mm | 1800 ml | 107,4 g |
-| 2,4 L | 242,0 mm | 240 mm | 141,6 × 77,9 | 137,42 | 0,00 mm | 1,40 mm | 2400 ml | 144,1 g |
+| 600 ml | 62,0 mm | 60 mm | 142,5 × 76,6 | 141,67 | 3,74 mm | 1,15 mm | 600 ml | 52,9 g |
+| 1,2 L | 122,0 mm | 120 mm | 142,5 × 76,6 | 140,62 | 4,42 mm | 1,20 mm | 1200 ml | 80,8 g |
+| 1,8 L | 182,0 mm | 180 mm | 142,5 × 76,6 | 139,58 | 3,19 mm | 1,30 mm | 1800 ml | 113,8 g |
+| 2,4 L | 242,0 mm | 240 mm | 142,5 × 76,6 | 138,53 | 0,00 mm | 1,40 mm | 2400 ml | 150,9 g |
 
-**O molde ficou mais simples do que era.** Descendo do colar, a peça **só estreita**:
-148,6 → 141,6 → 137,4. Nenhuma contra-saída, nenhuma gaveta, nenhuma extração por arraste. O
-rebaixo onde a trava engata não é uma canaleta — é a face de baixo do colar.
+**O molde continua sem gaveta.** Descendo, por fora a peça **só estreita**: 153,7 (saia) → 148,9
+(perna) → 142,5 (corpo) → 138,5 (fundo do 2,4 L). Por dentro também: 146,1 (boca) → 140,2 (corpo).
+Nenhuma contra-saída.
+
+**O que o molde ganha de novo:** a **nervura do canal** — 1,20 mm de espessura por 8,6 mm de
+altura (7,2:1), contínua nos 466 mm de perímetro, na cavidade. Pede raio no pé, saída própria e
+escape de ar na ponta. É o preço de ter uma aresta de engate que é material de verdade, e não um
+anel flutuando como na revisão 7.
 
 Empilhamento conferido — todas as combinações dão 240 mm:
 `600×4` · `1,2 L×2` · `600+600+1,2 L` · `600+1,8 L` · `2,4 L`.
@@ -167,91 +152,74 @@ fundo, e no 2,4 L isso vira 6 a 12 mm de espaço morto.
 Esta é a parte que não pode ser negociada no design, porque é ela que sustenta a modularidade:
 
 1. **Fundo de 2,0 mm, igual nos quatro potes.**
-2. **A tampa é uma bandeja cujo piso fica 2,0 mm abaixo da borda do pote** — recuado para dentro da
+2. **A tampa é uma bandeja cujo piso fica 2,0 mm abaixo do topo da borda** — recuado para dentro da
    boca, não apoiado em cima dela. Esse piso é o plano modular: é nele que o pote de cima se apoia.
-3. **O fundo reto do pote de cima desce dentro da bandeja.** Na revisão 6 quem descia era um pé
-   embutido; com o rodapé reto exigido pelo IML, o pé saiu e **o próprio fundo faz o serviço**.
+3. **O fundo reto do pote de cima desce dentro da bandeja.** Com o rodapé reto exigido pelo IML não
+   há pé embutido: **o próprio fundo faz o serviço**.
 
-**E é a regra 3 que dimensiona o colar.** O fundo reto tem de caber dentro da boca, e o orçamento
-de largura, por lado, é:
+**E é a regra 3, junto com a borda oca, que dimensiona o rebaixo.** O fundo reto tem de caber
+dentro da boca, e a boca fica atrás de toda a largura da borda:
 
 ```
-parede da borda 1,80 + folga de encaixe 0,50 + parede do plug 0,80 + folga do plug 0,60 = 3,70 mm
-pago por:  rebaixo do colar 3,50 + o que a saída estreita no 600 ml 0,497   = 4,00 mm
-folga:                                                                       +0,30 mm
+borda 3,80 (saia 1,20 + canal 1,20 + perna 1,40)
+     + folga de encaixe 0,50 + parede do plug 0,80 + folga do plug 0,60   = 5,70 mm/lado
+a saída já estreita, no corpo do 600 ml                                    = 0,40 mm
+logo rebaixo = 5,70 - 0,40 + margem 0,30                                   = 5,60 mm
+confere: bandeja 143,27 recebe o fundo de 141,67 com +0,80 mm/lado
 ```
 
-Com rebaixo de 2,6 mm a conta dá parede de bandeja de 0,04 mm — **a linha não empilharia**. Os
-3,50 mm não são estética: são o preço de ter rodapé reto e continuar modular. O fundo do 600 ml
-(140,56) entra na boca de 145,0 com 2,20 mm por lado.
+**É aqui que a revisão 8 cobra.** Na revisão 7 a borda era uma parede só, 1,80 mm, e o rebaixo
+fechava com 3,50. Mas aquela borda não podia ter aresta de engate: para o anel horizontal de baixo
+existir como material, a saia precisa de **ponta livre**, e ponta livre exige canal, e canal exige
+largura. São 2,00 mm a mais de borda, que viram 2,10 mm a mais de rebaixo — e como o módulo fixa a
+seção interna (600 ml por 60 mm de altura), a diferença só pode sair do footprint:
 
-Com as três juntas: passo = 60n exato, capacidade = 600n exata, e **uma tampa só serve os quatro**.
-Sem a terceira, o pote de cima não caberia dentro da bandeja — a boca do pote tem 118,9 mm e o corpo
-tem 141,6 mm. O colar é o que resolve, e de quebra os potes ficam **travados entre si** quando
-empilhados, em vez de só apoiados.
-
-**Orçamento de largura — é o que dimensiona o pé.** Entre a face externa do corpo e a face externa
-do pé sobram 4,1 mm por lado, e tudo tem que caber ali:
-
-| | por lado |
-|---|---|
-| parede na faixa da borda | 1,40 mm |
-| folga entre o plug e a parede (onde o aro trabalha) | 1,00 mm |
-| parede do plug | 1,50 mm |
-| folga de encaixe do pé | 0,50 mm |
-| **soma** | **4,40 mm** |
-
-É esse orçamento que fixa o rebaixo do colar em 3,50 mm. Na revisão 2 havia um aro de TPE dentro dessa conta,
-com 2,00 mm reservados para uma canaleta que precisa de 4,00 — era o número errado, e o pé de
-110,0 mm saiu dele. Tirando o aro da tampa de PP, a conta fecha e o pé cresce.
-
-**Caminho de carga:** pé do pote de cima → piso da bandeja → parede do plug → borda do pote →
-parede do pote. O aro de TPE fica na canaleta do plug, mais abaixo, vedando radialmente contra a
-parede — fora do caminho de carga, para não ser comprimido pelo peso da pilha.
-
-### 3.3 O preço do canto R10: a face comprida
-
-Reduzir o raio e afinar a frente ao mesmo tempo tem efeitos opostos, e não se cancelam igual nas
-duas faces. O painel plano é o trecho de parede entre os dois cantos:
-
-| | R18 de 121,2 × 93,2 | R10 de 139,7 × 79,8 |
+| | revisão 7 | revisão 8 |
 |---|---|---|
-| Painel plano da face **curta** | 57,2 mm | **59,8 mm** |
-| Painel plano da face **comprida** | 85,2 mm | **119,7 mm** |
+| medida máxima do corpo | 148,6 × 84,9 | **153,7 × 87,8** |
+| corpo reto | 141,6 × 77,9 | **142,5 × 76,6** |
+| boca | 145,0 | **146,1** |
+| peso do 600 ml | 47,0 g | **52,9 g** |
+| área projetada do corpo | 125 cm² | **134 cm²** |
+| aresta de engate | 1,80 mm — **sobre material que não existia** | 1,20 mm, material de verdade |
 
-A face curta praticamente não mudou — afinar a frente devolveu o que o raio menor tirou. A face
-comprida é que paga: 119,7 mm de parede plana sem nada que a segure no meio.
+**Caminho de carga:** fundo do pote de cima → piso da bandeja → parede do plug → topo da borda →
+perna de dentro → flare → parede do pote. O filete de TPE fica no friso do plug, mais abaixo,
+vedando radialmente contra a boca — fora do caminho de carga, para não ser comprimido pelo peso da
+pilha.
 
-Flecha relativa (placa engastada nas quatro bordas, mesma carga, `flecha ~ α·b⁴/t³`, `b` = menor
-vão do painel; 1,00 = a mesma face no desenho R18):
+### 3.3 O que a borda alta fez com a rigidez
 
-| Tamanho | Face comprida | Face curta | Parede que igualaria a face comprida |
+Dois efeitos opostos. A borda de 16 mm (12 + flare) **come altura de parede reta**, o que encurta o
+painel; o rebaixo maior derruba o canto do corpo de R6,5 para **R4,4**, o que **alarga** o painel.
+O painel plano é o trecho de parede entre dois cantos.
+
+Flecha de placa engastada nas quatro bordas, `flecha ~ α·b⁴/t³`, `b` = menor vão; 1,00 = o mesmo
+tamanho na revisão 7:
+
+| Tamanho | Painel rev. 7 | Painel rev. 8 | Flecha |
 |---|---|---|---|
-| 600 ml | 1,21× | 1,10× | 1,23 mm (hoje 1,15) |
-| 1,2 L | 2,38× | 1,19× | 1,60 mm (hoje 1,20) |
-| 1,8 L | 3,35× | 1,20× | 1,94 mm (hoje 1,30) |
-| **2,4 L** | **3,81×** | 1,20× | 2,19 mm (hoje 1,40) |
+| **600 ml** | 128,6 × 55 | 133,7 × 44 | **0,42×** |
+| 1,2 L | 128,6 × 115 | 133,7 × 104 | 0,82× |
+| 1,8 L | 128,6 × 175 | 133,7 × 164 | 1,03× |
+| **2,4 L** | 128,6 × 235 | 133,7 × 224 | **1,12×** |
 
-No 600 ml não é problema: a face comprida tem 119,7 × 60 mm, e quem manda na flecha é o vão menor,
-que é a altura — a mesma de antes. O problema aparece à medida que o pote sobe, porque aí o vão
-menor passa a ser a largura de 119,7 mm. No 2,4 L a face comprida fica **3,8× mais flexível**.
+No 600 ml o vão menor é a altura, e ela encurtou 11 mm: o painel ficou **2,4× mais rígido**. Do
+1,8 L para cima o vão menor passa a ser a largura, e aí o painel mais largo pesa mais que a altura
+menor — o 2,4 L fica **12% mais flexível**.
 
-**Igualar com parede está fora de questão:** 2,19 mm no 2,4 L é +56% de resina. As saídas reais são
-três, e nenhuma é minha para escolher:
+Em compensação a boca ganhou muito. A borda oca é um **caixão fechado de 3,80 × 12,0 mm**, contra o
+colar de 1,80 × 5,0 da revisão 7. Quem prende o filete é a boca, e é ela que enrijeceu.
 
-1. **Aceitar.** Pote de mantimento é pego pelas faces curtas, que não mudaram. A vedação é radial e
-   mora no bocal, que é a parte mais rígida da peça (aba em U de 3,0 mm com lábio de 3,5 mm). O que
-   precisa ser testado no protótipo é se a face comprida cede o bastante para **ovalizar o bocal** e
-   soltar o aro — é o único caminho por onde essa flexão vira defeito funcional.
-2. **Bombê de 1,0 a 1,5 mm na face comprida.** Lê como reta a olho nu e transforma o painel num arco
-   raso, que é como todo pote de linha resolve isso. Não é parede conada — a saída de extração
-   continua 0,5°, o molde continua de extração simples, sem gaveta. É a opção que eu levaria.
-3. **Voltar o ASP de 1,75 para ~1,55.** A face comprida cai para ~105 mm e a flecha do 2,4 L para
-   ~2,3×, ao custo de uma frente 5 mm mais larga.
+O que o protótipo tem de responder continua sendo o mesmo desde a revisão 5: **se a face comprida do
+2,4 L cede o bastante para ovalizar a boca e soltar o filete**. Com a borda virando caixão fechado,
+essa é a pergunta que mais mudou de resposta — e continua sem medida. Se o protótipo acusar, a
+saída é o **bombê de 1,0 a 1,5 mm** na face comprida: lê como reta a olho nu, e não é parede conada
+(a saída continua 0,5°, o molde continua de extração simples).
 
-O número honesto sobre esses 3,8×: a razão é confiável, porque só a geometria mudou entre as duas
-colunas. A **flecha absoluta** não é — depende de carga de aperto e de engastamento real, e pedia
-elemento finito ou protótipo. Nenhuma das duas revisões foi prototipada.
+O número honesto: a **razão** é confiável, porque só a geometria mudou entre as colunas. A **flecha
+absoluta** não é — depende de carga e engastamento real, e pedia elemento finito ou protótipo.
+Nenhuma revisão foi prototipada.
 
 ### 3.4 Quanto de saída é "reto"
 
@@ -264,9 +232,15 @@ Saída zero não extrai: a peça agarra o macho. O que se faz é a saída mínim
 | 0,75° | 6,3 mm (4,5%) | 777 mm (−47%) |
 | 1,00° | 8,4 mm (6,0%) | 643 mm (−56%) |
 
-**Recomendação: 0,5°/lado.** No maior pote a base fica 4,2 mm mais estreita que o topo em 141,6 mm de
-largura — 3,0%, imperceptível com canto R10 e parede polida. Abaixo disso a peça deixa de aninhar a
-vazio e o frete do pote vazio sobe ~28%.
+**Recomendação: 0,5°/lado.** No maior pote a base fica 4,0 mm mais estreita que o topo em 142,5 mm
+de largura — 2,8%, imperceptível com parede polida. Abaixo disso a peça deixa de aninhar a vazio e o
+frete do pote vazio sobe ~28%.
+
+**Eu esperava que a borda alta estragasse o aninhamento — não estraga.** A 0,5° a pilha de seis
+2,4 L continua dando os mesmos 1.044 mm da revisão 7. Quem manda ali é a saída, não a borda: o
+flare só vira batente abaixo de 0,3°, onde já não aninhava mesmo. O cálculo agora confere isso
+varrendo o perfil externo de um pote contra o interno do outro, em vez de aplicar uma fórmula
+fechada (`aninha()` em `calculo-modular.py`).
 
 Condições para a parede reta funcionar na extração:
 - **acabamento polido** (SPI A2 ou melhor) nas laterais — textura exige saída extra (~1° a cada
@@ -275,7 +249,7 @@ Condições para a parede reta funcionar na extração:
   quebrar o vácuo;
 - força de extração estimada em ~5 kN no 2,4 L (932 cm² de contato) contra ~62 kN disponíveis numa
   injetora de 380 t — **força não é o problema; curso de extração e vácuo são**;
-- o canto R10 ainda é aliado, mas menos que o R18: reduz o arrasto nos cantos, que é onde a peça reta costuma marcar.
+- o canto R10 da borda ainda é aliado; no corpo ele agora é R4,4, mais agressivo no arrasto — item para a ferramentaria olhar junto com a nervura do canal.
 
 ## 4. Validação nas injetoras
 
@@ -283,16 +257,19 @@ Condições para a parede reta funcionar na extração:
 
 | Tamanho | Área proj. | Fecham. 2 cav | Curso abert. mín. | Altura de molde | Injeção 2 cav | L/t |
 |---|---|---|---|---|---|---|
-| 600 ml | 146 cm² | 135 t | 136 mm | ~252 mm | 120 cm³ | 115 |
-| 1,2 L | 146 cm² | 144 t | 268 mm | ~312 mm | 190 cm³ | 161 |
-| 1,8 L | 146 cm² | 154 t | 400 mm | ~372 mm | 273 cm³ | 194 |
-| 2,4 L | 146 cm² | 161 t | 532 mm | ~432 mm | 366 cm³ | 223 |
+| 600 ml | 134 cm² | 124 t | 136 mm | ~252 mm | 136 cm³ | 116 |
+| 1,2 L | 134 cm² | 133 t | 268 mm | ~312 mm | 208 cm³ | 161 |
+| 1,8 L | 134 cm² | 142 t | 400 mm | ~372 mm | 292 cm³ | 195 |
+| 2,4 L | 134 cm² | 147 t | 532 mm | ~432 mm | 388 cm³ | 224 |
 
-A área projetada é a silhueta do **deck da tampa**, que é a medida máxima da linha:
-154,8 × 91,1 mm = **146 cm²**. Cresceu 17% sobre a revisão 6 (125 cm²), porque o colar afastou o
-corpo e a tampa passou a cobri-lo. Com isso o 600 ml pede **135 t: 84% de uma injetora de 160 t**,
-acima do limite prático de 80% — então **ele volta para a classe de 200 t**, junto com o 1,2 L. A
-alocação de 160 t que a revisão 6 tinha conquistado se perde. É um dos preços do colar.
+**Correção de número publicado.** A revisão 7 trazia 146 cm² para os quatro corpos — mas 146 é a
+silhueta do **deck da tampa**, calculada como retângulo cheio, maior que a peça. A área projetada
+do corpo é a da borda, com os cantos R10 descontados: **134 cm²**. A tampa, essa sim, tem 146 cm².
+Cada peça agora usa a sua.
+
+Mesmo corrigido, o 600 ml **não volta para a classe de 160 t** que a revisão 6 tinha conquistado: a
+124 t ele usaria 78% de uma 160 t, acima do limite prático de 70–80% da casa. Fica na de 200 t,
+junto com o 1,2 L.
 
 Os quatro têm a **mesma área projetada**: quem decide a máquina não é tonelagem, é profundidade.
 
@@ -313,14 +290,15 @@ Parque (`TPRWCP` + `TPRCAP`): 46 injetoras — 80 t ×1, 120 t ×7, 150 t ×2, 1
 
 ### 4.3 Aproveitamento de máquina
 
-O 2,4 L com 2 cavidades usa 139 t numa máquina de 380 t (37% do fechamento). Com **4 cavidades**
-(~278 t, molde ~620 × 500 mm, cabe entre as colunas de uma 380 t) dobra a produção na mesma hora
+O 2,4 L com 2 cavidades usa 147 t numa máquina de 380 t (39% do fechamento). Com **4 cavidades**
+(~294 t, molde ~640 × 510 mm, cabe entre as colunas de uma 380 t) dobra a produção na mesma hora
 de máquina. Mesma avaliação para o 1,8 L numa 250 t.
 
 ### 4.4 Bloqueio de dado
 
 `AD_INJETORAFICHA` tem **1 registro com os 29 campos de especificação nulos**. Com parede reta o
-dado que faltava ficou mais crítico, porque a extração passa a ser o ponto de projeto. Preencher
+dado que faltava ficou mais crítico, porque a extração passa a ser o ponto de projeto — e agora há
+a nervura do canal no meio dela. Preencher
 para as 46 injetoras antes de liberar o molde: `CURSOABERT`, `CURSOEXTR`, `FORCAEXTR`,
 `ALTMINMOLDE`, `ALTMAXMOLDE`, `COLUNASH`, `COLUNASV`, `CAPINJECAO`, `FORCAFECH`.
 
@@ -362,53 +340,46 @@ vez. **1,0 kgf para abrir** é tampa de pote, não alicate.
 
 Há um ganho de tabela que eu não tinha visto: **vedação radial tolera a borda flexionar.** Se o lado
 reto abre um pouco, o aro acompanha o movimento da parede em vez de perder contato — que é
-exatamente o que mata um aro axial. A aba em U continua valendo, agora para limitar a flexão a menos
-que a compressão de 0,20 mm, não para segurar a tampa.
+exatamente o que mata um aro axial. A **borda oca** cumpre esse papel desde a revisão 8: um caixão
+de 3,80 × 12,0 mm que limita a flexão da boca a menos que a compressão de 0,20 mm — não para
+segurar a tampa, para manter a boca redonda.
 
 ### 5.2 Cotas
 
 ```
-boca do pote ......... 145,0 mm (parede da borda 1,80 mm nos quatro tamanhos)
-face do plug ......... 143,8 mm — folga de 0,60 mm por lado
-parede do plug ....... 1,50 mm
-canaleta ............. 0,60 mm de profundidade, entre 5,0 e 7,4 mm abaixo da borda
-aro de TPE ........... seção 2,4 × 1,8 mm, sobra 1,20 mm da face do plug
-                       -> 0,20 mm de compressão contra a parede
-plug desce ........... 12 mm dentro do pote
-vão da bandeja ....... 142,2 mm, recebe o FUNDO RETO de 140,56 mm
+boca do pote ......... 146,1 mm (perna de dentro 1,40 mm nos quatro tamanhos)
+face do plug ......... 144,9 mm — folga de 0,60 mm por lado
+parede do plug ....... 0,80 mm  (= parede da bandeja)
+friso ................ 0,60 mm de profundidade, entre 3,0 e 4,4 mm abaixo do topo
+filete de TPE ........ corda de 1,40 mm, sobra 0,80 mm do fundo do friso
+                       -> 0,20 mm de compressão contra a parede da boca
+plug desce ........... 8,0 mm dentro do pote (a boca tem 12,0 mm)
+vão da bandeja ....... 143,3 mm, recebe o FUNDO RETO de 141,67 mm (+0,80/lado)
+filete ............... 0,9 g, perímetro 438 mm
 ```
 
 O plug faz três coisas de uma vez: **veda**, **forma a parede da bandeja** onde o pote de cima
-apoia, e **centra a tampa**. Por fora não há saia nenhuma — a tampa fica rente à aba da borda.
+apoia, e **centra a tampa**. O mesmo filete serve a tampa de teca, num friso 2,0 mm mais fundo.
 
 ### 5.3 O que ainda precisa de atenção
 
-**Retenção do aro.** A canaleta tem 0,60 mm de profundidade — 0,5% da largura da peça. Um plug de
-parede fina sai disso **por arranque** (stripping), com rampas de 30° nos dois ombros, sem gaveta no
-molde. O aro é montado depois, esticado sobre o plug; a própria tensão do aro mais os dois ombros o
-seguram contra o atrito da parede. **Confirmar no primeiro tryout** — é o ponto que mais merece
-teste de vida (abrir e fechar 500 vezes e ver se o aro migra).
+**Retenção do filete.** O friso tem 0,60 mm de profundidade. Um plug de parede fina sai disso por
+**arranque** (stripping), com rampas nos dois ombros, sem gaveta no molde. O filete é montado
+depois, esticado sobre o plug; a própria tensão mais os dois ombros o seguram contra o atrito da
+parede. **Confirmar no primeiro tryout** — é o ponto que mais merece teste de vida (abrir e fechar
+500 vezes e ver se o filete migra).
 
-**Ar preso.** O aro só encosta nos últimos 2 mm do curso, mas isso ainda comprime o ar de dentro:
+**Ar preso.** O filete só encosta nos últimos 2 mm do curso, mas isso ainda comprime o ar de dentro:
+3,5 kPa (3,8 kgf) no 600 ml, 0,9 kPa (0,9 kgf) no 2,4 L. No 600 ml dá para sentir. Reduz-se com o
+**chanfro de entrada da boca** (0,60 mm, já no modelo) ou aumentando-o para 1,5 mm. É o mesmo "pop"
+que a OXO transformou em argumento de venda.
 
-| | Δp | Força a mais |
-|---|---|---|
-| 600 ml | 3,5 kPa | 3,8 kgf |
-| 1,2 L | 1,8 kPa | 1,9 kgf |
-| 2,4 L | 0,9 kPa | 0,9 kgf |
+**Montagem.** O filete é peça montada — não existe bi-injeção no parque. 0,9 g de TPE mais alguns
+segundos por tampa. O lado bom: o **mesmo filete serve as duas tampas**, então o molde dele
+amortiza na linha inteira.
 
-No 600 ml dá para sentir. Reduz-se com **chanfro de 30° × 1,5 mm na boca**, que atrasa o contato do
-aro. E é o mesmo "pop" que a OXO transformou em argumento de venda — pode virar característica em
-vez de defeito.
-
-**Aba de alavanca.** Sem saia externa, é preciso um ponto para levantar: uma aba de ~18 mm numa das
-laterais curtas, com rebaixo correspondente na aba da borda para ficar rente ao perfil. É o que
-mantém o "liso" e ainda permite descascar.
-
-**Montagem.** O aro volta a ser peça montada — não existe bi-injeção no parque. 1,8 g de TPE mais
-alguns segundos de montagem por tampa. O lado bom: o **mesmo aro serve as três tampas** (padrão,
-dosadora e teca), então o molde do aro amortiza em toda a linha. Esse argumento, que eu tinha
-derrubado na revisão 3, volta a valer.
+**Na revisão 8 o filete não mudou.** Mesma corda, mesma compressão, mesmo friso — só mudou o
+diâmetro de trabalho, porque a boca passou de 145,0 para 146,1 mm.
 
 ### 5.4 O que entrega
 
@@ -422,14 +393,14 @@ planilha. Primeiro tryout com água colorida, pote deitado e de cabeça para bai
 ### 5.5 Orçamento de altura
 
 ```
-borda do pote ................... 62,0 mm   (600 ml)
-piso da bandeja da tampa ........ 60,0 mm   = PLANO MODULAR, 2,0 mm abaixo da borda
-vão livre da bandeja ............ 142,2 × 78,5 mm  (recebe o fundo reto de 140,56)
-plug .......................... desce até 12 mm abaixo da borda, dentro do pote
+topo da borda ................... 62,0 mm   (600 ml)
+piso da bandeja da tampa ........ 60,0 mm   = PLANO MODULAR, 2,0 mm abaixo do topo
+vão livre da bandeja ............ 143,3 × 77,4 mm  (recebe o fundo reto de 141,67)
+plug ............................ desce até 8,0 mm abaixo do topo, dentro da boca
 ```
 
-O pé do pote de cima tem que pousar no piso **junto à parede da bandeja** — que agora é a parede do
-plug. A carga desce plug → borda → parede do pote.
+O fundo do pote de cima tem que pousar no piso **junto à parede da bandeja** — que é a parede do
+plug. A carga desce plug → topo da borda → perna de dentro → flare → parede do pote.
 
 ### 5.6 Capacidade de borda × capacidade útil
 
@@ -439,10 +410,11 @@ as revisões anteriores —, mas a tampa desce 2,0 mm (plano modular) mais a esp
 
 | Tampa | Desce | Desloca | 600 ml | 1,2 L | 1,8 L | 2,4 L |
 |---|---|---|---|---|---|---|
-| Teca (placa 8 mm) | 10,0 mm | 115 ml | **485 ml** | 1.085 ml | 1.685 ml | 2.285 ml |
-| PP/PE (plug 6 mm) | 8,0 mm | 92 ml | **508 ml** | 1.108 ml | 1.708 ml | 2.308 ml |
+| Teca (placa 8 mm) | 10,0 mm | 114 ml | **486 ml** | 1.086 ml | 1.686 ml | 2.286 ml |
+| PP (plug 8 mm) | 10,0 mm | 114 ml | **486 ml** | 1.086 ml | 1.686 ml | 2.286 ml |
 
-No 600 ml a teca leva **19% do volume**. Nos tamanhos maiores o peso relativo cai (5% no 2,4 L),
+No 600 ml a teca leva **19% do volume**. Na revisão 8 as duas tampas descem igual (10,0 mm), então
+o número é o mesmo para as duas. Nos tamanhos maiores o peso relativo cai (5% no 2,4 L),
 porque o deslocamento é constante e a capacidade cresce.
 
 **Decisão em aberto:** rotular por borda (como está) ou re-resolver a linha para que a capacidade
@@ -453,50 +425,70 @@ módulo novo.
 
 ## 6. As duas tampas
 
-Duas tampas, **um só filete de TPE**. Foi o objetivo perseguido desde a revisão 4, e só fechou
-aqui, quando a borda ficou lisa: com a aba em U, cada tampa precisava de uma geometria diferente.
+Duas tampas, **um só filete de TPE**. A de PP passa a fechar com **duas travas de clipe**, uma por
+lado comprido, cobrindo 58% do comprimento — é o layout do STL de referência, e é o oposto das
+6 abas de 18 mm da revisão 7.
 
-| | **Teca** | **PP/PE com trava** |
+| | **Teca** | **PP com 2 travas** |
 |---|---|---|
-| O que é | placa maciça 143,8 × 80,1 × 8,0 mm | plug + deck + 6 abas |
+| O que é | placa maciça 144,9 × 79,0 × 8,0 mm | plug + deck + 2 travas de 89 mm |
 | Vedação | filete de TPE em friso usinado, radial | o **mesmo** filete, em friso moldado |
-| Retenção | **só atrito**: 7,3 kgf reto, 1,2 descascando | **trava**: 6 abas, 12 kgf |
+| Retenção | **só atrito**: 7,4 kgf reto, 1,2 descascando | **trava geométrica**: sair exige abrir 0,80 mm |
 | Plano modular | o **topo da placa** é o plano | o piso da bandeja |
-| Peso / custo | 60 g em teca · CNC, sem molde | 21,7 g em RP 141 · R$ 0,21 |
+| Medida máxima | 144,9 × 79,0 mm | 157,3 × 93,4 mm |
+| Peso / custo | 59 g em teca · CNC, sem molde | 24,5 g em RP 141 · R$ 0,23 |
 
-### 6.1 Tampa com trava
+**A tampa volta a ser PP.** Nas revisões 6 e 7 ela era PEAD HA 7260, escolhido por ser a resina mais
+barata da casa. Em PP RP 141 (R$ 9,55/kg contra 9,34) a tampa custa R$ 0,23 em vez de R$ 0,21 — dois
+centavos —, e em troca a linha volta a ser **monomaterial**, que era o único argumento contra o PE
+que continuava valendo (o de reciclagem) e o mais sério (compra de PE é residual: 1,1 t em 12 meses
+contra as 5,5 t/ano que 200 mil tampas pediriam).
 
-**A aresta de engate já existe no colar.** A face de baixo dele dá **3,46 mm por lado** de encosto —
-o dobro do que a farpa usa. Não foi preciso inventar canaleta: canaleta externa num retângulo
-pediria gaveta no molde.
+### 6.1 Tampa de PP com trava de clipe
+
+**A aresta de engate agora é material de verdade.** A saia externa da borda termina no ar, 10 mm
+abaixo do topo: a face de baixo dela é um anel horizontal de **1,20 mm**, e o gancho avança
+**0,80 mm** nele — 67% de engate. Não é canaleta, então o molde continua abrindo sem gaveta.
 
 ```
-deck ............ passa 3,10 mm/lado do colar -> 154,8 × 91,1 mm (medida máxima da linha)
-abas ............ 6 × 18,0 × 1,00 mm; face interna 149,2 (folga 0,30 sobre o colar)
-farpa ........... avança 1,85 mm sob o colar; braço de 8,0 mm da dobradiça até ela
-rabo ............ 5,0 mm abaixo da farpa, para o dedo
-plug ............ desce 6,0 mm na boca, com o friso do filete
-bandeja ......... piso 2,0 mm abaixo da borda = plano modular
+deck ............ passa 1,80 mm/lado da borda -> 157,3 mm de comprimento
+travas .......... 2 × 89 mm × 1,00 mm; uma por lado COMPRIDO
+                  face interna a 0,30 mm da face externa da borda
+gancho .......... avança 0,80 mm sob a aresta; braço de 10,0 mm até ela
+rabo ............ 6,0 mm abaixo do gancho, abrindo 1,50 mm para o dedo
+medida máxima ... 157,3 × 93,4 mm (a trava só cresce a LARGURA)
+plug ............ desce 8,0 mm na boca, com o friso do filete
+bandeja ......... piso 2,0 mm abaixo do topo da borda = plano modular
 ```
 
-**Cada aba fecha com ~2 kgf, uma de cada vez** — é assim que se fecha um pote de travas, não as
-seis juntas. As seis seguram **12 kgf** de arranque, contra os 7,3 kgf que o filete sozinho dá.
+**Cada trava fecha com 2,0 kgf, uma de cada vez.** Abrindo pelo rabo, a alavanca de 1,6× deixa
+**1,2 kgf** no dedo. A deformação de fibra no fechamento é de **1,20%**, contra os ~8% em que o PP
+randômico escoa — folga de 6,7×.
 
 **É essa a diferença entre as duas tampas.** Na teca o filete faz as duas coisas: veda e segura.
-Na de trava ele **só veda** — quem segura é a aba. Por isso a de trava pode prometer hermeticidade
-sob transporte e a de teca não.
+Na de PP ele **só veda** — quem segura é a trava, e a trava é um **bloqueio geométrico**: para a
+tampa sair, ela tem de abrir 0,80 mm. Por isso a de PP pode prometer hermeticidade sob transporte e
+a de teca não.
+
+**Por que duas grandes e não seis pequenas.** As travas ficam só nos lados compridos, que são os
+flexíveis; os curtos são rígidos e não precisam. É o que a referência faz, e reduz de 6 para 2 as
+feições que a ferramentaria tem de resolver.
 
 ### 6.1.1 O que não está resolvido na trava
 
-**A extração das abas.** Cada farpa é uma contra-saída de 1,85 mm num trecho de 18 mm, voltada para
-dentro. Em peça retangular isso normalmente pede gaveta. A saída usual é arraste com a aba
-flexionando — o PP randômico aguenta —, mas é item de ferramentaria, não de projeto de produto, e
-precisa ser fechado antes de orçar o molde.
+**A extração ficou mais fácil, mas continua sendo arraste.** A contra-saída do gancho caiu de
+**1,85 para 0,80 mm**, e a trava é uma aba livre nos três lados (fenda de ~1 mm) com 10 mm de
+braço — dentro do que se faz todo dia em tampa de clipe. Ainda assim é item de ferramentaria, a
+fechar antes de orçar o molde. **A fenda não está na malha**: é desenho de CAD.
 
-**A dobradiça viva.** O braço de 8,0 mm com 1,00 mm de espessura funciona como viga engastada no
-cálculo, mas uma trava de pote real é **sobre-centro**: ela passa de um ponto morto e trava. Essa
-geometria não está modelada — o que existe é a farpa e o encosto. Detalhar a dobradiça é o próximo
-passo do desenho da tampa.
+**A dobradiça viva.** O braço de 10,0 mm com 1,00 mm de espessura funciona como viga engastada no
+cálculo, mas uma trava de pote real é **sobre-centro**: ela passa de um ponto morto e trava lá.
+Essa geometria não está modelada — o que existe é o gancho e o encosto. Detalhar a dobradiça é o
+próximo passo do desenho da tampa.
+
+**Os lados curtos não têm trava.** Como a vedação é radial, a boca tolera um pouco de levantamento
+sem perder contato. Mas se o protótipo mostrar a tampa abrindo nos cantos, a resposta é uma
+terceira trava (no meio de um lado curto) ou o bombê da seção 3.3.
 
 ### 6.2 Tampa de teca
 
@@ -504,12 +496,16 @@ Cadeia própria: teca em tora e ripa serrada (CODPROD 6759), planta **WOOD** (CN
 moldureira, lixadeiras, prensa de alta frequência) e a **Teak Brazil**. Tampa de madeira já é
 produto corrente com FSC 100%. Sem molde — programa de CNC e gabarito.
 
-**Placa maciça de 143,8 × 80,1 × 8,0 mm**, ~60 g em teca seca, com **friso usinado na face lateral**
-alojando o filete de TPE. Sem trava: segura pelo atrito do filete, 7,3 kgf reto.
+**Placa maciça de 144,9 × 79,0 × 8,0 mm**, ~59 g em teca seca, com **friso usinado na face lateral**
+alojando o filete de TPE. Sem trava: segura pelo atrito do filete, 7,4 kgf reto.
 
 **O ponto que estava em aberto na revisão 6 fechou sozinho.** Lá a teca precisaria de um poço da
 bandeja usinado, senão não empilharia. Agora **o topo da placa É o plano modular**: ele fica 2,0 mm
-abaixo da borda e o fundo reto do pote de cima pousa direto nele. Nada a usinar.
+abaixo do topo da borda e o fundo reto do pote de cima pousa direto nele. Nada a usinar.
+
+**Com a borda alta, a teca ganhou moldura.** A placa fica embutida 2,0 mm dentro de uma borda de
+12 mm: a madeira aparece emoldurada pelo aro de PP, em vez de rente a ele. É ganho de desenho que
+veio de graça com a referência.
 
 **Dois cuidados que continuam sendo de madeira, não de plástico:**
 
@@ -605,47 +601,48 @@ Preços reais de compra dos últimos 12 meses (`TGFITE`/`TGFCAB`):
 | PP RP 340 S randômico fluidez 45 | R$ 17,00/kg | 49,5 t | alternativa de fluidez para o 2,4 L |
 | PP RP 141 randômico fluidez 40 | **R$ 9,54/kg** | 299,1 t | **tampas** |
 | PP CP 141 copolímero heterofásico | R$ 10,52/kg | 108,9 t | tampa colorida sem dobradiça |
-| PEBD PB 608 | R$ 11,10/kg | 0,5 t | (descartado — ver seção 6) |
+| PEAD HA 7260 IF 20 | R$ 9,34/kg | 1,1 t | (descartado na revisão 8 — ver seção 6) |
 | TPE Karinprene 45 | sem compra | — | aro de vedação, a recotar |
 
 | Item | Peso | Resina |
 |---|---|---|
-| Corpo 600 ml | 47,0 g | R$ 0,52 |
-| Corpo 1,2 L | 74,6 g | R$ 0,83 |
-| Corpo 1,8 L | 107,4 g | R$ 1,19 |
-| Corpo 2,4 L | 144,1 g | R$ 1,59 |
-| Tampa de teca (placa maciça 8 mm) | 60 g em teca | CNC, sem resina |
-| **Filete de TPE (nas duas tampas)** | **0,7 g** | a cotar |
+| Corpo 600 ml | 52,9 g | R$ 0,59 |
+| Corpo 1,2 L | 80,8 g | R$ 0,90 |
+| Corpo 1,8 L | 113,8 g | R$ 1,27 |
+| Corpo 2,4 L | 150,9 g | R$ 1,69 |
+| **Tampa de PP com 2 travas** | **24,5 g** | R$ 0,23 |
+| Tampa de teca (placa maciça 8 mm) | 59 g em teca | CNC, sem resina |
+| **Filete de TPE (nas duas tampas)** | **0,9 g** | a cotar |
 
 Só matéria-prima. Transformação entra pelo custo do PCP; a tampa de teca, pelo custo da WOOD.
 
-**O que a revisão 5 custou em resina.** Os quatro corpos somam **366,7 g** contra 349,1 g no
-desenho R18 de 121,2 × 93,2 — **+17,6 g, +5,0%**, ou R$ 0,19 por jogo de quatro. Os dois efeitos
-empurram para o mesmo lado: mesma área com frente estreita tem mais perímetro, e canto menos
-arredondado também. Metade vem do ASP, metade do raio.
+**O que a revisão 8 custou em resina.** Os quatro corpos somam **398,4 g** contra 373,1 g na
+revisão 7 — **+25,3 g, +6,8%**, ou R$ 0,28 por jogo de quatro. Vem todo do footprint maior, que
+vem da borda oca (seção 3.2). A tampa, indo de PEAD para PP, sobe de R$ 0,21 para R$ 0,23.
 
 ---
 
 ## 8. Ferramental
 
-Escopo na revisão 7: **4 moldes de corpo + 1 molde de tampa com trava + 1 molde de filete de TPE
-= 6 ferramentas.** A tampa de teca não usa molde (CNC); o filete agora serve **as duas**.
+Escopo na revisão 8: **4 moldes de corpo + 1 molde de tampa de PP + 1 molde de filete de TPE
+= 6 ferramentas.** A tampa de teca não usa molde (CNC); o filete serve **as duas**.
 
-**Os moldes de corpo ficaram mais simples.** Sem aba em U e sem pé embutido, a peça só estreita
-descendo do colar: duas placas, sem gaveta e sem extração por arraste. O rebaixo da trava é a face
-de baixo do colar, não uma canaleta — canaleta externa num retângulo exigiria gaveta.
+**Os moldes de corpo continuam de duas placas, sem gaveta.** Descendo, a peça só estreita por fora
+(153,7 → 148,9 → 142,5 → 138,5) e por dentro (146,1 → 140,2). O que entra de novo é a **nervura do
+canal**: 1,20 mm de espessura por 8,6 mm de altura (7,2:1), contínua nos 466 mm de perímetro, na
+cavidade. Pede raio no pé, saída própria e escape de ar na ponta — e é o item novo a orçar.
 
-**A tampa com trava é que ficou mais difícil.** As 6 abas têm farpa voltada para dentro: cada uma é
-uma contra-saída de 1,85 mm num trecho de 18 mm. Em peça retangular isso normalmente pede gaveta;
-a saída usual é extração por arraste com a aba flexionando. O PP randômico aguenta, mas **é o item
-a fechar com a ferramentaria antes de orçar.**
+**A tampa ficou mais fácil que na revisão 7.** Saem as 6 abas com farpa de 1,85 mm; entram 2 travas
+com gancho de 0,80 mm, livres nos três lados. Continua sendo extração por arraste com a aba
+flexionando, mas com metade da contra-saída e um terço das feições.
 
 Referências dos próprios orçamentos com a MR Plastic Mould (`AD_ORCAMENTO`, USD): corpo lixeira
 12 L / 380 t = 36.900 · 284-U / 280 t = 20.100 · 214-U / 250 t = 18.900 · corpo 026 / 120 t = 6.300 ·
 tampa 026-T / 90 t = 5.500 · **115/1 "potes modulares" 2 cav = 47.100 (aprovado)**.
 
-Faixa a cotar: corpos 2 cav entre USD 25–45 mil cada (o 2,4 L no topo, por profundidade, polimento
-e placa impulsora), tampas USD 15–20 mil, aro de TPE ~USD 8 mil. **Ordem de grandeza USD 140–190 mil.**
+Faixa a cotar: corpos 2 cav entre USD 25–45 mil cada (o 2,4 L no topo, por profundidade, polimento,
+placa impulsora e agora a nervura do canal), tampa USD 15–20 mil, filete de TPE ~USD 8 mil.
+**Ordem de grandeza USD 140–190 mil.**
 
 ---
 
@@ -656,12 +653,12 @@ extração da peça reta (mais tempo de resfriamento antes de arrancar do macho)
 
 | Tamanho | Ciclo est. | pç/h | pç/mês | Resina |
 |---|---|---|---|---|
-| 600 ml | 17 s | 424 | 186 mil | 18,4 kg/h |
-| 1,2 L | 21 s | 343 | 151 mil | 23,8 kg/h |
-| 1,8 L | 25 s | 288 | 127 mil | 28,8 kg/h |
-| 2,4 L | 29 s | 248 | 109 mil | 33,3 kg/h |
+| 600 ml | 17 s | 424 | 186 mil | 20,7 kg/h |
+| 1,2 L | 21 s | 343 | 151 mil | 25,7 kg/h |
+| 1,8 L | 25 s | 288 | 127 mil | 30,6 kg/h |
+| 2,4 L | 29 s | 248 | 109 mil | 34,9 kg/h |
 
-**Risco de preenchimento no 2,4 L:** L/t de 216 com parede de 1,40 mm. Viável com o PP de alta
+**Risco de preenchimento no 2,4 L:** L/t de 224 com parede de 1,40 mm. Viável com o PP de alta
 fluidez que já se compra, mas no limite. Mitigar com câmara quente de **2 pontos de injeção** no
 fundo, ou parede de 1,5 mm, ou RP 340 S. Definir no Moldflow antes de fechar o molde.
 
@@ -683,14 +680,19 @@ o de 1 kg de feijão — que era justamente o que a escala anterior (500/1000/15
 
 ## 11. Próximos passos
 
-1. **Confirmar a saída de 0,5°** com o design — é o que separa "reto" de "aninha no frete".
-2. **Preencher `AD_INJETORAFICHA`** (curso de abertura, curso e força de extração) para as 46 injetoras.
-3. **Reabrir o Projeto 115** e renegociar com a MR Plastic Mould a partir da cotação aprovada.
-4. **Recotar o TPE Karinprene 45** — agora com volume das três tampas.
-5. **Design da tampa**: bandeja com piso 2,0 mm abaixo da borda, pé do pote alinhado com a parede
-   da bandeja, aba de alavanca para abrir, e bandeja-vertedor na versão de líquidos (6.3).
-6. **Moldflow do 2,4 L** (L/t 216) e estudo de extração da peça reta.
-7. **Try-out**: reservar INJ 32 (380 t) para o 2,4 L e INJ 25/24 (250 t) para o 1,8 L.
+1. **Aprovar o footprint de 153,7 × 87,8 mm** (era 148,6 × 84,9). Tudo abaixo depende disso: é o
+   preço da borda oca, e se ele não passar, a borda volta a ser parede só — e a aresta de engate
+   volta a não existir como material.
+2. **Orçar a nervura do canal** (1,20 × 8,6 mm, contínua) com a ferramentaria. É a feição nova.
+3. **Confirmar a saída de 0,5°** com o design — é o que separa "reto" de "aninha no frete".
+4. **Preencher `AD_INJETORAFICHA`** (curso de abertura, curso e força de extração) para as 46 injetoras.
+5. **Reabrir o Projeto 115** e renegociar com a MR Plastic Mould a partir da cotação aprovada.
+6. **Recotar o TPE Karinprene 45** — agora com volume das duas tampas.
+7. **Design da tampa**: a fenda que recorta as duas travas, a dobradiça sobre-centro (6.1.1), a
+   saia decorativa da referência, e a bandeja-vertedor na versão de líquidos (6.4).
+8. **Moldflow do 2,4 L** (L/t 224) e estudo de extração da peça reta com a nervura do canal.
+9. **Try-out**: reservar INJ 32 (380 t) para o 2,4 L e INJ 25/24 (250 t) para o 1,8 L.
+10. **Decidir o rótulo**: capacidade de borda (como está) ou re-resolver para capacidade útil (5.6).
 
 ---
 
@@ -708,9 +710,10 @@ Memória de cálculo: `calculo-modular.py`.
 
 ## 12. Modelo 3D
 
-`gera-3d.py` constrói o sólido a partir das mesmas cotas e escreve **sete** STL em `stl/`:
-os quatro corpos, a placa de teca, a tampa com trava (com as 6 abas) e o filete de TPE. O visualizador interativo remonta a malha a partir
-da mesma receita de anéis, bandas e tampos (`perfis.json`), então desenho e STL não divergem.
+`gera-3d.py` constrói o sólido a partir das mesmas cotas — **importadas de `calculo-modular.py`, não
+copiadas** — e escreve **sete** STL em `stl/`: os quatro corpos, a placa de teca, a tampa de PP com
+as duas travas e o filete de TPE. O visualizador interativo remonta a malha a partir da mesma
+receita de anéis, bandas e tampos (`perfis.json`), então desenho e STL não divergem.
 
 **Como o sólido é construído:** cada peça é uma casca fechada feita de seções de retângulo com
 cantos arredondados empilhadas em alturas diferentes; bandas de quadriláteros ligam um anel ao
@@ -720,43 +723,45 @@ seguinte e tampos em leque fecham as pontas.
 
 | Verificação | Resultado |
 |---|---|
-| Volume assinado positivo **e normais consistentes** nas sete peças | sólido fechado e orientado para fora |
-| Cavidade × capacidade nominal | 599,9 / 1200,0 / 1800,5 / 2401,2 ml contra 600 / 1200 / 1800 / 2400 — dentro de **0,06%** |
-| Peso da malha × `calculo-modular.py` | 47,1 / 74,9 / 108,0 / 145,2 g nos corpos, 60 g na placa de teca e 21,7 g na tampa com trava |
+| Volume assinado positivo **e normais consistentes** nas sete peças | casca fechada e orientada para fora |
+| **Seção conexa em toda a altura** nos quatro corpos | o material de cada nível encosta no do nível seguinte |
+| Autoteste: o mesmo critério roda contra a geometria da **revisão 7** | tem de **reprovar** — e reprova |
+| Cavidade × capacidade nominal | 599,6 / 1199,3 / 1799,1 / 2398,9 ml contra 600 / 1200 / 1800 / 2400 — dentro de **0,07%** |
+| Peso da malha × `calculo-modular.py` | 52,9 / 80,8 / 113,8 / 150,9 g nos corpos, 59 g na teca, 24,5 g na tampa de PP |
 | Malha do visualizador × STL do Python | `verifica-malha.js`: 0,00% nas sete peças |
 
-**Na revisão 7 a verificação pegou três erros que leitura não pegaria:**
+**A verificação nova da revisão 8, e por que ela existe.** Na revisão 7 a boca media 144,95 mm e a
+face externa do corpo, 141,55: o colar era um anel de material entre 144,95 e 148,55 **pairando
+sobre um corpo que ia só até 141,55**. As duas superfícies horizontais em `z_col` se cancelavam, a
+malha fechava, o volume assinado dava um número plausível e as normais estavam certas — e a peça
+estava **em dois pedaços**. Impresso, o colar sairia solto.
 
-1. **O filete estava 0,40 mm aquém da boca.** A fórmula da face externa usava `FILETE_SOB − FRISO_PROF`
-   em vez de `FILETE_D − FRISO_PROF`. A peça ficava com folga onde deveria ter 0,20 mm de
-   interferência: **não vedaria nada**, e nenhuma checagem de malha acusa — malha estanque,
-   normais certas, volume positivo. Só apareceu na conferência de montagem, comparando cota a cota.
-2. **Metade das abas entrava espelhada no visualizador.** Os prismas dos lados de coordenada
-   negativa saem espelhados, e espelhar inverte a mão: três abas com volume negativo cancelavam as
-   outras três. O total batia com o de uma tampa **sem aba nenhuma**. O gerador Python já se
-   corrigia; o JS não.
-3. **O STL saiu com Y para cima em vez de Z.** Volume assinado e checagem de normais são agnósticos
-   a eixo e passaram os dois. Apareceu quando a medida de área de contato com a mesa deu **zero**.
+Nem volume assinado nem normais pegam isso. `secao_conexa()` percorre a altura, monta a coroa (ou
+as duas coroas, na faixa do canal) de cada nível e exige interseção radial com a do nível seguinte.
+E, porque **verificação que nunca disparou não prova nada**, `autoteste_conexao()` reconstrói a
+geometria da revisão 7 e exige que o mesmo critério a reprove; se não reprovar, o gerador sai com
+erro.
 
-**A checagem de normais entrou na revisão 6, e entrou porque falhou.** A tampa PE saiu com o piso da
-bandeja invertido: a malha ficou **estanque**, o volume assinado devolveu um número plausível
-(17,5 g) e nada acusou. O volume real era 27,6 g — 58% a mais. Volume assinado sozinho não detecta
-normal invertida; `normais_consistentes()` confere que toda aresta aparece uma vez em cada sentido,
-e agora o gerador **aborta** se alguma peça falhar.
+**As três da revisão 7, que valem manter registradas:**
 
-A folga de 0,7% na cavidade é a poligonal de 12 segmentos por canto, não erro de cota
-(`--seg 24` reduz). `verifica-malha.js` roda o construtor do visualizador fora do navegador e
-confere o volume contra o STL — as seis peças batem.
+1. **O filete estava 0,40 mm aquém da boca.** A fórmula usava `FILETE_SOB − FRISO_PROF` em vez de
+   `FILETE_D − FRISO_PROF`. Não vedaria nada, e nenhuma checagem de malha acusa.
+2. **Metade das abas entrava espelhada no visualizador.** Espelhar inverte a mão: três abas com
+   volume negativo cancelavam as outras três, e o total batia com o de uma tampa **sem aba nenhuma**.
+3. **O STL saiu com Y para cima em vez de Z.** Volume assinado e normais são agnósticos a eixo e
+   passaram os dois. Apareceu quando a área de contato com a mesa deu **zero**.
+
+E a da revisão 6: a tampa saiu com o piso da bandeja invertido, malha **estanque**, volume assinado
+plausível (17,5 g contra 27,6 reais). Foi ela que trouxe `normais_consistentes()`.
 
 **O que o modelo não é.** É malha, não sólido CAD: serve para conferir encaixe, empilhamento e
-volume, e para imprimir protótipo. **O molde precisa do CAD paramétrico do projetista.** Estão no
-modelo a aba da borda, o plug e o aro na canaleta; faltam a aba de alavanca, o chanfro de entrada da
-boca e o furo e o entalhe do vertedor da seção 6.3. O aro está desenhado na medida livre, e por isso
-invade 0,2 mm a parede no modelo — é justamente a interferência.
+volume, e para imprimir protótipo. **O molde precisa do CAD paramétrico do projetista.** Faltam no
+modelo: a **fenda de ~1 mm** que recorta as duas travas nos três lados livres, a saia decorativa da
+tampa que a referência mostra, e o furo e o entalhe do vertedor da seção 6.4. O filete está
+desenhado na medida livre, e por isso invade 0,2 mm a boca no modelo — é justamente a interferência.
 
-O corte do visualizador é onde se vê a vedação: o plug descendo dentro do pote e o aro trabalhando
-contra a parede.
-
+O corte do visualizador é onde se vê a borda oca: o flare, a perna de dentro, o canal, a saia livre
+e o gancho da trava por baixo dela.
 
 ---
 
@@ -834,3 +839,39 @@ específicas de cordão e nervura — US5356026 (*Double seal container*), EP028
 an engaging region formed inwardly and below it*), WO2008048406 (*double bead sealing system*).
 **Antes de abrir molde com qualquer um dos dois caminhos, busca de liberdade de operação é etapa
 real, não formalidade.**
+
+---
+
+## 14. O STL de referência — o que foi medido e como
+
+Arquivo: `REF_231.stl`, binário, **66 591 triângulos**, cabeçalho `STL generated by
+ImageToStl.com`. Duas cascas separadas (busca em profundidade sobre as arestas): um **corpo** e uma
+**tampa**, deslocados do zero — é um recorte de uma cena maior, não uma peça posicionada.
+
+**A escala.** O arquivo não traz unidade útil: a caixa envolvente do corpo dá 12,9 × 19,8 × 5,6.
+Medindo a **parede** em cortes horizontais, ela dá **0,113** constante. Parede de pote injetado em
+PP é 1,0–1,4 mm, então a escala é **1:10** — e com ela todo o resto fecha: corpo de
+129,1 × 197,6 × 56,3 mm, que é um pote de mantimento plausível.
+
+**O que foi medido, e como:**
+
+| Medida | Método | Resultado (×10) |
+|---|---|---|
+| parede | corte horizontal a meia altura, distância entre as duas coroas | 1,13 mm |
+| altura da borda | varredura da meia-largura externa por altura; ela salta de 5,489 para 6,286 em y = 3,90 | 17,3 mm, 31% do pote |
+| saliência da borda | mesma varredura, diferença entre o máximo da borda e o da parede | 9,6 mm/lado |
+| perfil da borda | corte vertical no meio do lado comprido, contorno encadeado e simplificado (Douglas-Peucker) | topo chato 4,3 mm, raio 2,5 fora, 1,9 dentro |
+| travas | vértices nos 0,25 mm mais externos em X, extensão em Z | 2 travas, 115,9 mm cada = 58% do comprimento |
+| gancho | corte vertical passando pela trava | pega 19,5 mm abaixo do topo; rabo até 39 mm |
+
+**O que a referência não é.** É modelo de aparência, não de fabricação: no corte, a borda aparece
+como um **bloco maciço de 8,5 × 17,5 mm**. Nenhuma peça injetada tem seção assim — o que existe na
+peça real é uma casca de parede constante. Por isso a revisão 8 tomou da referência a **forma e o
+layout** (borda alta com face externa reta, topo chato com raios generosos, aresta de engate na
+base, duas travas largas nos lados compridos) e construiu a **seção** do jeito que se injeta: casca
+oca, parede constante, saia de ponta livre.
+
+E foi justamente ter de construir a seção de verdade que revelou o erro da revisão 7 (seção 12).
+
+Os scripts da medição ficam no diretório de trabalho da sessão, não no repositório — o que vale
+aqui é a tabela acima e o `calculo-modular.py`, que é a fonte das cotas.

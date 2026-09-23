@@ -7,8 +7,8 @@
  "saida": "prep",
  "pecas": [
   {
-   "nome": "tampa_pe",
-   "stl": "../stl/impressao/tampa-pe.stl",
+   "nome": "tampa_pp",
+   "stl": "../stl/impressao/tampa-pp.stl",
    "flip": true
   },
   {
