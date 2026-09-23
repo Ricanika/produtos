@@ -1,9 +1,10 @@
 # Linha ELO — organizadores empilháveis, encaixáveis e acopláveis em PP
 
-> **ELO P** (4,09 L) e **ELO M** (9,10 L), peça única injetada cada. O nome da
-> linha e o M foram definidos em 23/09; o corpo deste documento é o registro do
-> projeto do P, e o M está na **§4.2.7** — inclusive o diferencial de que
-> **dois P acoplados empilham em um M**, medido em 0,0000 mm³.
+> **ELO P** (4,09 L · 179,2 g), **ELO M** (9,10 L · 298,7 g) e **ELO G**
+> (29,55 L · 457,0 g), peça única injetada cada. O corpo deste documento é o
+> registro do projeto do P; o M está na **§4.2.7** e o G na **§4.2.8**. O
+> diferencial da linha — **dois P acoplados empilham em um M**, e o par também
+> empilha no G — está medido em 0,0000 mm³ de interferência.
 
 **Status:** 3D fechado na **configuração C** (aba para fora, extrai em molde de duas placas), pronto para cotação de ferramental · **Data:** 23/09/2026
 **Referência:** STL enviado em 16/09 (bin de 150 × 100 × 80 mm, 192 faces) + anúncio
@@ -1448,6 +1449,104 @@ Arquivos: `cad/visor_elo.py` (gera `visor-elo.html`, o visor da linha, e
 `elo-medidas.json`) e `cad/elo.py` (folha `elo.png`). `padrao_m()` em
 `modelo3d.py` fixa a configuração do M.
 
+### 4.2.8 O ELO G: 30 L abaixo de 500 g, e o piso geométrico que quase impediu
+
+Pedido de 23/09: "o organizador M com aproximadamente 30 litros com menos de
+500 g, é possível?". A resposta curta é **sim, mas não com a parede do P**.
+
+#### O piso geométrico, antes de desenhar qualquer coisa
+
+Uma caixa de topo aberto com 30 L, na **proporção ótima possível**
+(391 × 391 × 196 mm), com parede uniforme de 1,4 mm e **sem rim, sem aba, sem
+pé e sem chapa reforçada**, pesa **583 g**. Travar a largura em 380 não muda
+nada — dá 583 g também, porque 380 já é quase a proporção ótima. Para fechar
+em 500 g a parede teria de ser **1,20 mm**, abaixo do mínimo da casa.
+
+Medido, com a arquitetura inteira do ELO e o vazado do P (8% de parede
+aberta):
+
+| candidato | capacidade | peso |
+|---|---|---|
+| 380 × 230 × 450 (planta travada, só altura) | 31,39 L | **640,0 g** |
+| 380 × 300 × 300 (quase cúbica) | 29,32 L | **631,4 g** |
+| 380 × 400 × 220 (mais rasa) | 29,55 L | **630,0 g** |
+
+Ou seja: **a forma quase não importa** — 30 L com o vazado do P custa 630 g,
+±1%. O que importa é quanto da peça é buraco.
+
+#### As duas alavancas, e por que só agora puderam ser puxadas
+
+O cliente definiu que o 30 L guarda **coisa volumosa**, não miudeza. Isso
+libera as duas alavancas que o P tinha travadas:
+
+1. **Rasgo de parede maior** — de 6 × 18,3 para **14 × 34 mm**, passo 22.
+2. **Chapa do fundo VAZADA** — a alavanca que o §4.2.3 vinha apontando como "a
+   única que sobra de verdade" e que o cliente havia recusado no P, porque
+   miudeza escapa. Numa peça de 30 L a chapa sozinha pesa ~244 g.
+
+Medido no G:
+
+| | |
+|---|---|
+| parede cheia e chapa inteira | 677,9 g |
+| vazado da parede | −102 g |
+| **vazado da chapa do fundo** | **−119 g** |
+| **ELO G** | **457,0 g · 29,55 L · 15,5 g/L** |
+
+**15,5 g/L contra 30,4 do Cesto Vime 7 L da casa** — o G é quase o dobro de
+eficiente que o melhor comparável, e a razão é geometria mais vazado, não
+mágica.
+
+#### A premissa do cliente estava meio certa, e a medição disse qual metade
+
+O pedido dizia "o comprimento precisa ficar igual para poder empilhar os 2
+organizadores acoplados". Não é bem isso: **as duas dimensões da planta
+travam o empilhamento**, cada uma por um apoio diferente.
+
+| M | contato do par | ilhas |
+|---|---|---|
+| 380 × 230 (o M de hoje) | **887 mm²** | 416 + 416 + 27 + 27 |
+| 380 × **300**, par centrado | **54 mm²** | 27 + 27 |
+| 380 × 300, **par recuado 56 mm** | **887 mm²** | 416 + 416 + 27 + 27 |
+
+Os **pés laterais** do par pousam nas abas laterais — travam a **largura em
+380**. As **duas saias de trás** pousam na aba de trás — e num G mais fundo,
+com o par centrado, elas caem no vazio: 94% do contato some e o par tomba.
+
+**A saída não custa nada:** recuando o par até as saias encontrarem a aba de
+trás do G, o contato volta inteiro. Então a profundidade **é livre** — o par
+só não fica centrado, encosta atrás e deixa a frente do G aberta. Foi a opção
+que o cliente escolheu, e é o que torna o G possível: com a planta travada em
+380 × 230, 30 L exigiriam **450 mm de altura**, e aí o passo de encaixe sai de
+40 para ~112 mm — 12 peças passariam de 573 mm para 1,3 m de caixa.
+
+#### Um defeito que a mudança de profundidade revelou
+
+As listras da frente e do fundo estavam plantadas em **y = ±95,0 literal** —
+que é `PROF/2 − 20` para os 230 mm do P. Com `PROF = 400` o prisma de corte
+passa a 60…130 enquanto a parede está em 200: **erra a parede inteira**. Os
+três candidatos da tabela acima foram medidos assim, com frente e fundo
+maciços — ou seja os 630 g são conservadores. Virou `y_parede()`.
+
+#### O que do G AINDA NÃO foi conferido
+
+Medido e fechado: peso, capacidade, e o par recuado pousando no G —
+**passo 220,02 mm, 0,0000 mm³ de interferência, 829 mm² de contato** em quatro
+ilhas (389 + 389 + 25 + 25).
+
+**Ainda rodando quando este trecho foi escrito**, e portanto ainda não
+afirmado: o encaixe e o empilhamento do G consigo mesmo, a auditoria de
+extração e o teste de raios. São as três que pegaram defeito no P e no M, e o
+G tem duas feições novas (a chapa vazada e a saída de 3°), então nenhuma delas
+é formalidade.
+
+**E uma que não foi medida de jeito nenhum: a rigidez da chapa vazada.** Tirei
+119 g dela; com ~40% de furo e 1,4 mm de nervura entre rasgos, numa peça de
+30 L com carga volumosa isso pede ensaio ou nervura cruzada. Pesei, não
+calculei flexão.
+
+Arquivos: `padrao_g()` e `_vazado_fundo()` em `modelo3d.py`.
+
 ### 4.3 Acoplado — as três canaletas
 
 O pedido foi uma **canaleta de ponta a ponta na lateral, macho de um lado e
@@ -1710,6 +1809,8 @@ novo chegar à metade disso (131 mil/ano), o payback é de 7,8 meses em virgem.
 | **Pressão específica do M** | **Alta** | A 0,32 t/cm² o M só roda na única 600 t da casa; a 0,28 entra na classe de 380 t, com três. É pergunta para o processador, e decide se o M é refém de uma máquina (§4.2.7) |
 | Marca "ELO" | Alta | **Não conferi** — sem acesso ao INPI e com o Mercado Livre bloqueado pelo proxy. Busca na classe 21 antes de gravar em molde ou embalagem |
 | Ferramental do M | Média | Os USD 19,5 mil são a analogia do P. O M tem 950 cm² de planta contra 480 — precisa de analogia própria |
+| **Carga da chapa vazada do G** | **Alta** | A chapa do G tem ~40% de furo e 1,4 mm de nervura entre rasgos. Numa peça de 30 L com carga volumosa isso precisa de ensaio ou de nervura cruzada — não calculei flexão da chapa, só peso |
+| **Rasgo de 14 mm no G** | Média | Foi dimensionado para "coisa volumosa". Se entrar miudeza, o G precisa do vazado do P e volta para ~630 g |
 | `SAIA_W` do M escala? | Média | O tripé do M é o mesmo 463 mm² do P. Basta para a carga de referência (0,53 MPa, 57× de folga); se o M for para carga pesada, a saia de trás vai de 108 a ~308 mm sem mexer em mais nada (§4.2.7) |
 | Cotas finais para a ferramentaria | Média | O pacote de cotas do molde ainda não foi fechado |
 | Ângulo de abertura da frente | Média | `cad/abertura.png` tem três (chanfro de 40 / 52 / 68 mm); está em **52** por ser o medido no STL de referência, e ninguém escolheu outro |
@@ -1769,6 +1870,10 @@ cad/elo.py         folha elo.png: o P, o M, e o par de P empilhado no M.
                    NAO remede -- le elo-medidas.json
 cad/elo-medidas.json  as medidas do M, versionadas de proposito: custam ~40
                    min de booleano e sao o que permite redesenhar a folha
+
+padrao_g() em modelo3d.py: o ELO G, 380 x 400 x 220 a 3 graus, com rasgo de
+parede maior e CHAPA DO FUNDO VAZADA (_vazado_fundo()). E a chapa que fecha os
+500 g: sozinha ela vale 119 g dos 221 que o vazado tira.
 
 O vazado da lateral: cols_lateral() gera as colunas ANCORADAS NO PE, nao numa
 grade centrada em y = 0 -- e o que garante nervura de 5 mm em toda a lateral

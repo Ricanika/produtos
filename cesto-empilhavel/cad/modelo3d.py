@@ -265,6 +265,14 @@ FOLGA_F = 6.0             # idem na frente, onde a borda e o arco da silhueta
 # estrutura -- muda so o vazado. Uma listra tira mais area que a bolinha que
 # ela substitui, entao a peca sai mais leve sem mexer em parede nenhuma.
 VAZADO = "listra"         # "listra", "bolinha" (o desenho antigo) ou "nenhum"
+
+# Vazado da CHAPA DO FUNDO. Desligado no P e no M -- eles guardam miudeza e o
+# cliente pediu fundo fechado. Ligado no G, que guarda coisa volumosa: a chapa
+# e um terco do peso da peca de 30 L, e e a unica alavanca de peso grande que
+# sobrava no projeto (o README aponta isso desde a secao 4.2.3).
+FUNDO_VAZADO = False
+FUN_W, FUN_P = 14.0, 22.0     # rasgo e passo da chapa
+FUN_MARG = 26.0               # margem ate a parede: livra o pe e a saia
 # TRES FAIXAS e rasgo pequeno (pedido de 22/09): "esse produto e para
 # organizar pecas pequenas, tem um perigo dos produtos sairem por esses rasgos
 # atuais". O rasgo era 10 x 31,5 mm = 315 mm2 de vao por listra; agora e
@@ -442,6 +450,44 @@ def cols_lateral():
             out.append(y)
             y += s * LIS_P
     return sorted(out)
+
+
+def _vazado_fundo():
+    """Rasgos na chapa do fundo, prismaticos em z.
+
+    Saem por fechamento macho-femea como os da parede: o macho desce pela
+    cavidade e encosta na placa que forma a face de baixo da chapa. Sem
+    gaveta, sem contra-saida.
+
+    A margem FUN_MARG livra o pe (que e contraforte encostado na parede) e a
+    saia de tras. Nao e chute: `fechado.py` mede a sola do pe e acusa se um
+    rasgo abrir dentro dela.
+    """
+    if not FUNDO_VAZADO:
+        return None
+    sx, sy = secao(H_PE)
+    lx, ly = sx - 2 * FUN_MARG, sy - 2 * FUN_MARG
+    if lx < FUN_P or ly < FUN_P:
+        return None
+    campo = Pos(0, 0, H_PE - 1.0) * extrude(
+        RectangleRounded(lx, ly, 12.0), T_FUNDO + 2.0)
+    corte = []
+    for x in grade(lx, FUN_P):
+        corte.append(Pos(x, 0, H_PE - 1.0) * extrude(
+            RectangleRounded(FUN_W, ly + 4.0, FUN_W * 0.45), T_FUNDO + 2.0))
+    return corte and (sum(corte[1:], corte[0]) & campo) or None
+
+
+def y_parede():
+    """Onde plantar o prisma que corta a parede da FRENTE e a do FUNDO.
+
+    Era 95,0 literal -- PROF/2 - 20 para os 230 mm do P. Com PROF = 400 o
+    prisma (de +-35 mm de meia-profundidade) passa a 60..130 enquanto a parede
+    esta em 200: erra a parede inteira e a peca sai MACICA na frente e no
+    fundo. Medido assim antes de eu ver: o candidato de 380 x 400 pesou 630 g
+    com as duas faces cheias.
+    """
+    return PROF / 2 - 20.0
 
 
 def grade(extensao, passo):
@@ -1047,6 +1093,26 @@ def padrao_m():
     set_envelope(380.0, 230.0, 6.0, alt=130.0, aba_dir=+1)
 
 
+def padrao_g():
+    """ELO G: ~30 L com menos de 500 g, para coisa VOLUMOSA.
+
+    A largura fica travada em 380 -- e ela que poe as paredes do G debaixo dos
+    pes laterais do par de P. A profundidade e livre porque o par pousa
+    RECUADO no fundo (medido: recuando, o contato volta aos mesmos 887 mm2 do
+    M; centrado num G mais fundo cai para 54).
+
+    O que muda em relacao ao P e ao M, e por que:
+      - saida de 3 graus, nao 6: a 6 a base de uma peca de 220 mm de altura
+        encolhe 46 mm e come a litragem
+      - rasgo de parede maior: a 8% de parede aberta a peca de 30 L pesa 630 g
+      - CHAPA DO FUNDO VAZADA: sao ~200 g de chapa numa peca de 30 L
+    """
+    global VAZADO, FUNDO_VAZADO, LIS_W, LIS_P, LIS_H, LIS_MIN
+    VAZADO, FUNDO_VAZADO = "listra", True
+    LIS_W, LIS_P, LIS_H, LIS_MIN = 14.0, 22.0, 34.0, 16.0
+    set_envelope(380.0, 400.0, 3.0, alt=220.0, aba_dir=+1)
+
+
 def set_envelope(larg, prof, graus, alt=None, aba_dir=None):
     """Troca a boca do CORPO, a altura e a saida de uma vez.
 
@@ -1180,6 +1246,9 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
         RectangleRounded(LARG + 40, PROF + 40, 0.1), T_FUNDO)
     # sem saia: a parede termina na chapa e quem apoia sao os pezinhos
     p -= extrude(RectangleRounded(LARG + 40, PROF + 40, 0.1), H_PE)
+    vf = _vazado_fundo()
+    if vf is not None:
+        p -= vf
 
     # faixa do rim: parede engrossada no alto
     cheio = fora - Pos(0, 0, T_FUNDO) * extrude(
@@ -1224,14 +1293,14 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
         for x in cols_fundo:
             lim = z_livre_frente(x, LIS_W / 2, FOLGA_F)
             for z0, z1 in fl_lat:                          # parede do fundo
-                furos.append(Pos(x, 95.0, 0)
+                furos.append(Pos(x, y_parede(), 0)
                              * _listra(LIS_W, z0, z1, Plane.XZ, 35.0))
                 n += 1
             for z0, z1 in fl_fr:                           # parede da frente
                 zt = min(z1, lim)
                 if zt - z0 < LIS_MIN:
                     continue
-                furos.append(Pos(x, -95.0, 0)
+                furos.append(Pos(x, -y_parede(), 0)
                              * _listra(LIS_W, z0, zt, Plane.XZ, 35.0))
                 n += 1
         for y in cols_lat:                                 # laterais
@@ -1257,11 +1326,11 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
                 # frente e fundo furados SEPARADAMENTE: o mesmo cilindro
                 # varando os dois obriga a aceitar o furo cortado pela borda
                 # da frente (as "meias bolas").
-                furos.append(Pos(x, 95.0, z) * Rot(90, 0, 0)
+                furos.append(Pos(x, y_parede(), z) * Rot(90, 0, 0)
                              * Cylinder(d / 2, 70.0))
                 n += 1
                 if cabe_na_frente(x, z, d, FOLGA_F):
-                    furos.append(Pos(x, -95.0, z) * Rot(90, 0, 0)
+                    furos.append(Pos(x, -y_parede(), z) * Rot(90, 0, 0)
                                  * Cylinder(d / 2, 70.0))
                     n += 1
             for y in cols_lat:
