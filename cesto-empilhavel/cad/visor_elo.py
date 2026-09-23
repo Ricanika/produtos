@@ -162,7 +162,7 @@ def mede():
     # O diferencial: o par no M. Com o M mais fundo que o par, o pouso pede
     # RECUO -- as saias de tras tem de encontrar a aba de tras do M. Centrado,
     # o contato cai de ~887 para 54 mm2 e o par tomba (medido, secao 4.2.8).
-    melhor = None
+    melhor, todos = None, {}
     for dy in (M.DESLOC, d["recuo"], 0.0):
         z = passo(m, par, dy)
         iv = vol(m, Pos(0, dy, M.ALT) * par)
@@ -171,11 +171,13 @@ def mede():
               "apoios %d ilhas %.0f mm2"
               % (dy, z, M.ALT, iv, len(ap), sum(ap)), flush=True)
         cand = dict(dy=dy, z=z, interf=iv, ap=ap)
+        todos[f"{dy:.0f}"] = cand
         # o melhor pouso e o que fica na altura do M com area de contato maxima
         if melhor is None or (abs(z - M.ALT), -sum(ap)) < \
                 (abs(melhor["z"] - M.ALT), -sum(melhor["ap"])):
             melhor = cand
     d["par"] = melhor
+    d["par_todos"] = todos
     print("  -> escolhido dy=%+.0f, passo %.2f, %.0f mm2 de contato"
           % (melhor["dy"], melhor["z"], sum(melhor["ap"])), flush=True)
 
@@ -321,6 +323,9 @@ def cenas(d):
     zp = d["par"]["z"]
     ap_par = sum(d["par"]["ap"])
     ap_m = sum(d["ap_m"])
+    # o pouso CENTRADO, para a pagina nao trazer o numero digitado
+    centro = d.get("par_todos", {}).get(f"{d['desloc']:.0f}")
+    ap_centro = sum(centro["ap"]) if centro else float("nan")
 
     def par_em(z0, y0, k0):
         """O par de P acoplado, pousado a z0."""
@@ -348,8 +353,8 @@ def cenas(d):
                    f"de trás do M e os dois pés externos caem nas abas "
                    f"laterais — {ap_par:.0f} mm² de contato de face plana, "
                    f"{vg(ap_par/ap_m)}× o próprio tripé do M. Centrado, o "
-                   f"contato cairia para 54 mm² e o par tombaria: é o recuo "
-                   f"que libera a profundidade do M."),
+                   f"contato cai para {ap_centro:.0f} mm² e o par tomba: é o "
+                   f"recuo que libera a profundidade do M."),
             dados=[["passo", f"{vg(zp, 2)} mm"],
                    ["recua em y", f"{dy:.0f} mm"],
                    ["contato", f"{ap_par:.0f} mm²"],
@@ -433,7 +438,7 @@ def main(rapido=False):
     if rapido:
         d = json.load(open(DADOS, encoding="utf-8"))
         print("lido elo-medidas.json (sem remedir)", flush=True)
-        for k in ("g",):
+        for k in ("p", "m", "par", "par_todos", "ap_m"):
             if k not in d:
                 raise SystemExit(f"falta '{k}' no json: rode sem --rapido")
         return escreve(d)

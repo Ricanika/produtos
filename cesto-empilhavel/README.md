@@ -1566,10 +1566,19 @@ maciços — ou seja os 630 g são conservadores. Virou `y_parede()`.
 | encaixa consigo | **64,65 mm** | 64,65 mm |
 | acopla | passo 400 · solta 7,5 mm | idem |
 | tripé próprio | 362 mm² | 476 mm² |
+| par com deslocamento ZERO | **encaixa** a 94,64 mm | encaixa a 40,00 |
+| rasgo frontal | **0 de 720 raios escapam** em z = 7,5 · 10 · 14 · 20 · 26 · 30 · 39 mm | idem |
+| preso no molde | **39.425 mm³** | 42.598 mm³ |
 
 O contraste entre **879 mm² recuado e 53 mm² centrado** é a medição que
 sustenta a §4.2.8 inteira: sem o recuo o par não pousa, e é o recuo que libera
 a profundidade do M.
+
+O teste de raios foi refeito a 190 mm porque **`BASE_Y` muda com a altura** e a
+tapa da frente depende dele: o cruzamento do chanfro do pé foi de 24,96 (no P)
+para **27,48 mm** aqui. A tapa acompanha, porque desde §4.2.6 ela é derivada e
+não literal — 0 de 720 raios escapam em todas as cotas até 39 mm. Em 41
+escapam 186: é a primeira faixa de listra, que é para estar aberta.
 
 **Eu previ que baixar a altura melhoraria a cubagem, e a medição me
 desmentiu.** A conta que fiz foi `NERV_T` dividido pela saída em x do pé,
