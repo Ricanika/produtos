@@ -875,3 +875,94 @@ E foi justamente ter de construir a seção de verdade que revelou o erro da rev
 
 Os scripts da medição ficam no diretório de trabalho da sessão, não no repositório — o que vale
 aqui é a tabela acima e o `calculo-modular.py`, que é a fonte das cotas.
+
+---
+
+## 15. Terceira tampa — de correr, com gaveta e bico em U
+
+**Estado: desenhada e conferida no cálculo, ainda sem 3D.** Três posições em aberto; escolhida
+uma, sai STL e gcode. Memória: `calculo-correr.py` · desenhos: `desenhos/gera-svg-correr.py`.
+
+O pedido: uma tampa de correr, com **outro aro de TPE**, e um bico na própria tampa **aberto em U,
+não fechado em O**, para o líquido escorrer e a peça poder ser lavada. (A referência enviada,
+`claude.ai/artifact/DwtbeRFf4zc1VgXNDiFngC`, não abriu — voltou "not found".)
+
+### 15.1 O mecanismo
+
+Tudo o que toca o pote vem da tampa de PP da revisão 8 e **não muda**: deck, plug, filete radial na
+boca, duas travas de clipe e o piso da bandeja em z = −2,00. **O corpo não muda nos quatro moldes.**
+
+```
+bolso ....... rebaixo no piso da bandeja, fundo em z = -3,95
+gaveta ...... painel de 1,80 mm; o TOPO dela e o plano modular
+trilhos ..... 2, avancam 3,00 mm sobre a gaveta, folga de 0,25/lado
+janela ...... furo no fundo do bolso; a gaveta corre por cima
+2o aro ...... TPE de 1,60 mm, friso de 0,70 na face de BAIXO da gaveta
+cunha ....... nos ultimos 2,50 mm de curso a gaveta desce 0,40 e so ai o aro encosta
+bico ........ calha ABERTA em U, piso em z +1,20, paredes ate +4,00, labio de 0,40
+```
+
+Em repouso o bolso **drena pela janela de volta para dentro do pote** — o fundo do bolso é o ponto
+mais baixo de todo o caminho. É por isso que o bico é em U e não em O: tubo fechado retém líquido e
+não se lava.
+
+### 15.2 O vertedouro — o que o corte revelou
+
+O caminho do líquido tem dois trechos:
+
+| | sobe | em | ângulo |
+|---|---|---|---|
+| fundo do bolso → piso da bandeja | 1,95 mm | 6,0 mm | 18° |
+| **piso da bandeja → piso da calha** | **3,20 mm** | **2,8 mm** | **49°** |
+
+O segundo **não tem como ser manso**. A calha não pode descer abaixo de z = 0 em cima da borda (ali
+a tampa *pousa* no pote) nem cortar o friso do filete, que começa em −3,00 na face do plug. Se
+cortasse, **a tampa deixaria de vedar mesmo com a gaveta fechada** — o furo estaria sempre aberto.
+No primeiro traçado ela cortava; foi desenhar o corte que mostrou. Hoje é uma das conferências que
+`calculo-correr.py` roda sozinho, com autoteste que quebra cada cota e exige que a conferência
+reprove.
+
+Consequência prática: verter pede inclinar o pote uns **50–60°**, e o último dedo de líquido não sai
+pelo bico. Primeiro item do protótipo.
+
+### 15.3 As três posições
+
+| | A · lado curto | B · canto | C · lado comprido |
+|---|---|---|---|
+| Janela | 55 × 25 | 34 × 19 | 70 × 24 |
+| **Vazão** | **1.367 mm²** | 638 mm² | **1.672 mm²** |
+| Maior possível ali | 1.664 mm² | 828 mm² | 2.655 mm² |
+| **Travessia de piso molhado** | **0 mm** | **17,8 mm** | **0 mm** |
+| Bico | 28 mm num vão de 77 | 24 mm no canto | 28 mm num vão de 143 |
+| Gaveta | 69 × 33 · 3,7 g | 48 × 27 · 2,1 g | 84 × 32 · 4,4 g |
+| 2º aro | 171 mm · 0,38 g | 117 mm · 0,26 g | 199 mm · 0,44 g |
+| Fechar | 2,7 kgf | 1,8 kgf | 3,1 kgf |
+| Bate na trava de clipe? | não | não | **sim** |
+
+**Eu apostava no canto e a conta derrubou.** A 45° o bolso transborda pela face comprida e tem de
+recuar quase 18 mm — o líquido atravessa piso de bandeja antes de chegar ao bico, e o que atravessa
+fica lá depois que se para de verter. Pelo mesmo motivo a janela cai para metade da de A.
+
+**C tem a maior vazão e custa uma trava:** as duas travas de clipe são centradas nos lados
+compridos, 89 mm cada, e o bico cai em cima de uma. Ela sai inteira ou vira duas menores, e a força
+de fechamento daquele lado se reparte.
+
+**A recomendação é A**: vazão suficiente, travessia zero, bico que converge, e fica na face que vai
+de frente na prateleira.
+
+### 15.4 O que a gaveta cobra
+
+Ela está **no** plano modular, então o pote de cima pousa em parte sobre ela. Eu esperava que a
+flecha decidisse a espessura — não decide: o vão curto da gaveta é curto (33 mm) e com o 2,4 L cheio
+em cima a flecha dá **0,04 mm**. Quem pede os 1,80 mm é o friso do 2º aro, que come 0,70 mm da face
+de baixo e deixa 1,10 de parede.
+
+O que ela cobra de verdade é outra coisa: **não se corre a gaveta com pote carregado em cima** — o
+atrito da carga trava o painel. Na prática o pote de vertedor é o do topo da pilha.
+
+### 15.5 Ferramental
+
+A linha vai de 5 para **6 peças injetadas**: 4 corpos + tampa de PP + tampa de correr, mais o filete
+e o 2º aro. A gaveta é peça separada — molde próprio ou cavidade no mesmo bloco. O 2º aro é ⌀1,60
+contra ⌀1,40 do filete: **perguntar ao fornecedor se sai do mesmo composto com outra matriz de
+extrusão**, para não abrir contrato novo num TPE que já está parado há 4 anos no cadastro.
