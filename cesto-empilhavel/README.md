@@ -1486,12 +1486,19 @@ libera as duas alavancas que o P tinha travadas:
 
 Medido no G:
 
-| | |
-|---|---|
-| parede cheia e chapa inteira | 677,9 g |
-| vazado da parede | −102 g |
-| **vazado da chapa do fundo** | **−119 g** |
-| **ELO G** | **457,0 g · 29,55 L · 15,5 g/L** |
+| | peso | o que falta |
+|---|---|---|
+| parede cheia e chapa inteira | 677,9 g | — |
+| só o vazado da parede | **564,0 g** | −113,9 g |
+| só o vazado da chapa | **570,9 g** | −107,0 g |
+| **os dois: ELO G** | **457,0 g** | −220,9 g |
+
+**Nenhuma das duas alavancas fecha sozinha os 500 g** — cada uma para em
+564-571 g. As duas juntas passam com 43 g de folga. A primeira vez que
+escrevi esta tabela eu tinha −102 e −119, porque estimei a chapa maciça em
+244 g em vez de medi-la; medidas, as duas alavancas valem quase o mesmo.
+
+**ELO G: 457,0 g · 29,55 L · 15,5 g/L.**
 
 **15,5 g/L contra 30,4 do Cesto Vime 7 L da casa** — o G é quase o dobro de
 eficiente que o melhor comparável, e a razão é geometria mais vazado, não
@@ -1538,6 +1545,13 @@ maciços — ou seja os 630 g são conservadores. Virou `y_parede()`.
 | rasgo frontal | **0 de 720 raios escapam** em z = 7,5 · 12 · 20 · 30 · 39 mm |
 | preso no molde | 42.598 mm³ |
 
+**Os 42.598 mm³ presos são rasgo passante e mais nada.** Medi a mesma peça com
+e sem o vazado da chapa: **42.598 mm³ nos dois casos**, igual até o dígito, e a
+mesma faixa de z (1,5 a 209,5). A chapa vazada **não prende nada** — e é o que
+a teoria dizia, porque acima de um rasgo da chapa não há material nenhum, só o
+interior do cesto, então o macho chega lá de cima. O número é 3,3× o do M
+porque os rasgos da parede do G têm 476 mm² cada contra 110 do M.
+
 O teste de raios era o que mais me preocupava — a tapa da frente depende da
 saída, e o G é a primeira peça a 3° (§4.2.6 conta como um 14 fixo reabriu
 11 mm de rasgo quando a saída caiu de 12 para 6). A 3° ela continua fechada.
@@ -1549,7 +1563,7 @@ saída, e o G é a primeira peça a 3° (§4.2.6 conta como um 14 fixo reabriu
 na aba.
 
 **E uma que não foi medida de jeito nenhum: a rigidez da chapa vazada.** Tirei
-119 g dela; com ~40% de furo e 1,4 mm de nervura entre rasgos, numa peça de
+107 g dela; com ~40% de furo e 1,4 mm de nervura entre rasgos, numa peça de
 30 L com carga volumosa isso pede ensaio ou nervura cruzada. Pesei, não
 calculei flexão.
 
@@ -1881,7 +1895,8 @@ cad/elo-medidas.json  as medidas do M, versionadas de proposito: custam ~40
 
 padrao_g() em modelo3d.py: o ELO G, 380 x 400 x 220 a 3 graus, com rasgo de
 parede maior e CHAPA DO FUNDO VAZADA (_vazado_fundo()). E a chapa que fecha os
-500 g: sozinha ela vale 119 g dos 221 que o vazado tira.
+500 g junto com o rasgo de parede -- medidas, valem 107,0 e 113,9 g, e
+nenhuma das duas sozinha desce dos 500.
 
 O vazado da lateral: cols_lateral() gera as colunas ANCORADAS NO PE, nao numa
 grade centrada em y = 0 -- e o que garante nervura de 5 mm em toda a lateral
