@@ -11,3 +11,12 @@ col-*.stl
 ext-*.stl
 af-*.stl
 vr-*.stl
+
+# STLs do visor da linha (regeraveis por visor_elo.py)
+elo-p.stl
+elo-m.stl
+ver-m.stl
+
+# elo-medidas.json NAO entra aqui de proposito: e o unico lugar onde as
+# medidas do M vivem, custa ~40 min de booleano para refazer, e e o que
+# permite redesenhar elo.png sem reconstruir os solidos.

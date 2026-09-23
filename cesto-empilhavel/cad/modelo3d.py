@@ -1030,6 +1030,23 @@ def padrao():
     set_envelope(180.0, 230.0, 6.0, alt=130.0, aba_dir=+1)
 
 
+def padrao_m():
+    """ELO M: a boca do corpo e 380 x 230 -- 2 x LARG_P + 2 x ABA_W.
+
+    Nao e um numero escolhido, e o que faz DOIS P ACOPLADOS EMPILHAREM no M.
+    A aba do P vai de 90 a 100 mm do eixo dele; dois P no passo de 200 tem as
+    abas se encontrando em x = 100 e o conjunto vai de -100 a +300, ou seja
+    400 mm de pegada de aba. Para o M ter a MESMA pegada, a aba dele tem de ir
+    de 190 a 200 do seu eixo -- logo a boca do corpo e 380, e as paredes do M
+    caem em x = -90 e +290, exatamente onde pousam os pes externos do par.
+
+    A profundidade NAO muda: 230 nos dois. Por isso a silhueta lateral, os
+    chanfros da frente (52 / 36) e o desenho da lateral ficam identicos ao P --
+    so o x escala.
+    """
+    set_envelope(380.0, 230.0, 6.0, alt=130.0, aba_dir=+1)
+
+
 def set_envelope(larg, prof, graus, alt=None, aba_dir=None):
     """Troca a boca do CORPO, a altura e a saida de uma vez.
 

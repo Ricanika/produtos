@@ -1,11 +1,16 @@
-# Cesto Mini Organizador Empilhável e Encaixável — peça única em PP
+# Linha ELO — organizadores empilháveis, encaixáveis e acopláveis em PP
+
+> **ELO P** (4,09 L) e **ELO M** (9,10 L), peça única injetada cada. O nome da
+> linha e o M foram definidos em 23/09; o corpo deste documento é o registro do
+> projeto do P, e o M está na **§4.2.7** — inclusive o diferencial de que
+> **dois P acoplados empilham em um M**, medido em 0,0000 mm³.
 
 **Status:** 3D fechado na **configuração C** (aba para fora, extrai em molde de duas placas), pronto para cotação de ferramental · **Data:** 23/09/2026
 **Referência:** STL enviado em 16/09 (bin de 150 × 100 × 80 mm, 192 faces) + anúncio
 "10 peças Cesto Mini Organizador Empilhável" (MLBU4092388469) + fotos cotadas
 (Mercado Livre MLBU4092388469) + fotos cotadas enviadas em 16/09/2026
-**Modelo:** `cad/modelo3d.py` (`padrao()` fixa a configuração do projeto) · **Economia:** `economia.py`
-**Sólido do projeto:** `cad/cesto-aba.step` / `cad/cesto-aba.stl` · **Visor 3D:** `cad/visor3d.html` · **Impressão:** `cad/print/`
+**Modelo:** `cad/modelo3d.py` (`padrao()` fixa o P, `padrao_m()` fixa o M) · **Economia:** `economia.py`
+**Sólido do projeto:** `cad/cesto-aba.step` / `cad/cesto-aba.stl` · **Visores 3D:** `cad/visor3d.html` (o P) e `cad/visor-elo.html` (a linha) · **Impressão:** `cad/print/`
 
 **Forma adaptada do STL de referência, com o vazado em furos redondos.** A silhueta lateral foi
 **medida no próprio sólido** do STL, não interpretada de foto: é uma caixa com **dois chanfros a
@@ -1318,6 +1323,131 @@ Arquivos: `cad/abafora.py` (folha `abafora.png`, as quatro configurações lado 
 lado) e `cad/varredura.py` (folha `varredura.png`, a varredura da C com os três
 vereditos e a seção da borda).
 
+### 4.2.7 A linha ELO, e o ELO M
+
+O nome da linha é **ELO** (decidido em 23/09). Ele diz o sistema — peças que
+se encadeiam — sem prometer uma aparência que a peça não tem, e o slot do
+qualificador na gramática da casa (`Cesto Organizador Vime 7 L`,
+`Cesto Europa Juta 5,3 L`) aceita palavra de uso, não só de trançado
+(`Cesto Transporta Tudo` é precedente). **Não conferi colisão de marca:** o
+proxy desta sessão bloqueia o Mercado Livre e não tenho acesso ao INPI. Antes
+de gravar em molde ou embalagem, vale busca na classe 21 e varredura nos
+marketplaces.
+
+O pedido do M trouxe um diferencial: **dois ELO P acoplados empilham
+perfeitamente em um ELO M.** Não encaixam dentro — *empilham em cima*, com os
+pés na aba do M, exatamente como um P empilha em outro P.
+
+#### A largura do M não foi escolhida, foi derivada
+
+A aba do P vai de 90 a 100 mm do eixo dele. Dois P acoplados no passo de
+200 mm têm as abas **se encontrando exatas em x = 100**, e o conjunto vai de
+−100 a +300: **400 mm de pegada de aba**. Para o M ter a mesma pegada, a aba
+dele tem de ir de 190 a 200 do seu eixo, logo:
+
+> boca do corpo do M = 2 × LARG_P + 2 × ABA_W = 2 × 180 + 2 × 10 = **380 mm**
+
+E aí as paredes do M caem em **x = −90 e +290**, que é precisamente onde
+pousam os pés externos do par. Medido: o envelope do M e o do par batem em
+**0,00 mm nos três eixos** (404,0 × 235,1 × 132,5).
+
+**A profundidade não muda: 230 nos dois.** É por isso que a silhueta lateral,
+os chanfros da frente (52 / 36), o pé, a saia de trás, o friso e a tapa do
+rasgo frontal ficam idênticos — só o x escala. `padrao_m()` em
+`modelo3d.py` é uma linha: `set_envelope(380, 230, 6, alt=130, aba_dir=+1)`.
+
+#### Os quatro requisitos, medidos
+
+| | ELO P | **ELO M** |
+|---|---|---|
+| boca do corpo | 180 × 230 | **380 × 230** |
+| envelope | 204,0 × 235,1 × 132,5 | **404,0 × 235,1 × 132,5** |
+| capacidade | 4,09 L | **9,10 L** |
+| peso em PP | 179,2 g | **298,7 g** |
+| rasgos | 123 | **213** |
+| **encaixa** | 39,99 mm | **40,00 mm** |
+| **empilha** | 130,00 mm | **130,00 mm**, 0,0000 mm³ |
+| **acopla** | passo 200, solta a 7,5 mm | **passo 400, solta a 7,5 mm** |
+| tripé de apoio | 463 mm² | **463 mm²** — o mesmo |
+| preso no molde | 9.217 mm³ | **12.877 mm³** |
+
+**O tripé do M é o mesmo do P: 463 mm²** (medidos os dois pelo mesmo script,
+`visor_elo.py`; as outras folhas dão 469 e 473 para o P pela tolerância da
+fatia — §4.2.6). Ou seja **a saia de trás e os dois pés não escalaram com a
+largura**: `SAIA_W` continua em 108 mm sobre uma traseira que agora tem
+352,7 mm de fundo reto. Isso é decisão, e ela tem limite:
+
+- Na carga do §4.2.6 — coluna de 4 com 1 kg em cada — a pressão de contato do
+  pé vai de 0,48 para **0,53 MPa**, porque a carga é dominada pelo conteúdo e
+  não pelo peso da peça. Passa com ~57× de folga.
+- Mas se o M for carregado **proporcional ao volume** (2,2× o conteúdo do P), a
+  pressão dobra para ~1,0 MPa. Ainda passa (~30×), e é onde a conta deixa de
+  ser confortável.
+
+**Então: se o M for vendido para carga pesada, `SAIA_W` deve escalar** — sobra
+fundo reto para levá-la de 108 a ~308 mm sem tocar em nada mais. Não escalei
+porque isso é massa (e o M já pesa 298,7 g) e porque a decisão depende do uso,
+que é do cliente. Está anotado na §7.
+
+**Fora isso, nada precisou ser adaptado.** Não é sorte: toda cota do modelo é derivada de
+`LARG`, e o que dita a silhueta, os chanfros, o pé e a tapa é a
+**profundidade**, que não mudou. As duas verificações que importavam passaram
+sem toque: **0 de 720 raios escapam** em z = 7,5 · 12 · 20 · 26 · 30 · 39 mm
+(a tapa frontal continua fechada, porque `z_chanfro_pe()` depende de `PROF` e
+`BASE_Y`), e a auditoria de extração dá **12.877 mm³**, a mesma linha de base
+de rasgo passante do P escalada pelos 213 rasgos — nenhuma contra-saída nova.
+
+**E o M é uma peça mais eficiente que o P: 32,8 g/L contra 43,8.** Isso é
+geometria outra vez — dobrar a largura dobra o volume mas não dobra a área de
+parede. A 32,8 g/L o M encosta nos 30,4 g/L do Cesto Vime 7 L (047) da casa,
+enquanto o P fica 44% acima. Se a conversa de custo por litro aparecer, é o M
+que defende a linha, não o P.
+
+**O passo de encaixe é o mesmo nos dois tamanhos (40,00 mm), e não é
+coincidência.** Quem manda nele é a saída em x do **pé**, que não depende da
+largura do corpo (§4.2.6). Por isso o M cuba tão bem quanto o P: 12 peças em
+**573 mm nos dois tamanhos** — os 572 que aparecem em outras folhas para o P
+são a mesma caixa medida com passo de 39,99 em vez de 40,00, ou seja a
+tolerância da busca binária, não um milímetro de diferença real.
+
+#### O empilhamento do par, medido
+
+| | |
+|---|---|
+| passo | **130,00 mm** — o mesmo do P sobre P |
+| desloca em y | **21 mm** — o mesmo `DESLOC` |
+| interferência | **0,0000 mm³** |
+| contato | **873 mm²** = 410 + 410 + 27 + 27 |
+
+Os 873 mm² são as **duas saias de trás pousando inteiras** mais os **dois pés
+externos**. Os dois pés internos ficam sobre a boca do M, no vazio, e não
+fazem falta: 873 mm² é **1,9× o próprio tripé do M** (463 mm²).
+
+**E de graça:** com deslocamento **zero** em y o par não empilha — **encaixa
+dentro do M**, a 40,00 mm. O mesmo deslocamento de 21 mm que troca encaixe por
+pilha no P troca também aqui.
+
+#### O que o M custa no parque
+
+| | |
+|---|---|
+| área projetada | 404,0 × 235,1 = **950 cm²** |
+| fechamento a 0,32 t/cm² + 10% de canal | **334 t** |
+| máquina a 80% | 418 t → **classe de 600 t, 1 máquina na casa** |
+| a 0,28 t/cm² | 293 t → 366 t → **classe de 380 t, 3 máquinas** |
+
+**É a única má notícia do M, e ela está na premissa, não na peça.** A 0,32
+t/cm² o M fica refém da única 600 t da casa — exatamente o argumento que usei
+contra as 2 cavidades no P (§5). A 0,28, que é defensável para parede de
+1,4 mm e pressão baixa, ele entra na classe de 380 t com três máquinas. **Não
+é número meu: é para o processador confirmar antes de fechar ferramental.**
+Também não há como fugir engordando ou afinando a peça — os 950 cm² são a
+pegada de dois P, e é ela que entrega o diferencial.
+
+Arquivos: `cad/visor_elo.py` (gera `visor-elo.html`, o visor da linha, e
+`elo-medidas.json`) e `cad/elo.py` (folha `elo.png`). `padrao_m()` em
+`modelo3d.py` fixa a configuração do M.
+
 ### 4.3 Acoplado — as três canaletas
 
 O pedido foi uma **canaleta de ponta a ponta na lateral, macho de um lado e
@@ -1576,6 +1706,11 @@ novo chegar à metade disso (131 mil/ano), o payback é de 7,8 meses em virgem.
 | Volume-alvo de venda | Alta | É o que decide o payback. Sobre cavidades a resposta mudou: 2 cavidades agora exigem 600 t, onde a casa tem **1 máquina** — acima de ~250 mil/ano a expansão é um segundo molde de 1 cavidade, não um de 2 (§5) |
 | Laranja em moído é viável? | Média | Vale R$ 0,63/peça, R$ 94 mil/ano a 150 mil (seção 6.2) |
 | Redução de peso | Média | A peça está em 179,2 g. A única alavanca grande que resta é perfurar a chapa do fundo (52,2 g, 29% da peça) — e o cliente pediu fundo fechado |
+| **Custo e preço do ELO M** | **Alta** | O `economia.py` roda só o P. O M pesa 298,7 g e faz 9,10 L — precisa do cenário próprio e de um comparável de preço (o 268, Cesto Europa Juta 5,3 L, sai a R$ 7,30 com 260 g) |
+| **Pressão específica do M** | **Alta** | A 0,32 t/cm² o M só roda na única 600 t da casa; a 0,28 entra na classe de 380 t, com três. É pergunta para o processador, e decide se o M é refém de uma máquina (§4.2.7) |
+| Marca "ELO" | Alta | **Não conferi** — sem acesso ao INPI e com o Mercado Livre bloqueado pelo proxy. Busca na classe 21 antes de gravar em molde ou embalagem |
+| Ferramental do M | Média | Os USD 19,5 mil são a analogia do P. O M tem 950 cm² de planta contra 480 — precisa de analogia própria |
+| `SAIA_W` do M escala? | Média | O tripé do M é o mesmo 463 mm² do P. Basta para a carga de referência (0,53 MPa, 57× de folga); se o M for para carga pesada, a saia de trás vai de 108 a ~308 mm sem mexer em mais nada (§4.2.7) |
 | Cotas finais para a ferramentaria | Média | O pacote de cotas do molde ainda não foi fechado |
 | Ângulo de abertura da frente | Média | `cad/abertura.png` tem três (chanfro de 40 / 52 / 68 mm); está em **52** por ser o medido no STL de referência, e ninguém escolheu outro |
 | `ABA_DOBRA` de 5 para 3 mm? | Baixa | Devolve ~1,7 g e ainda deixa 5,5 mm de engate, 2,2× o de antes da dobra. Ficou em 5 mm por falta de resposta, e 5 é o conservador |
@@ -1627,6 +1762,13 @@ cad/abafora.py     folha abafora.png: as configuracoes A, B e C da aba para
                    fora, medidas lado a lado com a peca de hoje
 cad/varredura.py   folha varredura.png: a varredura da C -- empilhar, acoplar,
                    encaixar, a secao da borda e as tres adaptacoes
+cad/visor_elo.py   gera visor-elo.html (o visor da LINHA, com as duas malhas
+                   e indice de 32 bits, porque o M passa de 65.535 vertices)
+                   e elo-medidas.json, onde as medidas do M vivem
+cad/elo.py         folha elo.png: o P, o M, e o par de P empilhado no M.
+                   NAO remede -- le elo-medidas.json
+cad/elo-medidas.json  as medidas do M, versionadas de proposito: custam ~40
+                   min de booleano e sao o que permite redesenhar a folha
 
 O vazado da lateral: cols_lateral() gera as colunas ANCORADAS NO PE, nao numa
 grade centrada em y = 0 -- e o que garante nervura de 5 mm em toda a lateral
