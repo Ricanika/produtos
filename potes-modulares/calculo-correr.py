@@ -91,12 +91,15 @@ def perim_ret(a, b, r):
 # posicao: (rotulo, largura da janela, profundidade da janela, largura do bico,
 #           eixo de corrida, quanto da face o bico ocupa)
 POSICOES = [
-    dict(cod='curto', rot='A · lado curto (frente estreita)',
-         jan_w=55.0, jan_d=25.0, bico_w=28.0, eixo='comprimento'),
-    dict(cod='canto', rot='B · canto, na diagonal',
-         jan_w=34.0, jan_d=19.0, bico_w=24.0, eixo='diagonal'),
-    dict(cod='comprido', rot='C · lado comprido',
-         jan_w=70.0, jan_d=24.0, bico_w=28.0, eixo='largura'),
+    # ESCOLHIDA. Janela menor que a primeira proposta (era 55 x 25) e bico com
+    # a LARGURA DA JANELA: bico mais estreito que a janela deixa o produto sair
+    # pelos lados da calha e cair em cima da tampa. Quem apontou foi o Ricardo.
+    dict(cod='curto', rot='A · lado curto (frente estreita)', escolhida=True,
+         jan_w=46.0, jan_d=22.0, bico_w=46.0, eixo='comprimento'),
+    dict(cod='canto', rot='B · canto, na diagonal', escolhida=False,
+         jan_w=34.0, jan_d=19.0, bico_w=34.0, eixo='diagonal'),
+    dict(cod='comprido', rot='C · lado comprido', escolhida=False,
+         jan_w=70.0, jan_d=24.0, bico_w=70.0, eixo='largura'),
 ]
 
 
@@ -289,9 +292,18 @@ def verifica():
         if g['curso'] < g['jan_d']:
             falhas.append('%s: curso %.1f nao abre a janela de %.1f'
                           % (p['cod'], g['curso'], g['jan_d']))
-        if p['bico_w'] > g['jan_w']:
-            falhas.append('%s: bico (%.0f) mais largo que a janela (%.0f)'
+        if p['bico_w'] < g['jan_w']:
+            falhas.append('%s: bico (%.0f) mais ESTREITO que a janela (%.0f) - o '
+                          'produto sai pelos lados da calha'
                           % (p['cod'], p['bico_w'], g['jan_w']))
+        # a calha tem de caber no trecho RETO da parede da bandeja e do deck
+        for nome, L, W, R in (('bandeja', BANDEJA, BAND_W, R_BAND),
+                              ('deck', DECK_O, DECK_O - DLW,
+                               cm.raio(DECK_O, COLAR_L))):
+            reto = (W - 2 * R) if p['cod'] == 'curto' else (L - 2 * R)
+            if p['cod'] != 'canto' and p['bico_w'] > reto:
+                falhas.append('%s: bico de %.0f nao cabe no trecho reto do %s (%.0f)'
+                              % (p['cod'], p['bico_w'], nome, reto))
     return falhas
 
 
@@ -303,18 +315,24 @@ def autoteste():
     """
     global Z_SEL, Z_BOLSO, Z_TOPO, GAV_T, ARO2_PROF
     guarda = (Z_SEL, Z_BOLSO, Z_TOPO, GAV_T, ARO2_PROF)
+    bico0 = POSICOES[0]['bico_w']
     casos = [('calha abaixo de z=0', 'Z_SEL', -0.5),
              ('calha em cima do friso', 'Z_SEL', -2.5),
              ('bolso raso', 'Z_BOLSO', -2.5),
              ('calha sem profundidade', 'Z_TOPO', 1.8),
-             ('gaveta fina sob o friso', 'GAV_T', 1.2)]
+             ('gaveta fina sob o friso', 'GAV_T', 1.2),
+             ('bico mais estreito que a janela', 'POS_BICO', 20.0)]
     ok = True
     for rot, nome, val in casos:
-        globals()[nome] = val
+        if nome == 'POS_BICO':
+            POSICOES[0]['bico_w'] = val
+        else:
+            globals()[nome] = val
         if not verifica():
             print("  AUTOTESTE FALHOU: ninguem reprova '%s'" % rot)
             ok = False
         Z_SEL, Z_BOLSO, Z_TOPO, GAV_T, ARO2_PROF = guarda
+        POSICOES[0]['bico_w'] = bico0
     return ok
 
 
@@ -474,7 +492,7 @@ def main():
         print("  material entre a calha e o apoio na borda .................. OK")
         print("  bolso fundo o bastante para a gaveta ....................... OK")
         print("  profundidade da calha e parede sob o friso do 2o aro ....... OK")
-        print("  bolso cabe na bandeja, curso abre a janela, bico <= janela .. OK")
+        print("  bolso cabe, curso abre a janela, bico >= janela e cabe no reto  OK")
     if autoteste():
         print("  autoteste: cada conferencia reprova a cota que ela vigia .... OK")
     else:

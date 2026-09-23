@@ -880,8 +880,8 @@ aqui é a tabela acima e o `calculo-modular.py`, que é a fonte das cotas.
 
 ## 15. Terceira tampa — de correr, com gaveta e bico em U
 
-**Estado: desenhada e conferida no cálculo, ainda sem 3D.** Três posições em aberto; escolhida
-uma, sai STL e gcode. Memória: `calculo-correr.py` · desenhos: `desenhos/gera-svg-correr.py`.
+**Estado: posição A fechada, cotas conferidas no cálculo, ainda sem 3D** (o porquê está em 15.6).
+Memória: `calculo-correr.py` · desenhos: `desenhos/gera-svg-correr.py`.
 
 O pedido: uma tampa de correr, com **outro aro de TPE**, e um bico na própria tampa **aberto em U,
 não fechado em O**, para o líquido escorrer e a peça poder ser lavada. (A referência enviada,
@@ -927,17 +927,20 @@ pelo bico. Primeiro item do protótipo.
 
 ### 15.3 As três posições
 
-| | A · lado curto | B · canto | C · lado comprido |
+| | **A · lado curto** | B · canto | C · lado comprido |
 |---|---|---|---|
-| Janela | 55 × 25 | 34 × 19 | 70 × 24 |
-| **Vazão** | **1.367 mm²** | 638 mm² | **1.672 mm²** |
-| Maior possível ali | 1.664 mm² | 828 mm² | 2.655 mm² |
-| **Travessia de piso molhado** | **0 mm** | **17,8 mm** | **0 mm** |
-| Bico | 28 mm num vão de 77 | 24 mm no canto | 28 mm num vão de 143 |
-| Gaveta | 69 × 33 · 3,7 g | 48 × 27 · 2,1 g | 84 × 32 · 4,4 g |
-| 2º aro | 171 mm · 0,38 g | 117 mm · 0,26 g | 199 mm · 0,44 g |
-| Fechar | 2,7 kgf | 1,8 kgf | 3,1 kgf |
+| Janela | **46 × 22** | 34 × 19 | 70 × 24 |
+| **Vazão** | **1.004 mm²** | 638 mm² | 1.672 mm² |
+| Maior possível ali | 1.751 mm² | 828 mm² | 2.655 mm² |
+| **Travessia de piso molhado** | **0 mm** | **17,8 mm** | 0 mm |
+| Bico | **46 mm = a janela** | 34 mm | 70 mm |
+| Gaveta | 60 × 30 · 2,9 g | 48 × 27 · 2,1 g | 84 × 32 · 4,4 g |
+| 2º aro | 147 mm · 0,32 g | 117 mm · 0,26 g | 199 mm · 0,44 g |
+| Fechar | 2,3 kgf | 1,8 kgf | 3,1 kgf |
 | Bate na trava de clipe? | não | não | **sim** |
+
+**Escolhida: A**, com a janela menor que a primeira proposta (era 55 × 25) e o bico com a largura
+exata da janela.
 
 **Eu apostava no canto e a conta derrubou.** A 45° o bolso transborda pela face comprida e tem de
 recuar quase 18 mm — o líquido atravessa piso de bandeja antes de chegar ao bico, e o que atravessa
@@ -966,3 +969,33 @@ A linha vai de 5 para **6 peças injetadas**: 4 corpos + tampa de PP + tampa de 
 e o 2º aro. A gaveta é peça separada — molde próprio ou cavidade no mesmo bloco. O 2º aro é ⌀1,60
 contra ⌀1,40 do filete: **perguntar ao fornecedor se sai do mesmo composto com outra matriz de
 extrusão**, para não abrir contrato novo num TPE que já está parado há 4 anos no cadastro.
+
+### 15.6 A correção do bico, e por que o 3D ainda não saiu
+
+**O bico tinha de ter a largura da janela.** Na primeira volta eu desenhei a calha com 28 mm sob uma
+janela de 55 e chamei isso de virtude — "o jato concentra em vez de espalhar". Está errado, e quem
+apontou foi o Ricardo: quem sai por uma janela de 55 mm não entra sozinho numa calha de 28; o que
+passa de 28 cai em cima do deck e escorre pela lateral do pote. **A calha começa com a largura da
+janela**, e as paredes dela são a continuação das paredes da janela. Virou conferência automática
+(`bico >= janela`), com autoteste.
+
+Se mais tarde a ideia for concentrar o jato, o jeito certo é a calha **convergir** ao longo dos
+17 mm de percurso — começando nos 46 e fechando na ponta —, não começar estreita.
+
+**Por que o 3D não saiu junto.** O gerador da linha monta cada peça **empilhando anéis** de retângulo
+arredondado e ligando um ao outro com bandas de quadriláteros. Isso resolve tudo que é de revolução:
+corpo, borda, plug, bandeja, plug da tampa. **Não resolve furo nem entalhe** — e esta tampa tem os
+dois: a janela é um furo no piso do bolso, e a calha é um entalhe que atravessa a parede da bandeja
+e o deck.
+
+O que falta no gerador, concretamente:
+
+1. **Laço com ponto livre** — hoje um anel é (z, L) e o raio sai da regra de curva paralela. Para a
+   rampa do vertedouro é preciso que `x`, `y` e `z` variem ponto a ponto ao longo do laço.
+2. **Banda entre um anel e um retângulo deslocado** — é o que faz o piso com furo: a face de cima do
+   piso vira uma coroa entre a parede da bandeja e a janela, que não é concêntrica com ela.
+3. **Paredes da calha como prismas fundidos** — isso já existe (é como as travas de clipe entram),
+   então esse terceiro é de graça.
+
+Feito isso, sai STL e gcode como nas outras peças, e as conferências que já existem
+(normais consistentes, seção conexa, montagem) passam a valer para esta tampa também.
