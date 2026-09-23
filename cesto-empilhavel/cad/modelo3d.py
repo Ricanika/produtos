@@ -1124,6 +1124,32 @@ def padrao_m():
     set_envelope(380.0, 400.0, 3.0, alt=190.0, aba_dir=+1)
 
 
+def padrao_g():
+    """ELO G: ~50 L com menos de 1 kg, e TRES P acoplados empilhando em cima.
+
+    A largura sai da mesma derivacao do M, um passo adiante: tres P acoplados
+    no passo de 200 tem a pegada de aba de -100 a +500, ou seja 604 mm de
+    envelope (medido). Para o G ter a mesma pegada:
+
+        boca do corpo = 3 x LARG_P + 2 x (2 x ABA_W) = 3 x 180 + 2 x 20 = 580
+
+    e as paredes do G caem em x = +-290 do eixo dele, exatamente onde pousam
+    os pes externos do trio. Medido: o envelope do G e o do trio batem em
+    dx = 0,00 mm, e o trio RECUADO pousa com 1.268 mm2 em cinco ilhas
+    (405 + 405 + 405 das tres saias, 26 + 26 dos dois pes externos).
+
+    ATENCAO, FECHAMENTO: 604 x 407 dao 2.461 cm2 de area projetada, que a
+    0,32 t/cm2 pedem 866 t. A maior maquina da casa e de 600 t -- e mesmo o G
+    MINIMO possivel (604 x 237, o trio mais folga) pede 630 t. Nenhum G que
+    receba tres P cabe no parque atual: e decisao de fornecimento, nao de
+    projeto. Ver secao 4.2.9 do README.
+    """
+    global VAZADO, FUNDO_VAZADO, LIS_W, LIS_P, LIS_H, LIS_MIN
+    VAZADO, FUNDO_VAZADO = "listra", True
+    LIS_W, LIS_P, LIS_H, LIS_MIN = 14.0, 22.0, 34.0, 16.0
+    set_envelope(580.0, 400.0, 3.0, alt=245.0, aba_dir=+1)
+
+
 def set_envelope(larg, prof, graus, alt=None, aba_dir=None):
     """Troca a boca do CORPO, a altura e a saida de uma vez.
 

@@ -1627,6 +1627,68 @@ node (índice máximo < nº de vértices, caixas batendo em 204,0 × 235,1 × 13
 404,0 × 235,1 × 132,5 · 404,0 × 407,4 × 222,5) e as dez cenas renderizadas no
 Chromium headless.
 
+### 4.2.9 O ELO G: ~50 L, três P em cima — e a máquina que a casa não tem
+
+Pedido de 23/09: "~50 litros, não mais que 1 kg, e em cima dele devem acoplar
+3 organizadores P".
+
+#### A largura, derivada de novo
+
+Mesma conta do M, um passo adiante. Três P acoplados no passo de 200 têm a
+pegada de aba de −100 a +500 — **604,0 mm de envelope, medido**. Para o G ter a
+mesma pegada:
+
+> boca do corpo do G = 3 × LARG_P + 2 × (2 × ABA_W) = 3 × 180 + 2 × 20 = **580 mm**
+
+E as paredes do G caem em x = ±290 do eixo dele, exatamente onde pousam os pés
+externos do trio. Medido: **o envelope do G e o do trio batem em dx = 0,00 mm.**
+
+#### O trio pousado, medido
+
+| | passo | ilhas | contato | interferência |
+|---|---|---|---|---|
+| trio **recuado** | **245,01 mm** | **5** | **1.268 mm²** | **0,0000 mm³** |
+| trio centrado | 245,01 mm | 2 | 52 mm² — tomba | 0,0000 mm³ |
+
+As cinco ilhas são **405 + 405 + 405** (as três saias de trás pousando
+inteiras) **+ 26 + 26** (os dois pés externos). É o dobro do contato do par no
+M, e o mesmo mecanismo: o recuo é o que faz as saias encontrarem a aba de trás.
+
+#### Peso: passa com folga
+
+| | capacidade | peso | g/L | planta | fechamento |
+|---|---|---|---|---|---|
+| **A** 580 × 400 × 245 | **50,89 L** | **632,9 g** | **12,4** | 2.461 cm² | 866 t |
+| **B** 580 × 230 × 450 | 49,22 L | 729,1 g | 14,8 | 1.434 cm² | 505 t |
+
+O A é a peça mais eficiente da linha — **12,4 g/L** contra 16,5 do M e 43,8 do
+P. Sobram **367 g** do quilo. Com essa folga a **chapa inteira** cabe (estimado
++150 g, ~783 g), o que tornaria o G utilizável para coisa menor também.
+
+#### E o problema, que não é de projeto
+
+**Nenhum G que receba três P cabe no parque da casa.** A largura de 604 mm é
+imposta pelo trio e a profundidade mínima é ~237 mm (o trio tem 235), então o
+piso de área projetada é **1.431 cm²** — que a 0,32 t/cm² pede **630 t**. A
+maior máquina da casa é de **600 t**. Não é escolher melhor a forma: **é o menor
+G possível que já não cabe.**
+
+| saída | consequência |
+|---|---|
+| aceitar **0,28 t/cm²** | o piso cai para 441 t e a 600 t serve, a 74% de uso — mas só o candidato **B** entra nesse envelope, e o B é uma torre de 45 cm sobre base de 24 cm, que tomba carregada |
+| **injetar fora**, numa 1.100 t | libera o **A**, melhor em tudo: mais leve, mais estável, mais litragem |
+| ficar em dois P | é o M que já existe |
+
+A recomendação é o **A**, tratando a máquina como decisão de fornecimento e não
+de projeto: um molde de 604 × 407 já é ferramental de outra ordem, então a
+pergunta "onde injeta" aparece de qualquer jeito.
+
+**Ainda não medido no G:** extração, teste de raios, encaixe e empilhamento
+consigo mesmo, e a rigidez da chapa vazada — a mesma pendência do M, agora
+sobre um vão maior.
+
+Arquivos: `padrao_g()` em `modelo3d.py`.
+
 ### 4.3 Acoplado — as três canaletas
 
 O pedido foi uma **canaleta de ponta a ponta na lateral, macho de um lado e
