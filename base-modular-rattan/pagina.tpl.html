@@ -1,0 +1,525 @@
+<title>Base Modular Rattan G</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#E4E5E2; --sheet:#F2F2EF; --ink:#18191A; --ink-2:#3C3E40; --muted:#6C6F72;
+    --line:#C3C5C1; --line-soft:#D6D8D4; --cota:#B4451D; --chumbo:#72777C; --rattan:#2A2B2C;
+    --ok:#4C7A4F; --alerta:#9A6A12; --corte:#8E949A; --stage:#D9DBD8; --shadow:0 1px 0 rgba(24,25,26,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme:dark;
+      --paper:#141516; --sheet:#1C1D1F; --ink:#E6E7E4; --ink-2:#BFC2C0; --muted:#8B8F8E;
+      --line:#34383A; --line-soft:#282B2D; --cota:#E0703F; --chumbo:#9AA0A6; --rattan:#C9CCCF;
+      --ok:#7BAE7C; --alerta:#CFA044; --corte:#5E656B; --stage:#202224; --shadow:0 1px 0 rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --paper:#141516; --sheet:#1C1D1F; --ink:#E6E7E4; --ink-2:#BFC2C0; --muted:#8B8F8E;
+    --line:#34383A; --line-soft:#282B2D; --cota:#E0703F; --chumbo:#9AA0A6; --rattan:#C9CCCF;
+    --ok:#7BAE7C; --alerta:#CFA044; --corte:#5E656B; --stage:#202224; --shadow:0 1px 0 rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--paper);color:var(--ink);font-family:"Barlow","Helvetica Neue",Arial,sans-serif;
+       font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  .sheet{max-width:1120px;margin:0 auto;padding-inline:20px;padding-block:32px 72px;}
+  h1,h2,h3{font-family:"Barlow Condensed","Barlow",sans-serif;font-weight:700;text-wrap:balance;margin:0;line-height:1.05;}
+  h1{font-size:clamp(34px,6.4vw,56px);letter-spacing:-.01em;text-transform:uppercase;}
+  h2{font-size:clamp(21px,3.2vw,27px);text-transform:uppercase;letter-spacing:.02em;}
+  h3{font-size:18px;letter-spacing:.01em;}
+  p{margin:0;}
+  .mono,.n{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums;}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+
+  .cartucho{border:1px solid var(--line);background:var(--sheet);box-shadow:var(--shadow);}
+  .cartucho-top{padding:22px 22px 18px;border-bottom:1px solid var(--line);}
+  .cartucho-top .sub{color:var(--ink-2);margin-top:10px;max-width:70ch;}
+  .cartucho-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));}
+  .campo{padding:12px 18px;border-right:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);}
+  .campo .k{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+  .campo .v{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:20px;letter-spacing:.01em;margin-top:2px;}
+  .campo .v small{font-family:"Barlow",sans-serif;font-weight:400;font-size:13px;color:var(--muted);}
+
+  section{margin-top:52px;}
+  .section-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-bottom:1.5px solid var(--ink);padding-bottom:7px;margin-bottom:20px;}
+  .lede{max-width:70ch;color:var(--ink-2);margin-bottom:20px;}
+  .lede + .lede{margin-top:-8px;}
+
+  /* ---- visualizador ---- */
+  .viz{display:grid;grid-template-columns:minmax(0,1fr) 300px;border:1px solid var(--line);background:var(--sheet);}
+  .stage{position:relative;min-height:560px;background:var(--stage);border-right:1px solid var(--line);}
+  .stage canvas{display:block;width:100%;height:100%;position:absolute;inset:0;touch-action:none;}
+  .stage .dica{position:absolute;left:12px;bottom:10px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);pointer-events:none;}
+  .stage .erro{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--ink-2);}
+  .painel{padding:18px;display:flex;flex-direction:column;gap:18px;}
+  .grupo{display:flex;flex-direction:column;gap:8px;}
+  .grupo .eyebrow{margin-bottom:2px;}
+  .botoes{display:flex;flex-wrap:wrap;gap:6px;}
+  button{font:500 13.5px/1 "Barlow",sans-serif;color:var(--ink);background:var(--paper);border:1px solid var(--line);
+         padding:8px 11px;cursor:pointer;border-radius:2px;}
+  button:hover{border-color:var(--ink-2);}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--cota);outline-offset:2px;}
+  button.forte{background:var(--ink);color:var(--sheet);border-color:var(--ink);}
+  label.chk{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;}
+  label.chk input{accent-color:var(--cota);width:16px;height:16px;margin:0;}
+  .pilha{display:flex;flex-direction:column-reverse;gap:3px;}
+  .pilha div{font-family:"IBM Plex Mono",monospace;font-size:11.5px;padding:4px 8px;border:1px solid var(--line);background:var(--paper);display:flex;justify-content:space-between;}
+  .pilha div.a{border-left:4px solid var(--chumbo);}
+  .pilha div.b{border-left:4px solid var(--chumbo);font-size:10.5px;padding-block:2px;}
+  .pilha div.t{border-left:4px solid var(--ink);}
+  .leitura{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line-soft);border:1px solid var(--line-soft);}
+  .leitura div{background:var(--sheet);padding:8px 10px;}
+  .leitura .k{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+  .leitura .v{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:21px;font-variant-numeric:tabular-nums;}
+  .aviso{font-size:13px;padding:8px 10px;border:1px dashed var(--alerta);color:var(--ink-2);}
+  .aviso b{color:var(--alerta);}
+
+  /* ---- desenho ---- */
+  .duas{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:28px;align-items:start;}
+  .desenho{border:1px solid var(--line);background:var(--sheet);overflow-x:auto;padding:14px 10px 6px;}
+  .desenho svg{display:block;width:100%;min-width:560px;height:auto;}
+  .desenho .corte{fill:var(--corte);stroke:var(--ink);stroke-width:1;}
+  .desenho .atras{fill:none;stroke:var(--muted);stroke-width:1;stroke-dasharray:4 3;}
+  .desenho .cesto{stroke:var(--rattan);stroke-width:2;stroke-dasharray:2 3;opacity:.7;}
+  .desenho .cesto-t{fill:var(--muted);font:500 10.5px "IBM Plex Mono",monospace;}
+  .desenho .shut{stroke:var(--cota);stroke-width:2.2;}
+  .desenho .lider{stroke:var(--muted);stroke-width:.8;}
+  .desenho .ponto{fill:var(--cota);}
+  .desenho .cham{fill:var(--ink);font:600 13.5px "Barlow Condensed",sans-serif;letter-spacing:.02em;}
+  .desenho .cham2{fill:var(--muted);font:400 11px "IBM Plex Mono",monospace;}
+  .desenho .aco{fill:var(--ink-2);font:600 11px "IBM Plex Mono",monospace;letter-spacing:.12em;}
+  .desenho .aco2{fill:var(--muted);font:400 10.5px "IBM Plex Mono",monospace;}
+  .desenho .seta{fill:none;stroke:var(--ink-2);stroke-width:1.4;}
+  .desenho .base{stroke:var(--ink);stroke-width:.8;stroke-dasharray:8 3 2 3;}
+  .desenho .cota{fill:var(--cota);font:500 11px "IBM Plex Mono",monospace;}
+  .regras{display:flex;flex-direction:column;gap:14px;}
+  .regra{border-left:2px solid var(--line);padding-left:14px;}
+  .regra h3{margin-bottom:3px;}
+  .regra p{color:var(--ink-2);font-size:14.5px;}
+
+  /* ---- tabelas ---- */
+  .tab{overflow-x:auto;border:1px solid var(--line);background:var(--sheet);}
+  table{border-collapse:collapse;width:100%;font-size:14px;}
+  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line-soft);vertical-align:top;white-space:nowrap;}
+  thead th{font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);}
+  tbody th{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:16px;}
+  td.n{text-align:right;}
+  tbody tr:last-child th,tbody tr:last-child td{border-bottom:0;}
+  .nota{font-size:13px;color:var(--muted);margin-top:10px;max-width:90ch;}
+
+  .quadro{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);}
+  .quadro > div{background:var(--sheet);padding:16px 18px;}
+  .quadro h3{margin-bottom:6px;}
+  .quadro p{color:var(--ink-2);font-size:14.5px;}
+  .chip{display:inline-block;font:500 10.5px "IBM Plex Mono",monospace;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border:1px solid currentColor;margin-bottom:8px;}
+  .chip.ok{color:var(--ok);} .chip.al{color:var(--alerta);} .chip.cr{color:var(--cota);}
+  ol.passos{margin:0;padding-left:22px;max-width:80ch;display:flex;flex-direction:column;gap:8px;color:var(--ink-2);}
+  ol.passos b{color:var(--ink);}
+  .fontes{font-size:13px;color:var(--muted);max-width:92ch;}
+  .fontes code{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-2);}
+
+  @media (max-width:900px){
+    .viz{grid-template-columns:1fr;}
+    .stage{min-height:440px;border-right:0;border-bottom:1px solid var(--line);}
+    .duas{grid-template-columns:1fr;}
+  }
+</style>
+
+<div class="sheet">
+  <header class="cartucho">
+    <div class="cartucho-top">
+      <div class="eyebrow">Estudo de produto · Base modular · 23/09/2026</div>
+      <h1 style="margin-top:6px">Base Modular Rattan G</h1>
+      <p class="sub">Gaveteiro empilhável para os cestos <b>Rattan G</b> (069.006.003) e <b>Rattan G Baixo</b> (261.006.003).
+        Três peças, três moldes: o módulo alto, o módulo baixo e o tampo. Os dois módulos têm a mesma planta e o mesmo encaixe,
+        então qualquer um vai em cima de qualquer um. Cada peça sai inteira de um molde de uma cavidade, <b>sem gaveta</b>.</p>
+    </div>
+    <div class="cartucho-grid">
+      <div class="campo"><div class="k">Planta (as três peças)</div><div class="v">{{LARG}} × {{PROF}} <small>mm</small></div></div>
+      <div class="campo"><div class="k">Passo alto / baixo</div><div class="v">{{PASSO_A}} / {{PASSO_B}} <small>mm · 2 baixos = 1 alto</small></div></div>
+      <div class="campo"><div class="k">Peso alto · baixo · tampo</div><div class="v">{{M_A}} · {{M_B}} · {{M_T}} <small>g</small></div></div>
+      <div class="campo"><div class="k">Resina</div><div class="v">PP CP 141 <small>R$ {{RS_KG}}/kg</small></div></div>
+      <div class="campo"><div class="k">Moldes</div><div class="v">3 · 1 cav. · 0 gavetas</div></div>
+      <div class="campo"><div class="k">Ferramental</div><div class="v">USD {{USD_LO}}–{{USD_HI}} mil <small>ordem de grandeza</small></div></div>
+    </div>
+  </header>
+
+  <section id="modelo">
+    <div class="section-head"><h2>Monte a torre</h2><span class="eyebrow">modelo 3D das três peças, gerado da memória de cálculo</span></div>
+    <div class="viz">
+      <div class="stage" id="stage">
+        <span class="dica">arraste para girar · role para aproximar</span>
+      </div>
+      <div class="painel">
+        <div class="grupo">
+          <div class="eyebrow">Combinações prontas</div>
+          <div class="botoes">
+            <button type="button" data-preset="AAAAA">5 altos</button>
+            <button type="button" data-preset="AAABB">3 altos + 2 baixos</button>
+            <button type="button" data-preset="BBBBBB">6 baixos</button>
+            <button type="button" data-preset="ABAB">Alternado</button>
+          </div>
+        </div>
+        <div class="grupo">
+          <div class="eyebrow">Montar peça por peça</div>
+          <div class="botoes">
+            <button type="button" id="addA" class="forte">+ Alto</button>
+            <button type="button" id="addB" class="forte">+ Baixo</button>
+            <button type="button" id="tira">Tirar do topo</button>
+          </div>
+        </div>
+        <div class="grupo">
+          <div class="eyebrow">Ver</div>
+          <label class="chk"><input type="checkbox" id="vCestos" checked> Cestos</label>
+          <label class="chk"><input type="checkbox" id="vAbertas"> Gavetas puxadas</label>
+          <label class="chk"><input type="checkbox" id="vExplode"> Vista explodida</label>
+          <label class="chk"><input type="checkbox" id="vCorte"> Corte no meio da profundidade</label>
+          <label class="chk"><input type="checkbox" id="vTampo" checked> Tampo</label>
+        </div>
+        <div class="grupo">
+          <div class="eyebrow">Esta torre</div>
+          <div class="leitura">
+            <div><div class="k">Altura</div><div class="v" id="rAlt">–</div></div>
+            <div><div class="k">Plástico</div><div class="v" id="rMassa">–</div></div>
+            <div><div class="k">Resina</div><div class="v" id="rRs">–</div></div>
+            <div><div class="k">Peças</div><div class="v" id="rPecas">–</div></div>
+          </div>
+          <div class="aviso" id="rAviso" hidden><b>Acima de 1,1 m:</b> prever fixação na parede (furo para cinta no tampo).</div>
+        </div>
+        <div class="grupo">
+          <div class="eyebrow">Pilha, de baixo para cima</div>
+          <div class="pilha" id="pilha"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="janela">
+    <div class="section-head"><h2>Por que não precisa de gaveta</h2><span class="eyebrow">corte da lateral do módulo alto</span></div>
+    <p class="lede">O módulo é um U aberto na frente, atrás e em cima: piso mais duas laterais. O molde abre para cima, então cada superfície
+      tem de ser vista de cima (o macho forma) ou de baixo (a cavidade forma). O problema está na janela lateral: um furo numa parede vertical
+      costuma exigir gaveta. Resolvi desenhando a lateral em degrau, para o furo sair só com o abrir e fechar do molde.</p>
+    <div class="duas">
+      <div class="desenho">{{SVG_CORTE}}</div>
+      <div class="regras">
+        <div class="regra"><h3>Peitoril e travessa não se sobrepõem em planta</h3>
+          <p>O peitoril (embaixo, por dentro) termina em x 149,0. A travessa (em cima, por fora) só começa em x {{X_TRAV}}. Visto de cima,
+            ninguém cobre ninguém: o macho desce pelo lado de dentro e forma o peitoril; a cavidade sobe pelo rasgo do piso e forma a travessa.</p></div>
+        <div class="regra"><h3>O recuo de {{RECUO}} mm é o ângulo de fechamento</h3>
+          <p>Macho e cavidade se encontram dentro da janela num plano inclinado. No módulo alto, que tem a janela mais alta, o recuo dá
+            <b>{{SHUT_A}}°</b>, o mínimo razoável para aço contra aço sem desgaste. No baixo dá {{SHUT_B}}°. A travessa usa o mesmo x nos dois
+            módulos, então a planta e o encaixe continuam idênticos.</p></div>
+        <div class="regra"><h3>O peitoril também é viga</h3>
+          <p>O rasgo corta a ligação direta entre o piso e a lateral. Quem leva a carga do piso até os montantes é o peitoril, uma parede de
+            3 mm que sobe 30 mm do piso. Ele também guia o cesto.</p></div>
+        <div class="regra"><h3>Montantes ocos, abertos por baixo</h3>
+          <p>Os quatro montantes são caixas de 22 × 32 mm com parede de 2,2. O pino de cima (Ø 12) entra na guia de baixo do módulo
+            seguinte, com folga de 0,3 mm. É o mesmo encaixe nas três peças.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="encaixe">
+    <div class="section-head"><h2>O cesto cabe e sai</h2><span class="eyebrow">folgas em mm · flecha com carga permanente</span></div>
+    <p class="lede">O cesto entra pela frente, com o lado de 28 cm voltado para fora e 38,5 cm de fundo, e apoia no piso. Um batente de {{BATENTE}} mm na
+      frente segura o cesto quando alguém esbarra na torre. Para tirar, levanta-se o cesto {{BATENTE}} mm, por isso a folga de topo tem de
+      cobrir o batente mais a flecha do piso de cima. A flecha foi calculada com o módulo de fluência do PP a 1.000 h ({{E_LONGO}} MPa),
+      com {{CARGA_A}} kg dentro do cesto alto e {{CARGA_B}} kg no baixo.</p>
+    <div class="tab"><table>
+      <thead><tr><th>Módulo</th><th>Cesto</th><th>Cesto L × P × A</th><th>Passo</th><th>Vão livre</th><th>Lado</th><th>Fundo</th><th>Topo</th><th>Flecha do piso</th></tr></thead>
+      <tbody>{{TABELA_ENCAIXE}}</tbody>
+    </table></div>
+    <p class="nota">A primeira geometria tinha piso de 14 mm e passos de 208/104. A conta mostrou 12 mm de flecha para 4 mm de folga: o piso de cima
+      encostaria no cesto de baixo, e o cesto não passaria pelo batente. Isso levou às nervuras sob cada barra do piso, ao peitoril de 30 mm e
+      aos passos de {{PASSO_A}}/{{PASSO_B}}. A flecha é conservadora: considera o piso biapoiado e ignora as três nervuras longitudinais.</p>
+  </section>
+
+  <section id="pecas">
+    <div class="section-head"><h2>As três peças e as injetoras</h2><span class="eyebrow">1 cavidade · câmara quente · PP CP 141</span></div>
+    <p class="lede">Os dois módulos têm {{AREA_MOD}} cm² de área projetada. Os oblongos do piso são 38% do vão; sem eles o módulo passaria de
+      1.100 cm² e sairia da classe de 380 t. O corpo do 069 já roda nas 380 t (INJ 33) e na 600 t (INJ 34), com molde de tamanho parecido.
+      O tampo é a peça difícil: {{AREA_TAMPO}} cm² de superfície cheia. Mesmo com dois pontos de injeção ele pede {{FECH_TAMPO}} t.</p>
+    <div class="tab"><table>
+      <thead><tr><th>Peça</th><th>Serve</th><th>Peso</th><th>Resina</th><th>Área proj.</th><th>Fecham.</th><th>Injetora</th><th>Curso mín.</th><th>Ciclo*</th><th>Pç/mês*</th><th>Molde USD</th></tr></thead>
+      <tbody>{{TABELA_PECAS}}</tbody>
+    </table></div>
+    <p class="nota">Fechamento: área projetada × 300 bar nos módulos (parede de 2,2 mm, fluxo de ~260 mm) e × 220 bar no tampo, mais 15% de margem.
+      *Os ciclos são estimados, porque não há ficha técnica do 069-C no ERP. A capacidade considera 20 h por dia e 22 dias por mês, e fica muito
+      acima da demanda. Os preços de molde são ordem de grandeza tirada dos orçamentos aprovados da casa: o corpo 283-C, de 380 t e 72 × 77 × 69 cm,
+      saiu por USD 36.900. Os três moldes daqui são menores e não têm gaveta.</p>
+  </section>
+
+  <section id="torres">
+    <div class="section-head"><h2>Torres montadas</h2><span class="eyebrow">plástico da base, sem os cestos</span></div>
+    <div class="duas">
+      <div class="tab"><table>
+        <thead><tr><th>Combinação</th><th>Altura</th><th>Plástico</th><th>Resina</th></tr></thead>
+        <tbody>{{TABELA_TORRES}}</tbody>
+      </table></div>
+      <div class="regras">
+        <div class="regra"><h3>Montante sobra</h3>
+          <p>Numa torre de seis altos cheios, o módulo de baixo carrega {{MONT_KG}} kg: {{MONT_MPA}} MPa em cada montante, contra 3 a 4 MPa admissíveis
+            em fluência. A flambagem tem fator {{MONT_FLAMB}}, e isso ainda tratando o montante como solto no topo, o que o pino não deixa acontecer.</p></div>
+        <div class="regra"><h3>O limite é tombamento, não resistência</h3>
+          <p>A base tem 336 × 395 mm. Um cesto cheio puxado cai do módulo antes de tombar a torre, mas uma criança apoiada numa gaveta aberta muda a conta.
+            Acima de 1,1 m, prever furo para cinta de parede no tampo.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="aberto">
+    <div class="section-head"><h2>Decisões em aberto</h2></div>
+    <div class="quadro">
+      <div><span class="chip al">confirmar</span><h3>Os 19 cm incluem a tampa do cesto?</h3>
+        <p>O 069.006.003 é vendido com tampa: corpo 069-C de 392 g mais tampa 069-T de 139 g. Dimensionei pelos 19,0 cm do cadastro, o
+          que dá {{FOLGA_TOPO_A}} mm de folga de topo. Se a medida inclui a tampa, na gaveta o cesto vai sem ela e sobra folga, e o passo alto pode cair.</p></div>
+      <div><span class="chip cr">definir</span><h3>Tampo: 600 t ou Moldflow</h3>
+        <p>Com {{FECH_TAMPO}} t estimadas, o tampo fica a 90% de uma 380 t. A INJ 34 (600 t) já roda o corpo do 069. Para ir para as 380 t,
+          validar em Moldflow com dois ou quatro pontos de câmara quente.</p></div>
+      <div><span class="chip al">protótipo</span><h3>Rigidez do piso</h3>
+        <p>A flecha de {{FLECHA_A}} mm no alto é conta de viga, conservadora. Imprimir um módulo baixo em FDM (cabe na Kobra 3 Max) e medir com 8 kg
+          por uma semana antes de congelar as nervuras.</p></div>
+      <div><span class="chip ok">sugestão</span><h3>Cor e acabamento</h3>
+        <p>Os cestos .003 são pretos. A base em cinza chumbo (master Cool Gray 7031, já usado no 069-C) repete a referência de loja. As laterais
+          lisas aceitam textura leve, já que os montantes têm saída.</p></div>
+    </div>
+  </section>
+
+  <section id="proximos">
+    <div class="section-head"><h2>Próximos passos</h2></div>
+    <ol class="passos">
+      <li><b>Confirmar a altura real do corpo do 069 e do 261 sem tampa</b>, com o paquímetro em uma peça da linha.</li>
+      <li><b>Imprimir o módulo baixo e o tampo em escala 1:1</b> para testar o encaixe do pino, o batente e a flecha do piso.</li>
+      <li><b>Mandar esta geometria ao projetista</b> para virar CAD paramétrico com saídas de 1° nas faces verticais. A malha daqui é de estudo.</li>
+      <li><b>Cotar os três moldes com a MR Plastic Mould</b>, usando os orçamentos do 283-C e do 284-U como base.</li>
+      <li><b>Moldflow do tampo</b>, para decidir entre a 380 t e a INJ 34.</li>
+    </ol>
+  </section>
+
+  <section id="fontes">
+    <div class="section-head"><h2>De onde vêm os números</h2></div>
+    <p class="fontes">Sankhya via MCP Nitron, somente leitura, em 23/09/2026.
+      <code>TGFPRO</code> CODPROD 347 e 1854: cestos de 38,5 × 28 × 19,0 e 8,3 cm ·
+      <code>TGFICP</code> corpo 069-C em PP CP 141 (CODPROD 994) mais 2% de master ·
+      <code>TGFITE</code> PP CP 141 a R$ 10,51/kg, 109 t compradas em 12 meses; vendas de 12 meses da família 069 (65.302 un, R$ 1,45 mi) e da 261 (19.305 un, R$ 350 mil) ·
+      <code>TPRAPA → TPRAPO → TPRIATV</code> corpo 069-C nas INJ 33 (380 t) e 34 (600 t) ·
+      <code>AD_MOLDE / AD_ORCAMENTO</code> molde 283-C de 380 t a USD 36.900.
+      Geometria, peso e área projetada saem de <code>geometria.py</code> e <code>calculo.py</code>, no repositório.</p>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const D = {{DADOS}};
+(function(){
+  const stage = document.getElementById('stage');
+  const K = D.K, PROF = K.PROF;
+  const fmt = (v,d=0) => v.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+  let seq = ['alto','alto','alto','baixo','baixo'];
+
+  function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+
+  // ---------- leitura (funciona mesmo sem WebGL) ----------
+  function leitura(){
+    const tampo = document.getElementById('vTampo').checked;
+    let h = seq.reduce((s,m)=>s+K.PASSO[m],0) + (tampo?K.TAMPO_H:0);
+    let g = seq.reduce((s,m)=>s+D.massa['modulo-'+m],0) + (tampo?D.massa.tampo:0);
+    let rs = seq.reduce((s,m)=>s+D.resina['modulo-'+m],0) + (tampo?D.resina.tampo:0);
+    const na = seq.filter(m=>m==='alto').length, nb = seq.length-na;
+    document.getElementById('rAlt').textContent = fmt(h)+' mm';
+    document.getElementById('rMassa').textContent = fmt(g/1000,2)+' kg';
+    document.getElementById('rRs').textContent = 'R$ '+fmt(rs,2);
+    document.getElementById('rPecas').textContent = `${na}A ${nb}B ${tampo?1:0}T`;
+    document.getElementById('rAviso').hidden = h <= 1100;
+    const p = document.getElementById('pilha'); p.innerHTML='';
+    seq.forEach((m,i)=>{ const d=document.createElement('div'); d.className=m==='alto'?'a':'b';
+      d.innerHTML=`<span>${i+1}. módulo ${m}</span><span>${m==='alto'?'069':'261'}</span>`; p.appendChild(d); });
+    if(tampo){ const d=document.createElement('div'); d.className='t'; d.innerHTML='<span>tampo</span><span></span>'; p.appendChild(d); }
+  }
+
+  // ---------- 3D ----------
+  let renderer, scene, camera, controls, torre, clip, matPeca, matCesto, matAro, geo = {}, cestoGeo = {};
+  function ok3d(){
+    try { const c=document.createElement('canvas'); return !!(window.THREE && (c.getContext('webgl')||c.getContext('experimental-webgl'))); }
+    catch(e){ return false; }
+  }
+
+  // (x,y,z) da peca -> (x, z, PROF/2 - y) no three: rotacao, preserva o sentido das faces
+  function geoPeca(el){
+    const pos=[], nor=[];
+    const P=(x,y,z)=>[x, z, PROF/2 - y];
+    function quad(a,b,c,d,n){ [a,b,c,a,c,d].forEach(p=>{pos.push(...p); nor.push(...n);}); }
+    for(const e of el){
+      if(e[0]==='caixa'){
+        const [,x0,x1,y0,y1,z0,z1]=e;
+        const v=[P(x0,y0,z0),P(x1,y0,z0),P(x1,y1,z0),P(x0,y1,z0),P(x0,y0,z1),P(x1,y0,z1),P(x1,y1,z1),P(x0,y1,z1)];
+        quad(v[0],v[3],v[2],v[1],[0,-1,0]); quad(v[4],v[5],v[6],v[7],[0,1,0]);
+        quad(v[0],v[1],v[5],v[4],[0,0,1]);  quad(v[2],v[3],v[7],v[6],[0,0,-1]);
+        quad(v[1],v[2],v[6],v[5],[1,0,0]);  quad(v[3],v[0],v[4],v[7],[-1,0,0]);
+      } else {
+        const [,xc,yc,z0,z1,re,ri]=e, n=20;
+        for(let k=0;k<n;k++){
+          const a0=2*Math.PI*k/n, a1=2*Math.PI*(k+1)/n, am=(a0+a1)/2;
+          const c0=Math.cos(a0),s0=Math.sin(a0),c1=Math.cos(a1),s1=Math.sin(a1);
+          const E0=P(xc+re*c0,yc+re*s0,z0),E1=P(xc+re*c1,yc+re*s1,z0),E2=P(xc+re*c1,yc+re*s1,z1),E3=P(xc+re*c0,yc+re*s0,z1);
+          const I0=P(xc+ri*c0,yc+ri*s0,z0),I1=P(xc+ri*c1,yc+ri*s1,z0),I2=P(xc+ri*c1,yc+ri*s1,z1),I3=P(xc+ri*c0,yc+ri*s0,z1);
+          const no=[Math.cos(am),0,-Math.sin(am)];
+          quad(E0,E1,E2,E3,no); quad(I1,I0,I3,I2,no.map(v=>-v));
+          quad(E3,E2,I2,I3,[0,1,0]); quad(E1,E0,I0,I1,[0,-1,0]);
+        }
+      }
+    }
+    const g=new THREE.BufferGeometry();
+    g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+    g.setAttribute('normal',new THREE.Float32BufferAttribute(nor,3));
+    return g;
+  }
+
+  // cesto: tronco de piramide aberto em cima, trama com furos (alphaTest)
+  function texTrama(){
+    const c=document.createElement('canvas'); c.width=c.height=64; const x=c.getContext('2d');
+    x.clearRect(0,0,64,64);
+    for(let i=0;i<4;i++){ // fitas alternadas em xadrez, como a trama do 069; vao de 2 px entre fitas
+      for(let j=0;j<4;j++){
+        const hor=((i+j)%2===0);
+        x.fillStyle='#fff'; x.fillRect(j*16+1, i*16+1, 14, 14);
+        x.fillStyle='#b8b8b8';
+        for(let f=1;f<3;f++){ if(hor) x.fillRect(j*16+1, i*16+1+f*4.7, 14, 1); else x.fillRect(j*16+1+f*4.7, i*16+1, 1, 14); }
+      }
+    }
+    const t=new THREE.CanvasTexture(c); t.wrapS=t.wrapT=THREE.RepeatWrapping; t.anisotropy=4; return t;
+  }
+  function geoCesto(H){
+    const L=D.cesto.alto.L, Pp=D.cesto.alto.P, ins=12, aro=10, per=36;
+    const pos=[], uv=[], nor=[];
+    const P=(x,y,z)=>[x, z, PROF/2 - y];
+    const y0=(PROF-Pp)/2;
+    function face(a,b,c,d,w,h,n){ // a..d anti-horario visto de fora
+      const U=[[0,0],[w/per,0],[w/per,h/per],[0,h/per]];
+      [[a,0],[b,1],[c,2],[a,0],[c,2],[d,3]].forEach(([p,i])=>{pos.push(...p);uv.push(...U[i]);nor.push(...n);});
+    }
+    const zt=H-aro;
+    const B=[[-L/2+ins,y0+ins],[L/2-ins,y0+ins],[L/2-ins,y0+Pp-ins],[-L/2+ins,y0+Pp-ins]];
+    const T=[[-L/2,y0],[L/2,y0],[L/2,y0+Pp],[-L/2,y0+Pp]];
+    const zb=K.PISO_H;
+    for(let k=0;k<4;k++){
+      const a=B[k],b=B[(k+1)%4],ta=T[k],tb=T[(k+1)%4];
+      const w=Math.hypot(tb[0]-ta[0],tb[1]-ta[1]);
+      const nx=(b[1]-a[1]), ny=-(b[0]-a[0]); const m=Math.hypot(nx,ny);
+      const n=[nx/m,0,-ny/m];
+      face(P(a[0],a[1],zb),P(b[0],b[1],zb),P(tb[0]*(1-aro/H)+b[0]*(aro/H),tb[1]*(1-aro/H)+b[1]*(aro/H),zb+zt),
+           P(ta[0]*(1-aro/H)+a[0]*(aro/H),ta[1]*(1-aro/H)+a[1]*(aro/H),zb+zt), w, zt, n);
+    }
+    const g=new THREE.BufferGeometry();
+    g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+    g.setAttribute('normal',new THREE.Float32BufferAttribute(nor,3));
+    g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
+    // fundo e aro solidos
+    const fundo=new THREE.BoxGeometry(L-2*ins, 2, Pp-2*ins); fundo.translate(0, zb+1, 0);
+    const aroG=new THREE.BufferGeometry(); const ap=[], an=[];
+    for(let k=0;k<4;k++){
+      const ta=T[k],tb=T[(k+1)%4];
+      const nx=(tb[1]-ta[1]), ny=-(tb[0]-ta[0]); const m=Math.hypot(nx,ny); const n=[nx/m,0,-ny/m];
+      const q=[P(ta[0],ta[1],zb+zt),P(tb[0],tb[1],zb+zt),P(tb[0],tb[1],zb+H),P(ta[0],ta[1],zb+H)];
+      [q[0],q[1],q[2],q[0],q[2],q[3]].forEach(p=>{ap.push(...p);an.push(...n);});
+    }
+    aroG.setAttribute('position',new THREE.Float32BufferAttribute(ap,3));
+    aroG.setAttribute('normal',new THREE.Float32BufferAttribute(an,3));
+    return {trama:g, fundo, aro:aroG};
+  }
+
+  function iniciar(){
+    renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+    renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+    renderer.localClippingEnabled=true;
+    stage.appendChild(renderer.domElement);
+    scene=new THREE.Scene();
+    camera=new THREE.PerspectiveCamera(32,1,10,20000);
+    scene.add(new THREE.HemisphereLight(0xffffff,0x9aa0a6,0.75));
+    const sol=new THREE.DirectionalLight(0xffffff,0.8); sol.position.set(900,1600,1300); scene.add(sol);
+    const contra=new THREE.DirectionalLight(0xffffff,0.25); contra.position.set(-1200,500,-900); scene.add(contra);
+    clip=new THREE.Plane(new THREE.Vector3(0,0,-1),0);
+    matPeca=new THREE.MeshStandardMaterial({color:0x72777c,roughness:.78,metalness:0,side:THREE.DoubleSide});
+    const tex=texTrama();
+    matCesto=new THREE.MeshStandardMaterial({color:0x2a2b2c,roughness:.6,map:tex,alphaTest:.5,side:THREE.DoubleSide});
+    matAro=new THREE.MeshStandardMaterial({color:0x2a2b2c,roughness:.55,side:THREE.DoubleSide});
+    for(const n in D.pecas) geo[n]=geoPeca(D.pecas[n]);
+    cestoGeo.alto=geoCesto(D.cesto.alto.H); cestoGeo.baixo=geoCesto(D.cesto.baixo.H);
+    // chao
+    const chao=new THREE.Mesh(new THREE.CircleGeometry(1400,64),new THREE.MeshStandardMaterial({color:0xcfd1ce,roughness:1}));
+    chao.rotation.x=-Math.PI/2; chao.position.y=-0.5; chao.name='chao'; scene.add(chao);
+    controls=new THREE.OrbitControls(camera,renderer.domElement);
+    controls.enableDamping=false; controls.minDistance=400; controls.maxDistance=6000;
+    controls.maxPolarAngle=Math.PI*0.52;
+    controls.addEventListener('change',render);
+    new ResizeObserver(tamanho).observe(stage);
+    aplicaTema(); montar(true);
+    const mq=window.matchMedia('(prefers-color-scheme: dark)');
+    mq.addEventListener && mq.addEventListener('change',()=>{aplicaTema();render();});
+    new MutationObserver(()=>{aplicaTema();render();}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  }
+  function aplicaTema(){
+    const c=css('--stage')||'#D9DBD8';
+    scene.background=new THREE.Color(c);
+    const ch=scene.getObjectByName('chao'); if(ch) ch.material.color=new THREE.Color(c).offsetHSL(0,0,-0.04);
+  }
+  function tamanho(){
+    const w=stage.clientWidth, h=stage.clientHeight;
+    renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); render();
+  }
+  function montar(recentra){
+    if(torre) scene.remove(torre);
+    torre=new THREE.Group();
+    const explode=document.getElementById('vExplode').checked ? 70 : 0;
+    const cestos=document.getElementById('vCestos').checked;
+    const abertas=document.getElementById('vAbertas').checked;
+    const corte=document.getElementById('vCorte').checked;
+    const tampo=document.getElementById('vTampo').checked;
+    const planos=corte?[clip]:[];
+    matPeca.clippingPlanes=planos; matCesto.clippingPlanes=planos; matAro.clippingPlanes=planos;
+    let z=0;
+    seq.forEach((m,i)=>{
+      const mod=new THREE.Mesh(geo['modulo-'+m],matPeca); mod.position.y=z; torre.add(mod);
+      if(cestos){
+        const cg=cestoGeo[m], gr=new THREE.Group();
+        gr.add(new THREE.Mesh(cg.trama,matCesto),new THREE.Mesh(cg.fundo,matAro),new THREE.Mesh(cg.aro,matAro));
+        gr.position.y=z; if(abertas) gr.position.z=(i%2===0?170:90);
+        torre.add(gr);
+      }
+      z+=K.PASSO[m]+explode;
+    });
+    if(tampo){ const t=new THREE.Mesh(geo.tampo,matPeca); t.position.y=z; torre.add(t); z+=K.TAMPO_H; }
+    scene.add(torre);
+    if(recentra){
+      const H=Math.max(z,300);
+      controls.target.set(0,H*0.46,0);
+      const d=Math.max(H*2.35,1500);
+      camera.position.set(d*0.55,H*0.55+160,d*0.9);
+      camera.far=d*8; camera.updateProjectionMatrix(); controls.update();
+    }
+    render(); leitura();
+  }
+  function render(){ if(renderer) renderer.render(scene,camera); }
+
+  // ---------- controles ----------
+  const MAXN=8;
+  document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{
+    seq=[...b.dataset.preset].map(c=>c==='A'?'alto':'baixo'); renderer?montar(true):leitura(); }));
+  document.getElementById('addA').addEventListener('click',()=>{ if(seq.length<MAXN){seq.push('alto'); renderer?montar(true):leitura();} });
+  document.getElementById('addB').addEventListener('click',()=>{ if(seq.length<MAXN){seq.push('baixo'); renderer?montar(true):leitura();} });
+  document.getElementById('tira').addEventListener('click',()=>{ if(seq.length>1){seq.pop(); renderer?montar(true):leitura();} });
+  ['vCestos','vAbertas','vExplode','vCorte','vTampo'].forEach(id=>document.getElementById(id).addEventListener('change',()=>{
+    renderer?montar(id==='vExplode'||id==='vTampo'):leitura(); }));
+
+  if(ok3d()){ try{ iniciar(); }catch(e){ console.error(e); falha(); } } else { falha(); }
+  function falha(){
+    const d=document.createElement('div'); d.className='erro';
+    d.textContent='O modelo 3D precisa de WebGL, que este navegador não liberou. Os números ao lado continuam valendo.';
+    stage.appendChild(d); leitura();
+  }
+})();
+</script>

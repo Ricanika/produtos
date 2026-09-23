@@ -1,0 +1,218 @@
+{
+ "pecas": {
+  "modulo-alto": {
+   "massa_g": 692.6786672054118,
+   "volume_cm3": 769.6429635615686,
+   "resina_rs": 7.2800527923288785,
+   "area_proj_cm2": 846.7,
+   "fechamento_t": 297.86609655,
+   "altura_mm": 228.0,
+   "curso_min_mm": 516.0,
+   "molde_mm": [
+    556.0,
+    615.0,
+    558.0
+   ],
+   "ciclo_s": 38.0,
+   "pc_mes": 41684.21052631579,
+   "gavetas": 0,
+   "cavidades": 1
+  },
+  "modulo-baixo": {
+   "massa_g": 579.8330672054122,
+   "volume_cm3": 644.2589635615692,
+   "resina_rs": 6.094045536328883,
+   "area_proj_cm2": 846.7,
+   "fechamento_t": 297.86609655,
+   "altura_mm": 118.0,
+   "curso_min_mm": 296.0,
+   "molde_mm": [
+    556.0,
+    615.0,
+    448.0
+   ],
+   "ciclo_s": 32.0,
+   "pc_mes": 49500.0,
+   "gavetas": 0,
+   "cavidades": 1
+  },
+  "tampo": {
+   "massa_g": 386.7969880875811,
+   "volume_cm3": 429.77443120842344,
+   "resina_rs": 4.065236344800478,
+   "area_proj_cm2": 1327.2,
+   "fechamento_t": 342.39649751999997,
+   "altura_mm": 12.0,
+   "curso_min_mm": 84.0,
+   "molde_mm": [
+    556.0,
+    615.0,
+    342.0
+   ],
+   "ciclo_s": 30.0,
+   "pc_mes": 52800.0,
+   "gavetas": 0,
+   "cavidades": 1
+  }
+ },
+ "encaixe": {
+  "alto": {
+   "ref": "069.006.003",
+   "cesto": [
+    280.0,
+    385.0,
+    190.0
+   ],
+   "passo": 220.0,
+   "vao_livre": [
+    292.0,
+    389.0,
+    202.0
+   ],
+   "folga_topo": 12.0,
+   "folga_lado": 6.0,
+   "folga_prof": 4.0,
+   "levanta_batente": 4.0,
+   "janela": [
+    48.0,
+    190.0
+   ],
+   "shutoff_graus": 2.983137883366399
+  },
+  "baixo": {
+   "ref": "261.006.003",
+   "cesto": [
+    280.0,
+    385.0,
+    83.0
+   ],
+   "passo": 110.0,
+   "vao_livre": [
+    292.0,
+    389.0,
+    92.0
+   ],
+   "folga_topo": 9.0,
+   "folga_lado": 6.0,
+   "folga_prof": 4.0,
+   "levanta_batente": 4.0,
+   "janela": [
+    48.0,
+    90.0
+   ],
+   "shutoff_graus": 9.992414526216253
+  }
+ },
+ "rigidez": {
+  "alto": {
+   "carga_N": 82.5021,
+   "flecha_piso_mm": 2.7045800461534824,
+   "flecha_peitoril_mm": 1.7613029264232847,
+   "flecha_total_mm": 4.465882972576767,
+   "folga_topo_mm": 12.0
+  },
+  "baixo": {
+   "carga_N": 42.8697,
+   "flecha_piso_mm": 1.4053525329002043,
+   "flecha_peitoril_mm": 0.9152073470237521,
+   "flecha_total_mm": 2.320559879923956,
+   "folga_topo_mm": 9.0
+  },
+  "montante": {
+   "carga_acima_kg": 45.90019032411464,
+   "N_por_montante": 112.57021676989116,
+   "tensao_MPa": 0.5158092777212756,
+   "P_flamb_N": 323.3229763906734,
+   "fator_flamb": 2.8721893380696737
+  }
+ },
+ "torres": [
+  {
+   "seq": [
+    "alto",
+    "alto",
+    "alto",
+    "alto",
+    "alto"
+   ],
+   "altura_mm": 1112.0,
+   "massa_g": 3850.19032411464,
+   "resina_rs": 40.465500306444866
+  },
+  {
+   "seq": [
+    "alto",
+    "alto",
+    "alto",
+    "baixo",
+    "baixo"
+   ],
+   "altura_mm": 892.0,
+   "massa_g": 3624.499124114641,
+   "resina_rs": 38.093485794444874
+  },
+  {
+   "seq": [
+    "baixo",
+    "baixo",
+    "baixo",
+    "baixo",
+    "baixo",
+    "baixo"
+   ],
+   "altura_mm": 672.0,
+   "massa_g": 3865.7953913200545,
+   "resina_rs": 40.62950956277377
+  },
+  {
+   "seq": [
+    "alto",
+    "alto",
+    "alto",
+    "alto"
+   ],
+   "altura_mm": 892.0,
+   "massa_g": 3157.5116569092283,
+   "resina_rs": 33.185447514115985
+  },
+  {
+   "seq": [
+    "alto",
+    "baixo",
+    "alto",
+    "baixo"
+   ],
+   "altura_mm": 672.0,
+   "massa_g": 2931.820456909229,
+   "resina_rs": 30.813433002116
+  }
+ ],
+ "constantes": {
+  "LARG": 336.0,
+  "PROF": 395.0,
+  "X_IN": 146.0,
+  "X_PEIT": 149.0,
+  "X_TRAV": 156.4,
+  "X_EXT": 168.0,
+  "PISO_H": 18.0,
+  "PEIT_H": 30.0,
+  "TRAV_H": {
+   "alto": 30.0,
+   "baixo": 20.0
+  },
+  "PASSO": {
+   "alto": 220.0,
+   "baixo": 110.0
+  },
+  "MONT_Y": 32.0,
+  "T": 2.2,
+  "TAMPO_H": 12.0,
+  "RS_KG": 10.51,
+  "E_LONGO": 400.0,
+  "BAR_CAV": 300.0,
+  "CARGA_KG": {
+   "alto": 8.0,
+   "baixo": 4.0
+  }
+ }
+}
