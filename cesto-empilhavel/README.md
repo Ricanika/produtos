@@ -1059,6 +1059,63 @@ entre z = 40 e 111, longe da aba, do friso e da chapa.
 Arquivos: `cad/colunas.py` (folha `colunas.png`, com o antes/depois no mesmo
 ponto de vista do print do cliente e a tabela de folgas).
 
+### 4.2.5 A aba para DENTRO não extrai — medido
+
+Pergunta do cliente (23/09): "pensando nas nossas injetoras, essa borda
+superior para dentro possivelmente não conseguirá fazer a extração, confere?"
+
+**Confere.** E o teste é um só, sem opinião: num molde de duas placas, um ponto
+do espaço vazio é formável se **não houver material acima** dele na coluna (o
+macho chega de cima) **ou não houver material abaixo** (a cavidade chega de
+baixo). O que tem material dos dois lados e não é material precisa de gaveta,
+postiço ou macho colapsável:
+
+    preso(z) = sombra_de_cima(z) ∩ sombra_de_baixo(z) − material(z)
+
+Medido em `cad/extracao.py`, cota a cota:
+
+| | volume preso |
+|---|---|
+| peça como está | **58.242 mm³** |
+| a mesma peça **sem a aba** | 6.064 mm³ |
+| **portanto a aba responde por** | **52.178 mm³ — 90%** |
+
+Os 6.064 mm³ que sobram são os **rasgos passantes** da parede. Eles entram na
+conta pela definição (têm material acima e abaixo), mas ali o fechamento é na
+própria superfície com saída da parede e a profundidade presa é só a espessura
+dela — 1,4 mm, que zera depois de 1,4/tg 12° = 6,6 mm de curso. É por isso que
+caixaria tem centenas de rasgos e se faz em molde de duas placas. Falso
+positivo conhecido, anotado no script.
+
+**A cota que decide** não é o volume, é a profundidade do ressalto: a aba
+avança **6,27 mm para dentro da face interna da parede**, numa boca interna de
+192,5 mm — **6,5% por lado**, em degrau contínuo de 2,5 mm. Bump-off em PP vive
+na faixa de 1 a 2% por lado, em feição arredondada e local. 6,5% num lábio
+contínuo de canto vivo não sai forçando: sai com macho colapsável (quatro
+postiços angulares mais cunha central), que é custo de ferramental e item de
+desgaste.
+
+O teste também trata certo o **chanfro de topo**, que a primeira versão do
+script acusava como contra-saída da cavidade. Não é: na frente do cesto, acima
+da borda baixa, não há material nenhum na coluna, então aquele espaço é do
+MACHO. O macho desta peça tem um lobo que desce na frente da parede baixa e
+fecha contra a cavidade na própria aresta do rim — linha de fechamento
+acompanhando a borda, o normal em caixaria.
+
+#### Duas armadilhas de medição que apareceram aqui
+
+1. **`to_2D()` do trimesh translada cada corte por conta própria** — medido:
+   −45,4 mm em z = 57 e +20,2 mm em z = 128,5. Com ela as cotas ficam
+   desalinhadas entre si e qualquer acúmulo cota a cota (como a sombra) sai
+   lixo: a primeira rodada acusou 636.542 mm³. Corrigido com `to_planar` na
+   identidade, x e y passam a ser os do mundo em todas as cotas.
+2. **Com a parede vazada, "furo do polígono" não é o vão interno.** Um corte em
+   z = 100 não é uma coroa: são ~60 ilhas, as nervuras entre listras. O vão
+   tem de vir do sólido, não da topologia do corte.
+
+Arquivo: `cad/extracao.py`. Depende de `networkx` e `rtree` (dependências
+opcionais do trimesh): `pip install networkx rtree`.
+
 ### 4.3 Acoplado — as três canaletas
 
 O pedido foi uma **canaleta de ponta a ponta na lateral, macho de um lado e
@@ -1331,6 +1388,8 @@ cad/frente.py      folha frente.png: o rasgo inferior frontal, com o teste de
 
 cad/colunas.py     folha colunas.png: as colunas de listra da lateral antes e
                    depois de serem ancoradas no pe, com a tabela de folgas
+cad/extracao.py    auditoria de EXTRACAO: mede o volume que nenhuma das duas
+                   metades do molde alcanca (sombra de cima x sombra de baixo)
 
 O vazado da lateral: cols_lateral() gera as colunas ANCORADAS NO PE, nao numa
 grade centrada em y = 0 -- e o que garante nervura de 5 mm em toda a lateral
