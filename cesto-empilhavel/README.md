@@ -1528,17 +1528,25 @@ passa a 60…130 enquanto a parede está em 200: **erra a parede inteira**. Os
 três candidatos da tabela acima foram medidos assim, com frente e fundo
 maciços — ou seja os 630 g são conservadores. Virou `y_parede()`.
 
-#### O que do G AINDA NÃO foi conferido
+#### O G, conferido
 
-Medido e fechado: peso, capacidade, e o par recuado pousando no G —
-**passo 220,02 mm, 0,0000 mm³ de interferência, 829 mm² de contato** em quatro
-ilhas (389 + 389 + 25 + 25).
+| | medido |
+|---|---|
+| par recuado pousando no G | **220,02 mm · 0,0000 mm³ · 829 mm²** (389 + 389 + 25 + 25) |
+| G empilha com G | **220,02 mm · 0,0000 mm³** |
+| G encaixa com G | **64,67 mm** |
+| rasgo frontal | **0 de 720 raios escapam** em z = 7,5 · 12 · 20 · 30 · 39 mm |
+| preso no molde | 42.598 mm³ |
 
-**Ainda rodando quando este trecho foi escrito**, e portanto ainda não
-afirmado: o encaixe e o empilhamento do G consigo mesmo, a auditoria de
-extração e o teste de raios. São as três que pegaram defeito no P e no M, e o
-G tem duas feições novas (a chapa vazada e a saída de 3°), então nenhuma delas
-é formalidade.
+O teste de raios era o que mais me preocupava — a tapa da frente depende da
+saída, e o G é a primeira peça a 3° (§4.2.6 conta como um 14 fixo reabriu
+11 mm de rasgo quando a saída caiu de 12 para 6). A 3° ela continua fechada.
+
+**O preço do G é a cubagem.** O passo de encaixe vai de 40,00 (P e M) para
+**64,67 mm**, porque a saída em x do pé é `(ABA_W − ABA_POUSO)/ALT` e o G tem
+220 mm de altura contra 130. Em caixa: **12 G ocupam 934 mm contra 573 mm de
+12 M**. É consequência da altura, não do vazado, e não tem conserto sem mexer
+na aba.
 
 **E uma que não foi medida de jeito nenhum: a rigidez da chapa vazada.** Tirei
 119 g dela; com ~40% de furo e 1,4 mm de nervura entre rasgos, numa peça de
