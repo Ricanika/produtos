@@ -1697,11 +1697,28 @@ eu impus: cai fora da conta da aba, e os dois casos foram conferidos por
 medição (envelope batendo em dx = 0,00 mm nos dois). A profundidade é livre nos
 dois porque o pouso é recuado.
 
-**Ainda não medido no G:** extração, teste de raios, encaixe e empilhamento
-consigo mesmo, e a rigidez da chapa vazada — a mesma pendência do M, agora
-sobre um vão maior.
+#### O G, conferido
 
-Arquivos: `padrao_g()` em `modelo3d.py`.
+| | medido |
+|---|---|
+| encaixa consigo | **65,34 mm** |
+| preso no molde | **55.014 mm³** |
+| rasgo frontal | **0 de 720 raios escapam** em z = 7,5 · 10 · 14 · 20 · 26 · 30 · 34 · 39 mm |
+
+O cruzamento do chanfro do pé caiu em **24,44 mm** aqui (`BASE_Y` = 374,3), e a
+tapa acompanhou sem toque — é o terceiro tamanho seguido em que ela acerta
+porque é derivada e não literal (§4.2.6). Em z = 41 escapam 180 raios: é a
+primeira faixa de listra.
+
+O encaixe de **65,34 mm** é praticamente o do M (64,65), o que confirma de novo
+que **quem manda no encaixe é a saída, não a altura** — os dois estão a 3°.
+
+**Ainda não medido no G: a rigidez da chapa vazada**, agora sobre um vão de
+554 × 374 mm contra os 357 × 377 do M. É a mesma pendência, sobre um vão maior.
+
+Arquivos: `padrao_g()` em `modelo3d.py`. O visor `cad/visor-elo.html` voltou às
+**três malhas** com as cenas "O G", "Três P no G" e a linha inteira; a malha do
+G tem 120.949 vértices.
 
 ### 4.3 Acoplado — as três canaletas
 
