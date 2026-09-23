@@ -1116,6 +1116,84 @@ acompanhando a borda, o normal em caixaria.
 Arquivo: `cad/extracao.py`. Depende de `networkx` e `rtree` (dependências
 opcionais do trimesh): `pip install networkx rtree`.
 
+### 4.2.6 A configuração C, e a varredura da borda
+
+Escolhida a **C** — envelope de planta em 200 × 250, aba para fora, saída de
+molde reduzida de 12° para 6° para devolver litragem. `ABA_DIR` (+1 fora, −1
+dentro) e `set_envelope(larg, prof, saída, alt)` geram qualquer das variantes;
+derivados novos: `aba_x0/aba_x1`, `pe_topo()` (a face externa do pé morre na
+aresta livre da aba — é dali que vem a saída em x de que ele precisa para
+telescopar) e `pe_r00()` (o piso do pé tem de alcançar a faixa de pouso).
+
+| | hoje | A | B | **C** |
+|---|---|---|---|---|
+| envelope | 204 × 241 | 224 × 241 | 204 × 221 | **204 × 235** |
+| capacidade | 4,41 L | 4,41 L | 3,52 L | **4,09 L** |
+| passo encaixado | 46,80 | 39,99 | 39,99 | **39,98** |
+| 12 peças | 647 mm | 572 mm | 572 mm | **572 mm** |
+| preso no molde | 58.242 mm³ | 5.676 | 5.088 | **9.217** |
+
+A contra-saída acaba nas três; o que sobra é a linha de base dos rasgos
+passantes. E o **encaixe melhora** de 46,80 para 39,98 mm porque a aresta
+interna da aba deixa de ser o gargalo — 12% menos caixa. Como o passo passa a
+ser `NERV_T` / saída em x do **pé**, que não depende da saída do **corpo**, a
+saída fica livre para engordar a base: é o que C explora.
+
+#### A varredura pediu três adaptações
+
+**1. `silhueta(folga)` para a aba — era um bug, não uma fragilidade.** O
+recorte da silhueta do corpo amputava a aba nova em y: sobravam **0,26 mm** da
+aba de trás em vez de 10, e a saia pousava no vazio. Era isso, e não o
+deslocamento, o tripé de 60 mm² da primeira rodada. Com a aba recortada pela
+sua própria silhueta (offset de `ABA_W`), o tripé volta a **473 mm²** — mais
+que os 388 de hoje — e `DESLOC` fica em 21 mm.
+
+**2. Dobra de 5 mm na aresta da aba.** Duas peças acopladas só se tocavam na
+espessura da aba: abaixo de z = 127,5 as paredes estão 10 mm para dentro de
+cada lado, um vão de 20 mm. O engate da cauda caía de **14 mm** (na versão com
+aba para dentro, onde a fêmea escavava a faixa do rim) para **2,5 mm**. A
+dobra devolve 7,5 mm de altura de junta, e de quebra enrijece e protege a
+aresta — o "mini reforço" que o cliente intuiu. Medido: a trava a 1,2 mm de
+deslocamento vai de 11,2 para **27,2 mm³**, e a soltura passa a exigir 10 mm
+de levantamento em vez de 6. Custa 4,3 g. Sai do molde: a silhueta salta para
+fora subindo (89,5 → 100 em z = 122,5) e o canal entre a dobra e a casca abre
+para baixo, onde a cavidade chega.
+
+**3. Vaziar a cauda de andorinha.** Era um bloco **maciço de 1.556 mm³ com 7 a
+11 mm de espessura** numa peça de parede 1,4 — não fragilidade, o contrário:
+massa que chupa a face externa do rim e manda no tempo de ciclo. Vaziada por
+cima (o plano da junta, então sai reta): parede de 1,8 mm, seção máxima 3,3 mm,
+a mesma do rim.
+
+#### A borda precisa de reforço em todo o perímetro? Não
+
+A seção **não mudou, só espelhou**: antes era uma alma de 3,2 × 14 mm com um
+lábio de 10 × 2,5 virado para dentro; agora é a mesma alma com o mesmo lábio
+virado para fora. O momento de inércia de um L espelhado é idêntico, então a
+rigidez de aro contra ovalizar é a mesma de hoje.
+
+Onde o empilhamento mudou, mudou para **melhor**. Hoje o pé pousa na ponta de
+um lábio de 10 mm em balanço; na C ele pousa em x 86,6…94,0 — sobre o topo do
+rim (86,8…90,0) **e** a raiz da aba (90…94), direto acima da parede. Braço de
+flexão medido: **0,55 mm contra 4,75 mm**. A aba nem entra em flexão.
+
+Coluna de 4 com 1 kg em cada (34,5 N na peça de baixo):
+
+| | carga | área | tensão |
+|---|---|---|---|
+| pé (cada) | 13,2 N | 27,4 mm² | 0,48 MPa → 60× |
+| saia | 8,1 N | 418 mm² | 0,41 MPa na aba, flecha 0,003 mm |
+| parede em compressão | 26,4 N | 64 mm² | 0,41 MPa |
+
+E o encaixe: o batente é **plano** — a membrana do pé, em z = 40 = `Z_CAV`.
+Não é cunha, então não agarra. A interferência é 1,83 mm³ no passo e **zero já
+a 1 mm acima**; parede-a-parede sobram 2,8 mm de folga e as cunhas do pé
+liberam 4,4 mm antes do batente.
+
+Arquivos: `cad/abafora.py` (folha `abafora.png`, as quatro configurações lado a
+lado) e `cad/varredura.py` (folha `varredura.png`, a varredura da C com os três
+vereditos e a seção da borda).
+
 ### 4.3 Acoplado — as três canaletas
 
 O pedido foi uma **canaleta de ponta a ponta na lateral, macho de um lado e
@@ -1390,6 +1468,10 @@ cad/colunas.py     folha colunas.png: as colunas de listra da lateral antes e
                    depois de serem ancoradas no pe, com a tabela de folgas
 cad/extracao.py    auditoria de EXTRACAO: mede o volume que nenhuma das duas
                    metades do molde alcanca (sombra de cima x sombra de baixo)
+cad/abafora.py     folha abafora.png: as configuracoes A, B e C da aba para
+                   fora, medidas lado a lado com a peca de hoje
+cad/varredura.py   folha varredura.png: a varredura da C -- empilhar, acoplar,
+                   encaixar, a secao da borda e as tres adaptacoes
 
 O vazado da lateral: cols_lateral() gera as colunas ANCORADAS NO PE, nao numa
 grade centrada em y = 0 -- e o que garante nervura de 5 mm em toda a lateral

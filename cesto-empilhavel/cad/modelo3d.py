@@ -138,6 +138,21 @@ ABA_DIR = +1
 # LARG/2 + ABA_W, e o piso do pe tem de alcancar la. ABA_POUSO e a largura do
 # apoio; o resto de ABA_W e a saida em x que o pe precisa para telescopar.
 ABA_POUSO = 4.0
+# DOBRA na aresta da aba, para baixo. Medido em 23/09 na configuracao C: com a
+# aba para fora, duas pecas acopladas so se tocam na espessura dela -- abaixo
+# de z = 127,5 as paredes estao 10 mm para dentro de cada lado, ou seja ha um
+# vao de 20 mm. O engajamento da cauda de andorinha caia de 14 mm (na versao
+# com aba para dentro, onde a femea escavava a faixa do rim) para 2,5 mm. A
+# dobra devolve altura de junta, e de quebra enrijece e protege a aresta -- o
+# "mini reforco" que o cliente intuiu. Sai do molde: a silhueta salta para
+# fora subindo (89,5 -> 100 em z = 122,5) e o canal entre a dobra e a casca
+# abre para baixo, onde a cavidade chega.
+ABA_DOBRA, ABA_DT = 5.0, 2.0
+# Parede da cauda de andorinha depois de vaziada. Ela era um bloco MACICO de
+# 1.556 mm3 com 7 a 11 mm de espessura numa peca de parede 1,4: chupa a face
+# externa do rim e manda no tempo de ciclo. Vaziada por CIMA -- o plano da
+# junta -- quem a forma e a metade de cima e sai reta.
+ACO2_T, ACO2_PISO = 1.8, 2.0
 ABA_F = 2.0                   # folga do recorte alem do pe
 NERV_P = 24.0                 # profundidade do pe em x (>20,6: encosta na parede)
 NERV_T = 1.6                  # parede do pe da frente
@@ -301,9 +316,17 @@ def secao(z, folga=0.0):
             BASE_Y + 2 * z * TAN - 2 * folga)
 
 
-def silhueta():
-    """Perfil lateral (plano YZ) com as pontas arredondadas. Frente em -Y."""
-    yf, yb = -PROF / 2, PROF / 2
+def silhueta(folga=0.0):
+    """Perfil lateral (plano YZ) com as pontas arredondadas. Frente em -Y.
+
+    `folga` empurra a frente e o fundo para FORA. Serve para a ABA PARA FORA:
+    ela avanca ABA_W alem da parede, e o recorte da silhueta do CORPO a
+    amputava em y (medido: sobravam 0,26 mm da aba de tras em vez de 10, e
+    por isso a saia de tras pousava no vazio). Com folga = ABA_W o perfil
+    acompanha a mesma dobra do rim, 10 mm para fora -- inclusive no chanfro de
+    topo, onde a aba tem de seguir a borda que desce.
+    """
+    yf, yb = -PROF / 2 - folga, PROF / 2 + folga
     pts = [
         (yb, 0.0),                       # fundo, atras
         (yb, ALT),                       # costas, no alto
@@ -603,6 +626,36 @@ def pe_r00():
     """x do piso do pe: tem de alcancar a faixa de pouso da aba."""
     return (LARG / 2 + ABA_POUSO if ABA_DIR > 0
             else LARG / 2 - ABA_W + 3.0)
+
+
+def _aba_dobra():
+    """Dobra para baixo na aresta livre da aba (so quando ela vai para fora).
+
+    Transforma o labio plano num PERFIL EM U: a altura de junta entre duas
+    pecas acopladas passa de ABA_T (2,5 mm) para ABA_T + ABA_DOBRA, e a aresta
+    -- que agora e o que bate primeiro numa queda e o que a mao pega -- deixa
+    de ser uma lamina de 2,5 mm.
+    """
+    r = 14.0 + ALT * TAN + ABA_W
+    z0 = ALT - ABA_T - ABA_DOBRA
+    fr = RectangleRounded(LARG + 2 * ABA_W, PROF + 2 * ABA_W, r)
+    dr = RectangleRounded(LARG + 2 * (ABA_W - ABA_DT),
+                          PROF + 2 * (ABA_W - ABA_DT), max(r - ABA_DT, 1.0))
+    return Pos(0, 0, z0) * (extrude(fr, ABA_DOBRA) - extrude(dr, ABA_DOBRA))
+
+
+def _cauda2_vazio(sx, yc):
+    """O vazio da cauda: a mesma planta recuada ACO2_T, aberta no TOPO."""
+    x0 = aba_x1() if ABA_DIR > 0 else LARG / 2
+    xi = LARG / 2 + ACO2_T                     # para na face externa do rim
+    xe = x0 + ACO2_D - ACO2_T
+    wn, wt = ACO2_WN - 2 * ACO2_T, ACO2_WT - 2 * ACO2_T
+    pts = [(sx * xi, yc - wn / 2), (sx * x0, yc - wn / 2),
+           (sx * xe, yc - wt / 2), (sx * xe, yc + wt / 2),
+           (sx * x0, yc + wn / 2), (sx * xi, yc + wn / 2)]
+    sk = make_face(Polyline(*pts, close=True))
+    z0 = ALT - ACO2_H + ACO2_PISO
+    return Pos(0, 0, z0) * extrude(sk, ALT + 2 - z0)
 
 
 def _aba(fora, interno):
@@ -1083,8 +1136,6 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
     p += cheio & Pos(0, 0, ALT - h_rim) * extrude(
         RectangleRounded(LARG + 40, PROF + 40, 0.1), h_rim + 10)
 
-    if aba:
-        p += _aba(fora, interno)
     if acopl == "D":
         p += _colar() - extrude(interno, ALT + 10, taper=-DRAFT)
 
@@ -1093,6 +1144,15 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
     p = p & sil
     # ... e devolve a parede que o chanfro do pe tinha comido na frente
     p += _tapa_frente(fora, sil)
+    # A ABA entra DEPOIS do recorte, com a silhueta dela: para fora ela passa
+    # de PROF/2 e o recorte do corpo a amputaria em y.
+    if aba:
+        folga = ABA_W if ABA_DIR > 0 else 0.0
+        sil_aba = extrude(Plane.YZ * silhueta(folga),
+                          LARG / 2 + 30 + folga, both=True)
+        p += _aba(fora, interno) & sil_aba
+        if ABA_DIR > 0 and ABA_DOBRA > 0:
+            p += _aba_dobra() & sil_aba
 
     # --- vazado ---
     # Colunas calculadas UMA vez, na cota mais BAIXA do campo (onde a parede
@@ -1209,6 +1269,9 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
         for yc in aco_y():
             p += _cauda2(1, yc) - env          # macho na direita
             p -= _cauda2(-1, yc, dentro=True, f=ACO2_F)   # femea na esquerda
+        if ABA_DIR > 0:
+            for yc in aco_y():                 # vazia o macho por cima
+                p -= _cauda2_vazio(1, yc)
     elif not estrutura:       # com estrutura o pe e o fundo da nervura
         p += _pezinhos()
     if empilha:
