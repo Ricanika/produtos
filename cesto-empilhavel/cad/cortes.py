@@ -59,9 +59,9 @@ def cota(ax, x, z0, z1, txt, cor=NOVO, lado=1):
             va="center", ha="left" if lado > 0 else "right")
 
 
-def main(pn):
+def main(pn, ap_saia=None):
     global DESLOC
-    M.set_draft(12.0)
+    M.padrao()
     DESLOC = M.DESLOC
     arq = os.path.join(DEST, "cesto-aba.stl")
     if not os.path.exists(arq):
@@ -92,12 +92,25 @@ def main(pn):
     cota(ax, hx - 42, 0.0, pn, f"{pn:.1f} mm".replace(".", ","))
     ax.text(hx + 5, 4, "piso do pé de cima\ndentro do pé de baixo", fontsize=8.4,
             color=NOVO, va="center", ha="left")
-    ax.annotate("", xy=(M.LARG / 2, 137), xytext=(M.LARG / 2 - M.ABA_W, 137),
+    # A seta e a nota marcam a ABA. Com ABA_DIR = +1 ela sai para fora, e o
+    # gargalo do encaixe deixa de ser a borda interna dela -- entao a nota
+    # muda de texto, em vez de repetir o "10/tg 12 = 46,9" que era da aba
+    # para dentro.
+    x_aba = M.LARG / 2 + M.ABA_DIR * M.ABA_W
+    ax.annotate("", xy=(M.LARG / 2, 137), xytext=(x_aba, 137),
                 arrowprops=dict(arrowstyle="<->", color=CINZ, lw=1.0))
-    ax.text(hx - M.ABA_W - 3, 138,
-            "aba 10 mm: a parede de cima tem\nde passar pela borda interna "
-            "dela\n→ 10/tg 12° = 46,9 mm",
-            fontsize=8.4, color=CINZ, va="bottom", ha="right")
+    if M.ABA_DIR > 0:
+        nota = (f"aba {M.ABA_W:.0f} mm para FORA: a parede de cima\n"
+                f"não passa mais pela borda dela\n"
+                f"→ quem manda no passo é o PÉ: "
+                f"{pn:.1f} mm".replace(".", ","))
+        ha, xt = "left", hx + M.ABA_W + 3
+    else:
+        nota = (f"aba {M.ABA_W:.0f} mm: a parede de cima tem\nde passar pela "
+                f"borda interna dela\n→ {M.ABA_W:.0f}/tg {M.DRAFT:.0f}° = "
+                f"{pn:.1f} mm".replace(".", ","))
+        ha, xt = "right", hx - M.ABA_W - 3
+    ax.text(xt, 138, nota, fontsize=8.4, color=CINZ, va="bottom", ha=ha)
     ax.text(hx - 55, 196, "cinza claro: a mesma peça %.0f mm ao lado,\nonde a " % DESLOC +
             "parede e a aba estão inteiras", fontsize=8.2, color="#9aa4b2",
             va="top", ha="left")
@@ -128,14 +141,31 @@ def main(pn):
     ax.set_xlim(98, 136); ax.set_ylim(118, 144)
     ax.set_title("A SAIA DE TRÁS · corte no meio da traseira", fontsize=12,
                  color=TINTA, weight="bold", pad=14)
-    ap = f"{M.BASE_Y / 2 + DESLOC - (M.PROF / 2 - M.ABA_W):.1f}".replace(
-        ".", ",")
-    ax.text(99, 143,
+    # A profundidade de pouso da saia na aba depende do LADO da aba: para
+    # dentro a faixa e [PROF/2 - ABA_W, PROF/2], para fora [PROF/2,
+    # PROF/2 + ABA_W]. A formula antiga so valia para dentro e, na
+    # configuracao C, exagerava o apoio em 10 mm.
+    y_saia = M.BASE_Y / 2 + DESLOC
+    if M.ABA_DIR > 0:
+        pouso = min(y_saia, M.PROF / 2 + M.ABA_W) - M.PROF / 2
+    else:
+        pouso = y_saia - (M.PROF / 2 - M.ABA_W)
+    ap = f"{pouso:.1f}".replace(".", ",")
+    # O numero formatado SOZINHO: o replace(".", ",") na frase inteira troca o
+    # ponto final por virgula -- e o que acabou de acontecer aqui, pela
+    # terceira vez neste arquivo.
+    med = ("" if ap_saia is None else
+           f"\nMedido no sólido, o contato real é de {ap_saia:.0f} mm².")
+    # A janela deste painel tem 26 mm de altura: nao cabe legenda de 5 linhas
+    # dentro dela. Em y = 143 o desenho passava por cima do texto; em 158 o
+    # texto ia para CIMA do titulo. Vai abaixo do eixo (ylim comeca em 118),
+    # onde a folha esta vazia -- titulo, desenho, legenda, nessa ordem.
+    ax.text(99, 115,
             f"a parede de trás (laranja) desce {M.H_PE:.0f} mm até o piso, "
             f"RENTE à casca:\nnada aparece de fora. A aresta de baixo, de "
             f"{M.SAIA_B:.0f} mm, pousa na aba\nda peça de baixo — {ap} mm de "
             f"apoio × {M.SAIA_W:.0f} mm de largura.\nCusta zero no encaixe: "
-            f"a face externa dela é a própria superfície do cone.",
+            f"a face externa dela é a própria superfície do cone." + med,
             fontsize=8.4, color=TINTA, va="top", ha="left")
 
     fig.subplots_adjust(top=0.855, bottom=0.03, left=0.015, right=0.985)
@@ -144,4 +174,16 @@ def main(pn):
 
 
 if __name__ == "__main__":
-    main(46.9)
+    # Rodando sozinho, MEDE o passo em vez de trazer o 46,9 digitado da
+    # saida de 12 graus. Na pratica quem chama e aba.py, que ja o mediu.
+    from build123d import Pos
+    M.padrao()
+    _p, _ = M.cesto(aba=True)
+    _lo, _hi = 0.0, 180.0
+    while _hi - _lo > 0.02:
+        _m = (_lo + _hi) / 2
+        if (_p & (Pos(0, 0, _m) * _p)).volume > 0.002:
+            _lo = _m
+        else:
+            _hi = _m
+    main(_hi)

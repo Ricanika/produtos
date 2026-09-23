@@ -1,20 +1,25 @@
 # Impressão 3D em PETG — Cesto Mini Organizador P
 
 Fatiado com PrusaSlicer 2.7.2 a partir de `cad/cesto-aba.stl` (o mesmo sólido
-do projeto, 200 × 250 × 130 mm, envelope real 204 × 241 × 132,5 mm).
+do projeto, 200 × 250 × 130 mm, envelope real 204 × 235,1 × 132,5 mm).
 
-Refatiado em 22/09 acompanhando as correções: os dois furos do pé (chapa do
-fundo inteira, parede cega até z = 40, bolsa cega sob o pé), as **três faixas
-de listra** com rasgo de 6 × 18,3 mm, a **tapa do rasgo inferior frontal** e
-as **colunas de listra ancoradas no pé** (123 rasgos, nenhum cortado). Todo `.gcode` desta pasta é da peça atual. O tempo subiu
-~50 min em relação à peça de duas faixas porque são 135 rasgos em vez de 65 —
-mais perímetro para contornar.
+Refatiado em 23/09 na **configuração C** — aba para FORA (é ela que extrai do
+molde em duas placas, §4.2.5 do README), saída de 6° e envelope de planta em
+200 × 250. Acompanha todas as correções anteriores: os dois furos do pé (chapa
+do fundo inteira, parede cega até z = 40, bolsa cega sob o pé), as **três
+faixas de listra** com rasgo de 6 × 18,3 mm, a **tapa do rasgo inferior
+frontal agora derivada da saída** (era fixa em 14 mm e reabria 11 mm de rasgo
+a 6°) e as **colunas de listra ancoradas no pé** (123 rasgos, nenhum cortado).
+Todo `.gcode` desta pasta é da peça atual.
+
+A peça encurtou 6 mm em y (241 → 235,1) e engordou 2,7 g. O tempo subiu ~40 min
+porque a aba virada para fora acrescentou a dobra de 5 mm em todo o perímetro.
 
 | arquivo | bico | camada | filamento | tempo |
 |---|---|---|---|---|
-| `cesto-P-petg-anycubic.gcode` | 0,4 mm | 0,30 mm | **221 g** | **15 h 47 min** |
-| `cesto-P-petg-bico04.gcode` | 0,4 mm | 0,30 mm | 221 g | 15 h 47 min |
-| `cesto-P-petg-bico06.gcode` | 0,6 mm | 0,40 mm | 232 g | **8 h 42 min** |
+| `cesto-P-petg-anycubic.gcode` | 0,4 mm | 0,30 mm | **233 g** | **16 h 27 min** |
+| `cesto-P-petg-bico04.gcode` | 0,4 mm | 0,30 mm | 233 g | 16 h 28 min |
+| `cesto-P-petg-bico06.gcode` | 0,6 mm | 0,40 mm | 245 g | **9 h 02 min** |
 
 **Para imprimir você usa UM arquivo só: o `.gcode` do seu bico.** Os dois são
 a mesma peça, fatiada de dois jeitos — escolha pelo bico que está na máquina.
@@ -24,19 +29,20 @@ sua máquina forem diferentes.
 
 ## ANTES DE IMPRIMIR — três coisas
 
-**1. A cama tem de ter 210 × 250 mm de área útil.** O perfil está para
+**1. A cama tem de ter 210 × 240 mm de área útil.** O perfil está para
 300 × 300 mm e a peça vai centrada em (150, 150), ocupando x 48…252 e
-y 30…270. Se a sua cama for menor:
+y 32…268 (medido no gcode: x 0…251,8 e y 10…280 com o brim de 4 mm). Se a sua
+cama for menor:
 
 - **250 × 210** (Prusa MK4): cabe **girando 90°** — `prusa-slicer --rotate 90`,
-  ou no GUI a peça entra rotacionada.
+  ou no GUI a peça entra rotacionada (235 em x, 204 em y).
 - **256 × 256** (Bambu X1/P1): cabe direto.
-- **220 × 220** (Ender 3): **não cabe**. 241 mm de comprimento não entram nem
-  girando.
+- **220 × 220** (Ender 3): **não cabe**. Faltam 15 mm para os 235 mm de
+  comprimento, e girar não resolve porque a cama é quadrada.
 
 **2. O suporte é obrigatório, e são só 5 mm.** A chapa do fundo fica 5 mm
 acima do piso (a peça apoia nos pés, não na parede), então esses 5 mm são um
-vão de 145 × 195 mm — nenhuma ponte fecha isso. O perfil desliga o suporte
+vão de 189 × 188 mm — nenhuma ponte fecha isso. O perfil desliga o suporte
 **automático** e força suporte só nas primeiras camadas (18 a 0,3 mm / 14 a
 0,4 mm). Isso importa: com o automático ligado, mesmo em "buildplate only", o
 PrusaSlicer enchia o cesto inteiro de torre — medido, **260 g de suporte para
@@ -49,10 +55,12 @@ start por um da sua impressora que **não** mande M83, tire também o
 
 ## O que a impressão NÃO vai reproduzir
 
-- **A face de baixo da aba** vai cair um pouco. A aba é um degrau de 7 mm para
-  dentro, sem apoio embaixo, e não vale a pena erguer 120 mm de torre dentro
-  do cesto para salvar uma face que não é funcional. A face de CIMA da aba —
-  que é onde os pés pousam — sai plana.
+- **A face de baixo da aba** vai cair um pouco. Agora a aba é um degrau de
+  10 mm para **fora**, com a dobra de 5 mm descendo na aresta — a face de baixo
+  fica em balanço e o suporte automático está desligado. Ela não é funcional: a
+  face de CIMA da aba, que é onde os pés da peça de cima pousam, sai plana. Se
+  o protótipo precisar dela perfeita, ligue suporte "apenas na mesa" — o balanço
+  é externo, então a torre sobe por fora e não enche o cesto.
 - **As folgas do acoplamento (0,2 mm por face) e do friso (0,3 mm) estão
   abaixo da resolução de FDM.** No protótipo a cauda de andorinha vai entrar
   justa ou precisar de uma lixada. Elas são cotas de molde, não de impressão.
@@ -67,7 +75,7 @@ nas 3 primeiras camadas, retração de 2 mm com wipe, perímetro externo a
 primeira camada é o que decide o resultado.
 
 `filament_cost = 120` R$/kg é palpite — troque pelo seu e o PrusaSlicer
-recalcula (hoje dá R$ 24,79 por peça no bico 0,4).
+recalcula (hoje dá R$ 27,99 por peça no bico 0,4).
 
 ## Anycubic Kobra 3 / S1 / 3 Max — `cesto-P-petg-anycubic.gcode`
 
@@ -103,17 +111,20 @@ vale nos outros dois. O que mudou em relação ao perfil genérico:
   miniatura foi gerada depois pelo `miniatura.py`, que desenha a peça a partir
   do STL e injeta o bloco `thumbnail begin/end` (PNG em base64, o mesmo
   formato que o OrcaSlicer escreve) no cabeçalho
-- brim de 4 para **2 mm**: a peça tem 241 mm em y e sobram só 4,8 mm de folga
+- brim de 4 para **2 mm**: a peça tem 235,1 mm em y. Com a C encurtando 6 mm,
+  a folga em y subiu de 4,8 para **7,7 mm** de cada lado
 - `M900` (pressure advance) **omitido de propósito**: está no perfil da Kobra 3
   mas não no da S1, e um valor errado estraga o canto
 - sem purga manual e sem `G28` no start — quem faz isso é o `G9111`
 
-Conferido no arquivo gerado: `G9111 bedTemp=80 extruderTemp=245` na linha 189
-(logo depois da miniatura), miniatura de 230 × 110 conferida byte a byte
-(cabeçalho PNG válido, dimensões reais 230 × 110, tamanho declarado igual ao
-real), E relativo com `G92 E0` por camada, suporte só entre z 0,3 e 4,9 mm,
-tudo dentro de 250 × 250 × 250 (x 10…227, y 4,8…245, z até 132,8) e só
-comandos que o Klipper conhece — G1/G21/G90/G91/G92 e
+Conferido no arquivo gerado: `G9111 bedTemp=80 extruderTemp=245` na **linha
+190** (logo depois da miniatura), miniatura de 230 × 110 conferida byte a byte
+(cabeçalho PNG válido, dimensões reais 230 × 110, PNG de 9.926 bytes e os
+13.236 caracteres de base64 declarados no cabeçalho — a convenção do
+PrusaSlicer é declarar o tamanho do **base64**, não do PNG), E relativo com
+`G92 E0` por camada, suporte só entre z 0,3 e 5,3 mm, tudo dentro de
+250 × 250 × 250 (**x 10…226,8, y 7,7…242,3**, z até 132,8) e só comandos que o
+Klipper conhece — G1/G21/G90/G91/G92 e
 M83/M84/M104/M106/M107/M109/M117/M140/M190/M400. Nenhum M205, M900 ou M420.
 
 **O que eu não pude testar:** a máquina. Se o 10133 insistir, o conserto
@@ -152,20 +163,21 @@ perfil da máquina, e reproduzir lá os parâmetros abaixo.
 | perímetro externo | 25 mm/s | PETG |
 
 **Suporte — é o ponto que mais importa.** A chapa do fundo fica 5 mm acima do
-piso, então esse vão de 145 × 195 mm precisa de suporte. Mas o suporte
+piso, então esse vão de 189 × 188 mm precisa de suporte. Mas o suporte
 automático quer encher o cesto inteiro de torre: medido no PrusaSlicer, **260 g
 de suporte para 196 g de peça**, e 16 h a mais. Ligue suporte **"apenas na
 mesa" (on build plate only)** e confira a pré-visualização: se aparecer torre
 DENTRO do cesto, use um *support blocker* cobrindo o interior acima de z = 6 mm.
 O suporte certo é uma laje de 5 mm embaixo da chapa e nada mais.
 
-**A cama.** A peça é 204 × 241 mm:
+**A cama.** A peça é 204 × 235,1 mm:
 
 | modelo | cabe? | sobra |
 |---|---|---|
-| Kobra 3 / S1 (250 × 250) | cabe | 46 mm em x, **9,1 mm em y** |
+| Kobra 3 / S1 (250 × 250) | cabe | 46 mm em x, **14,9 mm em y** |
 | Kobra 3 Max (420 × 420) | cabe folgado | — |
-| Kobra 2 / Neo (220 × 220) | **não cabe** | faltam 21 mm em y |
+| Kobra 2 / Neo (220 × 220) | **não cabe** | faltam 15 mm em y |
 
-Nos 250 × 250 sobram só 4,5 mm de cada lado em y — por isso brim de 2 mm e
-skirt desligado. Girar não resolve (a cama é quadrada) e girar 45° piora.
+Nos 250 × 250 sobram 7,7 mm de cada lado em y (era 4,5 na peça de 241 mm) — o
+brim de 2 mm e o skirt desligado ficam por precaução, não por necessidade.
+Girar não resolve (a cama é quadrada) e girar 45° piora.

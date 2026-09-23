@@ -31,7 +31,7 @@ def build(vazado, arq):
 
 
 def main():
-    M.set_draft(12.0)
+    M.padrao()
     out = {}
     for vazado, arq in (("bolinha", "lis-bol.stl"), ("listra", "lis-lis.stl")):
         p, n = build(vazado, arq)
@@ -87,12 +87,20 @@ def main():
                 va="center", ha="right")
         y -= 0.075
     bx.plot([0.05, 0.95], [y + 0.03, y + 0.03], color="#f0d3c2", lw=1)
-    bx.text(0.05, y - 0.02, "A parede vazada é só 26% da peça. Tirar 1 g dela "
-            "custa caro; a chapa do fundo, que é 33%, está intacta — o vazado "
-            "nunca chegou nela.\n\nMedido nas variantes de listra: o que pesa "
-            "não é a largura nem o passo, é o NÚMERO DE FAIXAS. Cada faixa a "
-            "mais é uma nervura horizontal dando a volta na peça: de 3 para 2 "
-            "faixas saem 6,1 g. Largura de 9 para 11 mm rende 0,7 g.\n\nDuas "
+    # As duas porcentagens saem da tabela logo acima. Digitadas, elas
+    # diziam 26% e 33% sobre uma tabela que mostrava outros valores -- a
+    # prosa contradizia a medicao a tres centimetros de distancia.
+    pc = {nome: 100 * g / tot for nome, g in peso}
+    p_par = next(v for k, v in pc.items() if "parede" in k)
+    p_cha = next(v for k, v in pc.items() if "chapa" in k)
+    bx.text(0.05, y - 0.02,
+            f"A parede vazada é só {p_par:.0f}% da peça. Tirar 1 g dela "
+            f"custa caro; a chapa do fundo, que é {p_cha:.0f}%, está intacta "
+            "— o vazado nunca chegou nela.\n\nMedido nas variantes de listra: "
+            "o que pesa não é a largura nem o passo, é o NÚMERO DE FAIXAS. "
+            "Cada faixa a mais é uma nervura horizontal dando a volta na "
+            "peça — a varredura está na folha rasgos.png, e lá de 2 para 3 "
+            "faixas entram 7,6 g.\n\nDuas "
             "faixas é o mínimo razoável: a nervura do meio é o que segura a "
             "parede contra embarrigar sob a pilha.",
             fontsize=9.0, color=TINTA, va="top", linespacing=1.5, wrap=True)

@@ -95,8 +95,11 @@ def furos(p):
     return (vol(inteira, fatia) - vol(p, tronco, fatia)) / e
 
 
+CARGA_PE = 13.2   # N, ver varredura.py
+
+
 def main():
-    M.set_draft(12.0)
+    M.padrao()
     dados = {}
     for nome, fechado in (("antes", False), ("depois", True)):
         p, n = constroi(fechado)
@@ -244,7 +247,7 @@ def folha(d):
            "a bolsa é CEGA: existe só por fora da casca")
     planta(fig, [0.030, 0.040, 0.445, 0.400], d)
 
-    tb = fig.add_axes([0.305, 0.545, 0.235, 0.360]); tb.axis("off")
+    tb = fig.add_axes([0.305, 0.520, 0.235, 0.385]); tb.axis("off")
     tb.add_patch(Rectangle((0, 0), 1, 1, transform=tb.transAxes,
                            facecolor="#fdf6f1", edgecolor="#f0d3c2", lw=1.3))
     tb.text(0.06, 0.955, "MEDIDO NO SÓLIDO", fontsize=11.5, color=NOVO,
@@ -283,7 +286,7 @@ def folha(d):
 
     corte(fig, [0.520, 0.040, 0.452, 0.400], d)
 
-    tx = fig.add_axes([0.580, 0.520, 0.392, 0.385]); tx.axis("off")
+    tx = fig.add_axes([0.580, 0.478, 0.392, 0.427]); tx.axis("off")
     tx.add_patch(Rectangle((0, 0), 1, 1, transform=tx.transAxes,
                            facecolor="#f6f7f9", edgecolor="#e3e0da", lw=1.2))
     tx.text(0.04, 0.955, "O PREÇO: A SOLA VIRA COROA", fontsize=11.5,
@@ -302,14 +305,24 @@ def folha(d):
         f"{vg(d['depois']['sola_aba'], 1, 'mm²')}.\n"
         f"Tripé completo: {' + '.join(f'{a:.0f}' for a in ap)} = "
         f"{sum(ap):.0f} mm² de contato de face plana.\n\n"
-        "Numa coluna de 4 com 1 kg em cada, o pé pega 11,6 N:\n"
-        f"   • pressão de contato 11,6 / {vg(d['depois']['sola_aba'])} = "
-        f"{vg(11.6/d['depois']['sola_aba'], 2)} MPa (PP cede a ~30) → 34×\n"
-        "   • a aba flete 0,03 mm e trabalha a 5,5 MPa → 5×\n"
-        "Passa folgado nos dois. O que NÃO passava era a folga de\n"
-        "montagem do friso: 0,21 mm, menos que a tolerância da\n"
-        "própria injeção. Aberta para 0,8 → ±0,9 mm em x, ±1,2 em y.")
-    tx.text(0.04, 0.905, texto, fontsize=8.0, color=TINTA, va="top",
+        # A carga por pe (13,2 N dos 34,5 N da coluna de 4) vem da estatica
+        # do tripe em varredura.png; a pressao sai da area MEDIDA aqui, para
+        # as duas folhas nao divergirem. Estava 11,6 N digitado, da geometria
+        # anterior, e a folga do friso trazia ±1,2 em y quando aba.py mede
+        # outro valor -- numero repetido em duas folhas envelhece em uma.
+        f"Numa coluna de 4 com 1 kg em cada ({vg(CARGA_PE)} N no pé, pela\n"
+        f"estática do tripé em varredura.png):\n"
+        f"   • pressão de contato {vg(CARGA_PE)} / "
+        f"{vg(d['depois']['sola_aba'])} = "
+        f"{vg(CARGA_PE/d['depois']['sola_aba'], 2)} MPa (PP cede a ~30) → "
+        f"{30/(CARGA_PE/d['depois']['sola_aba']):.0f}×\n"
+        "   • a saia pousa na aba direto acima da parede: braço de\n"
+        "     flexão de 0,55 mm, e a aba nem entra em flexão\n"
+        "Passa nos dois. O que NÃO passava era a folga de montagem\n"
+        "do friso: 0,21 mm, menos que a tolerância da própria injeção.\n"
+        "Aberta para 0,8 mm e 8° de saída; a folga resultante está\n"
+        "medida na folha aba.png.")
+    tx.text(0.04, 0.925, texto, fontsize=7.9, color=TINTA, va="top",
             linespacing=1.5, family="DejaVu Sans")
 
     fig.savefig(os.path.join(DEST, "fechado.png"), dpi=118,

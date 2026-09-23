@@ -82,7 +82,7 @@ def empacota(m):
 
 def medidas():
     """Os numeros que vao na pagina, medidos no solido -- nao digitados."""
-    M.set_draft(12.0)
+    M.padrao()
     p, n = M.cesto(aba=True)
 
     def vol(a, b):
@@ -105,8 +105,18 @@ def medidas():
     inter = p & (Pos(0, M.DESLOC, pe - 0.3) * p)
     ap = sorted((s.volume / 0.3 for s in inter.solids() if s.volume > 0.002),
                 reverse=True)
+    # Altura de levantamento que solta duas pecas acopladas: o visor trazia
+    # 15 mm digitado, da versao com a aba para dentro. Com a aba para fora a
+    # junta e a dobra (ABA_DOBRA + ABA_T), entao o numero MUDA com a cota.
+    passo_ac = M.passo_acoplado()
+    solta = 0.0
+    for dz in [i * 0.5 for i in range(1, 61)]:
+        if vol(p, Pos(passo_ac + 1.2, 0, dz) * p) <= 0.0:
+            solta = dz
+            break
     return dict(pn=pn, pe=pe, peso=p.volume * M.RHO, cap=M.capacidade(),
-                furos=n, apoios=ap, interf=vol(p, Pos(0, M.DESLOC, 130.0) * p))
+                furos=n, apoios=ap, solta=solta,
+                interf=vol(p, Pos(0, M.DESLOC, 130.0) * p))
 
 
 def troca(s, velho, novo, o_que):
@@ -130,8 +140,24 @@ def main():
     s = re.sub(r"var PASSO_ENCAIXE = [\d.]+, PASSO_PILHA = [\d.]+",
                f"var PASSO_ENCAIXE = {d['pn']:.1f}, PASSO_PILHA = "
                f"{d['pe']:.1f}", s, count=1)
-    s = re.sub(r"saída 12°/lado · [\d,]+ g",
-               f"saída 12°/lado · {vg(d['peso'])} g", s, count=1)
+    # A saida NAO e literal: ela mudou de 3,5 para 12 e depois para 6 graus
+    # (secao 4.2.6). Escrita a mao, o visor mentiria a cota mais estrutural
+    # da peca -- e foi por um "12" fixo assim que a tapa da frente reabriu.
+    s = re.sub(r"saída [\d,]+°/lado · [\d,]+ g",
+               f"saída {vg(M.DRAFT, 0)}°/lado · {vg(d['peso'])} g", s,
+               count=1)
+    # O passo de encaixe: com a aba para DENTRO o gargalo era a aresta
+    # interna dela (ABA_W/tg saida). Com a aba para FORA quem manda e a
+    # nervura do friso sobre a saida em x do PE, que nao depende da saida do
+    # corpo -- por isso a C pode ter 6 graus e encaixar melhor que os 12.
+    s = re.sub(r"Quem manda no passo é[^<]*?\.",
+               f"Quem manda no passo é o pé: com a aba virada para fora, "
+               f"o gargalo deixa de ser a aresta interna dela e passa a ser "
+               f"a nervura do friso sobre a saída em x do pé, que não depende "
+               f"da saída do corpo — medido no sólido, "
+               f"{vg(d['pn'])} mm.", s, count=1)
+    s = re.sub(r"\['solta levantando', '[\d,]+ mm'\]",
+               f"['solta levantando', '{vg(d['solta'])} mm']", s, count=1)
     s = re.sub(r"\['peso', '[\d,]+ g'\]", f"['peso', '{vg(d['peso'])} g']", s,
                count=1)
     s = re.sub(r"\['capacidade', '[\d,]+ L'\]",

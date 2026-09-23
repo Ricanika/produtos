@@ -105,8 +105,19 @@ def area_rasgo(m, dx=0.5, dz=0.125):
     return tot, faixa
 
 
+def passo(p, dy, lo=0.0, hi=180.0, tol=0.02):
+    """Menor deslocamento em z em que duas pecas nao se interpenetram."""
+    while hi - lo > tol:
+        mid = (lo + hi) / 2
+        if (p & (Pos(0, dy, mid) * p)).volume > 0.002:
+            lo = mid
+        else:
+            hi = mid
+    return hi
+
+
 def main():
-    M.set_draft(12.0)
+    M.padrao()
     d = {}
     ang = np.linspace(0, 2 * np.pi, N_RAIO, endpoint=False)
     dirs = np.stack([np.cos(ang), np.sin(ang)], 1)
@@ -130,6 +141,12 @@ def main():
         if faixa:
             print(f"         faixa z {faixa[0][0]:.2f}..{faixa[-1][0]:.2f} mm,"
                   f" largura ate {max(f[1] for f in faixa):.0f} mm")
+    # O selo da folha afirmava encaixe e empilhamento; media-os agora, em vez
+    # de repetir os 46,80/130,00 da saida de 12 graus.
+    d["depois"]["pn"] = passo(d["depois"]["p"], 0.0)
+    d["depois"]["pe"] = passo(d["depois"]["p"], M.DESLOC)
+    print(f"         encaixa {d['depois']['pn']:.2f} · "
+          f"empilha {d['depois']['pe']:.2f}")
     folha(d)
 
 
@@ -182,7 +199,8 @@ def painel_corte(fig, rect, d):
     # o rasgo, no antes
     ax.annotate("", xy=(-96.3, 7.9), xytext=(-99.6, 11.4),
                 arrowprops=dict(arrowstyle="->", color=VERM, lw=1.2))
-    ax.text(-99.8, 11.5, "o rasgo\n1,8 mm", color=VERM, fontsize=8.6,
+    ax.text(-99.8, 11.5, f"o rasgo\n{vg(d['antes']['faixa'][-1][0] - d['antes']['faixa'][0][0], 1)} mm",
+            color=VERM, fontsize=8.6,
             ha="left", va="bottom")
     ax.plot([-101.2, -93.5], [M.H_PE + M.T_FUNDO] * 2, color=GRIS, lw=0.7,
             ls=":")
@@ -239,8 +257,13 @@ def folha(d):
         tb.text(0.97, y, v2, fontsize=8.8, color=GRIS if i == 0 else VERDE,
                 va="center", ha="right", weight=w)
         y -= 0.125
-    tb.text(0.07, y, "a peça toda continua\nencaixando em 46,80 e\nempilhando "
-            "em 130,00 mm", fontsize=8.4, color=NOVO, va="top")
+    # Encaixe e empilhamento MEDIDOS. Estavam digitados em 46,80/130,00, da
+    # saida de 12 graus; e o bloco ficava logo abaixo do fim da caixa, com a
+    # ultima linha por fora dela -- por isso ele agora comeca em y + 0.035.
+    tb.text(0.07, y + 0.035,
+            f"a peça toda continua\nencaixando em {vg(b['pn'], 2)} e\n"
+            f"empilhando em {vg(b['pe'], 2)} mm",
+            fontsize=8.4, color=NOVO, va="top")
 
     tx = fig.add_axes([0.556, 0.038, 0.416, 0.505]); tx.axis("off")
     tx.add_patch(Rectangle((0, 0), 1, 1, transform=tx.transAxes,
@@ -261,22 +284,28 @@ def folha(d):
             f"{np.degrees(a['ang'][a['fuga']]).min():.0f}° e "
             f"{np.degrees(a['ang'][a['fuga']]).max():.0f}°, "
             "ou seja apontando para a frente. Depois: zero, em\n"
-            "todas as cotas de 7,5 a 39 mm.\n\n"
+            "todas as cotas de 7,5 a 39 mm (a 41 escapam 380: sao as\n"
+            "listras, que e para estarem abertas).\n\n"
             "A CONTA DO RASGO. O chanfro é a reta y = −89 − z; a parede\n"
             f"externa, y = −({vg(M.BASE_Y/2, 2)} + {vg(M.TAN, 4)} z). Elas se "
             f"cruzam em z = {vg(zc, 2)} mm:\n"
             "abaixo dali o chanfro passa POR DENTRO da parede e a apaga. Como\n"
-            "a chapa do fundo termina em z = 7, sobrava rasgo de 7,0 a 8,75 mm\n"
-            f"({vg(1.75)} mm de altura) em 130 mm de frente = "
-            f"{a['area']:.0f} mm². E de 8,85 a\n"
-            f"{vg(zc, 2)} a parede sobrevivia como LÂMINA de 0 a 1,4 mm — seção\n"
-            "que não enche na injeção.\n\n"
+            f"a chapa do fundo termina em z = 7, sobrava rasgo de "
+            f"{vg(a['faixa'][0][0], 1)} a {vg(a['faixa'][-1][0], 1)} mm\n"
+            f"({vg(a['faixa'][-1][0] - a['faixa'][0][0], 1)} mm de altura) em "
+            f"ate {max(f[1] for f in a['faixa']):.0f} mm de largura = "
+            f"{a['area']:.0f} mm².\n"
+            f"Acima dali, ate {vg(zc, 2)}, a parede sobrevivia como LÂMINA de "
+            f"0 a 1,4 mm —\nseção que não enche na injeção.\n\n"
             "A TAPA é uma parede de 1,4 mm deitada sobre o plano do chanfro: a\n"
             "silhueta menos ela mesma deslocada 1,4/√2 em y e em z. Cortada\n"
             "por `fora`, ela TERMINA SOZINHA onde o chanfro sai da casca — não\n"
             "há cota para acertar à mão, e se o chanfro mudar ela acompanha.\n"
-            "Custa 0,7 g. Por dentro fica uma transição chanfrada de 3,6 mm no\n"
-            "pé da parede da frente, que ainda ajuda a varrer o cesto.",
+            f"Custa {vg(b['peso'] - a['peso'], 1)} g (eram 0,7 g a 12° de "
+            f"saída, quando a faixa a\ntapar tinha 1,8 mm de altura e não "
+            f"{vg(a['faixa'][-1][0] - a['faixa'][0][0], 1)}). Por dentro fica "
+            f"uma transição\nchanfrada no pé da parede da frente, que ainda "
+            f"ajuda a varrer o cesto.",
             fontsize=8.2, color=TINTA, va="top", linespacing=1.44)
 
     fig.savefig(os.path.join(DEST, "frente.png"), dpi=118, facecolor=FUNDO)

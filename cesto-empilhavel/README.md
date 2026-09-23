@@ -1,10 +1,11 @@
 # Cesto Mini Organizador Empilhável e Encaixável — peça única em PP
 
-**Status:** 3D fechado, pronto para cotação de ferramental · **Data:** 16/09/2026
+**Status:** 3D fechado na **configuração C** (aba para fora, extrai em molde de duas placas), pronto para cotação de ferramental · **Data:** 23/09/2026
 **Referência:** STL enviado em 16/09 (bin de 150 × 100 × 80 mm, 192 faces) + anúncio
 "10 peças Cesto Mini Organizador Empilhável" (MLBU4092388469) + fotos cotadas
 (Mercado Livre MLBU4092388469) + fotos cotadas enviadas em 16/09/2026
-**Modelo:** `cad/modelo3d.py` · **Economia:** `economia.py` · **Arquivos:** `cad/cesto.step`
+**Modelo:** `cad/modelo3d.py` (`padrao()` fixa a configuração do projeto) · **Economia:** `economia.py`
+**Sólido do projeto:** `cad/cesto-aba.step` / `cad/cesto-aba.stl` · **Visor 3D:** `cad/visor3d.html` · **Impressão:** `cad/print/`
 
 **Forma adaptada do STL de referência, com o vazado em furos redondos.** A silhueta lateral foi
 **medida no próprio sólido** do STL, não interpretada de foto: é uma caixa com **dois chanfros a
@@ -29,19 +30,20 @@ injetada: sem dobradiça, sem painel, sem montagem.
 | Requisito | Situação |
 |---|---|
 | Peça única empilhável e encaixável | **Viável** — é a arquitetura mais simples possível: 1 peça, 1 molde, zero montagem |
-| Forma da referência | **Medida no STL, não interpretada** — chanfros a 45°: 52 mm no topo, 36 mm no pé, face frontal de 42 mm (seção 2.2) |
-| Furos redondos em gradiente | **Resolvido** — 4 bandas, Ø 15 → 6 mm, passo 21 mm, 68 furos, faixa cega de 40 mm |
-| Fundo sólido | **Atendido** — chapa de 2,0 mm sem furo |
-| Pé discreto | **Resolvido** — 4 pezinhos ocos sob a chapa, recuados 2 mm da borda; a chapa faz aba (seção 4.1) |
-| Empilhar, encaixar **e** acoplar | **Os três, medidos no sólido** — empilha 130,0 · encaixa 102,7 na mesma orientação · acopla com trava, 0,00 mm³ de interferência na cena (seções 4.2.1 e 4.2.2) |
+| Forma da referência | **Medida no STL, não interpretada** — chanfros a 45°: 52 mm no topo, 36 mm no pé (seção 2.2) |
+| Vazado | **3 faixas de listra**, rasgo de 6 × 18,33 mm, 123 rasgos em 13 colunas, faixa cega de 40 mm (seção 4.2.3). O vazado de bolinha, medido lado a lado, pesa 6,3 g mais |
+| Fundo sólido | **Atendido e medido** — chapa de 188,6 × 187,5 × 2,0 mm com **0 mm² de furo**, parede cega até z = 40, bolsa cega sob o pé (seção 4.2.4) |
+| Pé discreto | **Resolvido** — **tripé**: um pé oco por lateral, na frente (y = −58), e uma saia corrida na traseira, todos sob a chapa, que flutua 5 mm acima do piso. 469 mm² de contato de face plana (seções 4.1 e 4.2.6) |
+| Empilhar, encaixar **e** acoplar | **Os três, medidos no sólido** — empilha **130,0 mm** (0,0000 mm³ de interferência) · encaixa **39,99 mm** · acopla com trava de 27,2 mm³, solta a 7,5 mm de levantamento (seções 4.2.1, 4.2.2 e 4.2.6) |
 | Acoplar lateralmente | **Resolvido dentro das paredes de empilhamento** — cauda de andorinha vertical de 1,4 mm, sem gaveta, trava puxando de lado (seção 4.2.2) |
-| Encaixar para reduzir volume | **Medido no sólido: passo de 55,5 mm**, 630 mm para 10 peças. Exclusivo do empilhamento a 130 mm — ver seção 4.2 |
-| Injeção no parque atual | **1 cavidade numa 200 t (76%)** — a casa tem **12 máquinas** dessa classe |
+| Encaixar para reduzir volume | **Medido no sólido: passo de 39,99 mm**, 572 mm para 12 peças (era 46,80 com a aba para dentro). Exclusivo do empilhamento a 130 mm — ver seção 4.2 |
+| Extração | **Auditada por interseção de sombras** — a aba para DENTRO prendia 58.242 mm³ no molde e era inviável em duas placas; virada para FORA sobra a linha de base de 9.217 mm³, que são os rasgos passantes na parede com saída (seção 4.2.5) |
+| Injeção no parque atual | **1 cavidade numa 250 t (68%)** — a casa tem **9 máquinas** dessa classe. A aba para fora levou o footprint de 430 para 480 cm², e com ele o fechamento de 151 para 169 t: saiu da classe de 200 t |
 | Ferramental | **USD 19,5 mil FOB**, 1 molde — por analogia direta com dois moldes da casa |
-| Payback | **~6,8 meses** a 150 mil un/ano em PP virgem (5,4 com moído), com o molde estimado por cima |
+| Payback | **~6,2 meses** a 150 mil un/ano em PP virgem (4,9 com moído), com o molde estimado por cima |
 | Preço do anúncio de referência | **Não obtido** — o proxy desta sessão bloqueia o Mercado Livre (seção 6) |
 
-O produto é uma **commodity de volume**: contribuição de ~R$ 2,20 por peça, então a conta fecha
+O produto é uma **commodity de volume**: contribuição de ~R$ 1,79 por peça em virgem (R$ 2,24 em moído), então a conta fecha
 por quantidade, não por margem unitária. Isso muda o critério de decisão em relação à caixa
 dobrável: lá o risco era o ferramental caro; aqui o ferramental é barato (USD 19,5 mil, ~14% do
 que custaria a família dobrável) e **o risco é o volume de venda**.
@@ -50,21 +52,34 @@ que custaria a família dobrável) e **o risco é o volume de venda**.
 
 ## 2. Geometria
 
+Todos os valores abaixo são **medidos no sólido** (`cad/cesto-aba.step`) na
+configuração C, não cotas de intenção. As seções 3 e 4 são o registro de como
+se chegou neles — os números citados lá são os da etapa que cada seção
+descreve, e não os de hoje.
+
 | Cota | Valor |
 |---|---|
-| Boca (rim) | **215 × 200 mm** |
-| Base | 199,1 × 184,1 mm |
+| Boca do corpo | **180 × 230 mm** |
+| Envelope de planta, com a aba | **200 × 250 mm** |
+| Base (z = 0) | 152,7 × 202,7 mm |
 | Altura | **130 mm** |
-| Envelope real | **215 × 197 × 130 mm** |
+| Envelope real | **204,0 × 235,1 × 132,5 mm** |
 | Chanfros da frente | **52 mm no topo · 36 mm no pé**, ambos a 45° |
-| Face frontal | **42 mm** (o chanfro do pé foi reduzido para devolver volume) |
+| Face frontal | **42 mm** (130 − 52 − 36) |
 | Raios trabalhados | **R20** nas duas pontas dos chanfros · **R12** nas duas quinas da face frontal |
-| Saída de molde | **3,5° por lado** — é ela que permite o encaixe |
+| Raio de planta | **R14** na casca externa (`RectangleRounded`) |
+| Saída de molde | **6° por lado** (era 3,5° e depois 12° — ver 4.2.6) |
 | Parede / fundo / rim | 1,4 / 2,0 / 3,2 mm |
-| Pé | **4 pezinhos ocos** sob a chapa, que flutua 5 mm acima do piso |
-| Capacidade | **4,46 L** |
-| Peso | **170,8 g** (versão final, com estrutura e acoplamento) |
-| Área projetada | 430 cm² |
+| Aba do rim | **10 mm para FORA** × 2,5 mm, com dobra de 5 mm descendo na aresta |
+| Pé | **tripé** — 1 pé oco por lateral na frente (y = ±58 espelhado) + saia corrida de 108 mm na traseira, sob a chapa, que flutua 5 mm acima do piso; bolsa cega, sola sem furo |
+| Chapa do fundo | 188,6 × 187,5 × 2,0 mm, **0 mm² de furo** |
+| Vazado | 3 faixas de listra, rasgo **6 × 18,33 mm**, 123 rasgos, 13 colunas |
+| Capacidade | **4,09 L** |
+| Peso | **179,2 g** em PP (198,0 cm³ × 0,905) |
+| Área projetada | 480 cm² |
+| Empilha | **130,0 mm** deslocando 21 mm — 0,0000 mm³ de interferência |
+| Encaixa | **39,99 mm** — 12 peças em 572 mm. As folhas dão 39,98 a 40,00: é a tolerância da busca binária de cada script (0,01 a 0,02 mm), não geometrias diferentes |
+| Preso no molde | **9.217 mm³**, todo ele rasgo passante em parede com saída |
 
 ### 2.2 A silhueta, medida no STL de referência
 
@@ -88,17 +103,37 @@ então a forma tem um só lugar para mexer — e é nele que os fillets R20/R12 
 
 ### 2.1 Peso
 
-155,4 g para 4,50 L, contra o **Cesto Organizador Vime 7 L (047) da casa, que faz 7 L com 213 g**.
-A **32,9 g/L**, a peça fica na mesma eficiência do 047 (30,4 g/L) — sinal de que a parede de
-1,4 mm está coerente com a prática da casa. O peso caiu de 230 para 155 g ao trocar a forma: os
-chanfros tiram material e a aba em gancho da versão anterior saiu inteira.
+**179,2 g para 4,09 L**, contra o **Cesto Organizador Vime 7 L (047) da casa, que faz 7 L com
+213 g**. A **43,8 g/L** a peça fica **bem acima** do 047 (30,4 g/L), e isso é geometria, não
+desperdício: um cesto de 4 L tem mais área de parede por litro que um de 7 L, e a parede já está
+no mínimo da casa (1,4 mm).
 
-Não vejo mais gordura óbvia para cortar. Se o try-out pedir, o caminho é parede de 1,2 mm na
+O histórico do peso, todo medido no sólido:
+
+| etapa | peso | por quê |
+|---|---|---|
+| primeira geometria | 230 g | caixa reta com aba em gancho |
+| chanfros a 45° | 155 g | os chanfros tiram material e a aba em gancho saiu inteira |
+| tripé + acoplamento + friso | 169 g | o que empilhar, encaixar e acoplar custam |
+| **configuração C** | **179,2 g** | +4,7 g da tapa da frente, +4,3 g da dobra da aba, ~1 g do resto (aba virada e saída de 6°) |
+
+Os 10,2 g entre 169,0 e 179,2 não são gordura: 4,7 g fecham o rasgo frontal que o cliente mandou fechar
+e 4,3 g são a dobra sem a qual duas peças não acoplam (§4.2.6). **O único alívio grande que resta é
+perfurar a chapa do fundo** — 52,2 g dos 179,2, 29% da peça —, e o cliente pediu explicitamente
+fundo fechado, porque o P guarda miudezas. Se o try-out pedir mais, o caminho é parede de 1,2 mm na
 banda superior, onde não há carga de empilhamento.
 
 ---
 
 ## 3. O vazado
+
+> **Esta seção é o estudo do vazado de BOLINHA, que não é o que a peça tem
+> hoje.** O desenho escolhido é o de **listra vertical em 3 faixas** (§4.2.3), e
+> a comparação medida entre os dois está em `cad/listras.png`: a bolinha pesa
+> 6,3 g mais. `VAZADO = "bolinha"` em `modelo3d.py` reconstrói o que está
+> descrito abaixo. O que segue valendo daqui são as duas regras de retículado
+> no fim da seção e o §3.1, sobre o custo no molde — que vale para qualquer um
+> dos dois desenhos.
 
 Furos **redondos** em 4 bandas horizontais de cota Z fixa, com o diâmetro caindo de cima para
 baixo — é a alteração pedida em relação ao vazado de cortes verticais da referência.
@@ -146,6 +181,11 @@ Duas consequências para a cotação:
 ### 4.1 Empilhado
 
 #### O pé: 4 pezinhos sob a chapa
+
+> **Etapa intermediária.** Os quatro pezinhos descritos aqui foram depois
+> substituídos pelo **tripé** — um pé por lateral, na frente, e uma saia
+> corrida na traseira (§4.2). O que segue valendo desta subseção é o
+> princípio: chapa flutuando 5 mm, pé oco, e a chapa fazendo aba sobre ele.
 
 A chapa do fundo fica **5 mm acima do piso** e quem apoia são **4 pezinhos
 ocos de 13 × 20 e 13 × 26 mm**, recuados 2 mm da borda da chapa. A chapa faz
@@ -799,22 +839,27 @@ sob a pilha.
 
 #### Onde o peso está — medido por faixa de altura
 
-(remedido na peça atual, 168,4 g — três faixas de listra e tudo fechado)
+(remedido na peça atual da configuração C, **179,2 g** — três faixas de
+listra, tudo fechado, aba para fora com a dobra)
 
 | | peso | % |
 |---|---|---|
 | pés + saia (z 0–5) | 2,5 g | 1% |
-| **chapa do fundo (5–7)** | **51,7 g** | **31%** |
-| banda cega do pé (7–40) | 34,5 g | 20% |
-| parede vazada (40–111) | 47,6 g | 28% |
-| faixa do rim + aba (111–133) | 32,1 g | 19% |
+| **chapa do fundo (5–7)** | **52,2 g** | **29%** |
+| banda cega do pé (7–40) | 36,1 g | 20% |
+| parede vazada (40–111) | 48,3 g | 27% |
+| faixa do rim + aba (111–133) | 40,1 g | 22% |
 
-A parede vazada é só **28%** da peça — é por isso que otimizar listra dá pouco.
-A **chapa do fundo é 33% e está intacta**: o vazado nunca chegou nela. Vazar o
+A faixa do rim subiu de 32,1 para 40,1 g ao virar a aba para fora: a dobra de
+5 mm corre todo o perímetro. É o preço de extrair em molde de duas placas, e
+está pago — sem ela a peça não sai (§4.2.5).
+
+A parede vazada é só **27%** da peça — é por isso que otimizar listra dá pouco.
+A **chapa do fundo é 29% e está intacta**: o vazado nunca chegou nela. Vazar o
 fundo (como as cestas da referência do cliente fazem) é a única alavanca de
 peso que sobra de verdade, e é decisão do cliente porque muda a função de
-conter. As outras duas: a banda cega de 33 mm no pé da parede (19%) e a faixa
-do rim de 3,2 mm (20%), que é onde mora a aba e o acoplamento.
+conter. As outras duas: a banda cega de 33 mm no pé da parede (20%) e a faixa
+do rim de 3,2 mm (22%), que é onde mora a aba e o acoplamento.
 
 Arquivos: `cad/listras.py` (folha `listras.png`); `VAZADO = "listra"` ou
 `"bolinha"` em `modelo3d.py` alterna os dois desenhos.
@@ -844,16 +889,22 @@ onde começa a primeira faixa de listras, para o desenho não brigar), e o que
 esvazia o pé nos 40 mm de baixo é uma **bolsa cega** aberta no piso,
 `_pe_bolsa()`, separada da cavidade por uma membrana de 2 mm.
 
+Remedido na configuração C (é o que a folha `fechado.png` mostra hoje; o furo
+de 194 mm² acima é a medição original, a 12° de saída — a 6° o mesmo defeito
+abre 243 mm²):
+
 | | antes | depois |
 |---|---|---|
-| furo na chapa do fundo | 194 mm² | **0 mm²** |
+| furo na chapa do fundo | 243 mm² | **0 mm²** |
 | parede abre em z = | 1,6 mm | **40 mm** |
-| passo encaixado | 46,80 mm | 46,80 mm |
+| passo encaixado | 35,54 mm | **39,98 mm** |
 | passo empilhado | 130,00 mm | 130,00 mm |
-| peso em PP | 165,7 g | 169,0 g |
+| peso em PP | 175,9 g | **179,2 g** |
 
-(os pesos absolutos são os da peça ATUAL — três faixas de listra e a tapa da
-frente, que vieram depois; o delta da correção do pé é o mesmo +3,3 g)
+(os pesos absolutos são os da peça ATUAL; o delta da correção do pé continua
+sendo +3,3 g. O passo encaixado *piora* de 35,5 para 39,98 mm, e isso é
+correto: com a sola furada a peça de cima descia mais do que devia — os
+35,5 mm eram uma cubagem que só existia porque o fundo estava aberto)
 
 Provado por interseção booleana: `cavidade ∩ parede (z<40) = 0`,
 `cavidade ∩ chapa = 0`, e o mesmo para a bolsa. Medindo a seção cota por cota,
@@ -870,10 +921,13 @@ pode ter chapa por cima dela. Logo: **onde o pé é oco a parede é vazada, e on
 a parede é cega o pé é esvaziado por baixo.**
 
 O preço é a sola: nos 40 mm de baixo ela deixa de ser chapa e vira **coroa**,
-como o fundo de um balde. Apoio de cada pé na aba: 22,7 → **13,2 mm²**. Tripé
-completo 364 + 13 + 13 = **390 mm²** de contato de face plana. Numa coluna de
-4 com 1 kg em cada, o pé pega 11,6 N: pressão de contato 0,88 MPa contra ~30 de
-escoamento do PP (34×), e a aba flete 0,03 mm trabalhando a 5,5 MPa (5×).
+como o fundo de um balde. Na C o apoio de cada pé na aba vai de 100,1 para
+**32,1 mm²**, e o tripé completo mede **469 mm²** de contato de face plana
+(415 na canetinha de trás + 27 em cada pé da frente) — mais que os 390 mm² da
+versão com a aba para dentro, porque a aba virada para fora dá ao pé uma
+faixa de pouso mais larga. Numa coluna de 4 com 1 kg em cada, o pé pega
+13,2 N: pressão de contato 0,48 MPa contra ~30 de escoamento do PP (60×), e a
+saia flete 0,003 mm trabalhando a 0,41 MPa.
 
 #### O empilhamento: a dúvida do cliente estava certa pelo motivo certo
 
@@ -917,6 +971,8 @@ recalcula a altura real para as faixas preencherem exatamente o campo entre
 18,33 mm. Largura 10 → **6 mm**, e o passo 15 → **11**, para a nervura entre
 listras continuar em **5 mm** — o ritmo do desenho não muda, só o vão.
 
+Remedido na configuração C (é o que a folha `rasgos.png` mostra hoje):
+
 | | antes | depois |
 |---|---|---|
 | faixas | 2 | **3** |
@@ -924,8 +980,8 @@ listras continuar em **5 mm** — o ritmo do desenho não muda, só o vão.
 | vão por rasgo | 315 mm² | **110 mm²** — um terço |
 | nervura entre rasgos | 5 mm | 5 mm |
 | nº de rasgos | 61 | 123 |
-| área aberta total | 18.649 mm² | 12.445 mm² |
-| peso em PP | 161,1 g | **169,0 g** |
+| área aberta total | 18.147 mm² | 12.134 mm² |
+| peso em PP | 171,6 g | **179,2 g** |
 
 **O achado que mudou a decisão: o peso quase não depende da largura do rasgo.**
 Estreitar a listra encurta o passo, entram mais colunas e a área aberta se
@@ -934,17 +990,17 @@ rasgos, que é custo de fecha-macho no molde):
 
 | W/P | rasgos | peso | área aberta |
 |---|---|---|---|
-| 8/13 | 111 | 166,3 g | 14.576 mm² |
-| 7/12 | 117 | 167,5 g | 13.628 mm² |
-| 6/13 | 111 | 170,5 g | 11.218 mm² |
-| **6/11** | **123** | **169,0 g** | **12.445 mm²** |
-| 6/10 | 139 | 166,9 g | 14.052 mm² |
-| 5/11 | 123 | 171,4 g | 10.503 mm² |
-| 5/9 | 167 | 166,7 g | 14.210 mm² |
-| 4/8 | 183 | 168,7 g | 12.634 mm² |
+| 8/13 | 101 | 178,2 g | 12.914 mm² |
+| 7/12 | 117 | 177,8 g | 13.250 mm² |
+| 6/13 | 111 | 180,7 g | 10.906 mm² |
+| **6/11** | **123** | **179,2 g** | **12.134 mm²** |
+| 6/10 | 139 | 177,2 g | 13.684 mm² |
+| 5/11 | 123 | 181,6 g | 10.253 mm² |
+| 5/9 | 165 | 177,2 g | 13.735 mm² |
+| 4/8 | 181 | 179,1 g | 12.199 mm² |
 
-5,1 g de espalhamento numa peça de 169 — e a variação segue a **área aberta**,
-não a largura. Quem pesa são duas outras coisas: o **número de faixas** (+7,9 g
+4,4 g de espalhamento numa peça de 179 — e a variação segue a **área aberta**,
+não a largura. Quem pesa são duas outras coisas: o **número de faixas** (+7,6 g
 de 2 para 3, porque cada faixa a mais é uma nervura de 8 mm dando a volta na
 peça inteira, o que também é o que segura a parede contra embarrigar sob a
 pilha) e a área aberta total. Logo o tamanho do rasgo é decisão de **função** —
@@ -961,11 +1017,12 @@ alternativa (usar as faixas da lateral e deixar a segunda ser cortada pelo
 arco coluna a coluna) dá exatamente os mesmos 135 rasgos e o mesmo peso.
 
 Encaixe e empilhamento não mudam — os rasgos moram na parede, longe do pé, da
-aba e do friso. Medido: encaixa 46,80 mm, empilha 130,00 mm, 0,0000 mm³.
+aba e do friso. Medido na C: encaixa 39,98 mm, empilha 130,00 mm, 0,0000 mm³.
 
 Arquivos: `cad/rasgos.py` (folha `rasgos.png`, com o rasgo em tamanho real e o
 gráfico peso × largura). `VAZADO = "nenhum"` em `modelo3d.py` constrói a peça
-de parede cheia (184,7 g), que é a referência para medir a área aberta.
+de parede cheia (**194,6 g** na C), que é a referência para medir a área
+aberta.
 
 #### O rasgo inferior frontal — e a lição de método
 
@@ -975,13 +1032,18 @@ o risco dos produtos colocados nele escorrer e sair pelo buraco."
 Estava. O **chanfro do pé** (45°, `CHANFRO_PE = 36`) é a reta y = −89 − z; a
 parede externa é y = −(97,37 + 0,2126 z). Elas se cruzam em
 
-    z = (CHANFRO_PE − (PROF/2 − BASE_Y/2)) / (1 − tg θ) = 10,63 mm
+    z = (CHANFRO_PE − (PROF/2 − BASE_Y/2)) / (1 − tg θ)
 
-e **abaixo dessa cota o chanfro passa por dentro da parede e a apaga**. Como a
-chapa do fundo termina em z = 7, sobrava rasgo de **z 7,0 a 8,75 mm** (1,8 mm
-de altura) em 130 mm de frente = **237 mm²**, com a borda da chapa servindo de
-rampa para ele. E de 8,85 a 10,63 a parede sobrevivia como **lâmina de 0 a
-1,4 mm** — seção que não enche na injeção.
+que dava **10,63 mm** aos 12° de saída em que o defeito foi encontrado, e dá
+**24,96 mm** aos 6° da configuração C. **Abaixo dessa cota o chanfro passa por
+dentro da parede e a apaga.** Como a chapa do fundo termina em z = 7, sobrava
+rasgo de **z 7,0 a 8,75 mm** (1,8 mm de altura) em 130 mm de frente =
+**237 mm²** a 12°, e **928 mm²** a 6° (faixa de z 7 a 13, até 152 mm de
+largura), com a borda da chapa servindo de rampa para ele. Acima dali a parede
+sobrevivia como **lâmina de 0 a 1,4 mm** — seção que não enche na injeção.
+
+Que a cota dependa da saída é exatamente onde a primeira versão da tapa
+tropeçou: ela tinha a faixa em 14 mm, fixa. Ver §4.2.6.
 
 **A lição.** Os testes anteriores não pegaram isso, e a razão é instrutiva: eu
 media a parede *contra a casca já recortada pela silhueta*, e achava zero de
@@ -1001,16 +1063,18 @@ acertar à mão, e se `CHANFRO_PE` mudar ela acompanha. Saída de molde: a face
 externa dela *é* o plano do chanfro, que já é a silhueta da peça; a interna é
 paralela, e subindo o vão só cresce.
 
+Remedido na configuração C (é o que a folha `frente.png` mostra hoje):
+
 | | antes | depois |
 |---|---|---|
-| rasgo frontal | 237 mm² | **0 mm²** |
-| raios que escapam (z 7,5) | 135 de 720 | **0** |
-| parede em z = 7,5 | 0 mm | **2,18 mm** |
-| parede em z = 9,5 | 0,63 mm | **2,18 mm** |
-| peso em PP | 168,2 g | 169,0 g |
+| rasgo frontal | 928 mm² | **0 mm²** |
+| raios que escapam (z 7,5) | 165 de 720 | **0** |
+| faixa aberta | z 7,0…13,0 mm, até 152 mm de largura | nenhuma |
+| peso em PP | 174,5 g | **179,2 g** |
 
-Custa 0,7 g, e por dentro fica uma transição chanfrada de 3,6 mm no pé da
-parede da frente — que de quebra ajuda a varrer o cesto. Encaixe 46,80 e
+Custa 4,7 g na C (0,7 g eram a conta a 12°, quando a faixa a tapar tinha 1,8 mm
+de altura em vez de 6), e por dentro fica uma transição chanfrada no pé da
+parede da frente — que de quebra ajuda a varrer o cesto. Encaixe 39,98 e
 empilhamento 130,00 inalterados.
 
 Arquivos: `cad/frente.py` (folha `frente.png`, com o leque de raios em planta e
@@ -1044,16 +1108,17 @@ nervura entre listras fica em `LIS_P − LIS_W` = 5 mm em toda a lateral e a fol
 até o pé é 4 mm **dos dois lados, por construção** — não há cota para acertar à
 mão, e se o pé mudar de posição ou de largura as colunas acompanham.
 
+Remedido na configuração C (é o que a folha `colunas.png` mostra hoje):
+
 | | antes | depois |
 |---|---|---|
-| colunas na lateral | 15 (−77 … +77) | 13 (−75 … +80) |
+| colunas na lateral | 15 | **13** |
 | colunas cortadas pelo pé | 2 | **0** |
-| folga até o pé, lado da frente | 6,01 mm | **4,00 mm** |
-| folga até o pé, lado de trás | 1,01 mm | **4,00 mm** |
+| folga até o pé, dos dois lados | 6,01 e 1,01 mm | **4,00 mm** |
 | nº de rasgos | 135 | 123 |
-| peso em PP | 168,4 g | **169,0 g** |
+| peso em PP | 178,6 g | **179,2 g** |
 
-Encaixe 46,80 e empilhamento 130,00 inalterados — as listras moram na parede,
+Encaixe 39,98 e empilhamento 130,00 inalterados — as listras moram na parede,
 entre z = 40 e 111, longe da aba, do friso e da chapa.
 
 Arquivos: `cad/colunas.py` (folha `colunas.png`, com o antes/depois no mesmo
@@ -1086,6 +1151,14 @@ própria superfície com saída da parede e a profundidade presa é só a espess
 dela — 1,4 mm, que zera depois de 1,4/tg 12° = 6,6 mm de curso. É por isso que
 caixaria tem centenas de rasgos e se faz em molde de duas placas. Falso
 positivo conhecido, anotado no script.
+
+> **Os números acima são da peça de 23/09** — aba para dentro, saída de 12°.
+> `cad/extracao.py` hoje roda a configuração C, então o que ele imprime é o
+> pós-correção: **9.217 mm³ presos** com a aba, 9.224 sem ela (a aba responde
+> por −7 mm³, ou seja, por nada), e a cota que decide vira contrafactual — se
+> esta mesma peça tivesse a aba virada para dentro, ela avançaria 6,54 mm sobre
+> uma boca interna de 173,1 mm, 7,6% por lado. Pior que a de 12°, porque a
+> saída menor estreita a boca.
 
 **A cota que decide** não é o volume, é a profundidade do ressalto: a aba
 avança **6,27 mm para dentro da face interna da parede**, numa boca interna de
@@ -1125,19 +1198,33 @@ derivados novos: `aba_x0/aba_x1`, `pe_topo()` (a face externa do pé morre na
 aresta livre da aba — é dali que vem a saída em x de que ele precisa para
 telescopar) e `pe_r00()` (o piso do pé tem de alcançar a faixa de pouso).
 
+As quatro remedidas depois da correção da silhueta e da tapa (é o que
+`abafora.png` mostra hoje; `hoje` é a peça de 23/09 — aba para dentro, 12°):
+
 | | hoje | A | B | **C** |
 |---|---|---|---|---|
-| envelope | 204 × 241 | 224 × 241 | 204 × 221 | **204 × 235** |
+| aba / saída | dentro · 12° | fora · 12° | fora · 12° | **fora · 6°** |
+| envelope | 204 × 240,9 | 224 × 250,9 | 204 × 230,9 | **204 × 235,1** |
 | capacidade | 4,41 L | 4,41 L | 3,52 L | **4,09 L** |
-| passo encaixado | 46,80 | 39,99 | 39,99 | **39,98** |
+| peso em PP | 169,0 g | 190,1 g | 165,6 g | **179,2 g** |
+| passo encaixado | 46,80 | 39,99 | 39,99 | **39,99** |
 | 12 peças | 647 mm | 572 mm | 572 mm | **572 mm** |
 | preso no molde | 58.242 mm³ | 5.676 | 5.088 | **9.217** |
+| **tripé de apoio** | 388 mm² | **62 mm²** | **62 mm²** | **469 mm²** |
 
 A contra-saída acaba nas três; o que sobra é a linha de base dos rasgos
-passantes. E o **encaixe melhora** de 46,80 para 39,98 mm porque a aresta
+passantes. E o **encaixe melhora** de 46,80 para 39,99 mm porque a aresta
 interna da aba deixa de ser o gargalo — 12% menos caixa. Como o passo passa a
 ser `NERV_T` / saída em x do **pé**, que não depende da saída do **corpo**, a
 saída fica livre para engordar a base: é o que C explora.
+
+**A última linha é a que decide, e ela não estava na primeira comparação.** A
+e B, que mantêm os 12° de saída, ficam com **62 mm² de tripé** — a 12° a base é
+55 mm mais estreita que a boca e o pé não alcança a faixa de pouso da aba. Não
+é questão de cubagem: A e B **não empilham**, pousam na quina. C não foi
+escolhida por devolver 0,57 L a mais que B; foi escolhida porque baixar a saída
+para 6° é o que traz o pé de volta para cima da aba — 469 mm², mais que os
+388 da peça de 23/09. A litragem veio de carona.
 
 #### A varredura pediu três adaptações
 
@@ -1154,8 +1241,10 @@ cada lado, um vão de 20 mm. O engate da cauda caía de **14 mm** (na versão co
 aba para dentro, onde a fêmea escavava a faixa do rim) para **2,5 mm**. A
 dobra devolve 7,5 mm de altura de junta, e de quebra enrijece e protege a
 aresta — o "mini reforço" que o cliente intuiu. Medido: a trava a 1,2 mm de
-deslocamento vai de 11,2 para **27,2 mm³**, e a soltura passa a exigir 10 mm
-de levantamento em vez de 6. Custa 4,3 g. Sai do molde: a silhueta salta para
+deslocamento vai de 11,2 para **27,2 mm³**, e a soltura passa a exigir **7,5 mm**
+de levantamento em vez de 2,5 (medido por busca binária; a primeira versão da
+folha só amostrava 6 e 10 mm e relatava 10, enquanto `aba.py` relatava 8 — a
+mesma peça com dois números). Custa 4,3 g. Sai do molde: a silhueta salta para
 fora subindo (89,5 → 100 em z = 122,5) e o canal entre a dobra e a casca abre
 para baixo, onde a cavidade chega.
 
@@ -1164,6 +1253,32 @@ para baixo, onde a cavidade chega.
 massa que chupa a face externa do rim e manda no tempo de ciclo. Vaziada por
 cima (o plano da junta, então sai reta): parede de 1,8 mm, seção máxima 3,3 mm,
 a mesma do rim.
+
+#### E uma quarta, achada na conferência antes de gerar os arquivos
+
+A tapa do rasgo inferior frontal (§4.2.4) tinha a faixa em z **fixa em 14 mm**.
+Aquele 14 não era uma cota do produto: era onde o chanfro de 45° do pé cruzava
+a parede **a 12° de saída**. A C baixou a saída para 6° e o cruzamento subiu
+para **24,96 mm** — a tapa cobria 14 e reabria ~11 mm de rasgo na frente, junto
+da base. Exatamente o defeito que o cliente havia mandado fechar, de volta por
+um número mágico.
+
+> z_cruzamento = (CHANFRO_PE − (PROF/2 − BASE_Y/2)) / (1 − tg saída)
+> — 10,63 mm a 12°, **24,96 mm a 6°**
+
+Virou `z_chanfro_pe()` e a faixa passou a ser derivada (`z1 = z_chanfro_pe() +
+2`), nunca mais literal. Conferido pelo teste de raios **sem referência** (o
+mesmo da lição de método de §4.2.4): **0 de 1.440 raios escapam** em z = 7,5 ·
+10 · 14,5 · 20 · 24 · 26 · 30 · 39 mm. Em z = 41 escapam 380 — é a primeira
+faixa de listra, que é para estar aberta. Custa 2,7 g.
+
+E o teste de acoplamento da folha `aba.png` estava medindo com o passo errado:
+`LARG` (180 mm) quando a aba para fora move o passo para `LARG + 2·ABA_W`
+(200 mm). Duas peças entravam 20 mm uma na outra e a "trava" acusava
+7.551 mm³ de interferência no contato. `passo_acoplado()` agora considera
+`ABA_DIR`; com o passo certo a trava mede **0 mm³ no contato**, 27,2 mm³ a
+1,2 mm de afastamento, e a peça solta a **7,5 mm** de levantamento — a altura
+da junta (`ABA_T` 2,5 + `ABA_DOBRA` 5), como tem de ser.
 
 #### A borda precisa de reforço em todo o perímetro? Não
 
@@ -1176,6 +1291,15 @@ Onde o empilhamento mudou, mudou para **melhor**. Hoje o pé pousa na ponta de
 um lábio de 10 mm em balanço; na C ele pousa em x 86,6…94,0 — sobre o topo do
 rim (86,8…90,0) **e** a raiz da aba (90…94), direto acima da parede. Braço de
 flexão medido: **0,55 mm contra 4,75 mm**. A aba nem entra em flexão.
+
+> **Sobre o 473 mm² do tripé:** as três folhas que medem o contato dão
+> **469** (`aba.png`), **472** (`fechado.png`) e **473** (`varredura.png`). É a
+> mesma área, medida com espessuras de fatia diferentes em cada script — o
+> contato é uma face plana, então a "área" sai do volume de uma lâmina fina, e
+> a lâmina não tem a mesma espessura nos três. A dispersão é de 0,9%; nenhuma
+> conclusão depende dela. Não unifiquei porque cada folha mede o que ela
+> própria afirma, e é assim que uma erra sozinha em vez de as três errarem
+> juntas.
 
 Coluna de 4 com 1 kg em cada (34,5 N na peça de baixo):
 
@@ -1303,17 +1427,28 @@ verdade (~0,3 mm) — e confirmado com o ferramenteiro.
 ## 5. Injeção
 
 Fechamento a 0,32 t/cm² (valvulado) + 10% de canal, limitado a 80% da máquina. Os furos estão nas
-paredes, então **não reduzem a área projetada** — o que conta é o footprint de 430 cm².
+paredes, então **não reduzem a área projetada** — o que conta é o footprint, que na configuração C
+é o envelope real **com a aba**: 204,0 × 235,1 = **480 cm²** (era 430 com a aba para dentro).
 
 | Cavidades | Fechamento | Máquina | Uso | Máquinas disponíveis | Ciclo est. | Produção |
 |---|---|---|---|---|---|---|
-| **1** | 151 t | **200 t** | 76% | **12** (INJ 1–6, 19–22, 35, 37) | 22 s | 163 pç/h |
-| 2 | 303 t | 380 t | 80% | 3 (INJ 31, 32, 33) | 24 s | 300 pç/h |
+| **1** | 169 t | **250 t** | 68% | **9** | 22 s | 164 pç/h |
+| 2 | 338 t | 600 t | 56% | 1 | 24 s | 300 pç/h |
+
+(a contagem por classe vem do `PARQUE` em `economia.py`: 12 máquinas de 200 t, **9 de 250 t**,
+1 de 280, 1 de 300, 3 de 380 e 1 de 600. As etiquetas INJ da classe de 200 t estão no estudo da
+caixa dobrável; não levantei as da classe de 250 t)
+
+**A aba para fora custou uma classe de máquina.** Os 50 cm² a mais de footprint levaram o
+fechamento de 151 para 169 t, o que tira a peça dos 200 t (limite de 160 t a 80%) e a põe nos
+250 t. A casa tem **9 máquinas** de 250 t contra 12 de 200 t — ainda é classe abundante, mas é
+uma perda real, e é o preço de extrair em molde de duas placas (§4.2.5). Não há como devolvê-la
+sem desvirar a aba: a aba é o pouso da pilha e o plano do acoplamento.
 
 **Recomendação: começar com 1 cavidade.** Não é só o custo do molde (USD 19,5 mil contra 34 mil):
-a versão de 2 cavidades **empurra o produto para a classe de 380 t, onde a casa tem 3 máquinas**,
-enquanto 1 cavidade roda na classe de 200 t, onde tem **12**. Para uma commodity que vai precisar
-de horas de máquina em volume, disputar 3 máquinas é pior que disputar 12.
+a versão de 2 cavidades **empurra o produto para a classe de 600 t, onde a casa tem 1 máquina**,
+enquanto 1 cavidade roda na classe de 250 t, onde tem **9**. Para uma commodity que vai precisar
+de horas de máquina em volume, disputar 1 máquina é inviável.
 
 Se o volume passar de ~250 mil/ano, a expansão certa é um **segundo molde de 1 cavidade**
 (USD 39 mil os dois) e não um de 2 cavidades (USD 34 mil): custa USD 5 mil a mais e entrega
@@ -1342,33 +1477,43 @@ resina virgem**, o que só fecha rodando moído.
 
 ### 6.2 Dois cenários
 
+Recalculado para os **179,2 g** da configuração C:
+
 | Cenário | Custo | Preço | Margem | Contribuição | Pacote de 10 |
 |---|---|---|---|---|---|
-| Virgem RP 141 (R$ 15/kg custo) | R$ 2,33 | R$ 4,58 | 49% | R$ 2,25 | R$ 45,80 |
-| Moído + pigmento (R$ 11,50/kg custo) | R$ 1,79 | R$ 4,58 | 61% | R$ 2,79 | R$ 45,80 |
+| Virgem RP 141 (R$ 15/kg custo) | R$ 2,69 | R$ 4,58 | 41% | R$ 1,89 | R$ 45,80 |
+| Moído + pigmento (R$ 11,50/kg custo) | R$ 2,06 | R$ 4,58 | 55% | R$ 2,52 | R$ 45,80 |
 
-Resina no cenário virgem: 0,1637 kg × R$ 9,54 = **R$ 1,56** por peça.
+Resina no cenário virgem: 0,1792 kg × R$ 9,54 = **R$ 1,71** por peça.
 
 **Sobre o preço adotado.** Nas versões anteriores eu precifiquei por R$/kg, o mesmo critério do
 custo. Está errado como critério de preço: **a regra por kg penaliza a redução de peso**. O
 mercado paga pela função e pelo tamanho, não pelos gramas. Então adotei o preço do comparável
-direto — **R$ 4,58 do Cesto Vime 7 L (047)** — e é aí que está o ganho: tirar 75 g da peça derruba
-o custo em R$ 1,13 sem derrubar o preço, e a margem sai de 40% para 49%.
+direto — **R$ 4,58 do Cesto Vime 7 L (047)**. Contra os 230 g da primeira geometria, os 179,2 g
+de hoje derrubam o custo em R$ 0,76 sem derrubar o preço.
 
-A R$ 0,86/L o produto fica acima do 047 (R$ 0,65/L), o que é esperado: 4,5 L com empilhamento e
+A R$ 1,12/L o produto fica acima do 047 (R$ 0,65/L), o que é esperado: 4,09 L com empilhamento e
 encaixe vale mais por litro que 7 L de cesto simples. Se o comercial achar o preço agressivo,
-R$ 3,99 ainda entrega 42% de margem no cenário virgem.
+R$ 3,99 ainda entrega **33%** de margem no cenário virgem.
+
+> **Esta seção e a 6.5 usam bases de preço diferentes, e isso é deliberado.**
+> Aqui o preço é o do comparável (R$ 4,58, fixo). O `economia.py`, que gera a
+> tabela de payback de 6.5, ainda precifica por R$/kg — é a base da casa, e é
+> por isso que lá a peça mais pesada "rende mais". Os dois caminhos dão
+> **5,8 e 6,2 meses** de payback a 150 mil/ano em virgem; a diferença é de 0,4
+> mês e nenhuma decisão depende dela. Se for para unificar, a base certa é a
+> desta seção — preço de função, não de grama — e aí o payback é o de 5,8.
 
 **A cor laranja é o que decide entre os dois cenários.** A casa compra PP moído **branco**
 (R$ 7,69/kg, 124 t/ano) e **preto** (R$ 6,19/kg, 337 t/ano) — não laranja. Laranja em moído exige
 lote dedicado de moído claro mais masterbatch, com risco de variação de tom entre lotes. É uma
-pergunta para a produção, e vale **R$ 0,81 por peça** (R$ 122 mil/ano a 150 mil peças).
+pergunta para a produção, e vale **R$ 0,63 por peça** (R$ 94 mil/ano a 150 mil peças).
 
 ### 6.3 Resina
 
 | Resina | Preço | Volume 12 m | Leitura |
 |---|---|---|---|
-| **PP RP 141 randon fluidez 40** | R$ 9,54/kg | 299,1 t | **Recomendada** — fluidez é o que uma parede de 1,4 mm sobre 430 cm² pede |
+| **PP RP 141 randon fluidez 40** | R$ 9,54/kg | 299,1 t | **Recomendada** — fluidez é o que uma parede de 1,4 mm sobre 480 cm² pede |
 | PP CP 141 copolímero | R$ 10,52/kg | 108,9 t | Alternativa, se o teste de queda com carga reprovar o randon |
 | PP H 103 homopolímero | R$ 9,90/kg | 473,2 t | **Não** — frágil em cesto carregado |
 | PP moído branco / preto | R$ 7,69 / 6,19/kg | 124 / 337 t | Alavanca de custo, se a cor permitir |
@@ -1400,12 +1545,19 @@ Investimento nacionalizado de 1 cavidade: USD 19,5 mil × R$ 5,45 × 1,30 = **R$
 
 | Volume/ano | Cenário | Contribuição/ano | Payback | Horas de máquina |
 |---|---|---|---|---|
-| 60.000 | virgem | R$ 98,2 mil | 16,9 meses | 367 h |
-| 60.000 | moído | R$ 122,8 mil | 13,5 meses | 367 h |
-| **150.000** | **virgem** | **R$ 245,6 mil** | **6,8 meses** | 917 h |
-| 150.000 | moído | R$ 306,9 mil | 5,4 meses | 917 h |
-| 300.000 | virgem | R$ 491,1 mil | 3,4 meses | 1.833 h |
-| 300.000 | moído | R$ 613,9 mil | 2,7 meses | 1.833 h |
+| 60.000 | virgem | R$ 107,5 mil | 15,4 meses | 367 h |
+| 60.000 | moído | R$ 134,4 mil | 12,3 meses | 367 h |
+| **150.000** | **virgem** | **R$ 268,8 mil** | **6,2 meses** | 917 h |
+| 150.000 | moído | R$ 336,0 mil | 4,9 meses | 917 h |
+| 300.000 | virgem | R$ 537,6 mil | 3,1 meses | 1.833 h |
+| 300.000 | moído | R$ 671,9 mil | 2,5 meses | 1.833 h |
+
+> **O payback melhorou porque a peça engordou, e isso é artefato do modelo.** A
+> casa precifica em R$/kg, então mais massa é mais contribuição por peça:
+> 179,2 g rendem R$ 1,79 contra R$ 1,71 dos 170,8 g. Não leia isso como
+> "engordar a peça é bom" — o mercado não paga por grama num organizador de
+> R$ 4,48. O que a tabela diz é só que o ferramental se paga rápido nos três
+> volumes, e isso continua verdade com qualquer peso desta faixa.
 
 Referência de volume: o **041 (Organizador Multiuso 3 divisórias) vendeu 262 mil unidades em 12
 meses** para 1.847 clientes — é o campeão de volume da casa em organizador pequeno. Se o cesto
@@ -1417,13 +1569,16 @@ novo chegar à metade disso (131 mil/ano), o payback é de 7,8 meses em virgem.
 
 | Item | Gravidade | Por quê |
 |---|---|---|
-| **Capacidade de 4,43 L é suficiente?** | **Alta** | O chanfro do pé já caiu de 52 para 36 mm para devolver volume. Levá-lo a 24 mm devolve ~0,2 L a mais, sem tocar no acesso frontal |
+| **Capacidade de 4,09 L é suficiente?** | **Alta** | O chanfro do pé já caiu de 52 para 36 mm para devolver volume. Levá-lo a 24 mm devolve ~0,2 L a mais, sem tocar no acesso frontal. A saída já foi de 12° para 6° por esse motivo (§4.2.6) |
 | **Amostra física** | **Alta** | O passo do encaixe e o engate exato da saia nos berços do rim |
 | **Passo do encaixe** | **Alta** | É a promessa de embalagem do pacote de 10. Medir na amostra ou em protótipo impresso (seção 4.2) |
 | Preço do anúncio de referência | Alta | **Não consegui abrir** — o proxy da sessão bloqueia o Mercado Livre. Precisa do preço do pacote de 10 para validar o cenário de preço |
-| Volume-alvo de venda | Alta | É o que decide 1 ou 2 cavidades e o payback. A conta é de volume, não de margem |
-| Laranja em moído é viável? | Média | Vale R$ 0,78/peça (seção 6.2) |
-| Redução de peso para 200 g | Média | Vale R$ 22 mil/ano a 150 mil peças (seção 2.1) |
+| Volume-alvo de venda | Alta | É o que decide o payback. Sobre cavidades a resposta mudou: 2 cavidades agora exigem 600 t, onde a casa tem **1 máquina** — acima de ~250 mil/ano a expansão é um segundo molde de 1 cavidade, não um de 2 (§5) |
+| Laranja em moído é viável? | Média | Vale R$ 0,63/peça, R$ 94 mil/ano a 150 mil (seção 6.2) |
+| Redução de peso | Média | A peça está em 179,2 g. A única alavanca grande que resta é perfurar a chapa do fundo (52,2 g, 29% da peça) — e o cliente pediu fundo fechado |
+| Cotas finais para a ferramentaria | Média | O pacote de cotas do molde ainda não foi fechado |
+| Ângulo de abertura da frente | Média | `cad/abertura.png` tem três (chanfro de 40 / 52 / 68 mm); está em **52** por ser o medido no STL de referência, e ninguém escolheu outro |
+| `ABA_DOBRA` de 5 para 3 mm? | Baixa | Devolve ~1,7 g e ainda deixa 5,5 mm de engate, 2,2× o de antes da dobra. Ficou em 5 mm por falta de resposta, e 5 é o conservador |
 | Teste de queda com carga | Média | Decide RP 141 vs CP 141 |
 | Pastilhas de furo postiças | Média | Manutenção do molde (seção 3.1) |
 | Câmbio e nacionalização | Baixa | Premissa, não dado do ERP |
@@ -1478,7 +1633,7 @@ grade centrada em y = 0 -- e o que garante nervura de 5 mm em toda a lateral
 e LIS_FOLGA_PE de folga ate a pegada do pe, dos dois lados.
 cad/visor3d.py     regera a malha embutida e os numeros do visor3d.html a
                    partir do solido -- para o visor nao envelhecer calado
-cad/visor3d.html   visor 3D interativo (artifact): o solido embutido em 628 KB
+cad/visor3d.html   visor 3D interativo (artifact): o solido embutido em 823 KB
                    de binario e o desenho em WebGL2 escrito na propria pagina,
                    sem biblioteca externa -- gera-se dele os quatro modos
                    (peca, encaixadas, empilhadas, acopladas)
@@ -1487,5 +1642,14 @@ cad/print/         gcode em PETG: o da Anycubic (Kobra 3 / S1 / 3 Max, com o
                    e 0,6; os perfis .ini, o miniatura.py que injeta a
                    miniatura 230x110 que o PrusaSlicer headless nao desenha,
                    e o LEIA-ME com o que a impressao nao reproduz
-cad/cesto-aba.step/.stl    a peca da arquitetura da aba (12 graus de saida)
+cad/cesto-aba.step/.stl    O SOLIDO DO PROJETO -- configuracao C: aba para
+                   FORA, 6 graus de saida, 204,0 x 235,1 x 132,5 mm, 179,2 g
+                   em PP. E dele que saem o visor3d.html e os tres .gcode
 ```
+
+**A regeneração é em cadeia, e nesta ordem:** `modelo3d.py` (`padrao()` fixa a
+configuração) → `aba.py` exporta `cesto-aba.step`/`.stl` → `visor3d.py` troca a
+malha embutida do visor → `prusa-slicer --load print/perfil-*.ini` refatia os
+três gcode → `print/miniatura.py` injeta a miniatura no da Anycubic. Todas as
+outras folhas leem `padrao()` direto, então podem rodar em qualquer ordem — mas
+nenhuma delas alimenta o visor nem o gcode.

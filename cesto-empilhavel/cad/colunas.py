@@ -18,7 +18,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import trimesh
-from build123d import export_stl
+from build123d import Pos, export_stl
 from matplotlib.patches import Rectangle
 
 import modelo3d as M
@@ -35,8 +35,19 @@ def vg(x, casas=2):
     return f"{x:.{casas}f}".replace(".", ",")
 
 
+def passo(p, dy, lo=0.0, hi=180.0, tol=0.02):
+    """Menor deslocamento em z em que duas pecas nao se interpenetram."""
+    while hi - lo > tol:
+        mid = (lo + hi) / 2
+        if (p & (Pos(0, dy, mid) * p)).volume > 0.002:
+            lo = mid
+        else:
+            hi = mid
+    return hi
+
+
 def main():
-    M.set_draft(12.0)
+    M.padrao()
     yc, L, _, ky, _, _ = M.PES[0]
     meia = L / 2 + ky * M.listras()[-1][1]
     grade_antiga = lambda: M.grade(
@@ -55,6 +66,13 @@ def main():
         folgas = sorted((abs(y - yc) - meia - M.LIS_W / 2, y) for y in cols)
         d[nome] = dict(cols=cols, n=n, peso=p.volume * M.RHO, folgas=folgas,
                        corta=sum(1 for f, _ in folgas if f < 0))
+        if nome == "depois":
+            # Encaixe e empilhamento MEDIDOS: a folha os afirmava digitados
+            # em 46,80/130,00, da saida de 12 graus.
+            d[nome]["pn"] = passo(p, 0.0)
+            d[nome]["pe"] = passo(p, M.DESLOC)
+            print(f"         encaixa {d[nome]['pn']:.2f} · "
+                  f"empilha {d[nome]['pe']:.2f}")
         print(f"{nome:7s}: {len(cols)} colunas, {n} rasgos, "
               f"{p.volume*M.RHO:.1f} g, {d[nome]['corta']} cortada(s) pelo pe")
         render.salvar(render.render([(trimesh.load(arq), COR)], direcao=VISTA,
@@ -103,7 +121,7 @@ def folha(d, meia):
     for rot, dd, cor in (("antes", a, CINZ), ("depois", b, VERDE)):
         tb.text(0.045, y, rot.upper(), fontsize=9.6, color=cor, weight="bold",
                 va="center")
-        y -= 0.058
+        y -= 0.054
         for f, yy in dd["folgas"][:4]:
             marca = "  CORTA O PÉ" if f < 0 else ""
             tb.text(0.10, y, f"y = {yy:6.1f} mm", fontsize=9.0, color=TINTA,
@@ -112,19 +130,24 @@ def folha(d, meia):
                     color=VERM if f < 0 else TINTA, va="center",
                     family="DejaVu Sans Mono")
             tb.text(0.80, y, marca, fontsize=8.4, color=VERM, va="center")
-            y -= 0.052
+            y -= 0.048
         y -= 0.03
-    tb.text(0.045, y, f"nº de rasgos    {a['n']} → {b['n']}\n"
+    # As tres pilhas de texto vinham com y CORRIDO para as duas primeiras e
+    # y FIXO (0,155) para a terceira: com 4 folgas por lado elas se cruzavam.
+    # Agora as duas de baixo saem de ancoras fixas, com espaco reservado.
+    tb.text(0.045, 0.300, f"nº de rasgos    {a['n']} → {b['n']}\n"
             f"peso em PP      {vg(a['peso'],1)} → {vg(b['peso'],1)} g\n"
-            f"nervura entre listras   {M.LIS_P - M.LIS_W:.0f} mm, toda a lateral\n"
+            f"nervura entre listras   {M.LIS_P - M.LIS_W:.0f} mm, toda a "
+            f"lateral\n"
             f"folga até o pé  LIS_FOLGA_PE = {M.LIS_FOLGA_PE:.0f} mm, "
             "os dois lados",
             fontsize=9.0, color=TINTA, va="top", linespacing=1.7)
-    tb.text(0.045, 0.155, "A pegada do pé CRESCE com z (L/2 + ky·z), então quem\n"
+    tb.text(0.045, 0.160, "A pegada do pé CRESCE com z (L/2 + ky·z), então quem\n"
             "manda é a cota mais alta do campo. cols_lateral() gera as\n"
             "colunas do pé para fora, nos dois sentidos — não há cota\n"
             "para acertar à mão, e se o pé mudar as colunas acompanham.\n"
-            "Encaixe 46,80 e empilhamento 130,00 inalterados.",
+            f"Encaixe {vg(b['pn'], 2)} e empilhamento {vg(b['pe'], 2)} "
+            f"inalterados.",
             fontsize=8.6, color=NOVO, va="top", linespacing=1.55)
 
     fig.savefig(os.path.join(DEST, "colunas.png"), dpi=118, facecolor=FUNDO)

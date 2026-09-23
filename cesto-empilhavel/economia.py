@@ -48,10 +48,16 @@ PARQUE = {200: 12, 250: 9, 280: 1, 300: 1, 380: 3, 600: 1}
 
 def main():
     import modelo3d as M
-    p, n_furos = M.cesto()
+    # padrao() fixa a configuracao do projeto (C: aba para FORA, 6 graus), e
+    # aba=True monta a peca COM a aba do rim. Sem os dois, o modelo de custo
+    # pesava um solido que nao e o produto -- 8 g a menos, que a 150 mil
+    # pecas/ano e resina de verdade.
+    M.padrao()
+    p, n_furos = M.cesto(aba=True)
     peso = p.volume * M.RHO / 1000        # kg
     cap = M.capacidade()
-    area = M.LARG * M.PROF / 100.0
+    bb = p.bounding_box()
+    area = bb.size.X * bb.size.Y / 100.0  # envelope real, com a aba
 
     print(f"PECA: {peso*1000:.1f} g | {cap:.2f} L | pe em saia de {M.H_PE:.0f} mm "
           f"| area projetada {area:.0f} cm2 | {n_furos} furos\n")

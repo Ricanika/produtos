@@ -21,7 +21,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import trimesh
-from build123d import export_stl
+from build123d import Pos, export_stl
 from matplotlib.patches import Rectangle
 
 import modelo3d as M
@@ -63,8 +63,19 @@ def com(cotas, arq=None):
                 vao=cotas[0] * h)
 
 
+def passo(p, dy, lo=0.0, hi=180.0, tol=0.02):
+    """Menor deslocamento em z em que duas pecas nao se interpenetram."""
+    while hi - lo > tol:
+        mid = (lo + hi) / 2
+        if (p & (Pos(0, dy, mid) * p)).volume > 0.002:
+            lo = mid
+        else:
+            hi = mid
+    return hi
+
+
 def main():
-    M.set_draft(12.0)
+    M.padrao()
     M.VAZADO = "nenhum"
     cheio = M.cesto(aba=True)[0].volume
     M.VAZADO = "listra"
@@ -84,6 +95,13 @@ def main():
         m = trimesh.load(os.path.join(DEST, arq))
         render.salvar(render.render([(m, COR)], direcao=VISTA, largura=940),
                       os.path.join(DEST, f"rasgo-{nome}.png"))
+
+    # Encaixe e empilhamento MEDIDOS na peca escolhida: a folha os afirmava
+    # digitados em 46,80/130,00, da saida de 12 graus.
+    d["depois"]["pn"] = passo(d["depois"]["p"], 0.0)
+    d["depois"]["pe"] = passo(d["depois"]["p"], M.DESLOC)
+    print(f"         encaixa {d['depois']['pn']:.2f} · "
+          f"empilha {d['depois']['pe']:.2f}")
 
     linhas = []
     for cotas in VARRE:
@@ -148,7 +166,7 @@ def folha(d, varre):
            f"{b['n']} rasgos · {vg(b['peso'])} g")
     escala(fig, [0.672, 0.505, 0.155, 0.375], d)
 
-    tb = fig.add_axes([0.845, 0.470, 0.130, 0.400]); tb.axis("off")
+    tb = fig.add_axes([0.845, 0.445, 0.130, 0.425]); tb.axis("off")
     tb.add_patch(Rectangle((0, 0), 1, 1, transform=tb.transAxes,
                            facecolor="#fdf6f1", edgecolor="#f0d3c2", lw=1.3))
     tb.text(0.08, 0.955, "MEDIDO", fontsize=11, color=NOVO, weight="bold",
@@ -172,7 +190,7 @@ def folha(d, varre):
         tb.text(0.95, y, v2, fontsize=9.0, color=GRIS if i == 0 else VERDE,
                 va="center", ha="right", weight=w)
         y -= 0.093
-    tb.text(0.08, y - 0.02, "vão e aberto\nem mm²", fontsize=8.2, color=GRIS,
+    tb.text(0.08, max(y - 0.02, 0.085), "vão e aberto\nem mm²", fontsize=8.2, color=GRIS,
             va="top")
 
     # --- a varredura, em grafico: peso x largura do rasgo -------------------
@@ -200,7 +218,7 @@ def folha(d, varre):
     ax.tick_params(labelsize=8.6, colors=GRIS)
     ax.set_xlim(3.4, 9.0)
 
-    tx = fig.add_axes([0.520, 0.055, 0.453, 0.380]); tx.axis("off")
+    tx = fig.add_axes([0.520, 0.038, 0.453, 0.400]); tx.axis("off")
     tx.add_patch(Rectangle((0, 0), 1, 1, transform=tx.transAxes,
                            facecolor="#f6f7f9", edgecolor="#e3e0da", lw=1.2))
     tx.text(0.04, 0.955, "POR QUE A LARGURA SAI DE GRAÇA", fontsize=12,
@@ -212,7 +230,8 @@ def folha(d, varre):
             f"{vg(min(r['peso'] for r in varre))} e "
             f"{vg(max(r['peso'] for r in varre), 1, 'g')}: "
             f"{vg(max(r['peso'] for r in varre) - min(r['peso'] for r in varre))} g\n"
-            "de diferença numa peça de 168. O tamanho do rasgo é, portanto,\n"
+            f"de diferença numa peça de {b['peso']:.0f}. O tamanho do rasgo é, "
+            "portanto,\n"
             "decisão de FUNÇÃO — o que não pode passar por ele — e não de "
             "peso.\n\n"
             "Quem pesa são duas outras coisas:\n"
@@ -233,8 +252,9 @@ def folha(d, varre):
             f"{[r for r in varre if r['w']==5 and r['passo']==9][0]['n']} "
             "rasgos — 32 fecha-machos a mais no molde.\n\n"
             "O empilhamento e o encaixe não mudam: os rasgos moram na parede,\n"
-            "longe do pé, da aba e do friso. Medido: encaixa 46,80 mm,\n"
-            "empilha 130,00 mm, 0,0000 mm³ de interferência.",
+            f"longe do pé, da aba e do friso. Medido: encaixa "
+            f"{vg(b['pn'], 2)} mm,\n"
+            f"empilha {vg(b['pe'], 2)} mm, 0,0000 mm³ de interferência.",
             fontsize=8.5, color=TINTA, va="top", linespacing=1.48)
 
     fig.savefig(os.path.join(DEST, "rasgos.png"), dpi=118, facecolor=FUNDO)

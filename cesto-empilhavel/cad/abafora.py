@@ -172,7 +172,7 @@ def folha(res):
                     weight="bold" if forte else "normal")
         y -= 0.072
 
-    tx = fig.add_axes([0.640, 0.232, 0.338, 0.273]); tx.axis("off")
+    tx = fig.add_axes([0.640, 0.255, 0.338, 0.250]); tx.axis("off")
     tx.add_patch(Rectangle((0, 0), 1, 1, transform=tx.transAxes,
                            facecolor="#f6f7f9", edgecolor="#e3e0da", lw=1.2))
     tx.text(0.05, 0.950, "POR QUE C", fontsize=12, color=TINTA,
@@ -194,27 +194,37 @@ def folha(res):
             f"encaixe de {vg(h['pn'], 1)} para {vg(c['pn'], 1, 'mm')} "
             f"({100*(1-c['col12']/h['col12']):.0f}% menos caixa em 12 peças) "
             "e peso\n"
-            f"de {vg(c['peso'], 1, 'g')} — o MESMO de hoje. A vertical não "
-            "é alavanca aqui:\n"
+            # "o MESMO de hoje" era verdade quando hoje pesava 176,5 g.
+            # Hoje pesa 169,0: C custa 10,2 g a mais, e o numero tem de sair
+            # da medicao, nao de uma afirmacao que envelheceu.
+            f"de {vg(c['peso'], 1, 'g')}, "
+            f"{vg(c['peso'] - h['peso'], 1, 'g')} acima de hoje. A vertical "
+            "não é alavanca:\n"
             "a saída em x do pé é (ABA_W−ABA_POUSO)/ALT, então o passo\n"
             "encaixado cresce junto com a altura e a razão fica em 31%.\n"
             "Altura segue 130 mm, decisão de produto.",
-            fontsize=7.9, color=TINTA, va="top", linespacing=1.42)
+            fontsize=7.5, color=TINTA, va="top", linespacing=1.36)
 
-    al = fig.add_axes([0.640, 0.055, 0.338, 0.162]); al.axis("off")
+    al = fig.add_axes([0.640, 0.055, 0.338, 0.182]); al.axis("off")
     al.add_patch(Rectangle((0, 0), 1, 1, transform=al.transAxes,
-                           facecolor="#fff1f0", edgecolor="#f0c2c2", lw=1.3))
-    al.text(0.05, 0.90, "FALTA RESOLVER: O APOIO DE TRÁS", fontsize=10.5,
-            color=VERM, weight="bold", va="top")
-    al.text(0.05, 0.70,
-            f"O tripé caiu de {sum(h['apoios']):.0f} para "
-            f"{sum(c['apoios']):.0f} mm²: sobraram só os dois pés da\n"
-            "frente. A saia de trás é rente à casca, e com a aba para fora\n"
-            "a faixa de pouso saiu de baixo dela. Vale igual em A, B e C,\n"
-            "então não muda a escolha de envelope — mas tem de ser\n"
-            "resolvido: ou DESLOC de 21 para ~30 mm (de graça, a coluna\n"
-            "escalona mais), ou uma nervura de trás de 7 mm x 31 mm de\n"
-            "altura (o cone alcança 104 em z = 31, então é só até lá).",
+                           facecolor="#f0fdf4", edgecolor="#bbf7d0", lw=1.3))
+    # Esta caixa dizia "FALTA RESOLVER: o tripe caiu de 388 para 469 mm2,
+    # sobraram so os dois pes da frente". Era o BUG da silhueta -- o recorte
+    # do CORPO amputava a aba nova em y, sobravam 0,26 mm da aba de tras e a
+    # saia pousava no vazio. silhueta(folga) resolveu, e 388 -> 469 e uma
+    # SUBIDA, nao uma queda. O texto sobreviveu a propria correcao.
+    al.text(0.05, 0.90, "O QUE ERA \"FALTA RESOLVER\": O APOIO DE TRÁS",
+            fontsize=10.5, color=VERDE, weight="bold", va="top")
+    al.text(0.05, 0.72,
+            f"Resolvido. Na primeira rodada o tripé media 60 mm²: o recorte\n"
+            f"da silhueta do CORPO amputava a aba nova em y, sobravam\n"
+            f"0,26 mm da aba de trás em vez de 10, e a saia pousava no\n"
+            f"vazio. Com a aba recortada pela sua própria silhueta\n"
+            f"(offset de ABA_W), o tripé vai a {sum(c['apoios']):.0f} mm² — "
+            f"acima dos {sum(h['apoios']):.0f} de\n"
+            f"hoje — e DESLOC fica em 21 mm. A e B ficam em "
+            f"{sum(a['apoios']):.0f} mm² por outro\n"
+            f"motivo: a 12° de saída o pé não alcança a faixa de pouso.",
             fontsize=7.9, color=TINTA, va="top", linespacing=1.42)
 
     if False:

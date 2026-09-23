@@ -792,6 +792,20 @@ def _pe_bolsa(env):
     return out
 
 
+def z_chanfro_pe():
+    """Cota em que o chanfro do pe SAI da casca.
+
+    Abaixo dela o chanfro passa por DENTRO da parede da frente e a apaga; e
+    ate ali que a tapa tem de ir. Sai de
+        (CHANFRO_PE - (PROF/2 - BASE_Y/2)) / (1 - tg(saida))
+    e portanto DEPENDE DA SAIDA: 10,63 mm a 12 graus, 24,96 a 6. A primeira
+    versao da tapa tinha a faixa fixa em 14 mm, o que bastava a 12 graus e
+    reabriu 11 mm de rasgo quando a saida caiu para 6 na configuracao C.
+    Nunca mais em numero fixo.
+    """
+    return (CHANFRO_PE - (PROF / 2 - BASE_Y / 2)) / (1 - TAN)
+
+
 def _tapa_frente(fora, sil):
     """Fecha o RASGO INFERIOR FRONTAL: parede de T_PAREDE sobre o chanfro do pe.
 
@@ -822,8 +836,10 @@ def _tapa_frente(fora, sil):
     """
     d = T_PAREDE / np.sqrt(2.0)
     casca_sil = sil - Pos(0, d, d) * sil
-    faixa = Pos(0, -PROF / 2 + 20.0, (H_PE + 14.0) / 2) * Box(
-        LARG + 60, 40.0, 14.0 - H_PE)
+    z1 = z_chanfro_pe() + 2.0            # derivada, nunca fixa (ver docstring)
+    larg_y = z1 + 25.0                   # a linha do chanfro anda 1 mm por mm
+    faixa = Pos(0, -PROF / 2 + larg_y / 2, (H_PE + z1) / 2) * Box(
+        LARG + 60, larg_y, z1 - H_PE)
     return casca_sil & fora & faixa
 
 
@@ -1003,6 +1019,17 @@ def set_draft(graus):
     PES = tuple(t[:4] + (pe_r00(),) + t[5:] for t in PES)
 
 
+def padrao():
+    """A configuracao do projeto: a C, decidida em 23/09.
+
+    Todo script do cad chama isto no lugar de set_draft(12), para que a
+    geometria venha de UM lugar e nao de cada folha.
+      corpo 180 x 230, envelope de planta 200 x 250 com a aba para fora,
+      altura 130, saida 6 graus por lado.
+    """
+    set_envelope(180.0, 230.0, 6.0, alt=130.0, aba_dir=+1)
+
+
 def set_envelope(larg, prof, graus, alt=None, aba_dir=None):
     """Troca a boca do CORPO, a altura e a saida de uma vez.
 
@@ -1021,9 +1048,17 @@ def set_envelope(larg, prof, graus, alt=None, aba_dir=None):
     set_draft(graus)
 
 
-def passo_acoplado(acopl):
-    """Distancia entre os eixos de duas pecas acopladas."""
-    return LARG + (X_B - LARG / 2) if acopl == "B" else LARG
+def passo_acoplado(acopl=None):
+    """Distancia entre os eixos de duas pecas acopladas.
+
+    Com a ABA PARA FORA o que se toca sao as arestas dela, nao as paredes:
+    o passo e LARG + 2*ABA_W, nao LARG. Media com o valor errado, duas pecas
+    aparecem 20 mm interpenetradas e a trava mede 7.551 mm3 de "interferencia"
+    -- foi o que aconteceu na folha aba.png na primeira rodada da C.
+    """
+    if acopl == "B":
+        return LARG + (X_B - LARG / 2)
+    return LARG + 2 * ABA_W * max(ABA_DIR, 0)
 
 
 def _caixa(sx, x0, x1, y0, y1, z0, z1):

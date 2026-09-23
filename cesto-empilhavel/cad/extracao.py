@@ -153,7 +153,7 @@ def relatorio(nome, vol, presa, dz=DZ):
 
 
 def main():
-    M.set_draft(12.0)
+    M.padrao()
     res = {}
     for nome, com_aba in (("peca como esta", True), ("SEM a aba", False)):
         if not com_aba:
@@ -174,12 +174,23 @@ def main():
           f"os {b:.0f} restantes sao os rasgos passantes da parede,")
     print(f"   que travam so a espessura dela (1,4 mm) e liberam em 6,6 mm "
           f"de curso -- fechamento normal.")
+    # A cota que decide e a da aba para DENTRO: quanto ela avanca sobre a
+    # boca. Com ABA_DIR = +1 a aba nem entra na boca, entao aqui a conta e
+    # CONTRAFACTUAL -- o que a mesma peca prenderia se a aba fosse virada
+    # para dentro. Imprimir isso como se fosse a peca atual, como a primeira
+    # versao fazia, e afirmar o contrario do que a peca e.
     x_int = M.BASE_X / 2 + M.TAN * (M.ALT - M.ABA_T) - M.T_RIM
-    print(f"\nA COTA QUE DECIDE: a aba avanca "
-          f"{x_int - (M.LARG/2 - M.ABA_W):.2f} mm para DENTRO da face interna "
-          f"da parede,")
+    avanco = x_int - (M.LARG / 2 - M.ABA_W)
+    if M.ABA_DIR > 0:
+        print(f"\nA COTA QUE DECIDE (contrafactual -- a aba desta peca esta "
+              f"para FORA):")
+        print(f"   virada para DENTRO ela avancaria {avanco:.2f} mm sobre a "
+              f"face interna da parede,")
+    else:
+        print(f"\nA COTA QUE DECIDE: a aba avanca {avanco:.2f} mm para "
+              f"DENTRO da face interna da parede,")
     print(f"   numa boca interna de {2*x_int:.1f} mm -> "
-          f"{100*(x_int-(M.LARG/2-M.ABA_W))/x_int:.1f}% por lado, "
+          f"{100*avanco/x_int:.1f}% por lado, "
           f"em degrau de {M.ABA_T} mm continuo.")
 
 

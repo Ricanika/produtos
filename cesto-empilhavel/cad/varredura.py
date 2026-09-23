@@ -63,7 +63,7 @@ def vol(*ss):
 
 
 def main():
-    M.set_envelope(180.0, 230.0, 6.0, aba_dir=+1)
+    M.padrao()
     p, n = M.cesto(aba=True)
     arq = os.path.join(DEST, "vr-c.stl")
     export_stl(p, arq)
@@ -99,8 +99,17 @@ def main():
     d["ap"] = ap
     d["trava"] = [(dx, vol(p, Pos(M.LARG + 2 * M.ABA_W + dx, 0, 0) * p))
                   for dx in (0.6, 1.2, 2.0)]
-    d["solta"] = [(dz, vol(p, Pos(M.LARG + 2 * M.ABA_W + 1.2, 0, dz) * p))
-                  for dz in (6.0, 10.0)]
+    # Amostrar so 6 e 10 mm reportava "solta a 10" enquanto a folha aba.png,
+    # que testa 8, reportava 8: a mesma peca com dois numeros. Busca binaria.
+    lo, hi = 0.0, 16.0
+    while hi - lo > 0.05:
+        mid = (lo + hi) / 2
+        if vol(p, Pos(M.LARG + 2 * M.ABA_W + 1.2, 0, mid) * p) > 0.0:
+            lo = mid
+        else:
+            hi = mid
+    d["solta"] = [(6.0, vol(p, Pos(M.LARG + 2 * M.ABA_W + 1.2, 0, 6.0) * p)),
+                  (hi, 0.0)]
     d["enc"] = [(dz, vol(p, Pos(0, 0, d["pn"] + dz) * p))
                 for dz in (0.0, 1.0, 2.0)]
     print(f"C: {d['peso']:.1f} g | {d['cap']:.2f} L | encaixa {d['pn']:.2f} | "
@@ -199,35 +208,35 @@ def folha(d):
             "pé pousa sobre o topo do rim + a raiz",
             "da aba — não na ponta de um balanço"],
            "PASSA · 0,48 MPa de contato, 60× de folga", VERDE,
-           0.575, 0.466)
+           0.575, 0.470)
 
     painel(fig, [0.268, 0.595, 0.235, 0.300], "vr-aco.png",
            "ACOPLAR", NOVO,
            [f"altura de junta {vg(M.ABA_T + M.ABA_DOBRA, 1, 'mm')} "
             f"(era {vg(M.ABA_T)})",
-            f"trava a partir de 0,6 mm ({d['trava'][0][1]:.1f} mm³)",
-            f"a 1,2 mm: {d['trava'][1][1]:.1f} mm³ (era 11,2)",
-            f"solta levantando {d['solta'][1][0]:.0f} mm",
+            f"trava a partir de 0,6 mm ({vg(d['trava'][0][1], 1, 'mm³')})",
+            f"a 1,2 mm: {vg(d['trava'][1][1], 1, 'mm³')} (era 11,2)",
+            f"solta levantando {vg(d['solta'][1][0], 1, 'mm')}",
             "pescoço 7 × 7,5 mm = 52 mm² de seção",
             "resiste ~1.300 N — ninguém puxa isso"],
            "PRECISOU DA DOBRA · agora 2,4× o engate", NOVO,
-           0.575, 0.466)
+           0.575, 0.470)
 
     painel(fig, [0.514, 0.595, 0.235, 0.300], "vr-enc.png",
            "ENCAIXAR", VERDE,
            [f"passo {vg(d['pn'], 2, 'mm')} · 12 peças em "
             f"{d['env'][2] + 11*d['pn']:.0f} mm",
             "batente PLANO: a membrana do pé, em z = 40",
-            f"interferência: {d['enc'][0][1]:.2f} mm³ no passo,",
+            f"interferência: {vg(d['enc'][0][1], 2, 'mm³')} no passo,",
             f"0,00 já a 1 mm acima — para seco, sem cunha",
             "parede-a-parede sobra 2,8 mm de folga",
             "cunha do pé libera 4,4 mm antes do batente"],
            "PASSA · centra sozinho, e não agarra", VERDE,
-           0.575, 0.466)
+           0.575, 0.470)
 
     secao_rim(fig, [0.762, 0.560, 0.216, 0.335], d)
 
-    tb = fig.add_axes([0.022, 0.040, 0.455, 0.418]); tb.axis("off")
+    tb = fig.add_axes([0.022, 0.040, 0.455, 0.400]); tb.axis("off")
     tb.add_patch(Rectangle((0, 0), 1, 1, transform=tb.transAxes,
                            facecolor="#fdf6f1", edgecolor="#f0d3c2", lw=1.3))
     tb.text(0.035, 0.965, "AS TRÊS ADAPTAÇÕES QUE A VARREDURA PEDIU",
@@ -259,7 +268,7 @@ def folha(d):
                 linespacing=1.5)
         y -= 0.255
 
-    tx = fig.add_axes([0.492, 0.040, 0.486, 0.418]); tx.axis("off")
+    tx = fig.add_axes([0.492, 0.040, 0.486, 0.400]); tx.axis("off")
     tx.add_patch(Rectangle((0, 0), 1, 1, transform=tx.transAxes,
                            facecolor="#f0f7f1", edgecolor="#bcd9c2", lw=1.3))
     tx.text(0.032, 0.965, "A BORDA PRECISA DE REFORÇO EM TODO O PERÍMETRO?",
