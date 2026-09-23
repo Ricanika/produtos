@@ -91,9 +91,9 @@ para 220/110.
 
 ## 4. Injeção
 
-- **Área projetada dos módulos: 847 cm².** Os oblongos do piso ocupam 38% do vão. Sem eles o módulo passaria de 1.100 cm²
-  e sairia da classe de 380 t. A 300 bar, com 15% de margem, dá **298 t**.
-- **Tampo: 1.327 cm² de superfície cheia.** Com dois pontos de câmara quente (220 bar) dá **342 t**, 90% de uma 380 t.
+- **Área projetada dos módulos: 845 cm².** Os oblongos do piso ocupam 38% do vão. Sem eles o módulo passaria de 1.100 cm²
+  e sairia da classe de 380 t. A 300 bar, com 15% de margem, dá **297 t**.
+- **Tampo: 1.326 cm² de superfície cheia.** Com dois pontos de câmara quente (220 bar) dá **342 t**, 90% de uma 380 t.
   Recomendação: INJ 34 (600 t), que já roda o corpo do 069. Para ir para a 380 t, só com Moldflow.
 - **Referência que já roda:** o corpo 069-C (385 × 280 mm, 392 g) vai nas INJ 33 (380 t) e 34 (600 t).
 - **Ferramental, em ordem de grandeza: USD 74–92 mil** para os três moldes (1 cavidade, câmara quente, sem gaveta). A base
