@@ -3,9 +3,10 @@
 Memoria de calculo da BASE MODULAR Rattan G / Rattan G Baixo.
 
 Le a geometria de geometria.py (a mesma que gera o 3D) e confere, nesta ordem:
-  1. o cesto cabe e sai (folgas, batente)
+  1. o cesto cabe e sai (folgas, lombada)
   2. a janela lateral sai do molde sem gaveta (angulo de fechamento)
-  3. peso e resina de cada peca, pela UNIAO dos solidos
+  3. peso e resina de cada peca, pela UNIAO dos solidos (amostrada; valida.py
+     confere o metodo contra a conta exata e a malha)
   4. injetora: area projetada, fechamento, curso de abertura
   5. rigidez: flecha do piso com o cesto cheio, montante sob a torre
   6. torres montadas: altura, peso, custo de resina
@@ -26,6 +27,7 @@ Uso:  python3 calculo.py [--json dados.json]
 """
 import json, math, sys
 import geometria as g
+import solidos as s
 
 RHO = 0.900e-3              # g/mm3, PP CP 141
 RS_KG = 10.51               # R$/kg, media de compra 12 meses
@@ -72,17 +74,18 @@ def calcula():
             "passo": g.PASSO[m], "vao_livre": [livre_l, livre_p, livre_h],
             "folga_topo": livre_h - c["H"], "folga_lado": (livre_l - c["L"]) / 2,
             "folga_prof": livre_p - c["P"],
-            "levanta_batente": g.BATENTE_F,
+            "levanta_lombada": g.LOMB_H,
+            # a lombada so segura se o fundo do cesto comecar atras dela
+            "recuo_fundo_min": g.LOMB_W + 1.0 - ((livre_p - c["P"]) / 2 + g.T + 0.8),
             "janela": [z0, z1], "shutoff_graus": ang,
         }
 
     # ------------------------------------------------ 3/4. pecas e injetora --
     for nome, f in g.PECAS.items():
         el = f()
-        v = g.uniao_volume(el)
-        a = g.area_projetada(el)
+        v, a = s.volume_area(el, h=0.35)
         massa = v * RHO
-        altura = max((e[6] if e[0] == "caixa" else e[4]) for e in el)
+        altura = max(s.caixa_limite(e)[5] for e in el)
         bar = BAR_CAV_TAMPO if nome == "tampo" else BAR_CAV
         fech_t = a / 100 * bar * 1.0197 / 1000 * MARGEM_FECH
         curso = 2 * altura + 60
@@ -146,7 +149,9 @@ def calcula():
                        "TRAV_H": g.TRAV_H, "PASSO": g.PASSO,
                        "MONT_Y": g.MONT_Y, "T": g.T, "TAMPO_H": g.TAMPO_H,
                        "RS_KG": RS_KG, "E_LONGO": E_LONGO, "BAR_CAV": BAR_CAV,
-                       "CARGA_KG": CARGA_KG}
+                       "CARGA_KG": CARGA_KG, "LOMB_W": g.LOMB_W, "LOMB_H": g.LOMB_H,
+                       "R_CANTO": g.R_CANTO, "R_BOCA": g.R_BOCA, "R_JANELA": g.R_JANELA,
+                       "TAMPO_RF": g.TAMPO_RF}
     return r
 
 
@@ -164,7 +169,8 @@ def imprime(r):
         print(f"  {m:5s} {e['ref']}: vao livre {br(e['vao_livre'][0])} x "
               f"{br(e['vao_livre'][1])} x {br(e['vao_livre'][2])}  folgas "
               f"lado {br(e['folga_lado'])}/lado  prof {br(e['folga_prof'])}  "
-              f"topo {br(e['folga_topo'])}  (levanta {br(e['levanta_batente'])} no batente)")
+              f"topo {br(e['folga_topo'])}  (levanta {br(e['levanta_lombada'])} na lombada; "
+              f"fundo do cesto tem de comecar >= {br(e['recuo_fundo_min'])} mm atras da borda)")
     print("\n2. JANELA SEM GAVETA")
     for m, e in r["encaixe"].items():
         print(f"  {m:5s} janela z {br(e['janela'][0])} -> {br(e['janela'][1])}  "

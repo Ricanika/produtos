@@ -1,17 +1,31 @@
 # Base Modular Rattan G
 
-**Status:** estudo de produto · **Revisão 1** · 23/09/2026
+**Status:** estudo de produto · **Revisão 2** · 23/09/2026
 **Serve:** 069.006.003 (Rattan G, 38,5 × 28 × 19,0 cm) e 261.006.003 (Rattan G Baixo, 38,5 × 28 × 8,3 cm)
 
 Gaveteiro empilhável: cada módulo recebe um cesto, que entra pela frente como gaveta. **Três peças, três moldes:**
 
 | Peça | Serve | Peso | Resina (PP CP 141 a R$ 10,51/kg) | Injetora |
 |---|---|---|---|---|
-| Módulo alto | 069.006.003 | 693 g | R$ 7,28 | 380 t: INJ 31, 32, 33 |
-| Módulo baixo | 261.006.003 | 580 g | R$ 6,09 | 380 t: INJ 31, 32, 33 |
-| Tampo | fecha a torre | 387 g | R$ 4,07 | 600 t: INJ 34 (a 380 t depende de Moldflow) |
+| Módulo alto | 069.006.003 | 692 g | R$ 7,28 | 380 t: INJ 31, 32, 33 |
+| Módulo baixo | 261.006.003 | 585 g | R$ 6,15 | 380 t: INJ 31, 32, 33 |
+| Tampo | fecha a torre | 383 g | R$ 4,02 | 600 t: INJ 34 (a 380 t depende de Moldflow) |
 
 Página publicada, com o 3D para montar a torre: https://claude.ai/artifact/6T3wh7od7kxZ3uwmojPYph
+
+> **Revisão 2: cantos arredondados e lombada.**
+>
+> - **Cantos em planta R14** nos montantes e no tampo. O tampo ganha a **aresta de cima em R6**, com a face de
+>   dentro concêntrica (R3,5), para a parede ficar em 2,5 mm constante. Sem isso, a curva afinava para 1 mm.
+> - **Filete R12 na boca**, onde o montante encontra o piso (visto de frente), e **R20 nos cantos de cima da
+>   abertura lateral**.
+> - **Lombada arredondada de 12 × 5 mm, igual na frente e atrás**, no lugar do batente reto de 4 mm e do encosto de
+>   20 mm. O módulo ficou **simétrico**: entra na torre de qualquer lado, e a gaveta sai pelos dois.
+> - **Nenhum raio criou gaveta no molde** (seção 2.1). O canto de cima da boca ficou reto de propósito: arredondado
+>   ali, viraria contrassaída.
+> - **Nova condição:** o fundo do cesto tem de começar pelo menos 8 mm para dentro da borda de cima. Se não, o cesto
+>   apoia em cima da lombada. **Medir no 069 e no 261.**
+> - O peso quase não mudou: +/−5 g por peça. O encosto de trás saiu, e a lombada e os filetes entraram.
 
 ---
 
@@ -44,6 +58,18 @@ partir do ângulo.
 Custo do desenho: o rasgo corta a ligação direta entre o piso e a lateral. Quem leva a carga do piso até os montantes
 passa a ser o peitoril, que funciona como viga.
 
+### 2.1 Os raios da revisão 2, e quem forma cada um no molde
+
+| Onde | Raio | A face olha para | Quem forma |
+|---|---|---|---|
+| Canto externo do montante (planta) | R14 | o lado (vertical) | cavidade, com saída |
+| Canto do tampo (planta) | R14 | o lado (vertical) | cavidade do tampo |
+| Aresta de cima do tampo | R6 (dentro R3,5) | cima e fora | cavidade; macho por dentro |
+| Boca: montante → piso (vista de frente) | R12 | cima e dentro | macho |
+| Janela: montante → travessa (vista de lado) | R20 | baixo, por cima do rasgo | cavidade, subindo pelo rasgo |
+| Lombada, frente e atrás | 12 × 5 | cima | macho |
+| Canto de cima da boca | **reto** | baixo, sobre o piso | ninguém alcança: arredondar ali pediria gaveta |
+
 ## 3. O cesto cabe e sai
 
 | Módulo | Vão livre (mm) | Folga lado | Folga fundo | Folga topo | Flecha do piso* |
@@ -54,8 +80,9 @@ passa a ser o peitoril, que funciona como viga.
 \*Flecha com o módulo de fluência a 1.000 h (400 MPa), piso tratado como biapoiado e sem contar as nervuras longitudinais.
 É um limite conservador.
 
-Um **batente de 4 mm** na frente segura o cesto. Para tirar, levanta-se o cesto 4 mm, e por isso a folga de topo tem de cobrir
-o batente mais a flecha do piso de cima.
+Uma **lombada de 12 × 5 mm**, na frente e atrás, segura o cesto. Para tirar, levanta-se o cesto 5 mm, e por isso a folga de
+topo tem de cobrir a lombada mais a flecha do piso de cima: 9,5 mm contra 12 no alto, 7,3 contra 9 no baixo. O fundo do cesto
+tem de começar **pelo menos 8 mm para dentro da borda** (a borda encosta a 5 mm da face, e a lombada vai até 12).
 
 **Erro pego pela conta, não pelo desenho:** a primeira geometria tinha piso de 14 mm e passos de 208/104. Dava 12 mm de flecha
 para 4 mm de folga: o piso de cima encostaria no cesto de baixo, e o cesto não passaria pelo batente. A correção foi pôr uma
@@ -75,8 +102,9 @@ para 220/110.
 
 ## 5. Decisões em aberto
 
-1. **Os 19,0 cm do 069 incluem a tampa do cesto?** No cadastro, o 069 é corpo 069-C mais tampa 069-T. Se a medida inclui a
-   tampa, o cesto entra na gaveta sem ela, sobra folga e o passo alto pode cair. Medir uma peça da linha.
+1. **Medir o cesto em dois pontos.** (a) Os 19,0 cm do 069 incluem a tampa? No cadastro, o 069 é corpo 069-C mais tampa
+   069-T. Se a medida inclui a tampa, o cesto entra na gaveta sem ela, sobra folga e o passo alto pode cair. (b) Onde
+   começa o fundo do 069 e do 261: tem de ser ≥ 8 mm para dentro da borda, por causa da lombada.
 2. **Onde injetar o tampo:** INJ 34 ou Moldflow para a 380 t.
 3. **Rigidez do piso:** imprimir o módulo baixo em FDM, que cabe na Kobra 3 Max, e medir com carga por uma semana.
 4. **Cor:** sugestão de cinza chumbo com o master Cool Gray 7031, já usado no 069-C.
@@ -86,16 +114,23 @@ para 220/110.
 
 | Arquivo | O que é |
 |---|---|
-| `geometria.py` | cotas e as três peças como listas de caixas e tubos. Volume e área projetada saem da **união** dos sólidos, nunca da soma |
+| `geometria.py` | cotas e as três peças como listas de elementos (caixas, tubos, prismas de perfil curvo, retângulos arredondados, casca do tampo) |
+| `solidos.py` | os tipos de elemento: teste de "dentro", malha, volume e área da **união** por amostragem, e a união exata de caixas para conferência |
+| `valida.py` | confere a amostragem contra a conta exata (< 0,1%), a malha contra o teste de dentro (< 1%) e se cada malha é fechada |
 | `calculo.py` | memória de cálculo: folgas, fechamento da janela, peso, injetora, flecha, montante, torres. `--json dados.json` exporta |
-| `gera-3d.py` | gera `stl/*.stl` e `pecas.json`. O STL é para **visualizar** (caixas sobrepostas, não é união booleana) |
+| `gera-3d.py` | gera `stl/*.stl` e `malhas.json` (normais suaves nas curvas). O STL é para **visualizar**: elementos fechados mas sobrepostos, não é união booleana |
 | `monta-pagina.py` + `pagina.tpl.html` | montam `base-modular.html`, a página publicada. Nenhum número dela é digitado à mão |
 
 Para regenerar tudo:
 
 ```
-python3 gera-3d.py && python3 calculo.py --json dados.json && python3 monta-pagina.py
+pip install numpy
+python3 valida.py && python3 gera-3d.py && python3 calculo.py --json dados.json && python3 monta-pagina.py
 ```
+
+**Armadilha já paga (revisão 2):** a primeira amostragem sorteava um deslocamento por eixo. Parecia sem viés, mas uma pele
+plana inteira dependia das mesmas 8 cotas em Z, e o erro **crescia** ao refinar a grade (+5% no tampo). Pego pela
+comparação com a conta exata; o sorteio passou a ser ponto a ponto.
 
 **A malha é de estudo, não o CAD do molde.** As faces verticais estão sem saída. O projetista parte destas cotas e aplica
 1° de saída nas faces verticais.

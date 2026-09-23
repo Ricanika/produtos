@@ -131,11 +131,12 @@
 <div class="sheet">
   <header class="cartucho">
     <div class="cartucho-top">
-      <div class="eyebrow">Estudo de produto · Base modular · 23/09/2026</div>
+      <div class="eyebrow">Estudo de produto · Base modular · Revisão 2 · 23/09/2026</div>
       <h1 style="margin-top:6px">Base Modular Rattan G</h1>
       <p class="sub">Gaveteiro empilhável para os cestos <b>Rattan G</b> (069.006.003) e <b>Rattan G Baixo</b> (261.006.003).
         Três peças, três moldes: o módulo alto, o módulo baixo e o tampo. Os dois módulos têm a mesma planta e o mesmo encaixe,
-        então qualquer um vai em cima de qualquer um. Cada peça sai inteira de um molde de uma cavidade, <b>sem gaveta</b>.</p>
+        então qualquer um vai em cima de qualquer um. Cada peça sai inteira de um molde de uma cavidade, <b>sem gaveta</b>.
+        Na revisão 2 os cantos ficaram arredondados e o batente reto deu lugar a uma <b>lombada arredondada, igual na frente e atrás</b>.</p>
     </div>
     <div class="cartucho-grid">
       <div class="campo"><div class="k">Planta (as três peças)</div><div class="v">{{LARG}} × {{PROF}} <small>mm</small></div></div>
@@ -222,18 +223,51 @@
     </div>
   </section>
 
+  <section id="acabamento">
+    <div class="section-head"><h2>Cantos e lombada</h2><span class="eyebrow">revisão 2 · todos os raios saem do molde sem gaveta</span></div>
+    <p class="lede">Os cantos arredondados vêm do mesmo raciocínio da janela. Um raio só custa molde quando cria uma face que nem o macho nem a
+      cavidade conseguem alcançar. Por isso cada curva abaixo foi posta onde um dos dois lados do molde chega de frente. O canto de cima da boca
+      (onde o montante encontra o piso do módulo de cima) ficou reto de propósito: arredondado ali, ele viraria um contrassaída e pediria gaveta.</p>
+    <div class="duas">
+      <div class="desenho">{{SVG_LOMBADA}}</div>
+      <div class="regras">
+        <div class="regra"><h3>Lombada de {{LOMB_W}} × {{LOMB_H}} mm, na frente e atrás</h3>
+          <p>É um arco que nasce na aresta do piso. O fundo do cesto encosta nela por dentro e o cesto não escapa quando alguém esbarra na torre.
+            Para tirar, levanta-se a frente do cesto {{LOMB_H}} mm e puxa. Como a de trás é igual, o módulo ficou <b>simétrico</b>: entra na torre
+            de qualquer lado, e a gaveta pode ser puxada pelos dois lados. Com isso a torre também serve de divisória ou ilha.</p></div>
+        <div class="regra"><h3>Folga de topo continua fechando</h3>
+          <p>Para passar a lombada, o cesto sobe {{LOMB_H}} mm e o piso de cima pode ter cedido. No alto isso soma {{SUBIDA_A}} mm contra
+            {{FOLGA_TOPO_A}} de folga; no baixo, {{SUBIDA_B}} contra {{FOLGA_TOPO_B}}.</p></div>
+        <div class="regra"><h3>Condição: o fundo do cesto começa atrás da lombada</h3>
+          <p>A borda de cima do cesto encosta a {{BORDA_Y}} mm da face do módulo. A lombada vai até {{LOMB_W}} mm, então o fundo do cesto tem de começar
+            pelo menos <b>{{RECUO_FUNDO}} mm</b> para dentro da borda. Se começar antes, o cesto apoia em cima da lombada e fica torto. Isso precisa ser medido no 069 e no 261.</p></div>
+      </div>
+    </div>
+    <div class="tab" style="margin-top:22px"><table>
+      <thead><tr><th>Onde</th><th>Raio</th><th>Visto de</th><th>A face olha para</th><th>Quem forma no molde</th></tr></thead>
+      <tbody>
+        <tr><th>Canto externo do montante</th><td class="n">R {{R_CANTO}}</td><td>cima (planta)</td><td>o lado, é vertical</td><td>cavidade, com saída</td></tr>
+        <tr><th>Canto do tampo, em planta</th><td class="n">R {{R_CANTO}}</td><td>cima</td><td>o lado, é vertical</td><td>cavidade do tampo</td></tr>
+        <tr><th>Aresta de cima do tampo</th><td class="n">R {{TAMPO_RF}}</td><td>corte</td><td>cima e fora</td><td>cavidade; por dentro, raio concêntrico (parede constante)</td></tr>
+        <tr><th>Boca: montante → piso</th><td class="n">R {{R_BOCA}}</td><td>frente</td><td>cima e dentro</td><td>macho</td></tr>
+        <tr><th>Janela: montante → travessa</th><td class="n">R {{R_JANELA}}</td><td>lado</td><td>baixo, por cima do rasgo</td><td>cavidade, subindo pelo rasgo</td></tr>
+        <tr><th>Lombada</th><td class="n">{{LOMB_W}} × {{LOMB_H}}</td><td>corte</td><td>cima</td><td>macho</td></tr>
+        <tr><th>Canto de cima da boca</th><td class="n">reto</td><td>frente</td><td>baixo, sobre o piso</td><td>ninguém alcança; arredondar ali pediria gaveta</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
   <section id="encaixe">
     <div class="section-head"><h2>O cesto cabe e sai</h2><span class="eyebrow">folgas em mm · flecha com carga permanente</span></div>
-    <p class="lede">O cesto entra pela frente, com o lado de 28 cm voltado para fora e 38,5 cm de fundo, e apoia no piso. Um batente de {{BATENTE}} mm na
-      frente segura o cesto quando alguém esbarra na torre. Para tirar, levanta-se o cesto {{BATENTE}} mm, por isso a folga de topo tem de
-      cobrir o batente mais a flecha do piso de cima. A flecha foi calculada com o módulo de fluência do PP a 1.000 h ({{E_LONGO}} MPa),
+    <p class="lede">O cesto entra pela frente, com o lado de 28 cm voltado para fora e 38,5 cm de fundo, e apoia no piso entre as duas lombadas.
+      Para tirar, levanta-se o cesto {{LOMB_H}} mm, por isso a folga de topo tem de cobrir a lombada mais a flecha do piso de cima. A flecha foi calculada com o módulo de fluência do PP a 1.000 h ({{E_LONGO}} MPa),
       com {{CARGA_A}} kg dentro do cesto alto e {{CARGA_B}} kg no baixo.</p>
     <div class="tab"><table>
       <thead><tr><th>Módulo</th><th>Cesto</th><th>Cesto L × P × A</th><th>Passo</th><th>Vão livre</th><th>Lado</th><th>Fundo</th><th>Topo</th><th>Flecha do piso</th></tr></thead>
       <tbody>{{TABELA_ENCAIXE}}</tbody>
     </table></div>
     <p class="nota">A primeira geometria tinha piso de 14 mm e passos de 208/104. A conta mostrou 12 mm de flecha para 4 mm de folga: o piso de cima
-      encostaria no cesto de baixo, e o cesto não passaria pelo batente. Isso levou às nervuras sob cada barra do piso, ao peitoril de 30 mm e
+      encostaria no cesto de baixo, e o cesto não passaria pelo batente de 4 mm que existia antes da lombada. Isso levou às nervuras sob cada barra do piso, ao peitoril de 30 mm e
       aos passos de {{PASSO_A}}/{{PASSO_B}}. A flecha é conservadora: considera o piso biapoiado e ignora as três nervuras longitudinais.</p>
   </section>
 
@@ -273,9 +307,10 @@
   <section id="aberto">
     <div class="section-head"><h2>Decisões em aberto</h2></div>
     <div class="quadro">
-      <div><span class="chip al">confirmar</span><h3>Os 19 cm incluem a tampa do cesto?</h3>
-        <p>O 069.006.003 é vendido com tampa: corpo 069-C de 392 g mais tampa 069-T de 139 g. Dimensionei pelos 19,0 cm do cadastro, o
-          que dá {{FOLGA_TOPO_A}} mm de folga de topo. Se a medida inclui a tampa, na gaveta o cesto vai sem ela e sobra folga, e o passo alto pode cair.</p></div>
+      <div><span class="chip al">medir</span><h3>Duas medidas do cesto</h3>
+        <p>(1) Os 19 cm do 069 incluem a tampa? No cadastro ele é corpo 069-C mais tampa 069-T. Se incluem, na gaveta o cesto vai sem tampa, sobra
+          folga e o passo alto pode cair. (2) Onde começa o fundo dos dois cestos: tem de ser pelo menos {{RECUO_FUNDO}} mm para dentro da borda,
+          ou a lombada fica debaixo do cesto.</p></div>
       <div><span class="chip cr">definir</span><h3>Tampo: 600 t ou Moldflow</h3>
         <p>Com {{FECH_TAMPO}} t estimadas, o tampo fica a 90% de uma 380 t. A INJ 34 (600 t) já roda o corpo do 069. Para ir para as 380 t,
           validar em Moldflow com dois ou quatro pontos de câmara quente.</p></div>
@@ -292,7 +327,7 @@
     <div class="section-head"><h2>Próximos passos</h2></div>
     <ol class="passos">
       <li><b>Confirmar a altura real do corpo do 069 e do 261 sem tampa</b>, com o paquímetro em uma peça da linha.</li>
-      <li><b>Imprimir o módulo baixo e o tampo em escala 1:1</b> para testar o encaixe do pino, o batente e a flecha do piso.</li>
+      <li><b>Imprimir o módulo baixo e o tampo em escala 1:1</b> para testar o encaixe do pino, a lombada com o cesto real e a flecha do piso.</li>
       <li><b>Mandar esta geometria ao projetista</b> para virar CAD paramétrico com saídas de 1° nas faces verticais. A malha daqui é de estudo.</li>
       <li><b>Cotar os três moldes com a MR Plastic Mould</b>, usando os orçamentos do 283-C e do 284-U como base.</li>
       <li><b>Moldflow do tampo</b>, para decidir entre a 380 t e a INJ 34.</li>
@@ -348,34 +383,20 @@ const D = {{DADOS}};
     catch(e){ return false; }
   }
 
+  // malha vem pronta de gera-3d.py (Float32 + normais Int8, base64).
   // (x,y,z) da peca -> (x, z, PROF/2 - y) no three: rotacao, preserva o sentido das faces
-  function geoPeca(el){
-    const pos=[], nor=[];
-    const P=(x,y,z)=>[x, z, PROF/2 - y];
-    function quad(a,b,c,d,n){ [a,b,c,a,c,d].forEach(p=>{pos.push(...p); nor.push(...n);}); }
-    for(const e of el){
-      if(e[0]==='caixa'){
-        const [,x0,x1,y0,y1,z0,z1]=e;
-        const v=[P(x0,y0,z0),P(x1,y0,z0),P(x1,y1,z0),P(x0,y1,z0),P(x0,y0,z1),P(x1,y0,z1),P(x1,y1,z1),P(x0,y1,z1)];
-        quad(v[0],v[3],v[2],v[1],[0,-1,0]); quad(v[4],v[5],v[6],v[7],[0,1,0]);
-        quad(v[0],v[1],v[5],v[4],[0,0,1]);  quad(v[2],v[3],v[7],v[6],[0,0,-1]);
-        quad(v[1],v[2],v[6],v[5],[1,0,0]);  quad(v[3],v[0],v[4],v[7],[-1,0,0]);
-      } else {
-        const [,xc,yc,z0,z1,re,ri]=e, n=20;
-        for(let k=0;k<n;k++){
-          const a0=2*Math.PI*k/n, a1=2*Math.PI*(k+1)/n, am=(a0+a1)/2;
-          const c0=Math.cos(a0),s0=Math.sin(a0),c1=Math.cos(a1),s1=Math.sin(a1);
-          const E0=P(xc+re*c0,yc+re*s0,z0),E1=P(xc+re*c1,yc+re*s1,z0),E2=P(xc+re*c1,yc+re*s1,z1),E3=P(xc+re*c0,yc+re*s0,z1);
-          const I0=P(xc+ri*c0,yc+ri*s0,z0),I1=P(xc+ri*c1,yc+ri*s1,z0),I2=P(xc+ri*c1,yc+ri*s1,z1),I3=P(xc+ri*c0,yc+ri*s0,z1);
-          const no=[Math.cos(am),0,-Math.sin(am)];
-          quad(E0,E1,E2,E3,no); quad(I1,I0,I3,I2,no.map(v=>-v));
-          quad(E3,E2,I2,I3,[0,1,0]); quad(E1,E0,I0,I1,[0,-1,0]);
-        }
-      }
+  function b64(s, Tipo){ const bin=atob(s), u=new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i); return new Tipo(u.buffer); }
+  function geoPeca(m){
+    const p=b64(m.pos, Float32Array), n=b64(m.nor, Int8Array);
+    const pos=new Float32Array(p.length), nor=new Float32Array(p.length);
+    for(let i=0;i<p.length;i+=3){
+      pos[i]=p[i]; pos[i+1]=p[i+2]; pos[i+2]=PROF/2-p[i+1];
+      nor[i]=n[i]/127; nor[i+1]=n[i+2]/127; nor[i+2]=-n[i+1]/127;
     }
     const g=new THREE.BufferGeometry();
-    g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
-    g.setAttribute('normal',new THREE.Float32BufferAttribute(nor,3));
+    g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+    g.setAttribute('normal',new THREE.BufferAttribute(nor,3));
     return g;
   }
 
@@ -447,7 +468,7 @@ const D = {{DADOS}};
     const tex=texTrama();
     matCesto=new THREE.MeshStandardMaterial({color:0x2a2b2c,roughness:.6,map:tex,alphaTest:.5,side:THREE.DoubleSide});
     matAro=new THREE.MeshStandardMaterial({color:0x2a2b2c,roughness:.55,side:THREE.DoubleSide});
-    for(const n in D.pecas) geo[n]=geoPeca(D.pecas[n]);
+    for(const n in D.malhas) geo[n]=geoPeca(D.malhas[n]);
     cestoGeo.alto=geoCesto(D.cesto.alto.H); cestoGeo.baixo=geoCesto(D.cesto.baixo.H);
     // chao
     const chao=new THREE.Mesh(new THREE.CircleGeometry(1400,64),new THREE.MeshStandardMaterial({color:0xcfd1ce,roughness:1}));

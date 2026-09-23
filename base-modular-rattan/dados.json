@@ -1,11 +1,11 @@
 {
  "pecas": {
   "modulo-alto": {
-   "massa_g": 692.6786672054118,
-   "volume_cm3": 769.6429635615686,
-   "resina_rs": 7.2800527923288785,
-   "area_proj_cm2": 846.7,
-   "fechamento_t": 297.86609655,
+   "massa_g": 692.3155475249998,
+   "volume_cm3": 769.2394972499998,
+   "resina_rs": 7.276236404487748,
+   "area_proj_cm2": 845.0098999999999,
+   "fechamento_t": 297.2715252853499,
    "altura_mm": 228.0,
    "curso_min_mm": 516.0,
    "molde_mm": [
@@ -19,11 +19,11 @@
    "cavidades": 1
   },
   "modulo-baixo": {
-   "massa_g": 579.8330672054122,
-   "volume_cm3": 644.2589635615692,
-   "resina_rs": 6.094045536328883,
-   "area_proj_cm2": 846.7,
-   "fechamento_t": 297.86609655,
+   "massa_g": 584.9889695999998,
+   "volume_cm3": 649.9877439999998,
+   "resina_rs": 6.148234070495998,
+   "area_proj_cm2": 844.9804999999999,
+   "fechamento_t": 297.2611824682499,
    "altura_mm": 118.0,
    "curso_min_mm": 296.0,
    "molde_mm": [
@@ -37,11 +37,11 @@
    "cavidades": 1
   },
   "tampo": {
-   "massa_g": 386.7969880875811,
-   "volume_cm3": 429.77443120842344,
-   "resina_rs": 4.065236344800478,
-   "area_proj_cm2": 1327.2,
-   "fechamento_t": 342.39649751999997,
+   "massa_g": 382.8369289499999,
+   "volume_cm3": 425.3743654999999,
+   "resina_rs": 4.023616123264499,
+   "area_proj_cm2": 1325.5455499999998,
+   "fechamento_t": 341.9696757257549,
    "altura_mm": 12.0,
    "curso_min_mm": 84.0,
    "molde_mm": [
@@ -72,7 +72,8 @@
    "folga_topo": 12.0,
    "folga_lado": 6.0,
    "folga_prof": 4.0,
-   "levanta_batente": 4.0,
+   "levanta_lombada": 5.0,
+   "recuo_fundo_min": 8.0,
    "janela": [
     48.0,
     190.0
@@ -95,7 +96,8 @@
    "folga_topo": 9.0,
    "folga_lado": 6.0,
    "folga_prof": 4.0,
-   "levanta_batente": 4.0,
+   "levanta_lombada": 5.0,
+   "recuo_fundo_min": 8.0,
    "janela": [
     48.0,
     90.0
@@ -119,11 +121,11 @@
    "folga_topo_mm": 9.0
   },
   "montante": {
-   "carga_acima_kg": 45.90019032411464,
-   "N_por_montante": 112.57021676989116,
-   "tensao_MPa": 0.5158092777212756,
+   "carga_acima_kg": 45.894414666575,
+   "N_por_montante": 112.5560519697752,
+   "tensao_MPa": 0.5157443730286622,
    "P_flamb_N": 323.3229763906734,
-   "fator_flamb": 2.8721893380696737
+   "fator_flamb": 2.872550793425978
   }
  },
  "torres": [
@@ -136,8 +138,8 @@
     "alto"
    ],
    "altura_mm": 1112.0,
-   "massa_g": 3850.19032411464,
-   "resina_rs": 40.465500306444866
+   "massa_g": 3844.4146665749986,
+   "resina_rs": 40.40479814570324
   },
   {
    "seq": [
@@ -148,8 +150,8 @@
     "baixo"
    ],
    "altura_mm": 892.0,
-   "massa_g": 3624.499124114641,
-   "resina_rs": 38.093485794444874
+   "massa_g": 3629.7615107249994,
+   "resina_rs": 38.14879347771974
   },
   {
    "seq": [
@@ -161,8 +163,8 @@
     "baixo"
    ],
    "altura_mm": 672.0,
-   "massa_g": 3865.7953913200545,
-   "resina_rs": 40.62950956277377
+   "massa_g": 3892.770746549999,
+   "resina_rs": 40.91302054624049
   },
   {
    "seq": [
@@ -172,8 +174,8 @@
     "alto"
    ],
    "altura_mm": 892.0,
-   "massa_g": 3157.5116569092283,
-   "resina_rs": 33.185447514115985
+   "massa_g": 3152.099119049999,
+   "resina_rs": 33.128561741215485
   },
   {
    "seq": [
@@ -183,8 +185,8 @@
     "baixo"
    ],
    "altura_mm": 672.0,
-   "massa_g": 2931.820456909229,
-   "resina_rs": 30.813433002116
+   "massa_g": 2937.445963199999,
+   "resina_rs": 30.872557073231985
   }
  ],
  "constantes": {
@@ -213,6 +215,12 @@
   "CARGA_KG": {
    "alto": 8.0,
    "baixo": 4.0
-  }
+  },
+  "LOMB_W": 12.0,
+  "LOMB_H": 5.0,
+  "R_CANTO": 14.0,
+  "R_BOCA": 12.0,
+  "R_JANELA": 20.0,
+  "TAMPO_RF": 6.0
  }
 }

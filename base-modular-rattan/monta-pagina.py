@@ -3,7 +3,7 @@
 Monta base-modular.html (ficha + visualizador 3D) a partir de calculo.py e
 geometria.py. Nenhum numero da pagina e digitado a mao: tudo sai daqui.
 
-Uso:  python3 monta-pagina.py      (roda gera-3d.py antes para o pecas.json)
+Uso:  python3 monta-pagina.py      (roda gera-3d.py antes, para o malhas.json)
 """
 import json, os
 import geometria as g
@@ -16,7 +16,8 @@ P = r["pecas"]
 E = r["encaixe"]
 R = r["rigidez"]
 K = r["constantes"]
-pecas = json.load(open(os.path.join(AQUI, "pecas.json")))
+malhas = json.load(open(os.path.join(AQUI, "malhas.json")))
+from solidos import perfil_lombada
 
 USD = {"modulo-alto": (30, 36), "modulo-baixo": (26, 32), "tampo": (18, 24)}
 INJ = {"modulo-alto": "380 t · INJ 31, 32, 33",
@@ -95,6 +96,54 @@ def svg_corte():
     return "\n".join(o)
 
 
+# ------------------------------------------------------- perfil da lombada --
+def svg_lombada():
+    """Corte na frente do modulo, no meio da largura: aba, piso, lombada e o
+    pe do cesto. Escala unica nos dois eixos."""
+    s = 7.0
+    y0, y1, z0, z1 = -8.0, 44.0, -3.0, 44.0
+    ox, oy = 20, 20
+    W = int((y1 - y0) * s + ox + 250)
+    H = int((z1 - z0) * s + oy + 30)
+    X = lambda y: ox + (y - y0) * s
+    Z = lambda z: oy + (z1 - z) * s
+    borda = g.LOMB_W + 1.0 - E["alto"]["recuo_fundo_min"]      # onde encosta a borda do cesto
+    fundo = borda + 12.0                                        # suposicao do 3D (medir)
+    o = [f'<svg viewBox="0 0 {W} {H}" role="img" aria-label="Perfil da lombada na frente do modulo">']
+
+    def rect(ya, yb, za, zb, cls):
+        o.append(f'<rect x="{X(ya):.1f}" y="{Z(zb):.1f}" width="{(yb-ya)*s:.1f}" height="{(zb-za)*s:.1f}" class="{cls}"/>')
+
+    rect(0, g.T + 0.8, 0, g.PISO_H, "corte")
+    rect(g.T, y1, g.PISO_H - g.PISO_PELE, g.PISO_H, "corte")
+    pf = perfil_lombada(0.0, g.LOMB_W, g.PISO_H, g.LOMB_H, +1)
+    o.append('<polygon class="corte" points="' + " ".join(f"{X(u):.1f},{Z(v):.1f}" for u, v in pf) + '"/>')
+    # cesto: fundo apoiado, parede subindo ate a borda
+    o.append(f'<polyline class="cesto" fill="none" points="{X(y1):.1f},{Z(g.PISO_H):.1f} {X(fundo):.1f},{Z(g.PISO_H):.1f} '
+             f'{X(fundo - 3):.1f},{Z(z1 - 2):.1f}"/>')
+    o.append(f'<text x="{X(fundo + 2):.1f}" y="{Z(g.PISO_H + 12):.1f}" class="cesto-t">fundo do cesto</text>')
+    # cotas
+    zc = g.PISO_H + g.LOMB_H
+    o.append(f'<line x1="{X(0):.1f}" y1="{Z(zc) - 16:.1f}" x2="{X(g.LOMB_W):.1f}" y2="{Z(zc) - 16:.1f}" class="lider"/>')
+    o.append(f'<text x="{X(g.LOMB_W / 2):.1f}" y="{Z(zc) - 21:.1f}" class="cota" text-anchor="middle">{br(g.LOMB_W,0)}</text>')
+    o.append(f'<line x1="{X(-4):.1f}" y1="{Z(g.PISO_H):.1f}" x2="{X(-4):.1f}" y2="{Z(zc):.1f}" class="lider"/>')
+    o.append(f'<text x="{X(-5):.1f}" y="{Z(g.PISO_H + g.LOMB_H / 2) + 4:.1f}" class="cota" text-anchor="end">{br(g.LOMB_H,0)}</text>')
+    o.append(f'<line x1="{X(0):.1f}" y1="{Z(z0):.1f}" x2="{X(0):.1f}" y2="{Z(z1):.1f}" class="base"/>')
+    o.append(f'<text x="{X(0) - 4:.1f}" y="{Z(z1) + 12:.1f}" class="cota" text-anchor="end">face</text>')
+    # chamadas
+    lx = X(y1) + 14
+    for yy, zz, tt, ss in ((g.LOMB_W * 0.5, zc - 0.5, "Lombada", f"arco {br(g.LOMB_W,0)} × {br(g.LOMB_H,0)} mm · macho forma"),
+                           (fundo + 6, g.PISO_H, "Cesto apoiado", f"sobe {br(g.LOMB_H,0)} mm para sair"),
+                           (1.5, 6, "Aba do piso", "viga de frente, 3 mm")):
+        o.append(f'<polyline points="{X(yy):.1f},{Z(zz):.1f} {lx - 4:.1f},{Z(zz):.1f}" class="lider" fill="none"/>')
+        o.append(f'<circle cx="{X(yy):.1f}" cy="{Z(zz):.1f}" r="2.2" class="ponto"/>')
+        o.append(f'<text x="{lx:.1f}" y="{Z(zz) + 4:.1f}" class="cham">{tt}</text>')
+        o.append(f'<text x="{lx:.1f}" y="{Z(zz) + 18:.1f}" class="cham2">{ss}</text>')
+    o.append(f'<text x="{X(y0) + 2:.1f}" y="{H - 8:.1f}" class="cham2">FRENTE ← · atrás é o espelho</text>')
+    o.append("</svg>")
+    return "\n".join(o)
+
+
 # ------------------------------------------------------------ tabelas -------
 def linha_peca(n):
     p = P[n]
@@ -125,7 +174,7 @@ def linha_torre(t):
 
 usd_lo = sum(v[0] for v in USD.values())
 usd_hi = sum(v[1] for v in USD.values())
-dados_js = json.dumps({"pecas": pecas, "K": K,
+dados_js = json.dumps({"malhas": malhas, "K": K,
                        "massa": {n: P[n]["massa_g"] for n in P},
                        "resina": {n: P[n]["resina_rs"] for n in P},
                        "cesto": {m: g.CESTO[m] for m in g.CESTO}},
@@ -152,7 +201,15 @@ subs = {
     "{{AREA_MOD}}": br(P["modulo-alto"]["area_proj_cm2"], 0),
     "{{AREA_TAMPO}}": br(P["tampo"]["area_proj_cm2"], 0),
     "{{USD_LO}}": str(usd_lo), "{{USD_HI}}": str(usd_hi),
-    "{{PISO_H}}": br(g.PISO_H, 0), "{{BATENTE}}": br(g.BATENTE_F, 0),
+    "{{PISO_H}}": br(g.PISO_H, 0),
+    "{{LOMB_W}}": br(g.LOMB_W, 0), "{{LOMB_H}}": br(g.LOMB_H, 0),
+    "{{RECUO_FUNDO}}": br(E["alto"]["recuo_fundo_min"], 0),
+    "{{BORDA_Y}}": br(g.LOMB_W + 1.0 - E["alto"]["recuo_fundo_min"], 0),
+    "{{SUBIDA_A}}": br(g.LOMB_H + R["alto"]["flecha_total_mm"], 1),
+    "{{SUBIDA_B}}": br(g.LOMB_H + R["baixo"]["flecha_total_mm"], 1),
+    "{{R_CANTO}}": br(g.R_CANTO, 0), "{{R_BOCA}}": br(g.R_BOCA, 0),
+    "{{R_JANELA}}": br(g.R_JANELA, 0), "{{TAMPO_RF}}": br(g.TAMPO_RF, 0),
+    "{{SVG_LOMBADA}}": svg_lombada(),
     "{{TABELA_PECAS}}": "\n".join(linha_peca(n) for n in P),
     "{{TABELA_ENCAIXE}}": "\n".join(linha_encaixe(m) for m in ("alto", "baixo")),
     "{{TABELA_TORRES}}": "\n".join(linha_torre(t) for t in r["torres"]),
