@@ -127,6 +127,17 @@ B_CAB    = (116.0, 126.0)  # z da cabeca
 # sempre igual. A aba tem RECORTES nas posicoes dos pes: alinhado, os pes
 # passam pelos recortes e a peca ENCAIXA; deslocado, pousam na aba e EMPILHA.
 ABA_W, ABA_T = 10.0, 2.5      # largura e espessura da aba
+# DIRECAO DA ABA. Medido em 23/09 (cad/extracao.py): virada para DENTRO ela
+# avanca 6,27 mm para dentro da face interna da parede -- 6,5% por lado num
+# labio continuo de 2,5 mm -- e prende 52.178 mm3 do macho. Nao sai em molde
+# de duas placas: exigiria macho colapsavel. Para FORA a silhueta so cresce
+# subindo, entao a cavidade desce reta e o macho vira um tronco limpo.
+#   +1 = para FORA (extrai)      -1 = para DENTRO (a original)
+ABA_DIR = +1
+# Quanto do pouso o pe cobre: para fora, a faixa de pouso fica de LARG/2 a
+# LARG/2 + ABA_W, e o piso do pe tem de alcancar la. ABA_POUSO e a largura do
+# apoio; o resto de ABA_W e a saida em x que o pe precisa para telescopar.
+ABA_POUSO = 4.0
 ABA_F = 2.0                   # folga do recorte alem do pe
 NERV_P = 24.0                 # profundidade do pe em x (>20,6: encosta na parede)
 NERV_T = 1.6                  # parede do pe da frente
@@ -160,6 +171,8 @@ DESLOC = 21.0
 # (yc, L em y, parede, saida em y, face externa no piso, tem pino na aba)
 # Um pe por lateral, na frente, com o friso. Atras nao tem pe: tem a
 # CANETINHA, um friso curvo unico na sola da base (pedido de 21/09).
+# r00 (a penultima cota) vem de pe_r00(), que depende de LARG e da direcao
+# da aba -- por isso PES e recalculado por set_envelope().
 PES = (
     (-58.0, 10.0, 1.6, 0.045, LARG / 2 - ABA_W + 3.0, True),
 )
@@ -567,6 +580,31 @@ def nerv_y():
     return [(yc - L / 2, yc + L / 2) for yc, L, *_ in PES]
 
 
+def aba_x0():
+    """x onde a aba nasce -- a face externa do rim, e o plano da junta."""
+    return LARG / 2
+
+
+def aba_x1():
+    """x da aresta livre da aba."""
+    return LARG / 2 + ABA_DIR * ABA_W
+
+
+def pe_topo():
+    """x da face externa do pe no RIM: ela morre na aresta livre da aba.
+
+    Para fora, isso da ao pe a saida em x de que ele precisa para telescopar
+    (ABA_W - ABA_POUSO sobre a altura) sem sair da silhueta.
+    """
+    return LARG / 2 + max(ABA_DIR, 0) * ABA_W
+
+
+def pe_r00():
+    """x do piso do pe: tem de alcancar a faixa de pouso da aba."""
+    return (LARG / 2 + ABA_POUSO if ABA_DIR > 0
+            else LARG / 2 - ABA_W + 3.0)
+
+
 def _aba(fora, interno):
     """Aba plana de ABA_W no rim inteiro -- e nela que o pe pousa.
 
@@ -576,6 +614,16 @@ def _aba(fora, interno):
     solido (a mesma folga, por construcao).
     """
     r = 14.0 + ALT * TAN
+    if ABA_DIR > 0:
+        # PARA FORA: o anel e o que sobra da chapa maior depois de tirar o
+        # CONE -- assim ela solda na parede sem folga em cota nenhuma, e a
+        # face de baixo dela e um anel plano voltado para baixo, que a
+        # cavidade forma descendo (a silhueta so cresce subindo).
+        a = Pos(0, 0, ALT - ABA_T) * extrude(
+            RectangleRounded(LARG + 2 * ABA_W, PROF + 2 * ABA_W, r + ABA_W),
+            ABA_T)
+        return a - extrude(RectangleRounded(BASE_X, BASE_Y, 14.0), ALT + 40,
+                           taper=-DRAFT)
     a = Pos(0, 0, ALT - ABA_T) * extrude(
         RectangleRounded(LARG, PROF, r), ABA_T)
     a -= Pos(0, 0, ALT - ABA_T - 1) * extrude(
@@ -593,7 +641,7 @@ def _pe_planta(sx, yc, L, ky, r00, z, ox, oy, rc):
     - env.
     """
     xi = 60.0                                  # bem dentro da parede
-    r = r00 - ox + (LARG / 2 - r00) * z / ALT
+    r = r00 - ox + (pe_topo() - r00) * z / ALT
     h = L / 2 - oy + ky * z
     w = r - xi
     rr = min(rc, h * 0.95, w * 0.45) if rc > 0 else 0.0
@@ -759,6 +807,10 @@ def friso_x0():
     em x = LARG/2 - ABA_W; subindo FRISO_H ela engorda TAN*FRISO_H. O friso
     tem de morar para fora disso, senao ele fecha o encaixe.
     """
+    if ABA_DIR > 0:
+        # para fora o limite e a propria aresta interna da aba, que E a face
+        # externa do rim: a peca de cima passa por dentro dela
+        return LARG / 2 + 0.6
     return LARG / 2 - ABA_W + TAN * FRISO_H + 0.6
 
 
@@ -873,7 +925,7 @@ def _cauda2(sx, yc, dentro=False, f=0.0):
     dentro=True devolve a FEMEA: a mesma planta espelhada no plano da junta,
     escavada para dentro da aba.
     """
-    x0 = LARG / 2
+    x0 = aba_x1() if ABA_DIR > 0 else LARG / 2
     d = -ACO2_D if dentro else ACO2_D
     xi = x0 - 60.0 if not dentro else x0 + 1.5     # macho: entra na parede
     pts = [(sx * xi, yc - ACO2_WN / 2 - f),
@@ -889,12 +941,31 @@ def _cauda2(sx, yc, dentro=False, f=0.0):
 
 def set_draft(graus):
     """Muda a saida de molde e recalcula tudo que depende dela."""
-    global DRAFT, TAN, BASE_X, BASE_Y, EMP_XI, EMP_X0
+    global DRAFT, TAN, BASE_X, BASE_Y, EMP_XI, EMP_X0, PES
     DRAFT = graus
     TAN = np.tan(np.radians(graus))
     BASE_X = LARG - 2 * ALT * TAN
     BASE_Y = PROF - 2 * ALT * TAN
     EMP_XI, EMP_X0 = cotas_empilhamento()[:2]
+    PES = tuple(t[:4] + (pe_r00(),) + t[5:] for t in PES)
+
+
+def set_envelope(larg, prof, graus, alt=None, aba_dir=None):
+    """Troca a boca do CORPO, a altura e a saida de uma vez.
+
+    A aba para fora muda o que 'envelope' quer dizer: o ponto mais largo da
+    peca passa a ser a aresta livre dela, em LARG/2 + ABA_W. Entao LARG e
+    PROF aqui sao a boca do CORPO, e o envelope e LARG + 2*ABA_W.
+    """
+    global LARG, PROF, ALT, ABA_DIR, FRENTE_H, Z_TOPO
+    LARG, PROF = larg, prof
+    if alt is not None:
+        ALT = alt
+        FRENTE_H = ALT - CHANFRO - CHANFRO_PE
+        Z_TOPO = ALT - H_RIM - 9.0
+    if aba_dir is not None:
+        ABA_DIR = aba_dir
+    set_draft(graus)
 
 
 def passo_acoplado(acopl):
