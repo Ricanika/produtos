@@ -30,7 +30,6 @@ SAI = os.path.join(DEST, "visor-elo.html")
 DADOS = os.path.join(DEST, "elo-medidas.json")
 STL_P = os.path.join(DEST, "elo-p.stl")
 STL_M = os.path.join(DEST, "elo-m.stl")
-STL_G = os.path.join(DEST, "elo-g.stl")
 
 
 def vg(x, casas=1):
@@ -128,6 +127,7 @@ def mede():
 
     M.padrao_m()
     m, nm = M.cesto(aba=True)
+    d["recuo"] = M.DESLOC + (M.PROF - 230.0) / 2   # o par encosta ATRAS
     export_stl(m, STL_M)
     bm = m.bounding_box()
     d["m"] = dict(peso=m.volume * M.RHO, cap=M.capacidade(), furos=nm,
@@ -159,9 +159,11 @@ def mede():
     print("  M acopla: trava %s | solta %.1f"
           % (["%.1f" % t[1] for t in d["trava_m"]], d["solta_m"]), flush=True)
 
-    # O diferencial: o par no M. Qual deslocamento em y o pouso pede?
+    # O diferencial: o par no M. Com o M mais fundo que o par, o pouso pede
+    # RECUO -- as saias de tras tem de encontrar a aba de tras do M. Centrado,
+    # o contato cai de ~887 para 54 mm2 e o par tomba (medido, secao 4.2.8).
     melhor = None
-    for dy in (0.0, M.DESLOC, -M.DESLOC):
+    for dy in (M.DESLOC, d["recuo"], 0.0):
         z = passo(m, par, dy)
         iv = vol(m, Pos(0, dy, M.ALT) * par)
         ap = apoios(m, par, dy, z)
@@ -184,39 +186,6 @@ def mede():
         d[nome] = EX.audita(trimesh.load(arq))[0]
         print("  %s = %.0f mm3" % (nome, d[nome]), flush=True)
 
-    # --- o G ------------------------------------------------------------
-    M.padrao_g()
-    gg, ng = M.cesto(aba=True)
-    export_stl(gg, STL_G)
-    bg = gg.bounding_box()
-    G = dict(peso=gg.volume * M.RHO, cap=M.capacidade(), furos=ng,
-             larg=M.LARG, prof=M.PROF, alt=M.ALT, draft=M.DRAFT,
-             env=(bg.size.X, bg.size.Y, bg.size.Z),
-             lis_w=M.LIS_W, lis_h=M.LIS_H, fun_w=M.FUN_W, fun_p=M.FUN_P)
-    G["pn"] = passo(gg, gg, 0.0)
-    G["pe"] = passo(gg, gg, M.DESLOC)
-    G["interf"] = vol(gg, Pos(0, M.DESLOC, M.ALT) * gg)
-    G["ap"] = apoios(gg, gg, M.DESLOC, G["pe"])
-    G["passo_acopl"] = M.passo_acoplado()
-    lo, hi = 0.0, 20.0
-    while hi - lo > 0.05:
-        mid = (lo + hi) / 2
-        if vol(gg, Pos(G["passo_acopl"] + 1.2, 0, mid) * gg) > 0.0:
-            lo = mid
-        else:
-            hi = mid
-    G["solta"] = hi
-    G["trava"] = [(dx, vol(gg, Pos(G["passo_acopl"] + dx, 0, 0) * gg))
-                  for dx in (0.0, 0.6, 1.2, 2.0)]
-    # o par pousa RECUADO: e o que libera a profundidade do G (secao 4.2.8)
-    dyg = M.DESLOC + (M.PROF - 230.0) / 2
-    zg = passo(gg, par, dyg)
-    G["par"] = dict(dy=dyg, z=zg, interf=vol(gg, Pos(0, dyg, M.ALT) * par),
-                    ap=apoios(gg, par, dyg, zg))
-    G["preso"] = EX.audita(trimesh.load(STL_G))[0]
-    d["g"] = G
-    print("G: %.1f g | %.2f L | encaixa %.2f | par recuado %.2f (%.0f mm2)"
-          % (G["peso"], G["cap"], G["pn"], zg, sum(G["par"]["ap"])), flush=True)
     return d
 
 
@@ -374,15 +343,15 @@ def cenas(d):
             poses=[[0, 0, 0, 1, 0]]),
         "dois": dict(
             titulo="Dois P acoplados, empilhados no M",
-            texto=(f"O diferencial da linha. Os dois P acoplados pousam na "
-                   f"aba do M no mesmo passo de {vg(d['alt'])} mm com que um "
-                   f"P pousa em outro P, e com o mesmo deslocamento de "
-                   f"{dy:.0f} mm em y. As duas saias de trás pousam inteiras "
-                   f"e os dois pés externos também: {ap_par:.0f} mm² de "
-                   f"contato de face plana, {ap_par/ap_m:.1f}× o próprio "
-                   f"tripé do M."),
+            texto=(f"O diferencial da linha. O par encosta ATRÁS: recuando "
+                   f"{dy:.0f} mm em y, as duas saias de trás encontram a aba "
+                   f"de trás do M e os dois pés externos caem nas abas "
+                   f"laterais — {ap_par:.0f} mm² de contato de face plana, "
+                   f"{vg(ap_par/ap_m)}× o próprio tripé do M. Centrado, o "
+                   f"contato cairia para 54 mm² e o par tombaria: é o recuo "
+                   f"que libera a profundidade do M."),
             dados=[["passo", f"{vg(zp, 2)} mm"],
-                   ["desloca em y", f"{dy:.0f} mm"],
+                   ["recua em y", f"{dy:.0f} mm"],
                    ["contato", f"{ap_par:.0f} mm²"],
                    ["interferência", f"{d['par']['interf']:.4f} mm³".replace(".", ",")]],
             selo=f"{d['par']['interf']:.3f} mm³ de interferência".replace(".", ",") +
@@ -399,7 +368,7 @@ def cenas(d):
                    ["interferência", "0,0000 mm³"]],
             selo="a mesma aba serve de piso em todos os andares",
             poses=[[0, 0, 0, 1, 0], [0, d["desloc"], d["pe_m"], 1, 1]] +
-                  par_em(2 * d["pe_m"], 2 * d["desloc"], 0)),
+                  par_em(2 * d["pe_m"], d["desloc"] + dy, 0)),
         "encaixa": dict(
             titulo="M encaixados · para transportar",
             texto=(f"Passo de {vg(d['pn_m'], 2)} mm — o MESMO do P, e não por "
@@ -437,71 +406,19 @@ def cenas(d):
             selo="trava puxando de lado, solta levantando",
             poses=[[0, 0, 0, 1, 0], [d["passo_m"], 0, 0, 1, 1]]),
     }
-    # --- o G ------------------------------------------------------------
-    gg = d.get("g")
-    if gg:
-        dyg, zg = gg["par"]["dy"], gg["par"]["z"]
-        apg_par, apg = sum(gg["par"]["ap"]), sum(gg["ap"])
-        js["g"] = dict(
-            titulo="O ELO G",
-            texto=(f"{gg['larg']:.0f} × {gg['prof']:.0f} × {gg['alt']:.0f} mm "
-                   f"a {gg['draft']:.0f}° de saída: "
-                   f"{vg(gg['cap'], 2)} L com {vg(gg['peso'])} g. A largura "
-                   f"continua em 380 — é ela que põe as paredes do G debaixo "
-                   f"dos pés laterais do par. A profundidade é livre porque o "
-                   f"par pousa RECUADO no fundo."),
-            dados=[["capacidade", f"{vg(gg['cap'], 2)} L"],
-                   ["peso", f"{vg(gg['peso'])} g"],
-                   ["eficiência", f"{vg(gg['peso']/gg['cap'])} g/L"],
-                   ["rasgos", f"{gg['furos']}"]],
-            selo="chapa do fundo vazada: é ela e o rasgo maior que fecham "
-                 "os 500 g",
-            poses=[[0, 0, 0, 2, 0]])
-        js["parg"] = dict(
-            titulo="Dois P acoplados, empilhados no G",
-            texto=(f"O par encosta ATRÁS: recuando {dyg:.0f} mm em y, as duas "
-                   f"saias de trás encontram a aba de trás do G e o contato "
-                   f"volta inteiro — {apg_par:.0f} mm². Centrado num G mais "
-                   f"fundo ele cairia para 54 mm² e tombaria. É essa saída "
-                   f"que libera a profundidade e deixou o G com "
-                   f"{gg['alt']:.0f} mm de altura em vez de 450."),
-            dados=[["passo", f"{vg(zg, 2)} mm"],
-                   ["recua em y", f"{dyg:.0f} mm"],
-                   ["contato", f"{apg_par:.0f} mm²"],
-                   ["interferência", f"{gg['par']['interf']:.4f} mm³".replace(".", ",")]],
-            selo=f"{gg['par']['interf']:.3f} mm³ de interferência".replace(".", ",")
-                 + f" a {vg(zg, 2)} mm",
-            poses=[[0, 0, 0, 2, 0], [-pp, dyg, zg, 0, 1], [pp, dyg, zg, 0, 1]])
-        js["gencaixa"] = dict(
-            titulo="G encaixados · o preço da altura",
-            texto=(f"Passo de {vg(gg['pn'], 2)} mm contra 40,00 do P e do M. "
-                   f"Não é o vazado: a saída em x do pé é "
-                   f"(ABA_W − ABA_POUSO)/ALT, e o G tem {gg['alt']:.0f} mm de "
-                   f"altura contra 130. Em caixa, 12 G ocupam "
-                   f"{gg['env'][2] + 11*gg['pn']:.0f} mm contra 573 de 12 M."),
-            dados=[["passo", f"{vg(gg['pn'], 2)} mm"],
-                   ["12 peças", f"{gg['env'][2] + 11*gg['pn']:.0f} mm"],
-                   ["vs. o M", f"{vg((gg['env'][2]+11*gg['pn'])/573.0)} ×"],
-                   ["vs. empilhado", f"{vg(gg['pe']/gg['pn'])} × mais"]],
-            selo="a cubagem é o que o G paga pela litragem",
-            poses=[[0, 0, i * gg["pn"], 2, i] for i in range(5)])
-        js["linha"] = dict(
-            titulo="A linha ELO",
-            texto=(f"P {vg(p['cap'], 2)} L · M {vg(m['cap'], 2)} L · "
-                   f"G {vg(gg['cap'], 2)} L. Mesma aba, mesma cauda de "
-                   f"andorinha, mesma altura de junta nos três. O par de P "
-                   f"empilha no M e no G; o que muda de um para o outro é "
-                   f"onde ele pousa."),
-            dados=[["P", f"{vg(p['cap'], 2)} L · {vg(p['peso'])} g"],
-                   ["M", f"{vg(m['cap'], 2)} L · {vg(m['peso'])} g"],
-                   ["G", f"{vg(gg['cap'], 2)} L · {vg(gg['peso'])} g"],
-                   ["g/L", f"{vg(p['peso']/p['cap'])} · "
-                           f"{vg(m['peso']/m['cap'])} · "
-                           f"{vg(gg['peso']/gg['cap'])}"]],
-            selo="três tamanhos, uma arquitetura",
-            # +x cai a ESQUERDA na vista (a camera olha de -x), entao o P
-            # vai no maior x para a familia ler do menor para o maior.
-            poses=[[330, 0, 0, 0, 0], [0, 0, 0, 1, 1], [-430, 0, 0, 2, 0]])
+    js["linha"] = dict(
+        titulo="A linha ELO",
+        texto=(f"P {vg(p['cap'], 2)} L · M {vg(m['cap'], 2)} L. Mesma aba, "
+               f"mesma cauda de andorinha, mesma altura de junta nos dois. "
+               f"O que muda é a escala em planta — 380 é 2 × 180 + 2 × 10, a "
+               f"pegada exata de dois P acoplados — e a profundidade, que é "
+               f"livre porque o par pousa recuado."),
+        dados=[["P", f"{vg(p['cap'], 2)} L · {vg(p['peso'])} g"],
+               ["M", f"{vg(m['cap'], 2)} L · {vg(m['peso'])} g"],
+               ["g/L", f"{vg(p['peso']/p['cap'])} · {vg(m['peso']/m['cap'])}"],
+               ["parede", "1,4 mm nos dois"]],
+        selo="dois tamanhos, uma arquitetura",
+        poses=[[330, 0, 0, 0, 0], [0, 0, 0, 1, 1]])
     return js
 
 
@@ -535,8 +452,6 @@ def escreve(d):
     p, m = d["p"], d["m"]
     print("empacotando:", flush=True)
     malhas = [empacota(STL_P), empacota(STL_M)]
-    if os.path.exists(STL_G):
-        malhas.append(empacota(STL_G))
     s = open(BASE, encoding="utf-8").read()
     s = duas_malhas(s, malhas)
 
@@ -547,10 +462,8 @@ def escreve(d):
               '<span class="eyebrow">Nitron · linha ELO</span>', "eyebrow")
     s = troca(s, "<h1>Cesto Mini Organizador</h1>",
               "<h1>ELO</h1>", "h1")
-    gg = d.get("g")
-    sub = (f'P {vg(p["cap"], 2)} L · M {vg(m["cap"], 2)} L'
-           + (f' · G {vg(gg["cap"], 2)} L' if gg else "")
-           + f' · PP · peça única · dois P acoplados empilham no M e no G')
+    sub = (f'P {vg(p["cap"], 2)} L · M {vg(m["cap"], 2)} L · PP · peça única '
+           f'· dois P acoplados empilham no M')
     s = re.sub(r'<span class="sub">[^<]*saída[^<]*</span>',
                f'<span class="sub">{sub}</span>', s, count=1)
     s = troca(s, """      <button class="modo" data-modo="peca" aria-pressed="true">A peça</button>
@@ -560,12 +473,10 @@ def escreve(d):
               """      <button class="modo" data-modo="linha" aria-pressed="true">A linha</button>
       <button class="modo" data-modo="m" aria-pressed="false">O M</button>
       <button class="modo" data-modo="dois" aria-pressed="false">Dois P no M</button>
-      <button class="modo" data-modo="g" aria-pressed="false">O G</button>
-      <button class="modo" data-modo="parg" aria-pressed="false">Dois P no G</button>
       <button class="modo" data-modo="torre" aria-pressed="false">A torre</button>
-      <button class="modo" data-modo="encaixa" aria-pressed="false">M encaixados</button>
-      <button class="modo" data-modo="gencaixa" aria-pressed="false">G encaixados</button>
-      <button class="modo" data-modo="acopla" aria-pressed="false">M acoplados</button>""",
+      <button class="modo" data-modo="encaixa" aria-pressed="false">Encaixados</button>
+      <button class="modo" data-modo="empilha" aria-pressed="false">Empilhados</button>
+      <button class="modo" data-modo="acopla" aria-pressed="false">Acoplados</button>""",
               "botoes de modo")
 
     # ---- as cenas ---------------------------------------------------------

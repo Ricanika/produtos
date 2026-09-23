@@ -1076,8 +1076,14 @@ def padrao():
     set_envelope(180.0, 230.0, 6.0, alt=130.0, aba_dir=+1)
 
 
-def padrao_m():
-    """ELO M: a boca do corpo e 380 x 230 -- 2 x LARG_P + 2 x ABA_W.
+def padrao_m9():
+    """O PRIMEIRO M, de 9,10 L -- superado em 23/09 pelo M de 25 L.
+
+    Fica registrado porque e ele que faz o par de P pousar CENTRADO, cobrindo
+    a boca inteira (887 mm2 de contato). O M que ficou na linha e mais fundo,
+    e por isso o par pousa recuado -- mesmo contato, posicao diferente.
+
+    Boca do corpo 380 x 230 -- 2 x LARG_P + 2 x ABA_W.
 
     Nao e um numero escolhido, e o que faz DOIS P ACOPLADOS EMPILHAREM no M.
     A aba do P vai de 90 a 100 mm do eixo dele; dois P no passo de 200 tem as
@@ -1093,8 +1099,8 @@ def padrao_m():
     set_envelope(380.0, 230.0, 6.0, alt=130.0, aba_dir=+1)
 
 
-def padrao_g():
-    """ELO G: ~30 L com menos de 500 g, para coisa VOLUMOSA.
+def padrao_m():
+    """ELO M: ~25 L com menos de 500 g, para coisa VOLUMOSA.
 
     A largura fica travada em 380 -- e ela que poe as paredes do G debaixo dos
     pes laterais do par de P. A profundidade e livre porque o par pousa
@@ -1105,12 +1111,17 @@ def padrao_g():
       - saida de 3 graus, nao 6: a 6 a base de uma peca de 220 mm de altura
         encolhe 46 mm e come a litragem
       - rasgo de parede maior: a 8% de parede aberta a peca de 30 L pesa 630 g
-      - CHAPA DO FUNDO VAZADA: sao ~200 g de chapa numa peca de 30 L
+      - CHAPA DO FUNDO VAZADA: sao ~230 g de chapa nesta peca
+
+    A ALTURA e 190 e nao 220 porque o passo de encaixe e NERV_T dividido pela
+    saida em x do pe, que e (ABA_W - ABA_POUSO)/ALT: baixar a altura melhora a
+    cubagem na mesma proporcao. De 220 para 190 o passo cai de 64,7 para
+    ~44 mm e a litragem vai de 29,6 para ~25,5 L.
     """
     global VAZADO, FUNDO_VAZADO, LIS_W, LIS_P, LIS_H, LIS_MIN
     VAZADO, FUNDO_VAZADO = "listra", True
     LIS_W, LIS_P, LIS_H, LIS_MIN = 14.0, 22.0, 34.0, 16.0
-    set_envelope(380.0, 400.0, 3.0, alt=220.0, aba_dir=+1)
+    set_envelope(380.0, 400.0, 3.0, alt=190.0, aba_dir=+1)
 
 
 def set_envelope(larg, prof, graus, alt=None, aba_dir=None):
