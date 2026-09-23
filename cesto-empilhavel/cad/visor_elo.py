@@ -30,6 +30,7 @@ SAI = os.path.join(DEST, "visor-elo.html")
 DADOS = os.path.join(DEST, "elo-medidas.json")
 STL_P = os.path.join(DEST, "elo-p.stl")
 STL_M = os.path.join(DEST, "elo-m.stl")
+STL_G = os.path.join(DEST, "elo-g.stl")
 
 
 def vg(x, casas=1):
@@ -188,6 +189,40 @@ def mede():
         d[nome] = EX.audita(trimesh.load(arq))[0]
         print("  %s = %.0f mm3" % (nome, d[nome]), flush=True)
 
+    # --- o G, e o TRIO de tres P acoplados -------------------------------
+    trio = p + (Pos(d["passo_p"], 0, 0) * p) + (Pos(-d["passo_p"], 0, 0) * p)
+    M.padrao_g()
+    gg, ng = M.cesto(aba=True)
+    export_stl(gg, STL_G)
+    bg = gg.bounding_box()
+    G = dict(peso=gg.volume * M.RHO, cap=M.capacidade(), furos=ng,
+             larg=M.LARG, prof=M.PROF, alt=M.ALT, draft=M.DRAFT,
+             env=(bg.size.X, bg.size.Y, bg.size.Z))
+    G["pn"] = passo(gg, gg, 0.0, hi=340.0)
+    G["pe"] = passo(gg, gg, M.DESLOC, hi=340.0)
+    G["interf"] = vol(gg, Pos(0, M.DESLOC, M.ALT) * gg)
+    G["ap"] = apoios(gg, gg, M.DESLOC, G["pe"])
+    G["passo_acopl"] = M.passo_acoplado()
+    lo, hi = 0.0, 20.0
+    while hi - lo > 0.05:
+        mid = (lo + hi) / 2
+        if vol(gg, Pos(G["passo_acopl"] + 1.2, 0, mid) * gg) > 0.0:
+            lo = mid
+        else:
+            hi = mid
+    G["solta"] = hi
+    G["recuo"] = M.DESLOC + (M.PROF - 230.0) / 2
+    G["trio"] = {}
+    for nome, dd in (("recuado", G["recuo"]), ("centrado", M.DESLOC)):
+        z = passo(gg, trio, dd, hi=340.0)
+        G["trio"][nome] = dict(dy=dd, z=z, ap=apoios(gg, trio, dd, z),
+                               interf=vol(gg, Pos(0, dd, M.ALT) * trio))
+        print("  trio %-9s dy=%+5.0f passo %7.2f | %.0f mm2"
+              % (nome, dd, z, sum(G["trio"][nome]["ap"])), flush=True)
+    G["preso"] = EX.audita(trimesh.load(STL_G))[0]
+    d["g"] = G
+    print("G: %.1f g | %.2f L | encaixa %.2f | preso %.0f mm3"
+          % (G["peso"], G["cap"], G["pn"], G["preso"]), flush=True)
     return d
 
 
@@ -411,19 +446,60 @@ def cenas(d):
             selo="trava puxando de lado, solta levantando",
             poses=[[0, 0, 0, 1, 0], [d["passo_m"], 0, 0, 1, 1]]),
     }
+    gg = d.get("g")
+    if gg:
+        tr, trc = gg["trio"]["recuado"], gg["trio"]["centrado"]
+        ap_tr, ap_g = sum(tr["ap"]), sum(gg["ap"])
+        js["g"] = dict(
+            titulo="O ELO G",
+            texto=(f"{gg['larg']:.0f} × {gg['prof']:.0f} × {gg['alt']:.0f} mm "
+                   f"a {gg['draft']:.0f}°: {vg(gg['cap'], 2)} L com "
+                   f"{vg(gg['peso'])} g. A largura de 580 é 3 × 180 + 2 × 20 — "
+                   f"a pegada exata de TRÊS P acoplados, do mesmo jeito que a "
+                   f"do M é a de dois."),
+            dados=[["capacidade", f"{vg(gg['cap'], 2)} L"],
+                   ["peso", f"{vg(gg['peso'])} g"],
+                   ["eficiência", f"{vg(gg['peso']/gg['cap'])} g/L"],
+                   ["rasgos", f"{gg['furos']}"]],
+            selo="a peça mais eficiente da linha",
+            poses=[[0, 0, 0, 2, 0]])
+        js["trio"] = dict(
+            titulo="Três P acoplados, empilhados no G",
+            texto=(f"O trio encosta ATRÁS, como o par no M: recuando "
+                   f"{tr['dy']:.0f} mm em y, as TRÊS saias de trás encontram "
+                   f"a aba de trás do G e os dois pés externos caem nas abas "
+                   f"laterais. São {ap_tr:.0f} mm² em cinco ilhas — "
+                   f"{tr['ap'][0]:.0f} × 3 das saias e {tr['ap'][-1]:.0f} × 2 "
+                   f"dos pés. Centrado cai para {sum(trc['ap']):.0f} mm² e o "
+                   f"trio tomba."),
+            dados=[["passo", f"{vg(tr['z'], 2)} mm"],
+                   ["recua em y", f"{tr['dy']:.0f} mm"],
+                   ["contato", f"{ap_tr:.0f} mm²"],
+                   ["interferência", f"{tr['interf']:.4f} mm³".replace(".", ",")]],
+            selo=f"{tr['interf']:.3f} mm³ de interferência".replace(".", ",")
+                 + f" a {vg(tr['z'], 2)} mm",
+            poses=[[0, 0, 0, 2, 0]] +
+                  [[k * d["passo_p"], tr["dy"], tr["z"], 0, i]
+                   for i, k in enumerate((-1, 0, 1))])
     js["linha"] = dict(
         titulo="A linha ELO",
-        texto=(f"P {vg(p['cap'], 2)} L · M {vg(m['cap'], 2)} L. Mesma aba, "
-               f"mesma cauda de andorinha, mesma altura de junta nos dois. "
-               f"O que muda é a escala em planta — 380 é 2 × 180 + 2 × 10, a "
-               f"pegada exata de dois P acoplados — e a profundidade, que é "
-               f"livre porque o par pousa recuado."),
+        texto=(f"P {vg(p['cap'], 2)} L · M {vg(m['cap'], 2)} L"
+               + (f" · G {vg(gg['cap'], 2)} L" if gg else "")
+               + ". A planta de cada um é a pegada de N P acoplados: 380 = "
+                 "2 × 180 + 2 × 10, 580 = 3 × 180 + 2 × 20. Mesma aba, mesma "
+                 "cauda de andorinha, mesma altura de junta."),
         dados=[["P", f"{vg(p['cap'], 2)} L · {vg(p['peso'])} g"],
-               ["M", f"{vg(m['cap'], 2)} L · {vg(m['peso'])} g"],
-               ["g/L", f"{vg(p['peso']/p['cap'])} · {vg(m['peso']/m['cap'])}"],
-               ["parede", "1,4 mm nos dois"]],
-        selo="dois tamanhos, uma arquitetura",
-        poses=[[330, 0, 0, 0, 0], [0, 0, 0, 1, 1]])
+               ["M", f"{vg(m['cap'], 2)} L · {vg(m['peso'])} g"]]
+              + ([["G", f"{vg(gg['cap'], 2)} L · {vg(gg['peso'])} g"],
+                  ["g/L", f"{vg(p['peso']/p['cap'])} · "
+                          f"{vg(m['peso']/m['cap'])} · "
+                          f"{vg(gg['peso']/gg['cap'])}"]] if gg else
+                 [["g/L", f"{vg(p['peso']/p['cap'])} · "
+                          f"{vg(m['peso']/m['cap'])}"],
+                  ["parede", "1,4 mm nos dois"]]),
+        selo="a planta de cada um é a pegada de N P acoplados",
+        poses=([[660, 0, 0, 0, 0], [330, 0, 0, 1, 1], [-180, 0, 0, 2, 0]]
+               if gg else [[330, 0, 0, 0, 0], [0, 0, 0, 1, 1]]))
     return js
 
 
@@ -438,7 +514,7 @@ def main(rapido=False):
     if rapido:
         d = json.load(open(DADOS, encoding="utf-8"))
         print("lido elo-medidas.json (sem remedir)", flush=True)
-        for k in ("p", "m", "par", "par_todos", "ap_m"):
+        for k in ("p", "m", "par", "par_todos", "ap_m", "g"):
             if k not in d:
                 raise SystemExit(f"falta '{k}' no json: rode sem --rapido")
         return escreve(d)
@@ -457,6 +533,8 @@ def escreve(d):
     p, m = d["p"], d["m"]
     print("empacotando:", flush=True)
     malhas = [empacota(STL_P), empacota(STL_M)]
+    if os.path.exists(STL_G):
+        malhas.append(empacota(STL_G))
     s = open(BASE, encoding="utf-8").read()
     s = duas_malhas(s, malhas)
 
@@ -467,8 +545,9 @@ def escreve(d):
               '<span class="eyebrow">Nitron · linha ELO</span>', "eyebrow")
     s = troca(s, "<h1>Cesto Mini Organizador</h1>",
               "<h1>ELO</h1>", "h1")
-    sub = (f'P {vg(p["cap"], 2)} L · M {vg(m["cap"], 2)} L · PP · peça única '
-           f'· dois P acoplados empilham no M')
+    sub = (f'P {vg(p["cap"], 2)} L · M {vg(m["cap"], 2)} L'
+           + (f' · G {vg(d["g"]["cap"], 2)} L' if d.get("g") else "")
+           + ' · PP · peça única · N P acoplados empilham no tamanho N')
     s = re.sub(r'<span class="sub">[^<]*saída[^<]*</span>',
                f'<span class="sub">{sub}</span>', s, count=1)
     s = troca(s, """      <button class="modo" data-modo="peca" aria-pressed="true">A peça</button>
@@ -478,6 +557,8 @@ def escreve(d):
               """      <button class="modo" data-modo="linha" aria-pressed="true">A linha</button>
       <button class="modo" data-modo="m" aria-pressed="false">O M</button>
       <button class="modo" data-modo="dois" aria-pressed="false">Dois P no M</button>
+      <button class="modo" data-modo="g" aria-pressed="false">O G</button>
+      <button class="modo" data-modo="trio" aria-pressed="false">Três P no G</button>
       <button class="modo" data-modo="torre" aria-pressed="false">A torre</button>
       <button class="modo" data-modo="encaixa" aria-pressed="false">Encaixados</button>
       <button class="modo" data-modo="empilha" aria-pressed="false">Empilhados</button>

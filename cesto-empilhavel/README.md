@@ -1681,7 +1681,21 @@ G possível que já não cabe.**
 
 A recomendação é o **A**, tratando a máquina como decisão de fornecimento e não
 de projeto: um molde de 604 × 407 já é ferramental de outra ordem, então a
-pergunta "onde injeta" aparece de qualquer jeito.
+pergunta "onde injeta" aparece de qualquer jeito. **Foi o que o cliente
+escolheu em 23/09**, e é o que `padrao_g()` constrói.
+
+#### A regra da linha, agora com três pontos
+
+| | boca do corpo | de onde vem | recebe em cima |
+|---|---|---|---|
+| **P** | 180 × 230 | a peça de referência | — |
+| **M** | 380 × 400 | 2 × 180 + 2 × 10 | **dois P acoplados** |
+| **G** | 580 × 400 | 3 × 180 + 2 × 20 | **três P acoplados** |
+
+**A planta de cada tamanho é a pegada de N P acoplados.** Não é um padrão que
+eu impus: cai fora da conta da aba, e os dois casos foram conferidos por
+medição (envelope batendo em dx = 0,00 mm nos dois). A profundidade é livre nos
+dois porque o pouso é recuado.
 
 **Ainda não medido no G:** extração, teste de raios, encaixe e empilhamento
 consigo mesmo, e a rigidez da chapa vazada — a mesma pendência do M, agora
