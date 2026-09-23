@@ -30,6 +30,7 @@ SAI = os.path.join(DEST, "visor-elo.html")
 DADOS = os.path.join(DEST, "elo-medidas.json")
 STL_P = os.path.join(DEST, "elo-p.stl")
 STL_M = os.path.join(DEST, "elo-m.stl")
+STL_G = os.path.join(DEST, "elo-g.stl")
 
 
 def vg(x, casas=1):
@@ -182,6 +183,40 @@ def mede():
     for nome, arq in (("preso_p", STL_P), ("preso_m", STL_M)):
         d[nome] = EX.audita(trimesh.load(arq))[0]
         print("  %s = %.0f mm3" % (nome, d[nome]), flush=True)
+
+    # --- o G ------------------------------------------------------------
+    M.padrao_g()
+    gg, ng = M.cesto(aba=True)
+    export_stl(gg, STL_G)
+    bg = gg.bounding_box()
+    G = dict(peso=gg.volume * M.RHO, cap=M.capacidade(), furos=ng,
+             larg=M.LARG, prof=M.PROF, alt=M.ALT, draft=M.DRAFT,
+             env=(bg.size.X, bg.size.Y, bg.size.Z),
+             lis_w=M.LIS_W, lis_h=M.LIS_H, fun_w=M.FUN_W, fun_p=M.FUN_P)
+    G["pn"] = passo(gg, gg, 0.0)
+    G["pe"] = passo(gg, gg, M.DESLOC)
+    G["interf"] = vol(gg, Pos(0, M.DESLOC, M.ALT) * gg)
+    G["ap"] = apoios(gg, gg, M.DESLOC, G["pe"])
+    G["passo_acopl"] = M.passo_acoplado()
+    lo, hi = 0.0, 20.0
+    while hi - lo > 0.05:
+        mid = (lo + hi) / 2
+        if vol(gg, Pos(G["passo_acopl"] + 1.2, 0, mid) * gg) > 0.0:
+            lo = mid
+        else:
+            hi = mid
+    G["solta"] = hi
+    G["trava"] = [(dx, vol(gg, Pos(G["passo_acopl"] + dx, 0, 0) * gg))
+                  for dx in (0.0, 0.6, 1.2, 2.0)]
+    # o par pousa RECUADO: e o que libera a profundidade do G (secao 4.2.8)
+    dyg = M.DESLOC + (M.PROF - 230.0) / 2
+    zg = passo(gg, par, dyg)
+    G["par"] = dict(dy=dyg, z=zg, interf=vol(gg, Pos(0, dyg, M.ALT) * par),
+                    ap=apoios(gg, par, dyg, zg))
+    G["preso"] = EX.audita(trimesh.load(STL_G))[0]
+    d["g"] = G
+    print("G: %.1f g | %.2f L | encaixa %.2f | par recuado %.2f (%.0f mm2)"
+          % (G["peso"], G["cap"], G["pn"], zg, sum(G["par"]["ap"])), flush=True)
     return d
 
 
@@ -193,11 +228,11 @@ def troca(s, velho, novo, o_que):
     return s.replace(velho, novo, 1)
 
 
-def duas_malhas(s, b64p, b64m):
+def duas_malhas(s, malhas):
     """Passa a pagina de uma malha uint16 para N malhas uint32."""
-    # 1. as malhas
+    # 1. as malhas (0 = P, 1 = M, 2 = G)
     s = re.sub(r"var MALHA = '[^']*';",
-               "var MALHAS = ['" + b64p + "', '" + b64m + "'];", s, count=1)
+               "var MALHAS = ['" + "', '".join(malhas) + "'];", s, count=1)
 
     # 2. indice de 32 bits na decodificacao
     s = troca(s,
@@ -309,7 +344,7 @@ def duas_malhas(s, b64p, b64m):
 def cenas(d):
     """As cenas da linha, com os numeros MEDIDOS em mede().
 
-    Convencao de pose: [x, y, z, malha, cor]. malha 0 = P, 1 = M.
+    Convencao de pose: [x, y, z, malha, cor]. malha 0 = P, 1 = M, 2 = G.
     """
     p, m = d["p"], d["m"]
     pp = d["passo_p"] / 2          # os dois P do par ficam em +-pp
@@ -402,10 +437,89 @@ def cenas(d):
             selo="trava puxando de lado, solta levantando",
             poses=[[0, 0, 0, 1, 0], [d["passo_m"], 0, 0, 1, 1]]),
     }
+    # --- o G ------------------------------------------------------------
+    gg = d.get("g")
+    if gg:
+        dyg, zg = gg["par"]["dy"], gg["par"]["z"]
+        apg_par, apg = sum(gg["par"]["ap"]), sum(gg["ap"])
+        js["g"] = dict(
+            titulo="O ELO G",
+            texto=(f"{gg['larg']:.0f} × {gg['prof']:.0f} × {gg['alt']:.0f} mm "
+                   f"a {gg['draft']:.0f}° de saída: "
+                   f"{vg(gg['cap'], 2)} L com {vg(gg['peso'])} g. A largura "
+                   f"continua em 380 — é ela que põe as paredes do G debaixo "
+                   f"dos pés laterais do par. A profundidade é livre porque o "
+                   f"par pousa RECUADO no fundo."),
+            dados=[["capacidade", f"{vg(gg['cap'], 2)} L"],
+                   ["peso", f"{vg(gg['peso'])} g"],
+                   ["eficiência", f"{vg(gg['peso']/gg['cap'])} g/L"],
+                   ["rasgos", f"{gg['furos']}"]],
+            selo="chapa do fundo vazada: é ela e o rasgo maior que fecham "
+                 "os 500 g",
+            poses=[[0, 0, 0, 2, 0]])
+        js["parg"] = dict(
+            titulo="Dois P acoplados, empilhados no G",
+            texto=(f"O par encosta ATRÁS: recuando {dyg:.0f} mm em y, as duas "
+                   f"saias de trás encontram a aba de trás do G e o contato "
+                   f"volta inteiro — {apg_par:.0f} mm². Centrado num G mais "
+                   f"fundo ele cairia para 54 mm² e tombaria. É essa saída "
+                   f"que libera a profundidade e deixou o G com "
+                   f"{gg['alt']:.0f} mm de altura em vez de 450."),
+            dados=[["passo", f"{vg(zg, 2)} mm"],
+                   ["recua em y", f"{dyg:.0f} mm"],
+                   ["contato", f"{apg_par:.0f} mm²"],
+                   ["interferência", f"{gg['par']['interf']:.4f} mm³".replace(".", ",")]],
+            selo=f"{gg['par']['interf']:.3f} mm³ de interferência".replace(".", ",")
+                 + f" a {vg(zg, 2)} mm",
+            poses=[[0, 0, 0, 2, 0], [-pp, dyg, zg, 0, 1], [pp, dyg, zg, 0, 1]])
+        js["gencaixa"] = dict(
+            titulo="G encaixados · o preço da altura",
+            texto=(f"Passo de {vg(gg['pn'], 2)} mm contra 40,00 do P e do M. "
+                   f"Não é o vazado: a saída em x do pé é "
+                   f"(ABA_W − ABA_POUSO)/ALT, e o G tem {gg['alt']:.0f} mm de "
+                   f"altura contra 130. Em caixa, 12 G ocupam "
+                   f"{gg['env'][2] + 11*gg['pn']:.0f} mm contra 573 de 12 M."),
+            dados=[["passo", f"{vg(gg['pn'], 2)} mm"],
+                   ["12 peças", f"{gg['env'][2] + 11*gg['pn']:.0f} mm"],
+                   ["vs. o M", f"{vg((gg['env'][2]+11*gg['pn'])/573.0)} ×"],
+                   ["vs. empilhado", f"{vg(gg['pe']/gg['pn'])} × mais"]],
+            selo="a cubagem é o que o G paga pela litragem",
+            poses=[[0, 0, i * gg["pn"], 2, i] for i in range(5)])
+        js["linha"] = dict(
+            titulo="A linha ELO",
+            texto=(f"P {vg(p['cap'], 2)} L · M {vg(m['cap'], 2)} L · "
+                   f"G {vg(gg['cap'], 2)} L. Mesma aba, mesma cauda de "
+                   f"andorinha, mesma altura de junta nos três. O par de P "
+                   f"empilha no M e no G; o que muda de um para o outro é "
+                   f"onde ele pousa."),
+            dados=[["P", f"{vg(p['cap'], 2)} L · {vg(p['peso'])} g"],
+                   ["M", f"{vg(m['cap'], 2)} L · {vg(m['peso'])} g"],
+                   ["G", f"{vg(gg['cap'], 2)} L · {vg(gg['peso'])} g"],
+                   ["g/L", f"{vg(p['peso']/p['cap'])} · "
+                           f"{vg(m['peso']/m['cap'])} · "
+                           f"{vg(gg['peso']/gg['cap'])}"]],
+            selo="três tamanhos, uma arquitetura",
+            # +x cai a ESQUERDA na vista (a camera olha de -x), entao o P
+            # vai no maior x para a familia ler do menor para o maior.
+            poses=[[330, 0, 0, 0, 0], [0, 0, 0, 1, 1], [-430, 0, 0, 2, 0]])
     return js
 
 
-def main():
+def main(rapido=False):
+    """rapido=True le elo-medidas.json e os STLs em disco em vez de remedir.
+
+    Remedir custa mais de uma hora de booleano em pecas de 200+ rasgos. O
+    json e versionado justamente para que redesenhar a pagina nao dependa
+    disso -- mas quem muda a GEOMETRIA tem de rodar sem --rapido.
+    """
+    import json
+    if rapido:
+        d = json.load(open(DADOS, encoding="utf-8"))
+        print("lido elo-medidas.json (sem remedir)", flush=True)
+        for k in ("g",):
+            if k not in d:
+                raise SystemExit(f"falta '{k}' no json: rode sem --rapido")
+        return escreve(d)
     d = mede()
     # Despeja as medidas: a folha elo.py le DAQUI em vez de remedir tudo
     # (cada uma destas medicoes custa minutos de booleano em pecas de 213
@@ -414,33 +528,43 @@ def main():
     with open(DADOS, "w", encoding="utf-8") as fp:
         json.dump(d, fp, ensure_ascii=False, indent=1, default=float)
     print("gerado elo-medidas.json", flush=True)
+    return escreve(d)
+
+
+def escreve(d):
+    p, m = d["p"], d["m"]
     print("empacotando:", flush=True)
-    b64p, b64m = empacota(STL_P), empacota(STL_M)
+    malhas = [empacota(STL_P), empacota(STL_M)]
+    if os.path.exists(STL_G):
+        malhas.append(empacota(STL_G))
     s = open(BASE, encoding="utf-8").read()
-    s = duas_malhas(s, b64p, b64m)
+    s = duas_malhas(s, malhas)
 
     # ---- cabecalho e botoes ------------------------------------------------
-    m = d["m"]
     s = troca(s, "<title>Mini Organizador P</title>",
               "<title>ELO · a linha</title>", "titulo")
     s = troca(s, '<span class="eyebrow">Nitron · projeto P</span>',
               '<span class="eyebrow">Nitron · linha ELO</span>', "eyebrow")
     s = troca(s, "<h1>Cesto Mini Organizador</h1>",
-              "<h1>ELO M</h1>", "h1")
+              "<h1>ELO</h1>", "h1")
+    gg = d.get("g")
+    sub = (f'P {vg(p["cap"], 2)} L · M {vg(m["cap"], 2)} L'
+           + (f' · G {vg(gg["cap"], 2)} L' if gg else "")
+           + f' · PP · peça única · dois P acoplados empilham no M e no G')
     s = re.sub(r'<span class="sub">[^<]*saída[^<]*</span>',
-               f'<span class="sub">{m["larg"]:.0f} × {m["prof"]:.0f} × '
-               f'{d["alt"]:.0f} mm · PP · saída {M.DRAFT:.0f}°/lado · '
-               f'{vg(m["peso"])} g · dois ELO P empilham em cima</span>',
-               s, count=1)
+               f'<span class="sub">{sub}</span>', s, count=1)
     s = troca(s, """      <button class="modo" data-modo="peca" aria-pressed="true">A peça</button>
       <button class="modo" data-modo="encaixa" aria-pressed="false">Encaixadas</button>
       <button class="modo" data-modo="empilha" aria-pressed="false">Empilhadas</button>
       <button class="modo" data-modo="acopla" aria-pressed="false">Acopladas</button>""",
-              """      <button class="modo" data-modo="m" aria-pressed="true">O M</button>
+              """      <button class="modo" data-modo="linha" aria-pressed="true">A linha</button>
+      <button class="modo" data-modo="m" aria-pressed="false">O M</button>
       <button class="modo" data-modo="dois" aria-pressed="false">Dois P no M</button>
+      <button class="modo" data-modo="g" aria-pressed="false">O G</button>
+      <button class="modo" data-modo="parg" aria-pressed="false">Dois P no G</button>
       <button class="modo" data-modo="torre" aria-pressed="false">A torre</button>
       <button class="modo" data-modo="encaixa" aria-pressed="false">M encaixados</button>
-      <button class="modo" data-modo="empilha" aria-pressed="false">M empilhados</button>
+      <button class="modo" data-modo="gencaixa" aria-pressed="false">G encaixados</button>
       <button class="modo" data-modo="acopla" aria-pressed="false">M acoplados</button>""",
               "botoes de modo")
 
@@ -453,9 +577,9 @@ def main():
     novo = "var MODOS = {\n  " + corpo + "\n};"
     s = re.sub(r"var PASSO_ENCAIXE = .*?\n\nvar MODOS = \{.*?\n\};",
                novo, s, count=1, flags=re.S)
-    if "var MODOS = {\n  m:" not in s:
+    if "var MODOS = {" not in s:
         raise SystemExit("nao substitui o bloco MODOS")
-    s = troca(s, "var modo = 'peca'", "var modo = 'm'", "modo inicial")
+    s = troca(s, "var modo = 'peca'", "var modo = 'linha'", "modo inicial")
 
     s = re.sub(r'<span class="sub" id="cTexto">[^<]*</span>',
                '<span class="sub" id="cTexto">a linha ELO em 3D</span>',
@@ -479,4 +603,5 @@ def jlist(x):
 
 
 if __name__ == "__main__":
-    main()
+    import sys as _s
+    main(rapido="--rapido" in _s.argv)

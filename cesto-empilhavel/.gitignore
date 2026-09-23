@@ -15,6 +15,7 @@ vr-*.stl
 # STLs do visor da linha (regeraveis por visor_elo.py)
 elo-p.stl
 elo-m.stl
+elo-g.stl
 ver-m.stl
 
 # elo-medidas.json NAO entra aqui de proposito: e o unico lugar onde as

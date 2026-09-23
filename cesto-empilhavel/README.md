@@ -1567,7 +1567,16 @@ na aba.
 30 L com carga volumosa isso pede ensaio ou nervura cruzada. Pesei, não
 calculei flexão.
 
-Arquivos: `padrao_g()` e `_vazado_fundo()` em `modelo3d.py`.
+Arquivos: `padrao_g()` e `_vazado_fundo()` em `modelo3d.py`. O visor
+`cad/visor-elo.html` passou a ter as **três malhas** e dez cenas, entre elas "A
+linha" (P, M e G lado a lado), "Dois P no G" e "G encaixados". `visor_elo.py
+--rapido` redesenha a página lendo `elo-medidas.json`, sem reconstruir os
+sólidos — remedir custa mais de uma hora de booleano em peças de 200+ rasgos.
+
+Conferido: sintaxe do JS com `node --check`, as três malhas decodificadas em
+node (índice máximo < nº de vértices, caixas batendo em 204,0 × 235,1 × 132,5 ·
+404,0 × 235,1 × 132,5 · 404,0 × 407,4 × 222,5) e as dez cenas renderizadas no
+Chromium headless.
 
 ### 4.3 Acoplado — as três canaletas
 
