@@ -114,7 +114,7 @@ então a forma tem um só lugar para mexer — e é nele que os fillets R20/R12 
 ### 2.1 Peso
 
 **179,2 g para 4,09 L**, contra o **Cesto Organizador Vime 7 L (047) da casa, que faz 7 L com
-213 g**. A **43,8 g/L** a peça fica **bem acima** do 047 (30,4 g/L), e isso é geometria, não
+213 g**. A **43,9 g/L** a peça fica **bem acima** do 047 (30,4 g/L), e isso é geometria, não
 desperdício: um cesto de 4 L tem mais área de parede por litro que um de 7 L, e a parede já está
 no mínimo da casa (1,4 mm).
 
@@ -1402,7 +1402,7 @@ sem toque: **0 de 720 raios escapam** em z = 7,5 · 12 · 20 · 26 · 30 · 39 m
 `BASE_Y`), e a auditoria de extração dá **12.877 mm³**, a mesma linha de base
 de rasgo passante do P escalada pelos 213 rasgos — nenhuma contra-saída nova.
 
-**E o M é uma peça mais eficiente que o P: 32,8 g/L contra 43,8.** Isso é
+**E o M é uma peça mais eficiente que o P: 32,8 g/L contra 43,9.** Isso é
 geometria outra vez — dobrar a largura dobra o volume mas não dobra a área de
 parede. A 32,8 g/L o M encosta nos 30,4 g/L do Cesto Vime 7 L (047) da casa,
 enquanto o P fica 44% acima. Se a conversa de custo por litro aparecer, é o M
@@ -1617,8 +1617,9 @@ na aba.
 calculei flexão.
 
 Arquivos: `padrao_g()` e `_vazado_fundo()` em `modelo3d.py`. O visor
-`cad/visor-elo.html` passou a ter as **três malhas** e dez cenas, entre elas "A
-linha" (P, M e G lado a lado), "Dois P no G" e "G encaixados". `visor_elo.py
+`cad/visor-elo.html` passou a ter as **três malhas** e nove cenas, entre elas "A
+linha ELO" (P, M e G lado a lado), "Três P acoplados, empilhados no G" e
+"O ELO G". `visor_elo.py
 --rapido` redesenha a página lendo `elo-medidas.json`, sem reconstruir os
 sólidos — remedir custa mais de uma hora de booleano em peças de 200+ rasgos.
 
@@ -1661,7 +1662,7 @@ M, e o mesmo mecanismo: o recuo é o que faz as saias encontrarem a aba de trás
 | **A** 580 × 400 × 245 | **50,89 L** | **632,9 g** | **12,4** | 2.461 cm² | 866 t |
 | **B** 580 × 230 × 450 | 49,22 L | 729,1 g | 14,8 | 1.434 cm² | 505 t |
 
-O A é a peça mais eficiente da linha — **12,4 g/L** contra 16,5 do M e 43,8 do
+O A é a peça mais eficiente da linha — **12,4 g/L** contra 16,5 do M e 43,9 do
 P. Sobram **367 g** do quilo. Com essa folga a **chapa inteira** cabe (estimado
 +150 g, ~783 g), o que tornaria o G utilizável para coisa menor também.
 
@@ -2036,13 +2037,16 @@ cad/abafora.py     folha abafora.png: as configuracoes A, B e C da aba para
                    fora, medidas lado a lado com a peca de hoje
 cad/varredura.py   folha varredura.png: a varredura da C -- empilhar, acoplar,
                    encaixar, a secao da borda e as tres adaptacoes
-cad/visor_elo.py   gera visor-elo.html (o visor da LINHA, com as duas malhas
+cad/visor_elo.py   gera visor-elo.html (o visor da LINHA, com as tres malhas
                    e indice de 32 bits, porque o M passa de 65.535 vertices)
-                   e elo-medidas.json, onde as medidas do M vivem
-cad/elo.py         folha elo.png: o P, o M, e o par de P empilhado no M.
-                   NAO remede -- le elo-medidas.json
-cad/elo-medidas.json  as medidas do M, versionadas de proposito: custam ~40
-                   min de booleano e sao o que permite redesenhar a folha
+                   e elo-medidas.json, onde as medidas do M e do G vivem
+cad/elo.py         folha elo.png: a linha inteira -- P, M e G na mesma escala,
+                   o par no M, o trio no G, o encaixe e o acoplamento. NAO
+                   remede: le elo-medidas.json e as cotas de entrada saem das
+                   tres configuracoes do modelo3d, com assert contra o json
+                   velho. Com --rapido reaproveita os PNGs das cenas
+cad/elo-medidas.json  as medidas do M e do G, versionadas de proposito: custam
+                   ~40 min de booleano e sao o que permite redesenhar a folha
 
 padrao_m() em modelo3d.py: o ELO M, 380 x 400 x 190 a 3 graus, com rasgo de
 parede maior e CHAPA DO FUNDO VAZADA (_vazado_fundo()). E a chapa que fecha o

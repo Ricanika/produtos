@@ -19,5 +19,5 @@ elo-g.stl
 ver-m.stl
 
 # elo-medidas.json NAO entra aqui de proposito: e o unico lugar onde as
-# medidas do M vivem, custa ~40 min de booleano para refazer, e e o que
-# permite redesenhar elo.png sem reconstruir os solidos.
+# medidas do M e do G vivem, custam ~40 min de booleano para refazer, e sao o
+# que permite redesenhar elo.png sem reconstruir os solidos.
