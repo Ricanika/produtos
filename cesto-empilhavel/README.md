@@ -51,7 +51,7 @@ injetada: sem dobradiça, sem painel, sem montagem.
 | Injeção no parque atual | **1 cavidade numa 250 t (68%)** — a casa tem **9 máquinas** dessa classe. A aba para fora levou o footprint de 430 para 480 cm², e com ele o fechamento de 151 para 169 t: saiu da classe de 200 t |
 | Ferramental | **USD 19,5 mil FOB**, 1 molde — por analogia direta com dois moldes da casa |
 | Payback | **~6,2 meses** a 150 mil un/ano em PP virgem (4,9 com moído), com o molde estimado por cima |
-| Preço do anúncio de referência | **Não obtido** — o proxy desta sessão bloqueia o Mercado Livre (seção 6) |
+| Preço de mercado | **Levantado em 28/09/2026** — o gêmeo do P (170 g) sai a **R$ 6,20/un** em kit de 10; a caixa agrícola de 50 L, a R$ 34,89 a 46,90 pesando 1,6–1,7 kg. Em preço de fábrica equivalente o **G fica 28–46% abaixo** do rival agrícola de 50 L, e o **P empata no limite** contra o bin de loja (seção 6.6) |
 
 O produto é uma **commodity de volume**: contribuição de ~R$ 1,79 por peça em virgem (R$ 2,24 em moído), então a conta fecha
 por quantidade, não por margem unitária. Isso muda o critério de decisão em relação à caixa
@@ -1968,6 +1968,146 @@ novo chegar à metade disso (131 mil/ano), o payback é de 7,8 meses em virgem.
 
 ---
 
+### 6.6 Pesquisa de mercado: estamos dentro ou fora?
+
+**Status:** coleta de 28/09/2026 · `mercado.py` (dados e conta) + `mercado.png` (folha)
+
+**O método, em uma frase: trouxe tudo para o mesmo nível da cadeia.** Comparar o
+nosso preço de fábrica (R$ 4,58) com a vitrine de um marketplace (R$ 6,20) não
+diz nada — são dois degraus diferentes. Então cada preço observado foi dividido
+pelo múltiplo do canal em que ele foi visto, e a comparação inteira acontece em
+**preço de fábrica equivalente**.
+
+**O múltiplo do canal doméstico é o único que eu não preciso supor: ele está
+medido no nosso próprio produto.** O 047 sai da fábrica a R$ 4,58 (TGFCUS ×
+TGFITE) e está na gôndola a R$ 19,99 (Big Lar), R$ 28,98 (Nichele) e R$ 29,15
+(nitron.com.br) — **4,36× a 6,36×**. Para o canal das lojas de embalagem (ETA,
+Sampa, ABelt, que vendem direto ao usuário final) adotei **1,6× a 2,2×**, e essa
+é a premissa mais fraca de toda a análise. Por isso a tabela de veredito imprime,
+para cada duelo, o **múltiplo de empate**: acima dele estamos caros, abaixo
+estamos baratos.
+
+> **Os preços foram coletados por busca, sem abrir as páginas** — a política de
+> rede da sessão bloqueia esses domínios (`mercadolivre.com.br`,
+> `caixasplasticaseta.com.br`, `gruplast.com.br`, `guaxucabos.com.br` e outros).
+> Cada linha de `mercado.py` carrega a fonte. Antes de virar argumento de
+> negociação, os preços devem ser reconferidos na tela.
+
+#### As três prateleiras
+
+Este produto não tem **uma** prateleira, tem três, e elas pagam preços
+completamente diferentes pelo mesmo litro:
+
+| | referência | dim. ext. (cm) | L | peso | g/L | vitrine | fábrica equiv. |
+|---|---|---|---|---|---|---|---|
+| **cesto expositor** | Cesto Mini / caixa bin — **o gêmeo do nosso P** | 13 × 21,5 × 25 | ~4,5 | **170 g** | ~37,8 | R$ 6,20 (kit 10 a R$ 62,00) | R$ 2,82–3,88 |
+| | idem, na Amazon | 13 × 21,5 × 25 | ~4,5 | 170 g | ~37,8 | R$ 6,04 (kit 10 a R$ 60,44) | R$ 2,75–3,77 |
+| | Cesto expositor pequeno 30 L | 20 × 34 × 44 | 30 | 600 g | 20,0 | R$ 12,00 | R$ 5,45–7,50 |
+| | Cesto expositor pequeno 35 L | 24 × 37 × 43,5 | 35 | 850 g | 24,3 | R$ 10,57 | R$ 4,80–6,61 |
+| | Cesto expositor médio 55 L | 29 × 41 × 58 | 55 | 950 g | 17,3 | R$ 19,10 | R$ 8,68–11,94 |
+| **caixa agrícola** | ETA 20HF, encaixável, carga 15 kg | 17 × 30 × 48,5 | 20 | 885 g | 44,2 | R$ 24,89 | R$ 11,31–15,56 |
+| | **ETA31 ECX** — vazada, empilhável **E** encaixável, carga 30 kg | 31,5 × 36 × 56 | 50,5 | **1.700 g** | 33,7 | R$ 40,65 | R$ 18,48–25,41 |
+| | ETA31TAS | 31 × 36,5 × 55 | 50 | 1.600 g | 32,0 | R$ 34,89 | R$ 15,86–21,81 |
+| | ABelt AB-50L, PEAD virgem, carga 35 kg | 31 × 36,5 × 55 | 50 | n/p | — | R$ 46,90 | R$ 21,32–29,31 |
+| **doméstico** | **047 Vime 7 L (nosso)** | 16,8 × 20,5 × 29,4 | 7 | 213 g | 30,4 | **R$ 4,58 de fábrica** → R$ 19,99–29,15 | **medido** |
+| | Caixa organizadora 25 L c/ tampa (Arqplast, reciclado) | — | 25 | n/p | — | R$ 42,05–75,90 | R$ 6,61–17,41 |
+
+A capacidade do cesto bin não é publicada. Os ~4,5 L saem do envelope dele
+(13 × 21,5 × 25 = 6,99 L) com o **fator de enchimento medido no nosso P**
+(0,643) — que é o número mais favorável a ele que eu consigo justificar, porque
+a parede dele é mais reta e o chanfro menor. A 0,75 de enchimento ele daria
+5,24 L e 32,4 g/L.
+
+#### O primeiro achado: o gêmeo do P pesa 170 g e o nosso pesa 179,2
+
+**O produto de referência do projeto — o que veio do STL e do anúncio — é o
+"Cesto Mini" / "caixa bin": 13 × 21,5 × 25 cm, 170 g, carga de 5 kg, empilha 8,
+e o kit de 10 custa R$ 62,00.** Ele é ligeiramente maior que o nosso P
+(21,5 × 25 contra 20,4 × 23,5) e pesa **9,2 g menos**. Em grama por litro ele
+fica em ~37,8 contra os nossos **43,9**.
+
+Não é falha de desenho, é o que a §2.1 já dizia: parede por litro cresce quando
+a peça encolhe. Mas some a diferença de litragem com a diferença de canal e o
+resultado é o ponto mais apertado da linha inteira.
+
+#### A lei do R$/kg: quanto maior a peça, menos se paga pelo quilo
+
+Invertendo cada vitrine para preço de fábrica e dividindo pelo peso publicado:
+
+| peça | peso | R$/kg na fábrica |
+|---|---|---|
+| cesto bin | 170 g | 16,15 – 22,79 |
+| **047 (nosso, medido)** | **213 g** | **21,50** |
+| cesto expositor 30 L | 600 g | 9,09 – 12,50 |
+| cesto expositor 35 L | 850 g | 5,65 – 7,77 |
+| caixa agrícola 20 L | 885 g | 12,78 – 17,58 |
+| cesto expositor 55 L | 950 g | 9,14 – 12,57 |
+| caixa agrícola 50 L | 1.600–1.700 g | 9,91 – 14,94 |
+
+**Nosso custo de peça é R$ 11,50/kg em moído e R$ 15,00/kg em virgem.** Compare
+com a coluna da direita: o cesto expositor grande é vendido, na fábrica, por
+**R$ 6 a 12,50 o quilo de peça** — abaixo do nosso custo em virgem, e às vezes
+abaixo do nosso custo em moído. **Essa prateleira não roda com resina virgem.**
+A caixa organizadora da Arqplast anuncia "material reciclado" no próprio texto, e
+isso confirma por outro caminho.
+
+É o inverso da intuição: o preço por quilo **cai** quando a peça cresce. Peça
+grande e leve é o lugar mais difícil de ganhar dinheiro por grama — e é
+exatamente onde a nossa linha é melhor.
+
+#### O veredito, tamanho por tamanho
+
+Nosso preço aqui é o **R$/kg da casa** (R$ 21,50/kg, a âncora do 047), que é o
+critério que a casa usa hoje:
+
+| | nosso preço | duelo | fábrica equiv. do rival | posição | empata se k = |
+|---|---|---|---|---|---|
+| **P** · 4,09 L · 179,2 g | R$ 3,85 | cesto bin (R$ 6,20) | R$ 2,82–3,88 | **no limite** (−0,6% do teto) | 1,61 |
+| | R$ 4,58 (preço adotado na §6.2) | idem | idem | **18% acima do teto** | 1,35 |
+| **M** · 25,52 L · 420,7 g | R$ 9,05 | expositor 30 L (R$ 12,00) | R$ 5,45–7,50 | 21% acima | 1,33 |
+| | | agrícola 20 L (R$ 24,89) | R$ 11,31–15,56 | **42% abaixo** | 2,75 |
+| **G** · 50,89 L · 632,9 g | R$ 13,61 | expositor 55 L (R$ 19,10) | R$ 8,68–11,94 | 14% acima | 1,40 |
+| | | agrícola 50 L (R$ 34,89–40,65) | R$ 15,86–25,41 | **28–46% abaixo** | 2,56–2,99 |
+
+**Onde estamos DENTRO é onde o mercado usa mais plástico do que nós. Onde
+estamos FORA é onde ele usa menos preço — não menos plástico.**
+
+- **Contra a caixa agrícola, o G é o melhor negócio da linha.** Mesmos 50 L,
+  mesmo vazado, mesmo empilha-e-encaixa, e **2,7× mais leve** (632,9 g contra
+  1.700). A R$ 18,00 de fábrica — ainda 29% abaixo do teto da ETA31 ECX — a margem
+  seria de **47% a 60%**. Com uma ressalva que não é pequena: a ETA31 é
+  **classificada para 30 kg de carga** e a nossa não é classificada para nada.
+  A chapa vazada nunca foi ensaiada (§7). Esta é a primeira razão **comercial**
+  para fazer esse ensaio.
+- **Contra o cesto expositor ninguém da linha passa pelo R$/kg da casa** — o P
+  empata no limite, o M fica 21% acima e o G, 14%. Mas todos passam **em
+  moído**: ao preço do meio da faixa do rival, a margem é de 39% no P
+  (R$ 3,35 contra custo de R$ 2,06), 25% no M e 29% no G. A conta mais bonita é
+  a do pacote: **10 P a R$ 3,35 dão R$ 33,50 de fábrica, que no múltiplo médio
+  do canal chegam à vitrine a R$ 62,00 — exatamente o preço do kit que está
+  lá.** Competir nessa prateleira é decisão de **resina**, não de desenho.
+- **No canal doméstico o P está dentro, e é o único lugar onde os R$ 4,58
+  fecham.** O nosso próprio 047 prova: R$ 4,58 de fábrica sustentam R$ 19,99 a
+  29,15 de gôndola. Por litro ficamos em R$ 0,94 contra R$ 0,65 do 047 — 45%
+  acima —, e é a função (acopla, empilha, encaixa, e o P empilhando no M e no G)
+  que tem de pagar essa diferença. **Vendido em kit de 3 ou 4, o P foge da
+  comparação de R$/unidade com um bin de R$ 6,20**, que é a comparação que ele
+  perde.
+- **O M de 25 L cai numa prateleira doméstica que existe e paga bem**: a caixa
+  organizadora de 25 L com tampa está a R$ 42,05–75,90, o que dá R$ 6,61–17,41
+  de fábrica equivalente. Nosso M a R$ 9,05 está dentro da faixa, com tampa a
+  menos e vazado, empilhável, encaixável e acoplável a mais.
+
+#### O que falta para fechar isto, e é uma coisa só
+
+Todo o "fora" desta análise depende do múltiplo do canal das lojas de embalagem,
+que é premissa. **Os empates estão em k = 1,33 a 1,61** — ou seja, se essas
+fábricas vendem a 60–75% do próprio preço de vitrine, estamos dentro; se vendem
+a 45–50%, estamos fora. Nenhuma busca na web resolve isso: **é uma cotação de
+distribuidor** (ou o preço de tabela da casa para esse canal). Está na §7.
+
+---
+
 ## 7. O que falta — e o mais importante primeiro
 
 | Item | Gravidade | Por quê |
@@ -1975,15 +2115,16 @@ novo chegar à metade disso (131 mil/ano), o payback é de 7,8 meses em virgem.
 | **Capacidade de 4,09 L é suficiente?** | **Alta** | O chanfro do pé já caiu de 52 para 36 mm para devolver volume. Levá-lo a 24 mm devolve ~0,2 L a mais, sem tocar no acesso frontal. A saída já foi de 12° para 6° por esse motivo (§4.2.6) |
 | **Amostra física** | **Alta** | O passo do encaixe e o engate exato da saia nos berços do rim |
 | **Passo do encaixe** | **Alta** | É a promessa de embalagem do pacote de 10. Medir na amostra ou em protótipo impresso (seção 4.2) |
-| Preço do anúncio de referência | Alta | **Não consegui abrir** — o proxy da sessão bloqueia o Mercado Livre. Precisa do preço do pacote de 10 para validar o cenário de preço |
+| ~~Preço do anúncio de referência~~ | **Resolvido** | O gêmeo do P (13 × 21,5 × 25 cm, **170 g**) sai em kit de 10 a **R$ 62,00** (ETA) e R$ 60,44 (Amazon) — R$ 6,04 a 6,20/un. Coletado por busca, não abrindo a página (§6.6) |
+| **Preço de fábrica do canal expositor** | **Alta** | É o que decide se estamos dentro ou fora nessa prateleira. Os empates estão em k = 1,33 a 1,61, e o k é premissa minha. Resolve com **uma cotação de distribuidor** (§6.6) |
 | Volume-alvo de venda | Alta | É o que decide o payback. Sobre cavidades a resposta mudou: 2 cavidades agora exigem 600 t, onde a casa tem **1 máquina** — acima de ~250 mil/ano a expansão é um segundo molde de 1 cavidade, não um de 2 (§5) |
 | Laranja em moído é viável? | Média | Vale R$ 0,63/peça, R$ 94 mil/ano a 150 mil (seção 6.2) |
 | Redução de peso | Média | A peça está em 179,2 g. A única alavanca grande que resta é perfurar a chapa do fundo (52,2 g, 29% da peça) — e o cliente pediu fundo fechado |
-| **Custo e preço do ELO M** | **Alta** | O `economia.py` roda só o P. O M de ~25 L precisa do cenário próprio e de um comparável de preço — a casa não tem nada nessa litragem, então a analogia terá de vir de fora |
+| **Custo e preço do ELO M e do G** | Média | O `economia.py` roda só o P. Os comparáveis de fora já estão levantados (§6.6): expositor de 30 L e agrícola de 20 L para o M; expositor de 55 L e agrícola de 50 L para o G. Falta rodar o cenário de custo próprio de cada um no `economia.py` |
 | **Pressão específica do M** | **Alta** | O M de 25 L tem 404 × 407 mm de planta — 1.645 cm², bem mais que os 950 do M de 9,10 L. É o que decide a classe de máquina, e o número de pressão específica é do processador, não meu (§4.2.8) |
 | Marca "ELO" | Alta | **Não conferi** — sem acesso ao INPI e com o Mercado Livre bloqueado pelo proxy. Busca na classe 21 antes de gravar em molde ou embalagem |
 | Ferramental do M | Média | Os USD 19,5 mil são a analogia do P. O M de 25 L tem ~1.645 cm² de planta contra 480 — precisa de analogia própria |
-| **Carga da chapa vazada do M** | **Alta** | A chapa do M tem ~40% de furo e 1,4 mm de nervura entre rasgos. Numa peça de 25 L com carga volumosa isso precisa de ensaio ou de nervura cruzada — **não calculei flexão da chapa, só peso** |
+| **Carga da chapa vazada do M e do G** | **Alta** | Agora tem motivo comercial, não só técnico: o rival direto do G é classificado para 30 kg e o nosso não é classificado para nada (§6.6). A chapa do M tem ~40% de furo e 1,4 mm de nervura entre rasgos. Numa peça de 25 L com carga volumosa isso precisa de ensaio ou de nervura cruzada — **não calculei flexão da chapa, só peso** |
 | **Rasgo de 14 mm no M** | Média | Foi dimensionado para "coisa volumosa". Se entrar miudeza, o M precisa do vazado do P e sobe de peso na mesma proporção |
 | `SAIA_W` do M escala? | Média | O tripé do M é o mesmo 463 mm² do P. Basta para a carga de referência (0,53 MPa, 57× de folga); se o M for para carga pesada, a saia de trás vai de 108 a ~308 mm sem mexer em mais nada (§4.2.7) |
 | Cotas finais para a ferramentaria | Média | O pacote de cotas do molde ainda não foi fechado |
@@ -2047,6 +2188,13 @@ cad/elo.py         folha elo.png: a linha inteira -- P, M e G na mesma escala,
                    velho. Com --rapido reaproveita os PNGs das cenas
 cad/elo-medidas.json  as medidas do M e do G, versionadas de proposito: custam
                    ~40 min de booleano e sao o que permite redesenhar a folha
+mercado.py         pesquisa de mercado: a amostra de concorrentes com a fonte
+                   de cada linha, os multiplos de canal e o veredito por
+                   tamanho, tudo em preco de fabrica equivalente.
+                   --folha desenha mercado.png; --rapido le o cache
+folha_mercado.py   o desenho da folha mercado.png (nao busca e nao mede nada)
+mercado-medidas.json  cache de peso/capacidade/envelope das tres configuracoes,
+                   para a folha de mercado nao reconstruir os solidos
 
 padrao_m() em modelo3d.py: o ELO M, 380 x 400 x 190 a 3 graus, com rasgo de
 parede maior e CHAPA DO FUNDO VAZADA (_vazado_fundo()). E a chapa que fecha o
