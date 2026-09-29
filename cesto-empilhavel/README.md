@@ -1765,6 +1765,58 @@ na engenharia.
 
 ---
 
+#### E os dez viraram sólido (29/09)
+
+O croqui não comunicou: "não consegui entender" foi a resposta, e ela estava
+certa — desenho de linha não mostra volume. Os dez conceitos foram
+**construídos e pesados no sólido**, cada um a partir do ELO P com uma
+alteração só. Arquivos: `design/conceitos3d.py` (constrói e exporta),
+`design/render_conceitos.py` (renderiza) e `design/galeria.py` →
+`design/conceitos-3d.html`.
+
+| conceito | peso | contra hoje | capacidade | g/L |
+|---|---|---|---|---|
+| **hoje** | 179,2 g | — | 4,09 L | 43,9 |
+| Junta celebrada | **168,5 g** | **−10,7 g** | 4,09 L | 41,2 |
+| Canto R40 | 169,0 g | −10,2 g | **3,94 L** | 42,9 |
+| Ripado | 172,2 g | −7,0 g | 4,09 L | 42,2 |
+| Pega oval | 176,4 g | −2,8 g | 4,09 L | 43,2 |
+| Plinto | 181,4 g | +2,2 g | 4,09 L | 44,4 |
+| Arco frontal | 181,9 g | +2,7 g | 4,09 L | 44,5 |
+| Meia-pele | 183,6 g | +4,5 g | 4,09 L | 45,0 |
+| Pele lisa | 194,6 g | +15,4 g | 4,09 L | 47,6 |
+| Canelado | 205,1 g | +25,9 g | 4,09 L | 50,2 |
+| Borda virada | **232,7 g** | **+53,6 g** | 4,09 L | 57,0 |
+
+**Duas coisas só apareceram porque virou sólido, e as duas me contrariaram.**
+
+1. **A borda virada: estimei +4 a +8 g e o sólido deu +53,6 g** — errei por um
+   fator de sete. Uma borda de 13 mm de altura dando a volta no perímetro é
+   muita resina. Ou ela encolhe para 5–6 mm, ou o conceito está fora.
+2. **O arco frontal não funciona sobre a frente de hoje.** Ela já é um recorte
+   — os dois chanfros abrem uma concha da borda à meia altura — e somar um
+   arco só aumenta o buraco. Tentei subir a frente reduzindo o chanfro de topo
+   e o modelo quebrou duas vezes: a 6 mm o fillet R12 da face frontal falha, a
+   16 mm falha a tapa do rasgo. **A frente é uma teia de feições amarradas ao
+   chanfro; mexer nela é projeto, não estudo de forma.**
+
+E uma surpresa boa: a **junta celebrada** é o conceito mais **leve** dos dez
+(−10,7 g), porque o rebaixo de 2 mm no topo da parede tira material sem tirar
+função. É o único que melhora forma e peso ao mesmo tempo.
+
+**Os três que eu levaria adiante:** ripado (−7,0 g), plinto (+2,2 g) e junta
+celebrada (−10,7 g). Combinam entre si, nenhum toca a cota que define a linha,
+e os três juntos ainda ficam **mais leves que a peça de hoje**.
+
+> Duas mudanças técnicas ficaram no modelo por causa deste estudo: `R_PLANTA`
+> virou parâmetro em `modelo3d.py` (era 14,0 escrito à mão em dez lugares, e
+> por isso "e se a planta fosse mais redonda?" não tinha como ser medido), e o
+> conceito do plinto mostrou que **não dá para recuar a base cortando a face
+> externa** — a parede tem 1,4 mm, então tirar 4 mm dela apaga a saia inteira
+> e a peça passa a começar em z = 5. A saia tem de ser trocada, não cortada.
+
+---
+
 ### 4.3 Acoplado — as três canaletas
 
 O pedido foi uma **canaleta de ponta a ponta na lateral, macho de um lado e
@@ -2238,6 +2290,11 @@ design/conceitos.py   gera design/conceitos-b2c.html: as dez possibilidades
                    molde, peso e sistema ELO
 design/desenho.py  a biblioteca de croqui vetorial das dez (silhueta de
                    proporcao certa, tirada das cotas reais do P)
+design/conceitos3d.py  constroi os dez como SOLIDO e exporta STL + medidas
+design/render_conceitos.py  renderiza cada solido em 3/4 e de topo
+design/galeria.py  monta design/conceitos-3d.html com os renders e os pesos
+                   medidos (imagens embutidas: o arquivo abre sozinho)
+design/conceitos-medidas.json  peso, capacidade e envelope medidos dos dez
 mercado.py         pesquisa de mercado: a amostra de concorrentes com a fonte
                    de cada linha, os multiplos de canal e o veredito por
                    tamanho, tudo em preco de fabrica equivalente.

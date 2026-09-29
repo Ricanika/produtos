@@ -265,6 +265,11 @@ FOLGA_F = 6.0             # idem na frente, onde a borda e o arco da silhueta
 # estrutura -- muda so o vazado. Uma listra tira mais area que a bolinha que
 # ela substitui, entao a peca sai mais leve sem mexer em parede nenhuma.
 VAZADO = "listra"         # "listra", "bolinha" (o desenho antigo) ou "nenhum"
+# RAIO DE CANTO DA PLANTA, na base. Era 14,0 escrito a mao em dez lugares --
+# e por isso "e se a planta fosse mais redonda?" nao tinha como ser medido.
+# O valor de hoje (14,0) e o do projeto: trocar aqui muda a peca inteira de
+# forma coerente -- casca, cavidade, rim, aba e faixa do pe.
+R_PLANTA = 14.0
 
 # Vazado da CHAPA DO FUNDO. Desligado no P e no M -- eles guardam miudeza e o
 # cliente pediu fundo fechado. Ligado no G, que guarda coisa volumosa: a chapa
@@ -361,7 +366,7 @@ def y_frente(x, z):
     tromba nele.
     """
     w, h = secao(z)
-    r = 14.0 + z * TAN
+    r = R_PLANTA + z * TAN
     reto = w / 2 - r
     if abs(x) <= reto:
         return -h / 2
@@ -510,7 +515,7 @@ def _colar():
     base da faixa -- com ela ha face de encosto de verdade, 14 x 132 mm.
     """
     return Pos(0, 0, Z_D0) * extrude(
-        RectangleRounded(LARG, PROF, 14.0 + ALT * TAN), H_FAIXA2)
+        RectangleRounded(LARG, PROF, R_PLANTA + ALT * TAN), H_FAIXA2)
 
 
 def _trilho_D(y0, y1):
@@ -682,7 +687,7 @@ def _aba_dobra():
     -- que agora e o que bate primeiro numa queda e o que a mao pega -- deixa
     de ser uma lamina de 2,5 mm.
     """
-    r = 14.0 + ALT * TAN + ABA_W
+    r = R_PLANTA + ALT * TAN + ABA_W
     z0 = ALT - ABA_T - ABA_DOBRA
     fr = RectangleRounded(LARG + 2 * ABA_W, PROF + 2 * ABA_W, r)
     dr = RectangleRounded(LARG + 2 * (ABA_W - ABA_DT),
@@ -712,7 +717,7 @@ def _aba(fora, interno):
     recorte da aba, a janela na parede e a cavidade do pe sejam UM unico
     solido (a mesma folga, por construcao).
     """
-    r = 14.0 + ALT * TAN
+    r = R_PLANTA + ALT * TAN
     if ABA_DIR > 0:
         # PARA FORA: o anel e o que sobra da chapa maior depois de tirar o
         # CONE -- assim ela solda na parede sem folga em cota nenhuma, e a
@@ -721,7 +726,7 @@ def _aba(fora, interno):
         a = Pos(0, 0, ALT - ABA_T) * extrude(
             RectangleRounded(LARG + 2 * ABA_W, PROF + 2 * ABA_W, r + ABA_W),
             ABA_T)
-        return a - extrude(RectangleRounded(BASE_X, BASE_Y, 14.0), ALT + 40,
+        return a - extrude(RectangleRounded(BASE_X, BASE_Y, R_PLANTA), ALT + 40,
                            taper=-DRAFT)
     a = Pos(0, 0, ALT - ABA_T) * extrude(
         RectangleRounded(LARG, PROF, r), ABA_T)
@@ -905,11 +910,11 @@ def _saia_tras():
     O apoio e a aresta de baixo, de SAIA_B de espessura: deslocada DESLOC ela
     pousa na aba de tras da peca de baixo.
     """
-    faixa = extrude(RectangleRounded(BASE_X, BASE_Y, 14.0), H_PE + 0.2,
+    faixa = extrude(RectangleRounded(BASE_X, BASE_Y, R_PLANTA), H_PE + 0.2,
                     taper=-DRAFT)
     dentro = Pos(0, 0, -1.0) * extrude(
         RectangleRounded(BASE_X - 2 * SAIA_B, BASE_Y - 2 * SAIA_B,
-                         max(14.0 - SAIA_B, 2.0)), H_PE + 3.0, taper=-DRAFT)
+                         max(R_PLANTA - SAIA_B, 2.0)), H_PE + 3.0, taper=-DRAFT)
     rec = Pos(0, BASE_Y / 2 - 20.0, -0.5) * extrude(
         RectangleRounded(SAIA_W, 50.0, SAIA_R), H_PE + 1.5)
     return (faixa - dentro) & rec
@@ -996,7 +1001,7 @@ def aba_livre():
     o friso mora justo ai: se as duas se encontrarem a femea corta a perna do
     friso. Por isso o berco entra na lista de ocupados.
     """
-    r_topo = 14.0 + ALT * TAN
+    r_topo = R_PLANTA + ALT * TAN
     lim = (-PROF / 2 + CHANFRO + 2, PROF / 2 - r_topo - 2)
     ocupado = []
     for yc, L, t, ky, r00, friso in PES:
@@ -1270,9 +1275,10 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
     z_topo = ALT - h_rim - 9.0
 
     # casca tronco-piramidal
-    fora = extrude(RectangleRounded(BASE_X, BASE_Y, 14.0), ALT, taper=-DRAFT)
-    env = extrude(RectangleRounded(BASE_X, BASE_Y, 14.0), ALT + 40, taper=-DRAFT)
-    interno = RectangleRounded(BASE_X - 2 * T_PAREDE, BASE_Y - 2 * T_PAREDE, 12.0)
+    fora = extrude(RectangleRounded(BASE_X, BASE_Y, R_PLANTA), ALT, taper=-DRAFT)
+    env = extrude(RectangleRounded(BASE_X, BASE_Y, R_PLANTA), ALT + 40, taper=-DRAFT)
+    interno = RectangleRounded(BASE_X - 2 * T_PAREDE, BASE_Y - 2 * T_PAREDE,
+                             R_PLANTA - 2.0)
     # Tubo aberto: a cavidade sai do MESMO plano z=0 e com a MESMA saida da
     # casca, entao a parede fica em T_PAREDE constante em toda a altura. (Se a
     # cavidade fosse deslocada para cima mantendo a planta da base, a parede
@@ -1289,7 +1295,7 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
 
     # faixa do rim: parede engrossada no alto
     cheio = fora - Pos(0, 0, T_FUNDO) * extrude(
-        RectangleRounded(BASE_X - 2 * T_RIM, BASE_Y - 2 * T_RIM, 11.0),
+        RectangleRounded(BASE_X - 2 * T_RIM, BASE_Y - 2 * T_RIM, R_PLANTA - 3.0),
         ALT, taper=-DRAFT)
     p += cheio & Pos(0, 0, ALT - h_rim) * extrude(
         RectangleRounded(LARG + 40, PROF + 40, 0.1), h_rim + 10)
@@ -1447,7 +1453,7 @@ def cesto(acopl=None, h_rim=None, empilha=False, estrutura=False,
 
 def capacidade():
     cav = extrude(RectangleRounded(BASE_X - 2 * T_PAREDE, BASE_Y - 2 * T_PAREDE,
-                                   12.0), ALT, taper=-DRAFT)
+                                   R_PLANTA - 2.0), ALT, taper=-DRAFT)
     cav -= extrude(RectangleRounded(LARG + 40, PROF + 40, 0.1), H_PE + T_FUNDO)
     cav = cav & extrude(Plane.YZ * silhueta(), LARG / 2 + 30, both=True)
     return cav.volume / 1e6

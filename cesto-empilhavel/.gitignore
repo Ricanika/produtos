@@ -21,3 +21,8 @@ ver-m.stl
 # elo-medidas.json NAO entra aqui de proposito: e o unico lugar onde as
 # medidas do M e do G vivem, custam ~40 min de booleano para refazer, e sao o
 # que permite redesenhar elo.png sem reconstruir os solidos.
+
+# STLs dos conceitos B2C (regeraveis por design/conceitos3d.py, ~5 MB cada).
+# As medidas ficam em design/conceitos-medidas.json e os renders em design/img,
+# que sao o que a folha usa.
+design/stl/
