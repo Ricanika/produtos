@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ELO B2C · 10 possibilidades de design</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--fundo:#faf8f4;--tinta:#1d1813;--gris:#6d645a;--linha:#e7e2da;
+      --novo:#c2410c;--ok:#15803d;--at:#b45309;--ri:#b91c1c;--papel:#fffefb}
+body{background:var(--fundo);color:var(--tinta);
+     font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,
+     "Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:56px 24px 96px}
+h1{font-size:clamp(28px,4.4vw,44px);line-height:1.12;letter-spacing:-.022em;
+   font-weight:700;max-width:19ch}
+.sub{color:var(--gris);font-size:17px;margin-top:14px;max-width:62ch}
+.regra{margin-top:26px;padding:14px 18px;border-left:3px solid var(--novo);
+       background:#fdf3ec;font-size:14.5px;max-width:70ch;border-radius:0 8px 8px 0}
+h2{font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--gris);font-weight:700;margin:64px 0 18px}
+.hoje{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:12px}
+.hoje div{background:var(--papel);border:1px solid var(--linha);
+          border-radius:12px;padding:14px 16px;font-size:14px}
+.hoje b{display:block;font-size:12px;letter-spacing:.08em;color:var(--novo);
+        text-transform:uppercase;margin-bottom:5px}
+.grid{display:grid;gap:22px}
+.card{background:var(--papel);border:1px solid var(--linha);border-radius:18px;
+      overflow:hidden;display:grid;grid-template-columns:1fr 1.05fr}
+@media(max-width:860px){.card{grid-template-columns:1fr}}
+.arte{background:linear-gradient(170deg,#f6f2ea,#fbf8f2);padding:18px;
+      display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start}
+.arte figure{background:var(--papel);border-radius:12px;padding:4px;
+             border:1px solid #efeae1}
+.arte figcaption{font-size:10.5px;color:var(--gris);text-align:center;
+                 padding:0 4px 7px;line-height:1.35}
+svg{width:100%;height:auto;display:block}
+.corpo{fill:none;stroke:var(--tinta);stroke-width:2.6;stroke-linejoin:round}
+.ln{fill:none;stroke:var(--tinta);stroke-width:2;stroke-linejoin:round}
+.ln.tenue{stroke:#cdc6ba;stroke-width:1.4}
+.furo{fill:var(--novo);fill-opacity:.16;stroke:var(--novo);stroke-width:1.8}
+.canel{stroke:#b9b1a4;stroke-width:1.5}
+.tex{fill:#cfc7b9}
+.sombra{stroke:#cdc6ba;stroke-width:3;stroke-linecap:round}
+.sombra.forte{stroke:var(--novo);stroke-width:3.4;stroke-linecap:round}
+.cota{font:11px sans-serif;fill:var(--gris)}
+.txt{padding:24px 26px 26px}
+.num{font-size:12px;font-weight:700;color:var(--novo);letter-spacing:.1em}
+.fam{font-size:11px;color:var(--gris);letter-spacing:.1em;text-transform:uppercase}
+h3{font-size:23px;letter-spacing:-.015em;margin:6px 0 2px;font-weight:700}
+.tag{color:var(--gris);font-size:14.5px;margin-bottom:14px}
+.gesto{font-size:14.5px;margin-bottom:16px}
+.linhas{display:grid;gap:9px;font-size:13.2px;border-top:1px solid var(--linha);
+        padding-top:14px}
+.linhas>div{display:grid;grid-template-columns:96px 1fr;gap:12px;
+            align-items:start}
+.rot{color:var(--gris);font-size:11px;letter-spacing:.08em;
+     text-transform:uppercase;padding-top:2px}
+.pill{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;
+      border-radius:99px;letter-spacing:.06em;text-transform:uppercase;
+      margin-right:7px;vertical-align:1px}
+.ok{background:#e7f6ec;color:var(--ok)}
+.atencao{background:#fdf1de;color:var(--at)}
+.risco{background:#fdeaea;color:var(--ri)}
+.est{color:var(--gris);font-size:11.5px}
+.rec{display:grid;gap:14px}
+.rec article{background:var(--papel);border:1px solid var(--linha);
+             border-radius:16px;padding:20px 22px}
+.rec article.top{border-color:#f0c8ae;background:#fffaf6}
+.rec h4{font-size:15px;letter-spacing:.04em}
+.rec .it{color:var(--novo);font-weight:700;font-size:13px;margin:2px 0 8px}
+.rec p{font-size:14px}
+.fim{margin-top:56px;padding:22px 24px;border:1px dashed #d9d2c6;
+     border-radius:14px;font-size:14.5px;max-width:78ch;background:#fdfcf9}
+.fim b{color:var(--novo)}
+</style></head><body><div class="wrap">
+<h1>Dez maneiras de tirar o caixote da linha ELO</h1>
+<p class="sub">Croquis de proporção certa — a silhueta sai das cotas reais do
+P (boca 180 × 230, altura 130, saída 6°, envelope 204 com a aba). Nenhum destes
+desenhos é sólido: o 3D vem depois da escolha.</p>
+<div class="regra"><b>A regra que vale para os dez:</b> um molde por tamanho,
+uma injeção, duas placas, sem gaveta e sem postiço móvel. Nenhum conceito aqui
+pede segunda peça, segunda cor de injeção ou montagem — se pedisse, estaria
+fora do briefing.</div>
+
+<h2>O que hoje grita B2B</h2>
+<div class="hoje"><div><b>o vazado</b>123 rasgos curtos em 3 faixas, subindo até a borda: é a assinatura visual de engradado.</div><div><b>a aba para fora</b>12 mm de aba reta em todo o perímetro — a borda de caixa de feira, e a peça mais visível do conjunto.</div><div><b>os chanfros a 45°</b>vieram do bin de picking da referência. Resolvem acesso, mas desenham um objeto de estoque.</div><div><b>o tripé aparente</b>quatro pezinhos e uma saia corrida, à mostra sob a chapa.</div><div><b>a planta quase quadrada</b>R14 na base. Visto de cima — o ângulo da foto — lê retângulo duro.</div><div><b>o acabamento</b>liso brilhante, laranja de sinalização. Nada de textura, nada de paleta.</div></div>
+
+<h2>As dez possibilidades</h2>
+<div class="grid"><article class="card">
+  <div class="arte">
+    <figure><svg viewBox="0 0 264 212"><path class="ln" d="M17.8 34.0 h228.5 v6 h-4 v-4 h-219.5 v4 h-4 z"/><path class="corpo" d="M31.2 40.0 L232.8 40.0 L217.5 169.6 Q217.5 179.6 207.4 179.6 L56.6 179.6 Q46.5 179.6 46.5 169.6 Z"/><path class="ln" d="M66.7 179.6 v6 h22.0 v-6"/><path class="ln" d="M197.3 179.6 v6 h-22.0 v-6"/><circle class="tex" cx="72.7" cy="88.7" r="1"/><circle class="tex" cx="63.6" cy="127.9" r="1"/><circle class="tex" cx="110.0" cy="114.1" r="1"/><circle class="tex" cx="133.3" cy="56.9" r="1"/><circle class="tex" cx="120.2" cy="54.5" r="1"/><circle class="tex" cx="59.3" cy="58.4" r="1"/><circle class="tex" cx="186.5" cy="100.8" r="1"/><circle class="tex" cx="83.3" cy="64.8" r="1"/><circle class="tex" cx="204.0" cy="125.0" r="1"/><circle class="tex" cx="115.2" cy="119.0" r="1"/><circle class="tex" cx="63.9" cy="166.8" r="1"/><circle class="tex" cx="99.7" cy="152.7" r="1"/><circle class="tex" cx="65.0" cy="67.3" r="1"/><circle class="tex" cx="185.8" cy="86.9" r="1"/><circle class="tex" cx="146.2" cy="71.6" r="1"/><circle class="tex" cx="111.5" cy="126.4" r="1"/><circle class="tex" cx="60.7" cy="115.5" r="1"/><circle class="tex" cx="79.7" cy="57.1" r="1"/><circle class="tex" cx="120.5" cy="131.4" r="1"/><circle class="tex" cx="146.6" cy="87.6" r="1"/><circle class="tex" cx="98.8" cy="104.2" r="1"/><circle class="tex" cx="163.0" cy="145.0" r="1"/><circle class="tex" cx="144.8" cy="79.2" r="1"/><circle class="tex" cx="193.4" cy="112.8" r="1"/><circle class="tex" cx="98.6" cy="137.2" r="1"/><circle class="tex" cx="74.7" cy="167.2" r="1"/><circle class="tex" cx="174.9" cy="100.0" r="1"/><circle class="tex" cx="130.1" cy="68.2" r="1"/><circle class="tex" cx="162.0" cy="54.7" r="1"/><circle class="tex" cx="143.4" cy="141.4" r="1"/><circle class="tex" cx="103.5" cy="154.7" r="1"/><circle class="tex" cx="147.0" cy="133.2" r="1"/><circle class="tex" cx="124.9" cy="119.4" r="1"/><circle class="tex" cx="200.6" cy="150.5" r="1"/><circle class="tex" cx="159.1" cy="106.7" r="1"/><circle class="tex" cx="167.8" cy="57.3" r="1"/><circle class="tex" cx="211.0" cy="127.4" r="1"/><circle class="tex" cx="98.6" cy="148.3" r="1"/><circle class="tex" cx="160.3" cy="96.1" r="1"/><circle class="tex" cx="125.1" cy="52.7" r="1"/><circle class="tex" cx="65.2" cy="70.1" r="1"/><circle class="tex" cx="179.7" cy="57.1" r="1"/><circle class="tex" cx="87.6" cy="65.5" r="1"/><circle class="tex" cx="194.3" cy="96.8" r="1"/><circle class="tex" cx="123.0" cy="59.6" r="1"/><circle class="tex" cx="194.5" cy="115.7" r="1"/><circle class="tex" cx="188.4" cy="148.0" r="1"/><circle class="tex" cx="117.5" cy="83.3" r="1"/><circle class="tex" cx="196.9" cy="92.9" r="1"/><circle class="tex" cx="79.4" cy="164.5" r="1"/><circle class="tex" cx="85.3" cy="71.1" r="1"/><circle class="tex" cx="129.4" cy="77.9" r="1"/><circle class="tex" cx="93.6" cy="120.5" r="1"/><circle class="tex" cx="117.4" cy="50.5" r="1"/><circle class="tex" cx="143.2" cy="94.2" r="1"/><circle class="tex" cx="160.7" cy="164.0" r="1"/><circle class="tex" cx="151.3" cy="111.7" r="1"/><circle class="tex" cx="61.0" cy="130.9" r="1"/><circle class="tex" cx="174.7" cy="157.6" r="1"/><circle class="tex" cx="177.7" cy="154.6" r="1"/><circle class="tex" cx="115.0" cy="96.9" r="1"/><circle class="tex" cx="155.7" cy="62.4" r="1"/><circle class="tex" cx="55.1" cy="57.4" r="1"/><circle class="tex" cx="73.5" cy="75.0" r="1"/><circle class="tex" cx="56.2" cy="90.7" r="1"/><circle class="tex" cx="69.4" cy="50.0" r="1"/><circle class="tex" cx="107.9" cy="62.1" r="1"/><circle class="tex" cx="199.0" cy="53.0" r="1"/><circle class="tex" cx="75.4" cy="123.4" r="1"/><circle class="tex" cx="105.7" cy="80.2" r="1"/><circle class="tex" cx="68.4" cy="93.6" r="1"/><circle class="tex" cx="208.0" cy="151.5" r="1"/><circle class="tex" cx="129.3" cy="105.7" r="1"/><circle class="tex" cx="61.6" cy="60.3" r="1"/><circle class="tex" cx="92.2" cy="91.0" r="1"/><circle class="tex" cx="79.6" cy="149.1" r="1"/><circle class="tex" cx="212.7" cy="52.8" r="1"/><circle class="tex" cx="74.1" cy="113.2" r="1"/><circle class="tex" cx="54.8" cy="115.0" r="1"/><circle class="tex" cx="210.3" cy="113.2" r="1"/><circle class="tex" cx="162.1" cy="153.3" r="1"/><circle class="tex" cx="109.1" cy="81.2" r="1"/><circle class="tex" cx="179.5" cy="70.0" r="1"/><circle class="tex" cx="177.6" cy="113.7" r="1"/><circle class="tex" cx="85.0" cy="89.4" r="1"/><circle class="tex" cx="207.2" cy="147.1" r="1"/><circle class="tex" cx="179.1" cy="152.0" r="1"/><circle class="tex" cx="169.2" cy="147.9" r="1"/><circle class="tex" cx="135.0" cy="77.1" r="1"/><circle class="tex" cx="52.4" cy="92.5" r="1"/><circle class="tex" cx="92.6" cy="53.3" r="1"/><circle class="tex" cx="165.1" cy="81.0" r="1"/><circle class="tex" cx="124.0" cy="164.4" r="1"/><circle class="tex" cx="205.9" cy="162.1" r="1"/><circle class="tex" cx="111.6" cy="164.2" r="1"/><circle class="tex" cx="84.7" cy="76.4" r="1"/><circle class="tex" cx="80.6" cy="73.5" r="1"/><circle class="tex" cx="196.4" cy="124.6" r="1"/><circle class="tex" cx="128.8" cy="150.5" r="1"/><circle class="tex" cx="179.9" cy="128.1" r="1"/><circle class="tex" cx="160.4" cy="60.1" r="1"/><circle class="tex" cx="175.0" cy="158.8" r="1"/><circle class="tex" cx="128.6" cy="139.7" r="1"/><circle class="tex" cx="182.4" cy="71.4" r="1"/><circle class="tex" cx="183.0" cy="89.8" r="1"/><circle class="tex" cx="116.3" cy="166.2" r="1"/><circle class="tex" cx="206.9" cy="98.0" r="1"/><circle class="tex" cx="79.9" cy="136.7" r="1"/><circle class="tex" cx="70.7" cy="65.2" r="1"/><circle class="tex" cx="178.7" cy="158.2" r="1"/><circle class="tex" cx="189.2" cy="67.5" r="1"/><circle class="tex" cx="155.6" cy="167.2" r="1"/><circle class="tex" cx="140.2" cy="91.9" r="1"/><circle class="tex" cx="46.7" cy="65.7" r="1"/><circle class="tex" cx="154.5" cy="166.1" r="1"/><circle class="tex" cx="203.0" cy="113.0" r="1"/><circle class="tex" cx="193.9" cy="101.9" r="1"/><circle class="tex" cx="87.3" cy="148.8" r="1"/><circle class="tex" cx="96.4" cy="80.1" r="1"/><circle class="tex" cx="146.9" cy="78.8" r="1"/><circle class="tex" cx="118.1" cy="81.0" r="1"/><circle class="tex" cx="204.0" cy="65.7" r="1"/><circle class="tex" cx="124.9" cy="92.3" r="1"/><circle class="tex" cx="197.5" cy="119.8" r="1"/><circle class="tex" cx="201.7" cy="100.3" r="1"/><circle class="tex" cx="137.2" cy="110.0" r="1"/><circle class="tex" cx="53.1" cy="112.6" r="1"/><circle class="tex" cx="79.3" cy="102.6" r="1"/><circle class="tex" cx="185.7" cy="50.5" r="1"/><circle class="tex" cx="127.4" cy="70.6" r="1"/><circle class="tex" cx="140.9" cy="136.7" r="1"/><circle class="tex" cx="135.1" cy="89.0" r="1"/><circle class="tex" cx="178.3" cy="116.4" r="1"/><circle class="tex" cx="142.6" cy="62.7" r="1"/><circle class="tex" cx="93.6" cy="79.7" r="1"/><circle class="tex" cx="133.2" cy="142.4" r="1"/><circle class="tex" cx="174.3" cy="117.2" r="1"/><circle class="tex" cx="123.4" cy="159.1" r="1"/><circle class="tex" cx="132.9" cy="123.3" r="1"/><circle class="tex" cx="163.6" cy="111.3" r="1"/></svg>
+      <figcaption>o gesto, na frente</figcaption></figure>
+    <figure><svg viewBox="0 0 200 192"><rect class="ln" x="29.2" y="7.8" width="141.7" height="176.4" rx="27.8"/><rect class="corpo" x="37.5" y="16.1" width="125.0" height="159.7" rx="19.4"/><rect class="ln tenue" x="44.5" y="23.1" width="111.0" height="145.7" rx="12.4"/></svg>
+      <figcaption>planta de hoje, R28 na boca</figcaption></figure>
+  </div>
+  <div class="txt">
+    <div class="num">01 <span class="fam">· Pele</span></div>
+    <h3>Pele lisa + textura fosca</h3>
+    <div class="tag">tirar o vazado e apostar na superfície</div>
+    <p class="gesto">A parede fecha por inteiro e o produto passa a ser lido pela <b>superfície</b>, não pelo furo. Textura de molde fosca (granulado fino, VDI 24–30) no corpo inteiro, com a borda e o fundo lisos para contraste. É a mudança de menor risco técnico e a de maior efeito na foto: sem furo, o cesto deixa de parecer engradado e vira objeto.</p>
+    <div class="linhas">
+      <div><span class="rot">molde</span><span><span class="pill ok">1 molde, 2 placas</span>Textura é gravação na cavidade, não feição nova. Mas <b>textura come saída</b>: a regra de bolso é ~1° a mais por 0,025 mm de profundidade. O P tem 6° e aceita bem; o M e o G têm 3°, e aí cabe granulado fino, não couro fundo.</span></div>
+      <div><span class="rot">peso</span><span>P +17 g · M +90 g · G +203 g <span class="est">(estimado)</span></span></div>
+      <div><span class="rot">sistema elo</span><span><span class="pill ok">mantém</span>Não mexe em nada: empilha, encaixa, acopla e recebe o P igual.</span></div>
+      <div><span class="rot">risco</span><span>O G vai a ~836 g e passa de 1 kg de miolo de custo — e perde o argumento de 12,4 g/L, que é o melhor número comercial da linha.</span></div>
+    </div>
+  </div>
+</article><article class="card">
+  <div class="arte">
+    <figure><svg viewBox="0 0 264 212"><path class="ln" d="M17.8 34.0 h228.5 v6 h-4 v-4 h-219.5 v4 h-4 z"/><path class="corpo" d="M31.2 40.0 L232.8 40.0 L217.5 169.6 Q217.5 179.6 207.4 179.6 L56.6 179.6 Q46.5 179.6 46.5 169.6 Z"/><path class="ln" d="M66.7 179.6 v6 h22.0 v-6"/><path class="ln" d="M197.3 179.6 v6 h-22.0 v-6"/><rect class="furo" x="54.4" y="60.0" width="10.1" height="93.6" rx="5.0"/><rect class="furo" x="72.5" y="60.0" width="10.1" height="93.6" rx="5.0"/><rect class="furo" x="90.7" y="60.0" width="10.1" height="93.6" rx="5.0"/><rect class="furo" x="108.8" y="60.0" width="10.1" height="93.6" rx="5.0"/><rect class="furo" x="127.0" y="60.0" width="10.1" height="93.6" rx="5.0"/><rect class="furo" x="145.1" y="60.0" width="10.1" height="93.6" rx="5.0"/><rect class="furo" x="163.2" y="60.0" width="10.1" height="93.6" rx="5.0"/><rect class="furo" x="181.4" y="60.0" width="10.1" height="93.6" rx="5.0"/><rect class="furo" x="199.5" y="60.0" width="10.1" height="93.6" rx="5.0"/></svg>
+      <figcaption>o gesto, na frente</figcaption></figure>
+    <figure><svg viewBox="0 0 264 212"><path class="ln" d="M17.8 34.0 h228.5 v6 h-4 v-4 h-219.5 v4 h-4 z"/><path class="corpo" d="M31.2 40.0 L232.8 40.0 L217.5 169.6 Q217.5 179.6 207.4 179.6 L56.6 179.6 Q46.5 179.6 46.5 169.6 Z"/><path class="ln" d="M66.7 179.6 v6 h22.0 v-6"/><path class="ln" d="M197.3 179.6 v6 h-22.0 v-6"/><rect class="furo" x="45.5" y="60.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="59.3" y="60.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="73.2" y="60.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="87.1" y="60.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="100.9" y="60.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="114.8" y="60.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="128.6" y="60.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="142.5" y="60.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="156.4" y="60.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="170.2" y="60.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="184.1" y="60.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="197.9" y="60.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="211.8" y="60.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="49.1" y="89.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="62.4" y="89.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="75.6" y="89.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="88.9" y="89.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="102.1" y="89.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="115.4" y="89.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="128.6" y="89.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="141.9" y="89.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="155.1" y="89.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="168.4" y="89.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="181.7" y="89.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="194.9" y="89.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="208.2" y="89.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="52.7" y="118.3" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="65.4" y="118.3" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="78.0" y="118.3" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="90.7" y="118.3" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="103.3" y="118.3" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="116.0" y="118.3" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="128.6" y="118.3" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="141.3" y="118.3" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="153.9" y="118.3" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="166.6" y="118.3" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="179.2" y="118.3" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="191.9" y="118.3" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="204.5" y="118.3" width="6.7" height="20.2" rx="2.5"/></svg>
+      <figcaption>o vazado de hoje, para comparar</figcaption></figure>
+  </div>
+  <div class="txt">
+    <div class="num">02 <span class="fam">· Pele</span></div>
+    <h3>Ripado</h3>
+    <div class="tag">a listra vira uma só, do pé à borda</div>
+    <p class="gesto">Em vez de 123 rasgos curtos em 3 faixas, <b>9 fendas contínuas de ponta arredondada</b>, da base à borda. O olho lê ritmo, não perfuração: é a linguagem de ripa de madeira, não de caixa plástica. Mesmo furo, mesma função, outro idioma.</p>
+    <div class="linhas">
+      <div><span class="rot">molde</span><span><span class="pill ok">1 molde, 2 placas</span>Rasgo passante em parede com saída é exatamente a linha de base de extração que o projeto já audita (9.217 mm³ no P). Fenda mais longa significa <b>postiço mais esbelto</b> na cavidade — pede conferência de rigidez com a ferramentaria.</span></div>
+      <div><span class="rot">peso</span><span>neutro a −10 g <span class="est">(depende do vão livre)</span></span></div>
+      <div><span class="rot">sistema elo</span><span><span class="pill ok">mantém</span>A nervura horizontal entre faixas some; é ela que enrijece a parede hoje. Precisa medir se a borda sozinha aguenta a pilha.</span></div>
+      <div><span class="rot">risco</span><span>Fenda contínua tira a nervura horizontal. É a única mudança de pele que mexe em estrutura, e a que mais pede ensaio.</span></div>
+    </div>
+  </div>
+</article><article class="card">
+  <div class="arte">
+    <figure><svg viewBox="0 0 264 212"><path class="ln" d="M17.8 34.0 h228.5 v6 h-4 v-4 h-219.5 v4 h-4 z"/><path class="corpo" d="M31.2 40.0 L232.8 40.0 L217.5 169.6 Q217.5 179.6 207.4 179.6 L56.6 179.6 Q46.5 179.6 46.5 169.6 Z"/><path class="ln" d="M66.7 179.6 v6 h22.0 v-6"/><path class="ln" d="M197.3 179.6 v6 h-22.0 v-6"/><line class="canel" x1="40.4" y1="47.0" x2="53.2" y2="175.6"/><line class="canel" x1="49.5" y1="47.0" x2="61.1" y2="175.6"/><line class="canel" x1="58.7" y1="47.0" x2="69.0" y2="175.6"/><line class="canel" x1="67.9" y1="47.0" x2="76.8" y2="175.6"/><line class="canel" x1="77.0" y1="47.0" x2="84.7" y2="175.6"/><line class="canel" x1="86.2" y1="47.0" x2="92.6" y2="175.6"/><line class="canel" x1="95.3" y1="47.0" x2="100.5" y2="175.6"/><line class="canel" x1="104.5" y1="47.0" x2="108.4" y2="175.6"/><line class="canel" x1="113.7" y1="47.0" x2="116.2" y2="175.6"/><line class="canel" x1="122.8" y1="47.0" x2="124.1" y2="175.6"/><line class="canel" x1="132.0" y1="47.0" x2="132.0" y2="175.6"/><line class="canel" x1="141.2" y1="47.0" x2="139.9" y2="175.6"/><line class="canel" x1="150.3" y1="47.0" x2="147.8" y2="175.6"/><line class="canel" x1="159.5" y1="47.0" x2="155.6" y2="175.6"/><line class="canel" x1="168.7" y1="47.0" x2="163.5" y2="175.6"/><line class="canel" x1="177.8" y1="47.0" x2="171.4" y2="175.6"/><line class="canel" x1="187.0" y1="47.0" x2="179.3" y2="175.6"/><line class="canel" x1="196.1" y1="47.0" x2="187.2" y2="175.6"/><line class="canel" x1="205.3" y1="47.0" x2="195.0" y2="175.6"/><line class="canel" x1="214.5" y1="47.0" x2="202.9" y2="175.6"/><line class="canel" x1="223.6" y1="47.0" x2="210.8" y2="175.6"/></svg>
+      <figcaption>o gesto, na frente</figcaption></figure>
+    <figure><svg viewBox="0 0 200 192"><rect class="ln" x="29.2" y="7.8" width="141.7" height="176.4" rx="27.8"/><rect class="corpo" x="37.5" y="16.1" width="125.0" height="159.7" rx="19.4"/><rect class="ln tenue" x="44.5" y="23.1" width="111.0" height="145.7" rx="12.4"/></svg>
+      <figcaption>a canelura acompanha a saída</figcaption></figure>
+  </div>
+  <div class="txt">
+    <div class="num">03 <span class="fam">· Pele</span></div>
+    <h3>Canelado</h3>
+    <div class="tag">relevo em vez de furo — zero perfuração</div>
+    <p class="gesto">Nenhum furo: <b>nervuras verticais finas em relevo</b> (2 mm de largura, 0,8 mm de saliência, passo 8 mm) correndo na direção da desmoldagem. Lê como vidro canelado e cerâmica — o vocabulário mais 'casa' que existe hoje em utilidade —, esconde marca de chupagem e dá rigidez de graça.</p>
+    <div class="linhas">
+      <div><span class="rot">molde</span><span><span class="pill ok">1 molde, 2 placas</span>Canelura vertical é paralela ao saque: sai sozinha, desde que ela também tenha saída. Usinagem de cavidade um pouco mais cara, nada mais.</span></div>
+      <div><span class="rot">peso</span><span>P +21 g · M +104 g · G +230 g <span class="est">(estimado, fecha a parede e soma o relevo)</span></span></div>
+      <div><span class="rot">sistema elo</span><span><span class="pill ok">mantém</span>Não mexe. O relevo fica dentro do envelope da aba.</span></div>
+      <div><span class="rot">risco</span><span>É o conceito mais pesado de todos. Só fecha se o preço B2C subir junto — e o 047 diz que sobe (R$ 4,58 na fábrica viram R$ 19,99 a 29,15 na gôndola).</span></div>
+    </div>
+  </div>
+</article><article class="card">
+  <div class="arte">
+    <figure><svg viewBox="0 0 264 212"><path class="ln" d="M17.8 34.0 h228.5 v6 h-4 v-4 h-219.5 v4 h-4 z"/><path class="corpo" d="M31.2 40.0 L232.8 40.0 L217.5 169.6 Q217.5 179.6 207.4 179.6 L56.6 179.6 Q46.5 179.6 46.5 169.6 Z"/><path class="ln" d="M66.7 179.6 v6 h22.0 v-6"/><path class="ln" d="M197.3 179.6 v6 h-22.0 v-6"/><rect class="furo" x="50.9" y="108.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="63.8" y="108.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="76.8" y="108.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="89.8" y="108.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="102.7" y="108.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="115.7" y="108.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="128.6" y="108.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="141.6" y="108.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="154.6" y="108.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="167.5" y="108.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="180.5" y="108.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="193.4" y="108.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="206.4" y="108.0" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="50.9" y="137.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="63.8" y="137.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="76.8" y="137.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="89.8" y="137.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="102.7" y="137.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="115.7" y="137.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="128.6" y="137.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="141.6" y="137.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="154.6" y="137.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="167.5" y="137.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="180.5" y="137.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="193.4" y="137.2" width="6.7" height="20.2" rx="2.5"/><rect class="furo" x="206.4" y="137.2" width="6.7" height="20.2" rx="2.5"/></svg>
+      <figcaption>o gesto, na frente</figcaption></figure>
+    <figure><svg viewBox="0 0 200 192"><rect class="ln" x="29.2" y="7.8" width="141.7" height="176.4" rx="27.8"/><rect class="corpo" x="37.5" y="16.1" width="125.0" height="159.7" rx="19.4"/><rect class="ln tenue" x="44.5" y="23.1" width="111.0" height="145.7" rx="12.4"/></svg>
+      <figcaption>planta inalterada</figcaption></figure>
+  </div>
+  <div class="txt">
+    <div class="num">04 <span class="fam">· Pele</span></div>
+    <h3>Meia-pele</h3>
+    <div class="tag">topo limpo para a marca, vazado só embaixo</div>
+    <p class="gesto">Duas zonas: <b>metade de cima cega</b> — é onde a foto, o rótulo e a marca vivem — e <b>uma faixa vazada baixa</b>, onde a carga realmente pede alívio. Resolve o pior defeito visual de hoje (o furo sobe até a borda e polui a linha do topo) sem abrir mão do peso.</p>
+    <div class="linhas">
+      <div><span class="rot">molde</span><span><span class="pill ok">1 molde, 2 placas</span>Menos rasgo que hoje, mesma família de feição. Nada novo.</span></div>
+      <div><span class="rot">peso</span><span>P +9 g · M +45 g · G +101 g <span class="est">(estimado, ~metade dos rasgos)</span></span></div>
+      <div><span class="rot">sistema elo</span><span><span class="pill ok">mantém</span>Não mexe.</span></div>
+      <div><span class="rot">risco</span><span>Nenhum técnico. O risco é de gosto: fica no meio do caminho entre o industrial e o limpo, e meio-termo não vira foto.</span></div>
+    </div>
+  </div>
+</article><article class="card">
+  <div class="arte">
+    <figure><svg viewBox="0 0 264 212"><path class="ln" d="M17.8 34.0 h228.5 v6 h-4 v-4 h-219.5 v4 h-4 z"/><path class="corpo" d="M31.2 40.0 L232.8 40.0 L217.5 169.6 Q217.5 179.6 207.4 179.6 L56.6 179.6 Q46.5 179.6 46.5 169.6 Z"/><path class="ln" d="M66.7 179.6 v6 h22.0 v-6"/><path class="ln" d="M197.3 179.6 v6 h-22.0 v-6"/><path class="furo" d="M63.7 150.5 L63.7 114.6 A68.3 33.6 0 0 1 200.3 114.6 L200.3 150.5 Z"/></svg>
+      <figcaption>o gesto, na frente</figcaption></figure>
+    <figure><svg viewBox="0 0 200 192"><rect class="ln" x="29.2" y="7.8" width="141.7" height="176.4" rx="27.8"/><rect class="corpo" x="37.5" y="16.1" width="125.0" height="159.7" rx="19.4"/><rect class="ln tenue" x="44.5" y="23.1" width="111.0" height="145.7" rx="12.4"/></svg>
+      <figcaption>a boca não muda</figcaption></figure>
+  </div>
+  <div class="txt">
+    <div class="num">05 <span class="fam">· Silhueta</span></div>
+    <h3>Arco frontal</h3>
+    <div class="tag">um gesto só: alça, acesso e assinatura</div>
+    <p class="gesto">Os dois chanfros a 45° e o rasgo frontal — as feições mais 'bin de picking' da peça — dão lugar a <b>um único arco cortado na parede da frente</b>. Ele é a alça, é o acesso sem tirar da prateleira e é a assinatura que se reconhece a três metros. É o conceito com maior retorno por milímetro mexido.</p>
+    <div class="linhas">
+      <div><span class="rot">molde</span><span><span class="pill ok">1 molde, 2 placas</span>Furo passante em parede com saída: mesma família do rasgo. <b>O arco tem de parar abaixo da borda</b> — o anel do rim é a estrutura da peça (§4.2.1) e não pode ser interrompido.</span></div>
+      <div><span class="rot">peso</span><span>P −6 g · M −18 g · G −26 g <span class="est">(estimado, tira material)</span></span></div>
+      <div><span class="rot">sistema elo</span><span><span class="pill atencao">atenção</span>A frente é onde o P apoia no rim do de baixo. O arco precisa nascer acima da linha de apoio, ou a pilha perde contato na frente.</span></div>
+      <div><span class="rot">risco</span><span>Mexe na face que hoje resolve o empilhamento. É medição, não opinião: a cota de apoio já está no modelo.</span></div>
+    </div>
+  </div>
+</article><article class="card">
+  <div class="arte">
+    <figure><svg viewBox="0 0 264 212"><path class="ln" d="M17.8 34.0 h228.5 v6 h-4 v-4 h-219.5 v4 h-4 z"/><path class="corpo" d="M31.2 40.0 L232.8 40.0 L217.5 169.6 Q217.5 179.6 207.4 179.6 L56.6 179.6 Q46.5 179.6 46.5 169.6 Z"/><path class="ln" d="M66.7 179.6 v6 h22.0 v-6"/><path class="ln" d="M197.3 179.6 v6 h-22.0 v-6"/><rect class="furo" x="90.6" y="64.0" width="82.9" height="22.4" rx="11.2"/></svg>
+      <figcaption>o gesto, na frente</figcaption></figure>
+    <figure><svg viewBox="0 0 200 192"><rect class="ln" x="29.2" y="7.8" width="141.7" height="176.4" rx="27.8"/><rect class="corpo" x="37.5" y="16.1" width="125.0" height="159.7" rx="19.4"/><rect class="ln tenue" x="44.5" y="23.1" width="111.0" height="145.7" rx="12.4"/></svg>
+      <figcaption>a pega fica na face curta</figcaption></figure>
+  </div>
+  <div class="txt">
+    <div class="num">06 <span class="fam">· Silhueta</span></div>
+    <h3>Pega oval nas laterais</h3>
+    <div class="tag">o recorte que todo organizador bonito tem</div>
+    <p class="gesto">Um <b>recorte oval logo abaixo da borda</b>, nas duas faces curtas. É o detalhe mais universal do organizador doméstico (Muji, Hay, Coza usam variações dele) e resolve pegar o cesto cheio, que hoje se faz pela borda fina.</p>
+    <div class="linhas">
+      <div><span class="rot">molde</span><span><span class="pill ok">1 molde, 2 placas</span>Furo passante, sem gaveta.</span></div>
+      <div><span class="rot">peso</span><span>P −4 g · M −9 g · G −11 g <span class="est">(estimado)</span></span></div>
+      <div><span class="rot">sistema elo</span><span><span class="pill risco">conflito</span><b>A face curta do P é a face do acoplamento</b>: a aba vai de 90 a 102 mm do eixo e é ali que duas peças se engatam. Pega e engate disputam o mesmo lugar — ou a pega desce para o meio da parede, ou o acoplamento muda de face.</span></div>
+      <div><span class="rot">risco</span><span>É o único conceito que colide de frente com o diferencial da linha. Vale como opção deliberada: 'a versão B2C não acopla'.</span></div>
+    </div>
+  </div>
+</article><article class="card">
+  <div class="arte">
+    <figure><svg viewBox="0 0 264 212"><path class="ln" d="M17.8 34.0 h228.5 v6 h-4 v-4 h-219.5 v4 h-4 z"/><path class="corpo" d="M31.2 40.0 L232.8 40.0 L217.5 169.6 Q217.5 179.6 207.4 179.6 L56.6 179.6 Q46.5 179.6 46.5 169.6 Z"/><path class="ln" d="M66.7 179.6 v6 h22.0 v-6"/><path class="ln" d="M197.3 179.6 v6 h-22.0 v-6"/></svg>
+      <figcaption>o gesto, na frente</figcaption></figure>
+    <figure><svg viewBox="0 0 200 192"><rect class="ln" x="29.2" y="7.8" width="141.7" height="176.4" rx="50.0"/><rect class="corpo" x="37.5" y="16.1" width="125.0" height="159.7" rx="41.7"/><rect class="ln tenue" x="44.5" y="23.1" width="111.0" height="145.7" rx="34.7"/></svg>
+      <figcaption>R60 no canto (hoje é R14 na base)</figcaption></figure>
+  </div>
+  <div class="txt">
+    <div class="num">07 <span class="fam">· Silhueta</span></div>
+    <h3>Canto R60</h3>
+    <div class="tag">a planta deixa de ser retângulo</div>
+    <p class="gesto">Hoje o canto da planta é R14 na base e ~R28 na boca — quase quadrado, que é o que dá o ar de engradado visto de cima. Levando a <b>R60</b>, a planta vira um 'soft square' e o produto ganha o desenho de cima, que é justamente o ângulo da foto de organização.</p>
+    <div class="linhas">
+      <div><span class="rot">molde</span><span><span class="pill ok">1 molde, 2 placas</span>Raio maior é usinagem mais fácil, não mais difícil.</span></div>
+      <div><span class="rot">peso</span><span>−3% a −5% de capacidade <span class="est">(estimado, o canto é volume)</span></span></div>
+      <div><span class="rot">sistema elo</span><span><span class="pill atencao">atenção</span>O acoplamento precisa de um trecho reto de aba para as duas peças se encontrarem. Em 180 mm de boca, R60 deixa 60 mm retos — dá, mas aperta. No M e no G sobra.</span></div>
+      <div><span class="rot">risco</span><span>Come litro, e o P já é o tamanho que perde nesse quesito (43,9 g/L contra ~37,8 do concorrente).</span></div>
+    </div>
+  </div>
+</article><article class="card">
+  <div class="arte">
+    <figure><svg viewBox="0 0 264 212"><path class="ln" d="M17.8 34.0 h228.5 v6 h-4 v-4 h-219.5 v4 h-4 z"/><path class="corpo" d="M31.2 40.0 L232.8 40.0 L217.5 169.6 Q217.5 179.6 207.4 179.6 L56.6 179.6 Q46.5 179.6 46.5 169.6 Z"/><path class="ln" d="M62.2 179.6 v7 h139.6 v-7"/><line class="sombra" x1="64.4" y1="187.6" x2="199.6" y2="187.6"/></svg>
+      <figcaption>o gesto, na frente</figcaption></figure>
+    <figure><svg viewBox="0 0 264 212"><path class="ln" d="M17.8 34.0 h228.5 v6 h-4 v-4 h-219.5 v4 h-4 z"/><path class="corpo" d="M31.2 40.0 L232.8 40.0 L217.5 169.6 Q217.5 179.6 207.4 179.6 L56.6 179.6 Q46.5 179.6 46.5 169.6 Z"/><path class="ln" d="M66.7 179.6 v6 h22.0 v-6"/><path class="ln" d="M197.3 179.6 v6 h-22.0 v-6"/></svg>
+      <figcaption>o tripé de hoje, aparente</figcaption></figure>
+  </div>
+  <div class="txt">
+    <div class="num">08 <span class="fam">· Silhueta</span></div>
+    <h3>Plinto — a peça flutua</h3>
+    <div class="tag">o pé vira sombra, não vira pé</div>
+    <p class="gesto">Os quatro pezinhos e a saia traseira — puro vocabulário de caixa — recuam para dentro de uma <b>base rebaixada</b>. De fora vê-se uma fresta de sombra corrida sob a peça, e ela parece flutuar. Melhor ainda: o plinto vira <b>espiga de centragem</b>, e a pilha ganha registro em vez de depender do atrito.</p>
+    <div class="linhas">
+      <div><span class="rot">molde</span><span><span class="pill ok">1 molde, 2 placas</span>Rebaixo que abre para baixo sai no macho. É a mesma lógica da bolsa cega sob o pé que já existe.</span></div>
+      <div><span class="rot">peso</span><span>neutro <span class="est">(redistribui, não soma)</span></span></div>
+      <div><span class="rot">sistema elo</span><span><span class="pill ok">mantém</span>Melhora: o apoio deixa de ser um tripé de 463 mm² e passa a ser um anel contínuo, com muito mais contato.</span></div>
+      <div><span class="rot">risco</span><span>Nenhum evidente. É o conceito com melhor relação efeito/risco da lista.</span></div>
+    </div>
+  </div>
+</article><article class="card">
+  <div class="arte">
+    <figure><svg viewBox="0 0 264 212"><path class="corpo" d="M31.2 40.0 L232.8 40.0 L217.5 169.6 Q217.5 179.6 207.4 179.6 L56.6 179.6 Q46.5 179.6 46.5 169.6 Z"/><path class="ln" d="M66.7 179.6 v6 h22.0 v-6"/><path class="ln" d="M197.3 179.6 v6 h-22.0 v-6"/></svg>
+      <figcaption>o gesto, na frente</figcaption></figure>
+    <figure><svg viewBox="0 0 200 192"><path class="corpo" d="M34 158 L34 52 L86 52 L86 76 L78 76 L78 60 L44 60 L44 158 Z"/><text class="cota" x="40" y="174">hoje</text><path class="corpo" d="M120 158 L120 64 Q120 50 134 50 L154 50 Q170 50 170 66 L170 96 Q170 104 162 104 Q154 104 154 96 L154 70 Q154 64 148 64 L130 64 L130 158 Z"/><path class="ln" d="M137 72 L146 72 L146 80"/><text class="cota" x="126" y="174">proposta</text><text class="cota" x="16" y="190">o engate passa a morar dentro da borda</text></svg>
+      <figcaption>corte da borda: o engate escondido</figcaption></figure>
+  </div>
+  <div class="txt">
+    <div class="num">09 <span class="fam">· Silhueta</span></div>
+    <h3>Borda virada</h3>
+    <div class="tag">some a aba de caixote; o engate vai para baixo dela</div>
+    <p class="gesto">A aba reta de 12 mm que hoje sai para fora — a feição que mais grita caixa de feira — <b>vira para baixo</b> e forma uma borda cheia, macia ao toque, com o engate do acoplamento escondido na parte de dentro dela. De fora some a aba; de dentro a função continua.</p>
+    <div class="linhas">
+      <div><span class="rot">molde</span><span><span class="pill ok">1 molde, 2 placas</span><b>Isto já existe no projeto</b>: a dobra de 5 mm da aba. O canal entre a dobra e a parede abre para baixo, e o aço sai por ali — foi o que a auditoria de extração já provou.</span></div>
+      <div><span class="rot">peso</span><span>+4 a +8 g por tamanho <span class="est">(estimado)</span></span></div>
+      <div><span class="rot">sistema elo</span><span><span class="pill ok">mantém</span>O passo acoplado (200/400/600) é dado pela aresta da aba; virando-a para baixo o passo se mantém, mas <b>precisa ser remedido</b> — foi exatamente aqui que o passo errado apareceu uma vez e duas peças ficaram 20 mm interpenetradas.</span></div>
+      <div><span class="rot">risco</span><span>Mexe na cota que define a regra da linha inteira (380 = 2×180 + 2×10). Qualquer mudança aqui obriga a remedir o par e o trio.</span></div>
+    </div>
+  </div>
+</article><article class="card">
+  <div class="arte">
+    <figure><svg viewBox="0 0 264 212"><path class="corpo" d="M69.5 110.0 L194.5 110.0 L185.0 194.3 Q185.0 200.3 178.0 200.3 L86.0 200.3 Q79.0 200.3 79.0 194.3 Z"/><line class="ln" x1="61.5" y1="110.0" x2="202.5" y2="110.0"/><path class="corpo" d="M69.5 18.0 L194.5 18.0 L185.0 102.3 Q185.0 108.3 178.0 108.3 L86.0 108.3 Q79.0 108.3 79.0 102.3 Z"/><line class="ln" x1="61.5" y1="18.0" x2="202.5" y2="18.0"/><line class="sombra forte" x1="83.0" y1="112.5" x2="181.0" y2="112.5"/></svg>
+      <figcaption>o gesto, na frente</figcaption></figure>
+    <figure><svg viewBox="0 0 264 212"><path class="ln" d="M17.8 34.0 h228.5 v6 h-4 v-4 h-219.5 v4 h-4 z"/><path class="corpo" d="M31.2 40.0 L232.8 40.0 L217.5 169.6 Q217.5 179.6 207.4 179.6 L56.6 179.6 Q46.5 179.6 46.5 169.6 Z"/><path class="ln" d="M66.7 179.6 v6 h22.0 v-6"/><path class="ln" d="M197.3 179.6 v6 h-22.0 v-6"/><rect class="furo" x="58.9" y="60.0" width="10.1" height="93.6" rx="5.0"/><rect class="furo" x="81.6" y="60.0" width="10.1" height="93.6" rx="5.0"/><rect class="furo" x="104.3" y="60.0" width="10.1" height="93.6" rx="5.0"/><rect class="furo" x="127.0" y="60.0" width="10.1" height="93.6" rx="5.0"/><rect class="furo" x="149.6" y="60.0" width="10.1" height="93.6" rx="5.0"/><rect class="furo" x="172.3" y="60.0" width="10.1" height="93.6" rx="5.0"/><rect class="furo" x="195.0" y="60.0" width="10.1" height="93.6" rx="5.0"/></svg>
+      <figcaption>a peça sozinha fica sóbria de propósito</figcaption></figure>
+  </div>
+  <div class="txt">
+    <div class="num">10 <span class="fam">· Sistema</span></div>
+    <h3>Junta celebrada</h3>
+    <div class="tag">a torre é o produto, não o cesto</div>
+    <p class="gesto">Em vez de esconder o empilhamento, <b>desenhá-lo</b>: um rebaixo de 2 mm no topo da parede cria uma linha de sombra contínua onde uma peça encontra a outra. Empilhado, o conjunto vira um objeto só, listrado de sombra — e é a torre, não o cesto, que vai para a foto. É o único conceito que transforma o diferencial técnico da linha em argumento visual.</p>
+    <div class="linhas">
+      <div><span class="rot">molde</span><span><span class="pill ok">1 molde, 2 placas</span>Rebaixo no topo da parede sai no saque. Zero custo novo.</span></div>
+      <div><span class="rot">peso</span><span>neutro <span class="est">(—)</span></span></div>
+      <div><span class="rot">sistema elo</span><span><span class="pill ok">mantém</span>Reforça: a promessa do 2 P sobre o M e 3 P sobre o G passa a ser visível na prateleira.</span></div>
+      <div><span class="rot">risco</span><span>Sozinho não resolve — a peça individual continua com a pele de hoje. É o conceito que <b>combina</b>, não o que substitui.</span></div>
+    </div>
+  </div>
+</article></div>
+
+<h2>Três receitas — porque eles combinam</h2>
+<div class="rec"><article class="top"><h4>A · A CALMA</h4><div class="it">conceitos 1 + 8 + 9 + 10</div><p>Pele lisa e fosca, base em plinto, borda virada, junta desenhada. É a mais próxima do que o mercado doméstico chama de bonito hoje, e a de menor risco técnico — nenhum furo novo, nenhuma cota do sistema ELO tocada além da borda. <b>Custo: o peso.</b> O G sai de 632,9 g para ~840, e o argumento de 12,4 g/L vai junto.</p></article><article class=""><h4>B · A GRÁFICA</h4><div class="it">conceitos 2 + 7 + 8 + 10</div><p>Ripado contínuo, canto R60, plinto e junta desenhada. Mantém o vazado (e o peso, e a ventilação), mas troca o idioma dele. É a receita que <b>preserva os 12,4 g/L</b> e ainda assim muda a prateleira. Pede o ensaio da parede sem a nervura horizontal.</p></article><article class=""><h4>C · O ÍCONE</h4><div class="it">conceitos 5 + 1 + 8</div><p>Arco frontal, pele lisa, plinto. Uma peça de gesto único, que se reconhece de longe e não precisa de rótulo. É a de maior retorno de imagem e a que mais mexe na engenharia: o arco cai justamente na face que hoje resolve o empilhamento.</p></article></div>
+
+<h2>A camada que não é geometria</h2>
+<div class="fim">
+Cor e acabamento não custam molde e mudam mais a foto do que metade desta
+lista. <b>Um mesmo molde entrega quantas cores a produção quiser</b> — e o
+acabamento pode ser diferente em faces diferentes da mesma cavidade: corpo
+fosco, borda e fundo polidos. O que <b>não</b> dá, dentro do briefing, é
+bicolor na mesma peça: isso é bi-injeção, e bi-injeção é um segundo molde.
+<br><br>
+A conta de preço da pesquisa de mercado sustenta a virada: na prateleira
+doméstica o nosso próprio 047 sai a <b>R$ 4,58 de fábrica e chega à gôndola
+entre R$ 19,99 e R$ 29,15</b>. É essa prateleira que paga textura, raio grande
+e grama a mais — a prateleira de loja, que paga R$ 6,20 pelo cesto de 170 g,
+não paga.
+</div>
+
+<div class="fim">
+<b>O que eu preciso de você antes do 3D:</b> escolher entre 1 e 3 conceitos (ou
+uma das receitas), e decidir uma coisa que nenhum desenho decide sozinho —
+<b>o sistema ELO continua sendo obrigatório na versão B2C?</b> Se continuar, o
+conceito 6 cai e o 9 exige remedição. Se a versão B2C puder abrir mão do
+acoplamento lateral, o espaço de desenho dobra.
+</div>
+</div></body></html>

@@ -1721,6 +1721,50 @@ Arquivos: `padrao_g()` em `modelo3d.py`. O visor `cad/visor-elo.html` voltou às
 **três malhas** com as cenas "O G", "Três P no G" e a linha inteira; a malha do
 G tem 120.949 vértices.
 
+### 4.2.10 A virada B2C: dez possibilidades de desenho
+
+**Status:** croquis, 29/09/2026 · `design/conceitos.py` → `design/conceitos-b2c.html`
+
+O projeto até aqui resolveu engenharia e resolveu bem, mas desenhou um
+**objeto de estoque**. Seis feições respondem por isso, e vale nomeá-las: os
+123 rasgos curtos subindo até a borda, a aba reta de 12 mm em todo o perímetro,
+os dois chanfros a 45° herdados do bin de picking, o tripé aparente, a planta
+quase quadrada (R14 na base) e o acabamento liso brilhante.
+
+**A restrição não mudou: um molde por tamanho, uma injeção, duas placas, sem
+gaveta.** Nenhum dos dez conceitos pede segunda peça, segunda cor de injeção ou
+montagem — se pedisse, estaria fora do briefing. Bi-injeção é um segundo molde.
+
+| # | conceito | família | molde | peso | sistema ELO |
+|---|---|---|---|---|---|
+| 1 | Pele lisa + textura fosca | pele | ok, mas textura come saída | P +17 · M +90 · G +203 g | mantém |
+| 2 | Ripado (fenda contínua) | pele | ok, postiço mais esbelto | neutro a −10 g | mantém, tira a nervura horizontal |
+| 3 | Canelado (relevo, zero furo) | pele | ok | P +21 · M +104 · G +230 g | mantém |
+| 4 | Meia-pele (topo cego) | pele | ok | P +9 · M +45 · G +101 g | mantém |
+| 5 | **Arco frontal** | silhueta | ok, tem de parar abaixo da borda | −6 a −26 g | **atenção**: é a face do apoio |
+| 6 | Pega oval nas laterais | silhueta | ok | −4 a −11 g | **conflito**: é a face do acoplamento |
+| 7 | Canto R60 | silhueta | ok | −3% a −5% de capacidade | atenção: encurta a aba reta |
+| 8 | **Plinto (a peça flutua)** | silhueta | ok | neutro | **melhora**: anel contínuo no lugar do tripé |
+| 9 | Borda virada | silhueta | ok — já existe, é a dobra de 5 mm | +4 a +8 g | mantém, mas obriga a remedir o passo |
+| 10 | **Junta celebrada** | sistema | ok, custo zero | neutro | reforça: a torre vira o argumento |
+
+Os pesos são **aritmética** (área de rasgo × 1,4 mm × densidade), não medição no
+sólido — estão marcados como tal na folha.
+
+**Três receitas:** **A · a calma** (1+8+9+10), a de menor risco técnico e maior
+custo em grama — o G sai de 632,9 g para ~840 e o argumento de 12,4 g/L vai
+junto; **B · a gráfica** (2+7+8+10), que preserva o peso e troca só o idioma do
+vazado; **C · o ícone** (5+1+8), a de maior retorno de imagem e a que mais mexe
+na engenharia.
+
+> **A decisão que nenhum desenho toma sozinho:** o sistema ELO — acoplar
+> lateralmente, e o P pousando no M e no G — continua obrigatório na versão
+> B2C? Se sim, o conceito 6 cai e o 9 obriga a remedir o par e o trio. Se a
+> versão B2C puder abrir mão do acoplamento lateral, o espaço de desenho dobra.
+> Está na §7.
+
+---
+
 ### 4.3 Acoplado — as três canaletas
 
 O pedido foi uma **canaleta de ponta a ponta na lateral, macho de um lado e
@@ -2127,6 +2171,7 @@ distribuidor** (ou o preço de tabela da casa para esse canal). Está na §7.
 | **Carga da chapa vazada do M e do G** | **Alta** | Agora tem motivo comercial, não só técnico: o rival direto do G é classificado para 30 kg e o nosso não é classificado para nada (§6.6). A chapa do M tem ~40% de furo e 1,4 mm de nervura entre rasgos. Numa peça de 25 L com carga volumosa isso precisa de ensaio ou de nervura cruzada — **não calculei flexão da chapa, só peso** |
 | **Rasgo de 14 mm no M** | Média | Foi dimensionado para "coisa volumosa". Se entrar miudeza, o M precisa do vazado do P e sobe de peso na mesma proporção |
 | `SAIA_W` do M escala? | Média | O tripé do M é o mesmo 463 mm² do P. Basta para a carga de referência (0,53 MPa, 57× de folga); se o M for para carga pesada, a saia de trás vai de 108 a ~308 mm sem mexer em mais nada (§4.2.7) |
+| **Conceito B2C, e o que ele faz com o sistema ELO** | **Alta** | Dez possibilidades desenhadas (§4.2.10). Falta escolher, e falta decidir se a versão B2C mantém o acoplamento lateral — é o que libera ou bloqueia metade dos conceitos |
 | Cotas finais para a ferramentaria | Média | O pacote de cotas do molde ainda não foi fechado |
 | Ângulo de abertura da frente | Média | `cad/abertura.png` tem três (chanfro de 40 / 52 / 68 mm); está em **52** por ser o medido no STL de referência, e ninguém escolheu outro |
 | `ABA_DOBRA` de 5 para 3 mm? | Baixa | Devolve ~1,7 g e ainda deixa 5,5 mm de engate, 2,2× o de antes da dobra. Ficou em 5 mm por falta de resposta, e 5 é o conservador |
@@ -2188,6 +2233,11 @@ cad/elo.py         folha elo.png: a linha inteira -- P, M e G na mesma escala,
                    velho. Com --rapido reaproveita os PNGs das cenas
 cad/elo-medidas.json  as medidas do M e do G, versionadas de proposito: custam
                    ~40 min de booleano e sao o que permite redesenhar a folha
+design/conceitos.py   gera design/conceitos-b2c.html: as dez possibilidades
+                   de desenho para a virada B2C, com o custo de cada uma em
+                   molde, peso e sistema ELO
+design/desenho.py  a biblioteca de croqui vetorial das dez (silhueta de
+                   proporcao certa, tirada das cotas reais do P)
 mercado.py         pesquisa de mercado: a amostra de concorrentes com a fonte
                    de cada linha, os multiplos de canal e o veredito por
                    tamanho, tudo em preco de fabrica equivalente.
