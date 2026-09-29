@@ -1,0 +1,8 @@
+{
+ "mesa": [420, 420],
+ "eixo_vertical_do_stl": "Y",
+ "saida": "prep",
+ "pecas": [
+  {"nome": "suporte_deck", "stl": "suporte-deck-ikea.stl"}
+ ]
+}
