@@ -1,6 +1,6 @@
 # Linha Potes Retangulares Modulares em PP
 
-**Status:** estudo de viabilidade técnica · **Revisão 10** · 07/10/2026
+**Status:** estudo de viabilidade técnica · **Revisão 11** · 07/10/2026
 **Origem:** evolução do Projeto 115 do ERP ("Conjunto Potes Modular") · **Planta:** Nitron – Fábrica (CODPLP 1)
 
 Linha retangular em PP transparente, **parede reta com cantos arredondados**, quatro litragens
@@ -10,6 +10,36 @@ combinação empilhada chega à altura do maior.
 Todos os números de máquina, matéria-prima, custo e ferramental saíram do Sankhya, não de
 estimativa de catálogo. Fontes citadas em cada seção.
 
+> **Revisão 11 — tampa encorpada, farpa no aro, e a conta dos 3° de saída.** Três
+> pedidos do Ricardo, e o terceiro conflita com um requisito antigo dele.
+>
+> **1. Nervuras sob o deck.** Um deck de 1,50 mm vencendo 79 mm de vão é um painel mole.
+> Entrou uma grade **5 × 3** (célula de 33 × 34 mm, nervura de 0,80 na raiz, 0,49 na ponta,
+> 3,00 de altura, **saída de 3° por face**). O momento de inércia da seção T sobe **2,2×** —
+> a flecha cai para 0,46 do que era — e custa **1,29 g** de PP, 6% do peso da tampa. A
+> altura não foi escolhida por moldagem: a nervura para em −6,50 porque o **degrau interno
+> do pote** está em −7,00. Para nervura mais alta teria de subir a borda.
+>
+> **2. A farpa que segura o aro.** Antes o U era segurado só pelos **0,10 mm** de aperto do
+> vão, e aperto de borracha cede com o tempo e com a lavagem. A ponta da lingueta ganhou uma
+> **farpa de 0,25 mm por face**: entra por uma rampa de 36° e sai por um **degrau de 90°**.
+> Para o aro cair, o vão de 0,70 teria de abrir até 1,30. E o U ganhou uma **bolsa** de
+> 1,40 × 0,95 mm na base do vão, que recebe a farpa — montado, o silicone **relaxa**. Sem a
+> bolsa ele ficaria esticado 0,50 mm para sempre, e deformação permanente é exatamente o que
+> mata vedante de borracha em dois anos de armário. Custo: é a **segunda contra-saída** da
+> tampa (a outra é o gancho da trava), com 5,2% de deformação de fibra na extração por
+> arraste, contra os ~8% em que o PP randômico escoa.
+>
+> **3. Os 3° de saída.** Aplicados em **tudo o que é feição** — nervura, bolso, calha,
+> trilho, rabo da trava, farpa —, onde 3° custa 0,31 mm na ponta de uma nervura de 3 mm e
+> mais nada. **Na parede do pote, não**, e a conta está na seção 3.5. Resumo: a 3° o fundo do
+> 2,4 L fica 24 mm mais estreito que a boca em 242 mm de altura (16,1% de conicidade). Isso
+> não é "parede reta com cantos arredondados", é um balde, e o IML pede seção constante.
+> **A saída não precisa ser a mesma nos quatro** — cada tamanho tem molde próprio, só a borda
+> é comum —, e a 2° o 600 ml ainda está dentro dos 3%. Mas o 2,4 L, que é o mais fundo e
+> portanto o mais difícil de extrair, é justamente o que menos tolera. **Recomendação:
+> manter 0,5° na parede e levar a tabela para a ferramentaria antes de fechar o molde.**
+>
 > **Revisão 10 — a borda oca saiu; entrou uma borda de 8 mm com DENTE.** O Ricardo trouxe
 > uma referência física (um pote cinza com tampa canelada e um perfil de silicone em U) e
 > pediu três coisas: borda superior de ~8 mm com um **dente em toda a volta na base dela**,
@@ -258,6 +288,43 @@ borda → parede da borda → web → parede do pote. O aro em U fica na linguet
 vedando radialmente contra a boca — **fora do caminho de carga**, para não ser comprimido pelo peso
 da pilha. Na tampa de teca o caminho é mais curto ainda: placa → **degrau interno** → parede do
 pote, e a madeira só trabalha em compressão.
+
+### 3.5 Saída de extração — os 3° pedidos contra a parede reta
+
+O Ricardo pediu **pelo menos 3°** para a peça sair legal da máquina dele. Em tudo o que é
+**feição** isso já está aplicado e não custa nada. Na **parede do pote** custa o produto:
+
+| Saída/lado | Footprint | Fundo do 2,4 L | Conicidade | Pilha de 6 | IML |
+|---|---|---|---|---|---|
+| **0,5°** | 147,5 × 84,3 | 137,0 mm | 2,9% | 1049 mm | ok — é o de hoje |
+| 1,0° | 148,9 × 85,1 | 135,3 mm | 5,7% | 648 mm | não |
+| 1,5° | 150,3 × 85,9 | 133,5 mm | 8,4% | 514 mm | não |
+| 2,0° | 151,6 × 86,6 | 131,8 mm | 11,0% | 447 mm | não |
+| 3,0° | 154,4 × 88,2 | 128,2 mm | 16,1% | 381 mm | não |
+
+Conicidade por tamanho (o `*` marca o que fica dentro de 3%):
+
+| Saída | 600 ml | 1,2 L | 1,8 L | 2,4 L |
+|---|---|---|---|---|
+| 0,5° | 0,7%* | 1,4%* | 2,2%* | 2,9%* |
+| 1,0° | 1,3%* | 2,8%* | 4,2% | 5,7% |
+| 1,5° | 1,9%* | 4,1% | 6,3% | 8,4% |
+| 2,0° | 2,5%* | 5,4% | 8,2% | 11,0% |
+| 3,0° | 3,7% | 7,8% | 11,9% | 16,1% |
+
+**A saída não precisa ser a mesma nos quatro** — cada tamanho tem molde próprio e só a borda
+é comum. Mas o 2,4 L, o mais fundo e portanto o mais difícil de extrair, é justamente o que
+menos tolera: nele não há saída possível sem virar balde.
+
+**O que resolve extração sem saída**, e já está no projeto desde a revisão 5: cavidade e
+macho **polidos A2 ou melhor** (é a textura que gera a maioria das regras de 3° — 1° a cada
+0,025 mm de profundidade); extração por **placa impulsora**, não por pinos; e **válvula de ar**
+no topo do macho para quebrar o vácuo. A força estimada é de ~5 kN no 2,4 L contra ~62 kN
+disponíveis numa 380 t: **o gargalo não é força, é vácuo e risco de arranhar a parede polida.**
+
+**Recomendação:** manter 0,5° na parede dos quatro e levar esta tabela para a ferramentaria
+*antes* de fechar o molde. Se eles disserem que 0,5° não sai, isso muda o produto, não só o
+molde — e a decisão é do Produto.
 
 ### 3.3 O que a borda alta fez com a rigidez
 
@@ -515,7 +582,7 @@ lado comprido, cobrindo 58% do comprimento — é o layout do STL de referência
 | Retenção | **só atrito**: 10,2 kgf reto, 1,7 descascando | **trava geométrica**: sair exige abrir 0,80 mm | as mesmas duas travas |
 | Plano modular | o **topo da placa**, que *pousa no degrau* | o topo do deck | o topo do deck *e* o da gaveta |
 | Medida máxima | 144,2 × 81,0 mm | 149,7 × 89,5 mm | 150,1 × 89,5 mm (o lábio do bico) |
-| Peso / custo | 37 g em teca · CNC, sem molde | 21,0 g em RP 141 · R$ 0,20 | 19,7 + 2,8 + 0,2 g nas três peças |
+| Peso / custo | 37 g em teca · CNC, sem molde | 22,6 g em RP 141 · R$ 0,22 | 20,8 + 2,8 + 0,2 g nas três peças |
 
 **A tampa volta a ser PP.** Nas revisões 6 e 7 ela era PEAD HA 7260, escolhido por ser a resina mais
 barata da casa. Em PP RP 141 (R$ 9,55/kg contra 9,34) a tampa custa R$ 0,23 em vez de R$ 0,21 — dois

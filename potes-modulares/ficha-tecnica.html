@@ -114,9 +114,12 @@
 
   <header class="cartucho">
     <div class="cartucho-top">
-      <p class="eyebrow">Nitron · Estudo de viabilidade · Projeto 115 · Revisão 10</p>
+      <p class="eyebrow">Nitron · Estudo de viabilidade · Projeto 115 · Revisão 11</p>
       <h1>Potes retangulares modulares</h1>
       <p class="sub">Parede reta com cantos arredondados, quatro litragens de mantimento, três tampas e um só bocal. Empilhados em qualquer combinação, chegam à altura do maior. Geometria, encaixe, alocação de injetora e custo conferidos contra produção, compras e cadastro no ERP.</p>
+      <div class="rev">
+        <b>Revisão 11 —</b> três pedidos do Ricardo, e um deles conflita com um requisito antigo dele. (1) <strong>Nervuras sob o deck</strong>: grade 5 × 3, célula de 33 × 34 mm, 0,80 mm na raiz e 3,00 de altura — o momento de inércia da seção sobe <strong>2,2×</strong> por 1,29 g de PP. A altura não foi escolhida por moldagem: a nervura para em −6,50 porque o degrau interno do pote está em −7,00. (2) <strong>Farpa na ponta da lingueta</strong>, 0,25 mm por face, com rampa de entrada de 36° e degrau de saída de 90°, mais uma <strong>bolsa no U</strong> que recebe a farpa — montado, o silicone relaxa em vez de ficar esticado para sempre. Para o aro cair, o vão de 0,70 teria de abrir até 1,30; antes eram 0,10 mm de aperto. (3) <strong>Saída de 3°</strong>: aplicada em tudo o que é feição (nervura, bolso, calha, trilho, rabo), onde não custa nada. <strong>Na parede do pote, não</strong> — e a seção 03 mostra por quê, com a conta.
+      </div>
       <div class="rev">
         <b>Revisão 10 —</b> a <strong>borda oca saiu inteira</strong>. No lugar dela: uma borda de <strong>8,0 mm</strong> cuja parede expande <strong>3,18 mm para fora</strong> sobre um web horizontal de 1,00 mm. A face de BAIXO do web é o <strong>dente</strong> onde a trava engata; a de CIMA é um <strong>degrau interno</strong>. A tampa de PP passa a ter <strong>uma saia só</strong>, com uma lingueta de 0,80 mm em que calça um <strong>aro de silicone extrudado em U</strong> — ele não é colado, ele abraça, e a perna de fora comprime 0,35 mm/lado contra a boca. <strong>O que isso devolveu:</strong> footprint de 153,7 → <strong>147,5 × 84,3 mm</strong>, peso do 600 ml de 52,9 → <strong>47,1 g</strong> (−11%), área projetada de 134 → <strong>123 cm²</strong>, e o molde perde a <strong>nervura de 1,20 × 8,6 mm</strong> que era a feição mais cara da revisão 8. <strong>O que custou:</strong> a borda deixou de ser caixão e virou um L — menos rígida na boca (seção 03).
       </div>
@@ -249,17 +252,18 @@
     </div>
 
     <div class="desenho" style="margin-top:22px">
-      <svg viewBox="0 0 600 450" role="img" aria-label="Corte ampliado da borda de 8 mm: dente, degrau interno, lingueta com o aro de silicone em U e a trava de clipe">
+      <svg viewBox="0 0 600 490" role="img" aria-label="Corte ampliado da borda de 8 mm: dente, degrau interno, lingueta com o aro de silicone em U e a trava de clipe">
         <defs>
           <pattern id="hb" width="5" height="5" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
             <line x1="0" y1="0" x2="0" y2="5" stroke="var(--pp)" stroke-width="1" opacity=".5"/>
           </pattern>
         </defs>
-        <path d="M 62.0 161.0 L 103.4 161.0 L 103.4 90.6 L 172.7 90.6 L 172.7 117.0 L 129.8 117.0 L 129.8 194.0 L 125.4 194.0 L 125.4 246.8 L 107.8 246.8 L 107.8 194.0 L 103.4 194.0 L 62.0 194.0 Z" fill="var(--verde)" opacity=".55"/>
-        <path d="M 62.0 161.0 L 103.4 161.0 L 103.4 90.6 L 172.7 90.6 L 172.7 117.0 L 129.8 117.0 L 129.8 194.0 L 125.4 194.0 L 125.4 246.8 L 107.8 246.8 L 107.8 194.0 L 103.4 194.0 L 62.0 194.0 Z" fill="none" stroke="var(--verde)" stroke-width="1.5"/>
+        <path d="M 62.0 161.0 L 103.4 161.0 L 103.4 90.6 L 172.7 90.6 L 172.7 117.0 L 129.8 117.0 L 129.8 194.0 L 125.4 194.0 L 125.4 228.1 L 130.9 228.1 L 130.9 239.1 L 125.4 246.8 L 107.8 246.8 L 102.3 239.1 L 102.3 228.1 L 107.8 228.1 L 107.8 194.0 L 103.4 194.0 L 62.0 194.0 Z" fill="var(--verde)" opacity=".55"/>
+        <path d="M 62.0 161.0 L 103.4 161.0 L 103.4 90.6 L 172.7 90.6 L 172.7 117.0 L 129.8 117.0 L 129.8 194.0 L 125.4 194.0 L 125.4 228.1 L 130.9 228.1 L 130.9 239.1 L 125.4 246.8 L 107.8 246.8 L 102.3 239.1 L 102.3 228.1 L 107.8 228.1 L 107.8 194.0 L 103.4 194.0 L 62.0 194.0 Z" fill="none" stroke="var(--verde)" stroke-width="1.5"/>
         <path d="M 172.7 90.6 L 172.7 293.0 L 147.0 293.0 L 147.0 304.0 L 177.1 330.4 L 205.7 425.0 L 223.3 405.2 L 190.3 310.6 L 190.3 90.6 Z" fill="var(--verde)" opacity=".8"/>
         <path d="M 172.7 90.6 L 172.7 293.0 L 147.0 293.0 L 147.0 304.0 L 177.1 330.4 L 205.7 425.0 L 223.3 405.2 L 190.3 310.6 L 190.3 90.6 Z" fill="none" stroke="var(--verde)" stroke-width="1.5"/>
-        <path d="M 147.4 194.0 L 147.4 262.2 L 85.8 262.2 L 85.8 194.0 L 107.8 194.0 L 107.8 246.8 L 125.4 246.8 L 125.4 194.0 Z" fill="var(--tpe)"/>
+        <path d="M 147.4 194.0 L 147.4 262.2 L 85.8 262.2 L 85.8 194.0 L 107.8 194.0 L 107.8 225.9 L 101.2 225.9 L 101.2 246.8 L 132.0 246.8 L 132.0 225.9 L 125.4 225.9 L 125.4 194.0 Z" fill="var(--tpe)"/>
+        <path d="M 185.2 194.0 L 188.7 260.0 L 199.3 260.0 L 202.8 194.0 Z" fill="var(--verde)" opacity=".8" stroke="var(--verde)" stroke-width="1.2"/>
         <path d="M 139.7 271.0 L 139.7 130.2 L 140.7 125.1 L 143.6 120.9 L 147.9 118.0 L 152.9 117.0 L 158.0 118.0 L 162.2 120.9 L 165.1 125.1 L 166.1 130.2 L 166.1 293.0 L 96.2 293.0 L 96.2 425.0 L 70.9 425.0 L 70.9 271.0 Z" fill="url(#hb)" stroke="var(--pp)" stroke-width="1.8"/>
         <path d="M 85.8 161.0 L 85.8 40.0 L 62.0 40.0 L 62.0 161.0 Z" fill="url(#hb)" stroke="var(--pp)" stroke-width="1.8"/>
         <g stroke="var(--cota)" stroke-width=".9" fill="none">
@@ -267,16 +271,18 @@
           <path d="M 139.7 271.0 L 250 271.0 L 262 108.0"/>
           <path d="M 147.0 298.5 L 250 298.5 L 262 174.0"/>
           <path d="M 147.4 228.1 L 250 228.1 L 262 240.0"/>
-          <path d="M 125.4 233.6 L 250 233.6 L 262 304.0"/>
-          <path d="M 103.4 161.0 L 250 161.0 L 262 364.0"/>
-          <path d="M 96.2 381.0 L 250 381.0 L 262 416.0"/>
+          <path d="M 130.9 233.6 L 250 233.6 L 262 296.0"/>
+          <path d="M 198.4 227.0 L 250 227.0 L 262 352.0"/>
+          <path d="M 103.4 161.0 L 250 161.0 L 262 400.0"/>
+          <path d="M 96.2 381.0 L 250 381.0 L 262 432.0"/>
         </g>
         <g fill="var(--cota)">
           <circle cx="131.1" cy="293.0" r="3"/>
           <circle cx="139.7" cy="271.0" r="3"/>
           <circle cx="147.0" cy="298.5" r="3"/>
           <circle cx="147.4" cy="228.1" r="3"/>
-          <circle cx="125.4" cy="233.6" r="3"/>
+          <circle cx="130.9" cy="233.6" r="3"/>
+          <circle cx="198.4" cy="227.0" r="3"/>
           <circle cx="103.4" cy="161.0" r="3"/>
           <circle cx="96.2" cy="381.0" r="3"/>
         </g>
@@ -293,15 +299,18 @@
           <text x="268" y="244" fill="var(--cota)">ARO EM U DE SILICONE</text>
           <text x="268" y="259" font-size="11" fill="var(--ink-2)">comprime 0.35 mm/lado contra a parede da boca</text>
           <text x="268" y="273" font-size="10.5" fill="var(--muted)">calcado na lingueta: nao e colado, ele abraca</text>
-          <text x="268" y="308" fill="var(--cota)">LINGUETA</text>
-          <text x="268" y="323" font-size="11" fill="var(--ink-2)">0.80 x 2.40 mm, recuada 0.20 em cada face da saia</text>
-          <text x="268" y="337" font-size="10.5" fill="var(--muted)">a teca NAO leva o U: em madeira essa lingueta quebra</text>
-          <text x="268" y="368" fill="var(--cota)">PLANO MODULAR</text>
-          <text x="268" y="383" font-size="11" fill="var(--ink-2)">topo do deck, 2.0 mm abaixo do topo da borda</text>
-          <text x="268" y="397" font-size="10.5" fill="var(--muted)">recebe o FUNDO RETO do pote de cima - nao ha pe</text>
-          <text x="268" y="420" fill="var(--cota)">CORPO RETO</text>
-          <text x="268" y="435" font-size="11" fill="var(--ink-2)">141.1 mm, secao constante ate o fundo</text>
-          <text x="268" y="449" font-size="10.5" fill="var(--muted)">e o que o IML pede</text>
+          <text x="268" y="300" fill="var(--cota)">FARPA + BOLSA</text>
+          <text x="268" y="315" font-size="11" fill="var(--ink-2)">farpa de 0.25/face; o U tem bolsa e RELAXA em cima dela</text>
+          <text x="268" y="329" font-size="10.5" fill="var(--muted)">entra por rampa de 36°, sai por degrau de 90°</text>
+          <text x="268" y="356" fill="var(--cota)">NERVURA</text>
+          <text x="268" y="371" font-size="11" fill="var(--ink-2)">0.80 na raiz, 0.49 na ponta, 3.00 de altura</text>
+          <text x="268" y="385" font-size="10.5" fill="var(--muted)">grade 5x3, saida de 3° por face, I sobe 2.2x</text>
+          <text x="268" y="404" fill="var(--cota)">PLANO MODULAR</text>
+          <text x="268" y="419" font-size="11" fill="var(--ink-2)">topo do deck, 2.0 mm abaixo do topo da borda</text>
+          <text x="268" y="433" font-size="10.5" fill="var(--muted)">recebe o FUNDO RETO do pote de cima - nao ha pe</text>
+          <text x="268" y="436" fill="var(--cota)">CORPO RETO</text>
+          <text x="268" y="451" font-size="11" fill="var(--ink-2)">141.1 mm, secao constante ate o fundo</text>
+          <text x="268" y="465" font-size="10.5" fill="var(--muted)">saida de 0,5° - ver SAIDA DE EXTRACAO no calculo</text>
         </g>
         <g font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">
           <text x="66" y="42">POTE DE CIMA</text>
@@ -378,6 +387,28 @@
       </div>
     </div>
 
+    <div class="veredito" style="margin-top:26px">
+      <span class="status s-alerta">Pedido × requisito</span>
+      <h3>Os 3° de saída não cabem na parede do pote</h3>
+      <p>O pedido é legítimo e está aplicado em <strong>tudo o que é feição</strong> — nervura, bolso, calha, trilho, rabo da trava, farpa — onde 3° custa 0,31 mm de espessura na ponta de uma nervura de 3 mm, e mais nada. Na <strong>parede do pote</strong> ele custa o produto: a conicidade é o que o olho vê.</p>
+      <div class="tabela-wrap" style="margin-top:14px">
+        <table>
+          <thead><tr><th>Saída/lado</th><th>Footprint</th><th>Fundo do 2,4 L</th><th>Conicidade</th><th>Pilha de 6</th><th>IML</th></tr></thead>
+          <tbody>
+            <tr class="destaque"><td class="tam">0,5°</td><td class="num">147,5 × 84,3</td><td class="num">137,0 mm</td><td class="num">2,9%</td><td class="num">1049 mm</td><td class="num">ok — é o de hoje</td></tr>
+            <tr><td class="tam">1,0°</td><td class="num">148,9 × 85,1</td><td class="num">135,3 mm</td><td class="num">5,7%</td><td class="num">648 mm</td><td class="num">não</td></tr>
+            <tr><td class="tam">1,5°</td><td class="num">150,3 × 85,9</td><td class="num">133,5 mm</td><td class="num">8,4%</td><td class="num">514 mm</td><td class="num">não</td></tr>
+            <tr><td class="tam">2,0°</td><td class="num">151,6 × 86,6</td><td class="num">131,8 mm</td><td class="num">11,0%</td><td class="num">447 mm</td><td class="num">não</td></tr>
+            <tr><td class="tam">3,0°</td><td class="num">154,4 × 88,2</td><td class="num">128,2 mm</td><td class="num">16,1%</td><td class="num">381 mm</td><td class="num">não</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">A 3°, o fundo do 2,4 L fica <strong>24 mm mais estreito que a boca</strong> em 242 mm de altura. Isso não é “parede reta com cantos arredondados” — é um balde. E o IML pede seção constante: a etiqueta enruga ou descola na base.</p>
+      <p style="margin-top:10px"><strong>Mas a saída não precisa ser a mesma nos quatro.</strong> Cada tamanho tem molde próprio, e só a borda é comum. A 3° o 600 ml dá 3,7% de conicidade e o 2,4 L dá 16,1%; a 2° o 600 ml ainda está em 2,5% — dentro dos 3% em que o IML e o “parede reta” aguentam. Dá para dar <strong>mais saída aos pequenos</strong>. O problema é que o 2,4 L, o mais fundo e portanto o mais difícil de extrair, é justamente o que menos tolera.</p>
+      <p style="margin-top:10px"><strong>O que resolve extração sem saída</strong>, e já está no projeto desde a revisão 5: cavidade e macho <strong>polidos A2 ou melhor</strong> (é a textura que gera a maioria das regras de 3° — 1° a cada 0,025 mm de profundidade); extração por <strong>placa impulsora</strong>, não por pinos; e <strong>válvula de ar</strong> no topo do macho. A força estimada é de ~5 kN no 2,4 L contra ~62 kN disponíveis numa 380 t: o gargalo não é força, é vácuo e risco de arranhar a parede polida.</p>
+      <p style="margin-top:10px"><strong>Recomendação:</strong> manter 0,5° na parede dos quatro e levar a tabela acima para a ferramentaria <em>antes</em> de fechar o molde. Se eles disserem que 0,5° não sai, isso muda o produto, não só o molde — e essa decisão é do Produto, não da Engenharia.</p>
+    </div>
+
     <h3 style="margin-top:34px">O que a borda alta fez com a rigidez</h3>
     <p>O <em>painel plano</em> é o trecho de parede entre dois cantos — o que não tem nada segurando no meio. A borda de 16 mm (12 + flare) come altura de parede, e o rebaixo maior derruba o canto do corpo de R6,5 para R4,4, o que alarga o painel. Os dois efeitos puxam em sentidos opostos. Flecha de placa engastada nas quatro bordas, <span class="mono">flecha ~ α·b⁴/t³</span> com <span class="mono">b</span> = menor vão; 1,00 = o mesmo tamanho na revisão 7:</p>
     <div class="tabela-wrap">
@@ -416,12 +447,12 @@
       <table>
         <thead><tr><th></th><th>Teca</th><th>PP com 2 travas</th><th>PP de correr</th></tr></thead>
         <tbody>
-          <tr><td>O que é</td><td class="num">placa maciça 144,2 × 81,0 × <strong>5,0</strong></td><td class="num">saia + deck + aba + 2 travas de 86 mm</td><td class="num">a de PP + bolso, janela e calha em U</td></tr>
+          <tr><td>O que é</td><td class="num">placa maciça 144,2 × 81,0 × <strong>5,0</strong></td><td class="num">saia + deck nervurado + aba + 2 travas</td><td class="num">a de PP + bolso, janela e calha em U</td></tr>
           <tr class="destaque"><td>Vedação</td><td class="num">corda de silicone em friso usinado</td><td class="num"><strong>aro em U</strong> calçado na lingueta</td><td class="num">o mesmo aro em U <strong>+ 2º aro</strong> Ø1,20</td></tr>
           <tr><td>Retenção</td><td class="num">só atrito do aro</td><td class="num">trava geométrica: abrir exige 0,80 mm</td><td class="num">as mesmas duas travas</td></tr>
           <tr><td>Plano modular</td><td class="num">o topo da placa, <em>apoiada no degrau</em></td><td class="num">o topo do deck</td><td class="num">o topo do deck <em>e</em> o da gaveta</td></tr>
           <tr><td>Medida máxima</td><td class="num">144,2 × 81,0 mm</td><td class="num">149,7 × 89,5 mm</td><td class="num">150,1 × 89,5 mm (o lábio do bico)</td></tr>
-          <tr><td>Peso / custo</td><td class="num">37 g em teca · CNC, sem molde</td><td class="num">21,0 g · R$ 0,20 em PP RP 141</td><td class="num">22,7 g nas três peças · molde novo</td></tr>
+          <tr><td>Peso / custo</td><td class="num">37 g em teca · CNC, sem molde</td><td class="num">22,6 g · R$ 0,22 em PP RP 141</td><td class="num">23,8 g nas três peças · molde novo</td></tr>
         </tbody>
       </table>
     </div>
@@ -433,6 +464,18 @@
     </div>
 
     <div class="notas" style="margin-top:26px">
+      <div class="nota">
+        <h3>A tampa encorpada: grade de nervuras</h3>
+        <p>Um deck de 1,50 mm vencendo 79 mm de vão é um painel mole. A grade <strong>5 × 3</strong> (célula 33 × 34 mm, 0,80 na raiz, 3,00 de altura, saída de 3° por face) sobe o momento de inércia <strong>2,2×</strong> — a flecha cai para 0,46 — e custa <strong>1,29 g</strong>, 6% do peso da tampa. Nervura a 53% da espessura do deck: abaixo dos 60% em que a marca de chupagem aparece na face de cima.</p>
+      </div>
+      <div class="nota">
+        <h3>A farpa que segura o aro</h3>
+        <p>Antes o U era segurado só por <strong>0,10 mm</strong> de aperto — e aperto de borracha cede com o tempo e com a lavagem. A ponta da lingueta ganhou uma farpa de <strong>0,25 mm por face</strong>: entra por rampa de 36°, sai por degrau de 90°. Para cair, o vão de 0,70 teria de abrir até 1,30. E o U tem uma <strong>bolsa</strong> de 1,40 × 0,95 que recebe a farpa: montado, o silicone <em>relaxa</em>. Sem ela ficaria esticado 0,50 mm para sempre, e deformação permanente é o que mata vedante de borracha.</p>
+      </div>
+      <div class="nota">
+        <h3>Duas contra-saídas na tampa, nenhuma gaveta</h3>
+        <p>O gancho da trava e agora a farpa da lingueta. A farpa sai por arraste com a língueta flexionando: deformação de fibra de <strong>5,2%</strong>, contra os ~8% em que o PP randômico escoa. É apertado mas cabe — e baixar a farpa para 0,20 mm levaria a 4,2%, se a ferramentaria preferir.</p>
+      </div>
       <div class="nota">
         <h3>Fecha uma trava de cada vez</h3>
         <p>Cada uma pede <strong>1,9 kgf</strong>, com braço de 8 mm. Abrindo pelo rabo, a alavanca de 1,8× deixa <strong>1,1 kgf</strong> no dedo. A deformação de fibra é de <strong>1,50%</strong>, contra os ~8% em que o PP randômico escoa. <strong>A trava teve de afinar de 1,00 para 0,80 mm:</strong> o braço encurtou de 10 para 8 mm (a trava é tão alta quanto a borda) e força vai com 1/L³ — sem afinar, fechar pediria 3,7 kgf.</p>

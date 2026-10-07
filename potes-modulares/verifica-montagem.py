@@ -24,11 +24,15 @@ def ler(nome):
     return T
 
 
-def cruzamentos(T, z, eixo):
-    """X (ou Y) onde o raio pelo centro, na altura z, atravessa a casca.
+def cruzamentos(T, z, eixo, desvio=0.0):
+    """X (ou Y) onde o raio, na altura z, atravessa a casca.
 
-    eixo 'x': raio ao longo de X com y=0 (corta o lado CURTO).
-    eixo 'y': raio ao longo de Y com x=0 (corta o lado COMPRIDO).
+    eixo 'x': raio ao longo de X com y=desvio (corta o lado CURTO).
+    eixo 'y': raio ao longo de Y com x=desvio (corta o lado COMPRIDO).
+
+    O desvio precisa existir desde que a tampa ganhou nervuras: ha uma nervura
+    em cima de cada eixo, e um raio passando por cima dela sai com cruzamentos
+    degenerados - a medida da lingueta vinha com a nervura no meio.
     """
     a, b = (0, 1) if eixo == 'x' else (1, 0)
     out = []
@@ -50,12 +54,13 @@ def cruzamentos(T, z, eixo):
         # Um vertice EM CIMA da linha (b == 0) e caso comum aqui, porque as
         # faces das travas sao quads partidos ao meio: testar so o produto de
         # sinais perde essas faces e a peca parece nao ter gancho nenhum.
-        if s[b] == 0.0:
+        sb, eb = s[b] - desvio, e[b] - desvio
+        if sb == 0.0:
             out.append(s[a])
-        elif e[b] == 0.0:
+        elif eb == 0.0:
             out.append(e[a])
-        elif s[b] * e[b] < 0:
-            f = s[b] / (s[b] - e[b])
+        elif sb * eb < 0:
+            f = sb / (sb - eb)
             out.append(s[a] + f * (e[a] - s[a]))
     return sorted({round(v, 3) for v in out if v > 0})
 
@@ -172,6 +177,7 @@ def main():
     cm = importlib.util.module_from_spec(sp); sp.loader.exec_module(cm)
     T05 = 0.008727                       # tan(0,5°)
 
+    p = cm.linha(cm.footprint())[0]
     P = ler('pote-600.stl')
     L = ler('tampa-pp.stl')
     U = ler('aro-u.stl')
@@ -272,6 +278,59 @@ def main():
     teca_x = max(cruzamentos(K, -4.0, 'x'))
     diz('a placa nao passa pelo degrau', teca_x > min(abaixo_d),
         'placa %.2f contra o corpo %.2f: ela POUSA, nao cai' % (teca_x, min(abaixo_d)))
+
+    print('\n8) A FARPA QUE SEGURA O ARO  (lado comprido, fora das nervuras)')
+    z_omb = cm.Z_DECK_B - (cm.LING_H - cm.DENTE_ARO_H - cm.DENTE_ARO_R)
+    z_far = z_omb - cm.DENTE_ARO_H / 2            # meio do trecho cheio da farpa
+    DES = 12.0                                    # desvio do raio: ha nervura no eixo
+    # nessa altura o raio pega TRES coisas: nervuras, a lingueta e a trava.
+    # Pegar os dois ultimos cruzamentos entrega a TRAVA. A lingueta e o par em
+    # volta de LING_O - selecionar por posicao, nao por ordem.
+    LING_O = p['boca'] - 2 * cm.SAIA_FOLGA - 2 * cm.RECUO
+    alvo = (LING_O - p['dLW']) / 2
+    par = lambda v: [q for q in v if alvo - 1.5 <= q <= alvo + 1.0]
+    cima = par(cruzamentos(L, z_omb + 0.20, 'y', DES))
+    farpa = par(cruzamentos(L, z_far, 'y', DES))
+    print('   lingueta acima do ombro:', cima, '\n   na farpa:', farpa)
+    esp_cima = cima[-1] - cima[0]
+    esp_farpa = farpa[-1] - farpa[0]
+    diz('lingueta tem %.2f mm acima do ombro' % cm.LING_T,
+        abs(esp_cima - cm.LING_T) < 0.03, '%.3f mm' % esp_cima)
+    diz('e %.2f mm na farpa' % (cm.LING_T + 2 * cm.DENTE_ARO),
+        abs(esp_farpa - cm.LING_T - 2 * cm.DENTE_ARO) < 0.03, '%.3f mm' % esp_farpa)
+    diz('o degrau avanca %.2f por face' % cm.DENTE_ARO,
+        abs((farpa[-1] - cima[-1]) - cm.DENTE_ARO) < 0.04,
+        '%.3f mm - e esta face que o aro tem de vencer para cair'
+        % (farpa[-1] - cima[-1]))
+    vao_cima = cruzamentos(U, z_omb + 0.20, 'y', DES)
+    vao_farpa = cruzamentos(U, z_far, 'y', DES)
+    print('   vao do U acima do ombro:', vao_cima, '\n   na farpa:', vao_farpa)
+    # o vao e o par do MEIO (as quatro faces sao: perna de dentro, vao, perna
+    # de fora). vao_farpa[1]-vao_farpa[0] seria a espessura da perna.
+    s_cima = vao_cima[2] - vao_cima[1]
+    s_farpa = vao_farpa[2] - vao_farpa[1]
+    diz('o vao do U abre na BOLSA',
+        len(vao_farpa) >= 4 and len(vao_cima) >= 4
+        and s_farpa > s_cima + 2 * cm.DENTE_ARO - 0.05,
+        'de %.2f para %.2f mm: o silicone RELAXA em cima da farpa'
+        % (s_cima, s_farpa))
+
+    print('\n9) AS NERVURAS SOB O DECK')
+    nv = cm.nervuras(DECK_U := (p['boca'] - 2 * cm.SAIA_FOLGA - 2 * cm.SAIA_T),
+                     (p['boca'] - 2 * cm.SAIA_FOLGA - 2 * cm.SAIA_T) - p['dLW'])
+    col = intervalos(raio_z(L, nv['xs'][1], 2.0))
+    livre = intervalos(raio_z(L, (nv['xs'][1] + nv['xs'][2]) / 2, 2.0))
+    print('   raio em cima de uma nervura:', col, '\n   raio no meio da celula:', livre)
+    diz('a nervura desce ate %+.2f' % (cm.Z_DECK_B - cm.NERV_H),
+        bool(col) and abs(col[0][0] - (cm.Z_DECK_B - cm.NERV_H)) < 0.01,
+        'fundo da nervura em %+.2f' % (col[0][0] if col else 0))
+    diz('fora dela so ha o deck', bool(livre)
+        and abs((livre[0][1] - livre[0][0]) - cm.PP_DECK) < 0.01,
+        'deck de %.2f mm' % (livre[0][1] - livre[0][0] if livre else 0))
+    diz('a nervura nao alcanca o degrau do pote',
+        bool(col) and col[0][0] > cm.Z_DEGRAU,
+        '%.2f mm de folga para o degrau em %+.2f'
+        % ((col[0][0] - cm.Z_DEGRAU) if col else 0, cm.Z_DEGRAU))
 
     ok2 = correr()
     print('\nMONTAGEM:', 'OK' if (ok and ok2) else 'FALHOU')

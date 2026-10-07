@@ -23,12 +23,18 @@ DECK_U  = SAIA_O - 2 * cm.SAIA_T
 TAMPA_O = COLAR + 2 * cm.TRAVA_FOLGA
 U_OO    = LING_O + 2 * cm.ARO_PAR
 U_II    = LING_I - 2 * cm.ARO_PAR
+PTA_O   = LING_O + 2 * cm.DENTE_ARO       # lingueta na farpa
+PTA_I   = LING_I - 2 * cm.DENTE_ARO
+BOL_O   = LING_O + 2 * (cm.DENTE_ARO + 0.05)
+BOL_I   = LING_I - 2 * (cm.DENTE_ARO + 0.05)
 BASE600 = p0['base_ext']
 W       = cm.WALL[1]
 ZD      = cm.Z_DENTE               # face de baixo do web = o DENTE
 ZG      = cm.Z_DEGRAU              # face de cima do web = o DEGRAU
 ZL      = cm.Z_DECK_B              # topo da lingueta / da banda do aro
 ZLF     = ZL - cm.LING_H           # ponta da lingueta
+ZOMB    = ZL - (cm.LING_H - cm.DENTE_ARO_H - cm.DENTE_ARO_R)   # ombro da farpa
+ZFIM    = ZOMB - cm.DENTE_ARO_H
 ZUF     = ZL - cm.ARO_H            # fundo do U
 ZUV     = ZUF + cm.ARO_FUNDO       # teto do vao do U
 
@@ -39,7 +45,7 @@ pt = lambda v, z: '%.1f %.1f' % (X(v), Y(z))
 CUT = 2 * R0                       # o quadro corta aqui, a esquerda
 
 o = []; a = o.append
-a('      <svg viewBox="0 0 600 450" role="img" aria-label="Corte ampliado da borda de '
+a('      <svg viewBox="0 0 600 490" role="img" aria-label="Corte ampliado da borda de '
   '8 mm: dente, degrau interno, lingueta com o aro de silicone em U e a trava de clipe">')
 a('        <defs>')
 a('          <pattern id="hb" width="5" height="5" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">')
@@ -50,7 +56,10 @@ a('        </defs>')
 # ---- tampa de PP (desenhada primeiro; os contornos dos potes ficam por cima) ----
 seq = [(CUT, cm.Z_MOD), (DECK_U, cm.Z_MOD), (DECK_U, cm.PP_FLANGE),
        (TAMPA_O, cm.PP_FLANGE), (TAMPA_O, 0.0), (SAIA_O, 0.0),
-       (SAIA_O, ZL), (LING_O, ZL), (LING_O, ZLF), (LING_I, ZLF), (LING_I, ZL),
+       (SAIA_O, ZL),
+       (LING_O, ZL), (LING_O, ZOMB), (PTA_O, ZOMB), (PTA_O, ZFIM),   # a FARPA
+       (LING_O, ZLF), (LING_I, ZLF),
+       (PTA_I, ZFIM), (PTA_I, ZOMB), (LING_I, ZOMB), (LING_I, ZL),
        (DECK_U, ZL), (CUT, ZL)]
 d = 'M ' + ' L '.join(pt(v, z) for v, z in seq) + ' Z'
 a('        <path d="%s" fill="var(--verde)" opacity=".55"/>' % d)
@@ -77,9 +86,19 @@ a('        <path d="%s" fill="none" stroke="var(--verde)" stroke-width="1.5"/>' 
 
 # aro em U, CALCADO na lingueta e na medida livre: a perna de fora passa
 # ARO_COMP por lado alem da boca, e e essa a interferencia.
+ZP = ZUV + cm.ARO_BOLSA_H                 # teto da bolsa
 u = [(U_OO, ZL), (U_OO, ZUF), (U_II, ZUF), (U_II, ZL),
-     (LING_I, ZL), (LING_I, ZUV), (LING_O, ZUV), (LING_O, ZL)]
+     (LING_I, ZL), (LING_I, ZP), (BOL_I, ZP), (BOL_I, ZUV),
+     (BOL_O, ZUV), (BOL_O, ZP), (LING_O, ZP), (LING_O, ZL)]
 a('        <path d="M %s Z" fill="var(--tpe)"/>' % ' L '.join(pt(v, z) for v, z in u))
+
+# ---- nervura sob o deck, no recorte da esquerda ----
+nv = cm.nervuras(DECK_U, DECK_U - (p0['colar_l'] - p0['colar_w']))
+xn = CUT + 2 * 6.0                        # uma nervura a 6 mm do recorte
+nerv = [(xn - cm.NERV_T, ZL), (xn - nv['t_pta'], ZL - cm.NERV_H),
+        (xn + nv['t_pta'], ZL - cm.NERV_H), (xn + cm.NERV_T, ZL)]
+a('        <path d="M %s Z" fill="var(--verde)" opacity=".8" stroke="var(--verde)" '
+  'stroke-width="1.2"/>' % ' L '.join(pt(v, z) for v, z in nerv))
 
 # ---- pote de baixo: a borda em L, com a meia-cana no topo ----
 pb = [(BOCA, ZG), (BOCA, -cm.ARRED)]
@@ -111,16 +130,20 @@ CH = [(COLAR - cm.DENTE, ZD, 48, 'O DENTE',
       (U_OO, (ZL + ZUF) / 2, 244, 'ARO EM U DE SILICONE',
        'comprime %.2f mm/lado contra a parede da boca' % cm.ARO_COMP,
        'calcado na lingueta: nao e colado, ele abraca'),
-      (LING_O, ZLF + 0.6, 308, 'LINGUETA',
-       '%.2f x %.2f mm, recuada %.2f em cada face da saia'
-       % (cm.LING_T, cm.LING_H, cm.RECUO),
-       'a teca NAO leva o U: em madeira essa lingueta quebra'),
-      (DECK_U, cm.Z_MOD, 368, 'PLANO MODULAR',
+      (PTA_O, (ZOMB + ZFIM) / 2, 300, 'FARPA + BOLSA',
+       'farpa de %.2f/face; o U tem bolsa e RELAXA em cima dela' % cm.DENTE_ARO,
+       'entra por rampa de 36°, sai por degrau de 90°'),
+      (xn + cm.NERV_T / 2, ZL - cm.NERV_H / 2, 356, 'NERVURA',
+       '%.2f na raiz, %.2f na ponta, %.2f de altura'
+       % (cm.NERV_T, nv['t_pta'], cm.NERV_H),
+       'grade %dx%d, saida de %.0f° por face, I sobe %.1fx'
+       % (len(nv['xs']), len(nv['ys']), cm.SAIDA_NERV, nv['ganho'])),
+      (DECK_U, cm.Z_MOD, 404, 'PLANO MODULAR',
        'topo do deck, %.1f mm abaixo do topo da borda' % cm.BASE_T,
        'recebe o FUNDO RETO do pote de cima - nao ha pe'),
-      (CORPO, ZD - 4.0, 420, 'CORPO RETO',
+      (CORPO, ZD - 4.0, 436, 'CORPO RETO',
        '%.1f mm, secao constante ate o fundo' % CORPO,
-       'e o que o IML pede')]
+       'saida de 0,5° - ver SAIDA DE EXTRACAO no calculo')]
 a('        <g stroke="var(--cota)" stroke-width=".9" fill="none">')
 for v, z, yy, _t, _a, _b in CH:
     a('          <path d="M %.1f %.1f L 250 %.1f L 262 %.1f"/>' % (X(v), Y(z), Y(z), yy - 4))

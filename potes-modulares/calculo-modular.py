@@ -102,6 +102,29 @@ ARO_FOLGA = 0.40    # folga entre o fundo do U e o degrau interno
 E_SIL     = 2.5     # modulo do silicone ~50 ShA, MPa
 MU_SIL    = 0.75    # atrito silicone / PP
 
+# ---- o mini dente que segura o aro (revisao 11) ----
+# Sem ele o U so e segurado pelo aperto de ARO_GRIP, e aperto de borracha cede
+# com o tempo e com a lavagem. O dente e uma FARPA na ponta da lingueta: entra
+# por uma rampa e sai por um degrau de 90°, e o U tem uma BOLSA na base do vao
+# que recebe a farpa - assim ele encaixa e RELAXA, em vez de ficar esticado
+# para sempre em cima dela (deformacao permanente e o que mata vedante).
+DENTE_ARO   = 0.25    # quanto a farpa avanca, por face
+DENTE_ARO_H = 0.50    # altura do degrau de 90° da farpa
+DENTE_ARO_R = 0.35    # altura da rampa de entrada
+
+# ---- nervuras sob o deck (revisao 11) ----
+# "mais encorpada" nao e so sensacao: um deck de 1,50 mm vencendo 78 mm de vao
+# e um painel mole. Nervura e o jeito barato de enrijecer - rigidez sobe com o
+# quadrado do braco, peso sobe so com a area da nervura.
+NERV_T     = 0.80   # espessura da nervura na raiz (53% do deck: abaixo dos 60%
+                    # em que a marca de chupagem aparece na face de cima)
+NERV_H     = 3.00   # altura. Limitada pelo DEGRAU interno do pote, nao por
+                    # moldagem: mais que isso e a nervura da borda bate nele.
+SAIDA_NERV = 3.00   # saida das nervuras, por face - o que a maquina do Ricardo
+                    # pede. Numa nervura isso e de graca; na parede do pote nao
+                    # (secao SAIDA DE EXTRACAO).
+NERV_MARG  = 5.00   # quanto a nervura para antes da borda do deck
+
 # ---- tampa de PP com trava de clipe ----
 PP_DECK   = 1.50    # espessura do deck (o piso que recebe o pote de cima)
 PP_FLANGE = 1.20    # espessura da aba que cruza por cima do topo da borda
@@ -136,6 +159,9 @@ TECA_ESP = Z_MOD - Z_DEGRAU          # a PLACA POUSA NO DEGRAU -> 5,00 mm
 LING_H   = (Z_DECK_B - Z_DEGRAU) - ARO_FUNDO - ARO_FOLGA   # altura da lingueta
 ARO_H    = LING_H + ARO_FUNDO        # altura total do U
 ARO_VAO  = LING_T - ARO_GRIP         # vao livre do U (aperta na lingueta)
+LING_PTA = LING_T + 2 * DENTE_ARO    # lingueta na farpa
+ARO_BOLSA = LING_PTA + 0.10          # bolsa na base do vao, recebe a farpa
+ARO_BOLSA_H = DENTE_ARO_H + DENTE_ARO_R + 0.10   # a bolsa cobre o degrau E a rampa
 ARO_W    = 2 * ARO_PAR + LING_T      # largura total do U montado
 
 
@@ -152,7 +178,7 @@ def raio(L, colar_l):
     return max(R_EXT + (L - colar_l) / 2, 0.15)
 
 
-def tronco(L0, L1, h, colar_l, dLW, passos=2000):
+def tronco(L0, L1, h, colar_l, dLW, passos=400):
     """Volume de um tronco entre duas secoes de retangulo arredondado."""
     if h <= 0:
         return 0.0
@@ -201,7 +227,7 @@ def linha(colar_l):
                     + tronco(boca_z(z_degrau), boca, BORDA_H - WEB_T, colar_l, dLW))
 
         lo, hi = -1.0, 16.0
-        for _ in range(60):
+        for _ in range(40):
             e = (lo + hi) / 2
             lo, hi = (e, hi) if vol_com(e) > n * 600e3 else (lo, e)
         e = (lo + hi) / 2
@@ -232,7 +258,7 @@ def linha(colar_l):
 def footprint():
     """Borda em que o maior pote fecha 2400 ml com o fundo no nivel."""
     lo, hi = 110.0, 230.0
-    for _ in range(60):
+    for _ in range(40):
         mid = (lo + hi) / 2
         lo, hi = (lo, mid) if linha(mid)[3]['elev'] > 0.0 else (mid, hi)
     return (lo + hi) / 2
@@ -275,6 +301,27 @@ def verifica(potes):
     dentro = [p['bore_corpo'], boca]
     exige(all(a <= b + 1e-9 for a, b in zip(dentro, dentro[1:])),
           f"por dentro so estreita descendo: {boca:.1f} -> {p['bore_corpo']:.1f}")
+    exige(DENTE_ARO_H + DENTE_ARO_R < LING_H,
+          f"a farpa ({DENTE_ARO_H:.2f} de degrau + {DENTE_ARO_R:.2f} de rampa) cabe "
+          f"na lingueta de {LING_H:.2f} mm")
+    exige(ARO_BOLSA_H >= DENTE_ARO_H + DENTE_ARO_R,
+          f"a bolsa do U ({ARO_BOLSA_H:.2f}) cobre o degrau E a rampa da farpa "
+          f"({DENTE_ARO_H + DENTE_ARO_R:.2f}): o silicone RELAXA em vez de esticar")
+    exige(ARO_PAR - (DENTE_ARO + 0.05) >= 0.50,
+          f"na bolsa a perna do U afina para "
+          f"{ARO_PAR - (DENTE_ARO + 0.05):.2f} mm (minimo 0,50 para extrudar)")
+    saia_o = p['boca'] - 2 * SAIA_FOLGA
+    deck_u = saia_o - 2 * SAIA_T
+    nv = nervuras(deck_u, deck_u - p['dLW'])
+    exige(Z_DECK_B - NERV_H > Z_DEGRAU,
+          f"a nervura ({Z_DECK_B - NERV_H:+.2f}) nao bate no degrau interno "
+          f"({Z_DEGRAU:+.2f}): {Z_DECK_B - NERV_H - Z_DEGRAU:.2f} mm de folga")
+    exige(nv['t_pta'] >= 0.40,
+          f"com {SAIDA_NERV:.0f}° por face a nervura chega na ponta com "
+          f"{nv['t_pta']:.2f} mm (abaixo de 0,40 nao enche)")
+    exige(NERV_T / PP_DECK <= 0.60,
+          f"nervura de {NERV_T:.2f} sobre deck de {PP_DECK:.2f} = "
+          f"{NERV_T / PP_DECK * 100:.0f}% (acima de 60% marca chupagem por fora)")
     exige(all(q['elev'] >= -1e-6 for q in potes),
           "elevacao de fundo >= 0 nos quatro (nenhum pote pede fundo negativo)")
     for combo in ((1, 1, 1, 1), (2, 2), (1, 1, 2), (1, 3), (4,)):
@@ -314,6 +361,49 @@ def aninha(p, s, boca, colar_l):
                  for y in [mid - d * mid / 120 for d in range(121)] if 0 <= y <= H)
         lo, hi = (mid, hi) if ok else (lo, mid)
     return H - lo
+
+
+def nervuras(deck_l, deck_w):
+    """Grade de nervuras sob o deck: posicoes, comprimento, peso e rigidez.
+
+    A conta de rigidez e a de uma secao T: a nervura so serve se o deck andar
+    junto com ela, e quem faz isso e a aba do T - por isso o ganho nao e o
+    I da nervura sozinha, e sim o do conjunto em torno do centroide comum.
+    """
+    uso_l, uso_w = deck_l - 2 * NERV_MARG, deck_w - 2 * NERV_MARG
+    n_trans = 5                      # nervuras ao longo da LARGURA (cortam o comprimento)
+    n_long = 3                       # nervuras ao longo do COMPRIMENTO
+    px, py = uso_l / (n_trans - 1), uso_w / (n_long - 1)
+    xs = [-uso_l / 2 + i * px for i in range(n_trans)]
+    ys = [-uso_w / 2 + i * py for i in range(n_long)]
+    t_pta = NERV_T - 2 * NERV_H * math.tan(math.radians(SAIDA_NERV))
+    t_med = (NERV_T + t_pta) / 2
+    comp = n_trans * uso_w + n_long * uso_l
+    vol = comp * t_med * NERV_H
+
+    # secao T equivalente, por passo da grade (usa o passo menor, o que manda)
+    p = min(px, py)
+    a_f, y_f = p * PP_DECK, PP_DECK / 2
+    a_n, y_n = t_med * NERV_H, PP_DECK + NERV_H / 2
+    yb = (a_f * y_f + a_n * y_n) / (a_f + a_n)
+    I_t = (p * PP_DECK ** 3 / 12 + a_f * (yb - y_f) ** 2
+           + t_med * NERV_H ** 3 / 12 + a_n * (y_n - yb) ** 2)
+    I_0 = p * PP_DECK ** 3 / 12
+    return dict(xs=xs, ys=ys, px=px, py=py, t_pta=t_pta, t_med=t_med,
+                comp=comp, vol=vol, peso=vol * RHO_PP, ganho=I_t / I_0,
+                celula=(px, py), uso=(uso_l, uso_w))
+
+
+def cenario(saida_graus):
+    """A linha inteira resolvida com outra saida de extracao."""
+    global T, DENTE, PRECISO, GANHO
+    T0, D0, P0, G0 = T, DENTE, PRECISO, GANHO
+    T = math.tan(math.radians(saida_graus))
+    PRECISO, GANHO, DENTE = dente_necessario()
+    pots = linha(footprint())
+    an = aninha(pots[3], saida_graus, pots[0]['boca'], pots[0]['colar_l'])
+    T, DENTE, PRECISO, GANHO = T0, D0, P0, G0
+    return pots, an
 
 
 def main():
@@ -508,6 +598,115 @@ def main():
     print( "  Em madeira essa lingueta quebra. A teca fica com corda redonda em friso,")
     print( "  que e o que ela ja tinha. Quem quiser um vedante so na linha inteira")
     print( "  precisa de um aro de PP carregando o U, com a placa encaixada nele.")
+
+    # ---- nervuras sob o deck ----
+    nv = nervuras(deck_util, deck_util - dLW)
+    eps_strip = 3 * LING_T * DENTE_ARO / (2 * LING_H ** 2)
+    print("\n" + "=" * 79)
+    print("NERVURAS SOB O DECK - a tampa 'encorpada'")
+    print("=" * 79)
+    print(f"  grade {len(nv['xs'])} x {len(nv['ys'])} dentro de "
+          f"{nv['uso'][0]:.0f} x {nv['uso'][1]:.0f} mm (margem {NERV_MARG:.1f} da borda)")
+    print(f"  celula {nv['px']:.1f} x {nv['py']:.1f} mm | nervura {NERV_T:.2f} na raiz, "
+          f"{nv['t_pta']:.2f} na ponta, {NERV_H:.2f} de altura")
+    print(f"  saida {SAIDA_NERV:.0f}° por face - numa nervura isso nao custa nada: "
+          f"{NERV_T - nv['t_pta']:.2f} mm de diferenca em {NERV_H:.1f} mm")
+    print(f"  {nv['comp']:.0f} mm de nervura | {nv['vol'] / 1e3:.2f} cm3 | "
+          f"+{nv['peso']:.2f} g na tampa ({nv['peso'] / 21.0 * 100:.0f}%)")
+    print(f"  RIGIDEZ: secao T de passo {min(nv['px'], nv['py']):.1f} mm -> "
+          f"I sobe {nv['ganho']:.1f}x contra o deck liso")
+    print(f"  (flecha cai na mesma proporcao: o deck de {PP_DECK:.2f} mm vencendo "
+          f"{deck_util - dLW:.0f} mm")
+    print(f"   de vao passa a flechar {1 / nv['ganho']:.2f} do que flechava.)")
+    print(f"  altura limitada pelo DEGRAU do pote, nao por moldagem: a nervura para "
+          f"em {Z_DECK_B - NERV_H:+.2f}")
+    print(f"  e o degrau esta em {Z_DEGRAU:+.2f}. Para subir a nervura teria de "
+          f"subir a borda.")
+    print(f"  CUSTO ESCONDIDO: as nervuras tiram {nv['vol'] / 1e3:.1f} ml da "
+          f"capacidade util - 0,2% no 600 ml.")
+
+    print("\n" + "=" * 79)
+    print("O MINI DENTE QUE SEGURA O ARO")
+    print("=" * 79)
+    print(f"  farpa na PONTA da lingueta: {DENTE_ARO:.2f} mm por face "
+          f"({LING_T:.2f} -> {LING_PTA:.2f} mm)")
+    print(f"  entra por rampa de {DENTE_ARO_R:.2f} mm "
+          f"({math.degrees(math.atan2(DENTE_ARO, DENTE_ARO_R)):.0f}° da vertical) e sai "
+          f"por degrau de 90° de {DENTE_ARO_H:.2f} mm")
+    print(f"  o U tem BOLSA de {ARO_BOLSA:.2f} x {ARO_BOLSA_H:.2f} mm na base do vao "
+          f"(cobre o degrau E a rampa)")
+    print(f"  na bolsa a perna do U afina de {ARO_PAR:.2f} para "
+          f"{ARO_PAR - DENTE_ARO - 0.05:.2f} mm - ainda extrudavel")
+    print(f"  -> montado, o silicone RELAXA em cima da farpa. Sem a bolsa ele ficaria")
+    print(f"     esticado {2 * DENTE_ARO:.2f} mm para sempre, e deformacao permanente")
+    print(f"     e exatamente o que mata vedante de borracha em 2 anos de armario.")
+    print(f"  para sair, o vao de {ARO_VAO:.2f} tem de abrir ate {LING_PTA:.2f}: "
+          f"{2 * DENTE_ARO + ARO_GRIP:.2f} mm de esticamento, contra os "
+          f"{ARO_GRIP:.2f} mm de aperto que seguravam antes")
+    print(f"  EXTRACAO DA TAMPA: a farpa e contra-saida de {DENTE_ARO:.2f} mm numa "
+          f"lingueta de {LING_T:.2f} x {LING_H:.2f}")
+    print(f"  que flexiona. Deformacao de fibra na saida: {eps_strip * 100:.1f}% "
+          f"(PP randomico escoa perto de 8%).")
+    print(f"  E a segunda contra-saida da tampa, junto com o gancho da trava - as "
+          f"duas por arraste,")
+    print( "  nenhuma por gaveta.")
+
+    # ---- saida de extracao: o pedido de 3° contra a parede reta ----
+    print("\n" + "=" * 79)
+    print("SAIDA DE EXTRACAO - o pedido de 3° contra a parede reta")
+    print("=" * 79)
+    print("  O Ricardo pediu pelo menos 3° para a peca sair legal da maquina dele.")
+    print("  Nas NERVURAS, nos BOLSOS e na CALHA isso ja esta aplicado e nao custa")
+    print("  nada. Na PAREDE DO POTE custa o produto inteiro, e o numero mostra")
+    print("  por que - o fundo externo do 2,4 L contra a borda dele:\n")
+    print(f"  {'saida':>6} {'footprint':>15} {'fundo do 2,4 L':>15} {'conicidade':>11} "
+          f"{'pilha de 6':>11} {'IML':>6}")
+    for sg in (0.5, 1.0, 1.5, 2.0, 3.0):
+        pots, an = cenario(sg)
+        p4 = pots[3]
+        conic = (p4['corpo_l'] - p4['base_ext']) / p4['corpo_l']
+        pilha = 5 * an + p4['H']
+        iml = 'ok' if conic < 0.03 else 'NAO'
+        marca = '  <- hoje' if abs(sg - SAIDA) < 1e-9 else ''
+        print(f"  {sg:>5.1f}° {pots[0]['colar_l']:>8.1f} x {pots[0]['colar_w']:<5.1f} "
+              f"{p4['base_ext']:>13.1f} mm {conic:>10.1%} {pilha:>9.0f} mm "
+              f"{iml:>6}{marca}")
+    print( "\n  A conicidade e o que o olho ve: no 2,4 L, 3° deixam o fundo 24 mm mais")
+    print( "  estreito que a boca em 242 mm de altura. Isso nao e 'parede reta com")
+    print( "  cantos arredondados' - e um balde. E o IML pede secao constante: com")
+    print( "  3° a etiqueta enruga ou descola na base.")
+    print( "  O QUE RESOLVE EXTRACAO SEM SAIDA, e ja esta no projeto desde a revisao 5:")
+    print( "    - cavidade e macho POLIDOS A2 ou melhor (textura e que pede 1° a cada")
+    print( "      0,025 mm de profundidade, e e ela que gera a maioria das regras de 3°)")
+    print( "    - extracao por PLACA IMPULSORA, nao por pinos: empurra o rodape inteiro")
+    print( "    - VALVULA DE AR no topo do macho, para quebrar o vacuo")
+    print(f"    - forca de extracao estimada em ~5 kN no 2,4 L contra ~62 kN")
+    print( "      disponiveis numa 380 t: o gargalo nao e forca, e vacuo e risco de")
+    print( "      arranhar a parede polida.")
+    print( "\n  MAS A SAIDA NAO PRECISA SER A MESMA NOS QUATRO. Cada tamanho tem molde")
+    print( "  proprio, e so a BORDA e comum - a saida so decide quanto a parede estreita")
+    print( "  descendo. Conicidade (quanto o fundo e mais estreito que o corpo) por")
+    print( "  tamanho e por saida:\n")
+    print(f"  {'saida':>6} " + " ".join(f"{q['cap']:>8} ml" for q in potes))
+    for sg in (0.5, 1.0, 1.5, 2.0, 3.0):
+        pots, _ = cenario(sg)
+        linha_txt = f"  {sg:>5.1f}° "
+        for q in pots:
+            c = (q['corpo_l'] - q['base_ext']) / q['corpo_l']
+            linha_txt += f"{c:>8.1%}{'*' if c < 0.03 else ' '} "
+        print(linha_txt)
+    print( "  (* dentro de 3% de conicidade, que e onde o IML e o 'parede reta' aguentam)")
+    print( "\n  Le-se assim: o 600 ml aguenta ate 2,0° sem deixar de parecer reto; o")
+    print( "  2,4 L nao passa de 0,5°. Se a ferramentaria disser que nao tira a peca,")
+    print( "  da para dar MAIS saida aos pequenos e menos aos grandes - mas o 2,4 L,")
+    print( "  que e o mais fundo e portanto o mais dificil, e justamente o que menos")
+    print( "  tolera. Nele nao ha saida: tem de sair por polimento, placa impulsora e")
+    print( "  valvula de ar.")
+    print( "\n  RECOMENDACAO: manter 0,5° na parede dos quatro e levar 3° para tudo o")
+    print( "  que e FEICAO - nervura, bolso, calha, trilho, rabo da trava, farpa. Levar")
+    print( "  a tabela acima para a ferramentaria ANTES de fechar o molde: se eles")
+    print( "  disserem que 0,5° nao sai, isso muda o produto, nao so o molde, e a")
+    print( "  decisao e sua, nao minha.")
 
     # ---- injecao ----
     a_corpo = area(colar_l, colar_w, R_EXT) / 100

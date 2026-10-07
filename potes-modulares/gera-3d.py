@@ -56,6 +56,9 @@ ELEV = {p['n']: p['elev'] for p in POTES}
 SAIA_T, SAIA_FOLGA, RECUO = cm.SAIA_T, cm.SAIA_FOLGA, cm.RECUO
 LING_T, LING_H = cm.LING_T, cm.LING_H
 ARO_PAR, ARO_FUNDO, ARO_H = cm.ARO_PAR, cm.ARO_FUNDO, cm.ARO_H
+DENTE_ARO, DENTE_ARO_H, DENTE_ARO_R = cm.DENTE_ARO, cm.DENTE_ARO_H, cm.DENTE_ARO_R
+ARO_BOLSA_H = cm.ARO_BOLSA_H
+NERV_T, NERV_H, NERV_MARG = cm.NERV_T, cm.NERV_H, cm.NERV_MARG
 PP_DECK, PP_FLANGE = cm.PP_DECK, cm.PP_FLANGE
 TRAVA_N, TRAVA_T, TRAVA_FOLGA = cm.TRAVA_N, cm.TRAVA_T, cm.TRAVA_FOLGA
 TRAVA_FARPA, TRAVA_RABO, TRAVA_BULGE = cm.TRAVA_FARPA, cm.TRAVA_RABO, cm.TRAVA_BULGE
@@ -458,18 +461,68 @@ def tampa_pp(seg):
     D3  = c.add(0.0,                  TAMPA_O)     # face externa da aba
     D4  = c.add(0.0,                  SAIA_O)      # a aba pousa na meia-cana
     D5  = c.add(Z_DECK_B,             SAIA_O)      # face externa da saia
-    D6  = c.add(Z_DECK_B,             LING_O)      # recuo para a lingueta
-    D7  = c.add(Z_DECK_B - LING_H,    LING_O)      # face externa da lingueta
-    D8  = c.add(Z_DECK_B - LING_H,    LING_I)      # ponta da lingueta
-    D9  = c.add(Z_DECK_B,             LING_I)      # face interna da lingueta
-    D10 = c.add(Z_DECK_B,             DECK_UTIL)   # face de baixo do deck
-    for a, b in ((D1,D0),(D2,D1),(D3,D2),(D4,D3),(D5,D4),(D6,D5),(D7,D6),(D8,D7),
-                 (D9,D8),(D10,D9)):
-        c.banda(a, b)
-    c.cap(D0, True)
-    c.cap(D10, False)
+    D = [D0, D1, D2, D3, D4, D5] + lingueta(c) + [c.add(Z_DECK_B, DECK_UTIL)]
+    for a, b in zip(D, D[1:]):
+        c.banda(b, a)
+    c.cap(D[0], True)
+    c.cap(D[-1], False)
 
     poe_travas(c)
+    poe_nervuras(c)
+    return c
+
+
+def perfil_lingueta():
+    """(largura, z) da lingueta com a farpa, de cima para baixo e de volta."""
+    z_omb = Z_DECK_B - (LING_H - DENTE_ARO_H - DENTE_ARO_R)   # ombro do degrau
+    z_fim = z_omb - DENTE_ARO_H
+    z_pta = Z_DECK_B - LING_H
+    PTA_O, PTA_I = LING_O + 2 * DENTE_ARO, LING_I - 2 * DENTE_ARO
+    return [(LING_O, Z_DECK_B), (LING_O, z_omb), (PTA_O, z_omb), (PTA_O, z_fim),
+            (LING_O, z_pta), (LING_I, z_pta), (PTA_I, z_fim), (PTA_I, z_omb),
+            (LING_I, z_omb), (LING_I, Z_DECK_B)]
+
+
+def lingueta(c):
+    """A lingueta em que o aro em U calca, com a FARPA que segura ele.
+
+    De cima para baixo: recuo da saia, trecho reto, DEGRAU de 90° para fora
+    (e esta face que o aro tem de vencer para cair), trecho cheio da farpa,
+    rampa de volta e ponta. O aro entra pela rampa e sai pelo degrau - e por
+    isso que ele entra com a mao e nao sai sozinho.
+    """
+    return [c.add(z, L) for L, z in perfil_lingueta()]
+
+
+def poe_nervuras(c, pula=None):
+    """Grade de nervuras sob o deck. E o que deixa a tampa 'encorpada'.
+
+    Um deck de 1,50 mm vencendo 79 mm de vao e um painel mole. A grade sobe o
+    I da secao 2,2x por 1,3 g de PP - rigidez sobe com o quadrado do braco,
+    peso sobe so com a area da nervura.
+
+    Saida de 3° por face, que e o que a maquina pede: numa nervura de 3 mm isso
+    custa 0,31 mm de espessura na ponta e nada mais. (Na parede do pote a mesma
+    saida custaria o produto - ver calculo-modular.py.)
+
+    pula(x, y) -> True para nao por nervura ali: e como a tampa de correr tira
+    as que cairiam dentro do bolso.
+    """
+    nv = cm.nervuras(DECK_UTIL, DECK_UTIL - DLW)
+    t0, t1 = NERV_T / 2, nv['t_pta'] / 2
+    z0, z1 = Z_DECK_B + 0.5, Z_DECK_B - NERV_H
+    perfil = [(+t0, z0), (+t1, z1), (-t1, z1), (-t0, z0)]
+    uso_l, uso_w = nv['uso']
+    for y in nv['ys']:
+        if pula and pula(None, y):
+            continue
+        c.tris += prisma(perfil, 'y', y, uso_l)
+        c.prismas.append(dict(perfil=perfil, eixo='y', pos=y, comp=uso_l, off=0.0))
+    for x in nv['xs']:
+        if pula and pula(x, None):
+            continue
+        c.tris += prisma(perfil, 'x', x, uso_w)
+        c.prismas.append(dict(perfil=perfil, eixo='x', pos=x, comp=uso_w, off=0.0))
     return c
 
 
@@ -578,10 +631,7 @@ def tampa_correr(seg):
          anelx(TAMPA_O, largura(TAMPA_O), raio(TAMPA_O), 0.0),         # face externa
          anelx(SAIA_O, largura(SAIA_O), raio(SAIA_O), 0.0),            # aba pousa na borda
          anelx(SAIA_O, largura(SAIA_O), raio(SAIA_O), Z_DECK_B),       # face externa da saia
-         anelx(LING_O, largura(LING_O), raio(LING_O), Z_DECK_B),       # recuo da lingueta
-         anelx(LING_O, largura(LING_O), raio(LING_O), Z_DECK_B - LING_H),
-         anelx(LING_I, largura(LING_I), raio(LING_I), Z_DECK_B - LING_H),
-         anelx(LING_I, largura(LING_I), raio(LING_I), Z_DECK_B),
+         ] + [anelx(L, largura(L), raio(L), z) for L, z in perfil_lingueta()] + [
          anelx(z=Z_DECK_B, **ban),                           # face de baixo do deck
          anelx(z=Z_DECK_B, **bol),
          anelx(z=ZB - PP_DECK, **bol),
@@ -608,6 +658,10 @@ def tampa_correr(seg):
                               off=P['bol_cx']))
 
     poe_travas(c)                       # as MESMAS travas da tampa de PP
+    # nervuras, menos as que cairiam dentro do bolso da gaveta
+    bx0, bx1 = P['bol_cx'] - P['bol_l'] / 2, P['bol_cx'] + P['bol_l'] / 2
+    poe_nervuras(c, pula=lambda x, y: (abs(y) < P['bol_w'] / 2 + 2.0) if x is None
+                 else (bx0 - 2.0 < x < bx1 + 2.0))
     return c
 
 
@@ -688,10 +742,18 @@ def aro_u(seg):
     z_vao = z_bot + ARO_FUNDO                   # teto do fundo do U
 
     c = Casca(seg)
-    # A ordem dos oito vertices e o que da o sinal do volume: percorrida ao
+    # BOLSA na base do vao: e ela que recebe a farpa da lingueta. Sem ela o
+    # silicone ficaria esticado 0,50 mm em cima da farpa para sempre, e
+    # deformacao permanente e o que mata vedante de borracha.
+    z_p = z_vao + ARO_BOLSA_H
+    BOL_O = LING_O + 2 * (DENTE_ARO + 0.05)
+    BOL_I = LING_I - 2 * (DENTE_ARO + 0.05)
+    # A ordem dos vertices e o que da o sinal do volume: percorrida ao
     # contrario, a casca fecha igual e o volume sai NEGATIVO.
-    U = [c.add(z_top, LING_O), c.add(z_vao, LING_O), c.add(z_vao, LING_I),
-         c.add(z_top, LING_I), c.add(z_top, L_ii), c.add(z_bot, L_ii),
+    U = [c.add(z_top, LING_O), c.add(z_p, LING_O), c.add(z_p, BOL_O),
+         c.add(z_vao, BOL_O), c.add(z_vao, BOL_I), c.add(z_p, BOL_I),
+         c.add(z_p, LING_I), c.add(z_top, LING_I),
+         c.add(z_top, L_ii), c.add(z_bot, L_ii),
          c.add(z_bot, L_oo), c.add(z_top, L_oo)]
     for a, b in zip(U, U[1:] + U[:1]):
         c.banda(a, b)
