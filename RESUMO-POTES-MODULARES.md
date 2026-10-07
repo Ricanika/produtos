@@ -1,6 +1,6 @@
 # Potes retangulares modulares em PP — resumo para retomar em outro chat
 
-**Projeto 115 do ERP (Nitron) · Revisão 9 · 23/09/2026**
+**Projeto 115 do ERP (Nitron) · Revisão 10 · 07/10/2026**
 Branch: `claude/serene-johnson-ja8az8` · pasta `potes-modulares/`
 
 Este arquivo é auto-contido: cole ele num chat novo e o contexto está todo aqui.
@@ -21,7 +21,34 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
 4. **Parede reta**, não conada, com cantos arredondados.
 5. **Sem trava**, acabamento liso.
 6. Validar tudo contra o parque de injetoras real (via MCP Sankhya / Nitron).
-7. **(revisão 9 — a terceira tampa)** Pedido do Ricardo: *"uma tampa de correr com outro aro de
+7. **(revisão 10 — a borda com DENTE e o aro em U)** O Ricardo mandou fotos de uma referência
+   física (pote cinza, tampa canelada, um perfil de silicone em U na mão) e pediu: borda de
+   **~8 mm** com um **dente em toda a volta na base dela** (é onde a trava engata); a borda
+   **expandindo ~3 mm para fora**, e nessa expansão encaixa a parte interna da tampa; e a tampa
+   entrando no corpo com um **vão na lateral** onde vai o silicone **extrudado em U**.
+   **A borda OCA da revisão 8 saiu inteira** — saia livre, canal e flare. No lugar: parede reta
+   até −8,00, um **web** horizontal de 1,00 mm atravessando para fora, e a parede da borda subindo
+   dele até uma **meia-cana** de R0,60. Face de BAIXO do web = o **dente** (3,18 mm/lado); face de
+   CIMA = **degrau interno**; entre o web e o topo, 7,00 mm de **boca**.
+   **Perguntei uma coisa antes de cortar** (saia única × saia dupla, porque "a parte INTERNA da
+   tampa" sugeria duas) e ele escolheu **saia única**: o U calça numa **lingueta** de 0,80 × 2,40
+   recuada 0,20 em cada face, e a perna de fora comprime **0,35 mm/lado** contra a boca.
+   **O que isso devolveu:** footprint 153,7 × 87,8 → **147,5 × 84,3**; peso do 600 ml 52,9 →
+   **47,1 g** (−11%); área projetada 134 → **123 cm²**; aresta de engate 1,20 → **3,18 mm** (o
+   gancho usa 25% dela em vez de 67%); e o molde **perde** a nervura de 1,20 × 8,6 mm (7,2:1) que
+   a revisão 8 tinha somado — é a primeira revisão que tira trabalho do ferramental.
+   **De brinde:** a placa de teca passou a **pousar no degrau**, e isso FIXA a espessura dela em
+   5,00 mm (= borda 8 − web 1 − fundo 2). Ela caiu de 8,0 para 5,0 mm, de 59 para 37 g, e passou
+   a comer 14% do pote de 600 em vez de 19%. O peso do pote de cima vai para o degrau através da
+   madeira, em compressão: a placa não trabalha mais em flexão.
+   **O que custou:** a borda deixou de ser caixão fechado e virou um **L** — menos rígida na boca
+   — e encurtou de 16 para 10 mm, o que deixou o painel reto 6 mm mais alto. No 600 ml o painel
+   ficou **1,61× mais flexível** que na revisão 8 (ainda mais rígido que na 7); do 1,8 L para cima
+   melhorou. A pergunta do protótipo continua: a boca ovaliza o bastante para soltar o aro?
+   **E a teca perdeu o vedante comum:** o U calça numa lingueta de 0,80 mm e em madeira ela
+   quebra, então a placa ficou com corda redonda em friso usinado (10,2 kgf de atrito). Decisão
+   aberta: aceitar dois perfis ou pôr um aro de PP carregando o U sob a placa.
+8. **(revisão 9 — a terceira tampa)** Pedido do Ricardo: *"uma tampa de correr com outro aro de
    TPE... colocar na tampa mesmo um bico mas não fechado e sim aberto tipo 'U' e não 'O' para poder
    escorrer o líquido"*. Base: a tampa de PP — mesmo plug, mesmo filete, as mesmas duas travas.
    **Mecanismo (escolha dele):** *gaveta na tampa* — painel que corre em trilhos num bolso no piso
@@ -42,7 +69,7 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
    **No gerador:** anéis passaram a poder vir como lista de **pontos livres** e `banda()` pula o
    quadrilátero de largura zero — é o que permite furo, entalhe e rampa. A tampa de correr é uma
    casca de **gênero 1**. São **dez** peças agora, todas a 0,00% do STL.
-8. **(revisão 8 — a borda, a partir do STL de referência `REF_231.stl`)** O Ricardo mandou um STL
+9. **(revisão 8 — a borda, a partir do STL de referência `REF_231.stl`)** O Ricardo mandou um STL
    com um pote e uma tampa em escala 1:10 (a parede medida, 0,113 mm, é o que fixa a escala) e
    pediu: **manter alturas, larguras, comprimentos e o raio de canto**, e refazer a **borda
    superior do corpo** e a **tampa de PP**, pegando dali o **layout de tampa e travas**.
@@ -67,7 +94,7 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
    corpos — 146 é a silhueta do **deck da tampa**. O corpo tem 134.
    **O que NÃO piorou, contra a minha expectativa:** o aninhamento a vazio. A 0,5° a pilha de seis
    2,4 L continua em 1044 mm (−28%) — quem manda ali é a saída, não a borda.
-9. **(revisão 7 — mudança de arquitetura, a partir de referência física)** Saem a **aba em U**, o
+10. **(revisão 7 — mudança de arquitetura, a partir de referência física)** Saem a **aba em U**, o
    **pé embutido** e a garra da tampa. Entram o **colar de borda** (liso, arredondado em cima,
    sobressaindo 3,50 mm/lado, cuja face de baixo é a aresta de engate), o **rodapé reto** para IML
    e **6 abas de trava** na tampa. As duas tampas passam a usar **o mesmo filete de TPE** (objetivo
@@ -82,7 +109,7 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
    **Três erros pegos por verificação, não por leitura:** filete 0,40 mm aquém da boca (não vedaria
    nada), metade das abas espelhada no visualizador (volume negativo cancelando as outras), e o STL
    saindo com Y para cima em vez de Z. Nenhum deles é acusado por volume assinado ou normais.
-10. **(revisão 6)** A tampa PE **fecha por fora**: saia por fora da borda, garra engatando sob o
+11. **(revisão 6)** A tampa PE **fecha por fora**: saia por fora da borda, garra engatando sob o
    lábio da aba em U. Princípio oposto ao plug da teca, na mesma borda, **sem mudar uma cota do
    pote** — o lábio já dava 3,04 mm/lado de ressalto e a garra usa 0,80. Resina **PEAD HA 7260
    IF 20 a R$ 9,34/kg** (a mais barata da casa depois do moído), tampa de 27,6 g a R$ 0,26.
@@ -92,13 +119,13 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
    Dois pontos abertos: a retenção depende da rigidez do deck (o aro da saia dá 3 gf, então pede
    elemento finito ou protótipo), e a **tampa de teca não pode ser o plug de parede fina** — em
    maciço, precisa do poço da bandeja usinado ou não empilha.
-11. **(estudo, 21/09/2026 — não implementado)** Pedido de referência à vedação da Tupperware.
+12. **(estudo, 21/09/2026 — não implementado)** Pedido de referência à vedação da Tupperware.
    Mecanismo levantado: canal em U na tampa que engole um cordão da borda, apertando-o de
    **faces opostas** (US2487400, de 1949, expirada, "nonsnap"). O burp não dá para copiar — a
    tampa deles é membrana, a nossa é datum de empilhamento. Dois caminhos orçados (com e sem
    mexer no molde do corpo), 4,3 e 5,1 kgf de arranque. **Decisão: fica como estudo**, seção 13
    do README. A linha segue na revisão 6.
-12. **(revisão 5)** O pote tinha ficado largo e muito arredondado em relação ao render de
+13. **(revisão 5)** O pote tinha ficado largo e muito arredondado em relação ao render de
    referência. Corrigido para **frente estreita e pote fundo, canto R10** — escolhido de propósito
    o caminho que mantém altura, módulo, curso de abertura e classe de injetora. Custou **+17,6 g**
    de resina nos quatro corpos e deixou a face comprida do 2,4 L **3,8× mais flexível** (única
@@ -172,14 +199,18 @@ Um **plug** da tampa desce 8 mm dentro da boca e leva o filete de TPE num friso 
 duas tampas — na teca, num friso 2,0 mm mais fundo.
 
 ```
-boca do pote ..... 146,1 mm      face do plug ..... 144,9 mm (folga 0,60 por lado)
-parede do plug ... 0,80 mm       friso ............ 0,60 mm, a 3,0-4,4 mm do topo
-filete de TPE .... corda de 1,40 mm, sobra 0,80 -> comprime 0,20 contra a parede
-plug desce ....... 8,0 mm        vão da bandeja ... 143,3, recebe o fundo de 141,67
-tampa de PP ...... 157,3 × 93,4 mm com as 2 travas. 24,5 g. R$ 0,23 + filete 0,9 g
-tampa de teca .... placa maciça 144,9 × 79,0 × 8,0 mm, 59 g, CNC, sem molde
-tampa de correr .. a mesma de PP + bolso, janela 22 x 46 e canal em U. 23,2 g
-                   + gaveta 2,8 g + 2o aro 0,2 g. Maxima 157,7 x 93,4 (labio do bico)
+borda do corpo ... 147,5 x 84,3 (maxima)   corpo reto ..... 141,1 x 77,9
+borda ............ 8,00 mm de altura ate o DENTE de 3,18 mm/lado
+web .............. 1,00 mm: face de baixo = dente, face de cima = DEGRAU interno
+boca do pote ..... 145,1 mm      face da saia ..... 144,2 mm (folga 0,45 por lado)
+parede da saia ... 1,20 mm       lingueta ......... 0,80 x 2,40, recuada 0,20/face
+aro em U ......... 2,80 x 3,10, perna 1,00 -> comprime 0,35 contra a parede
+saia+aro descem .. 6,60 mm       vao do deck ...... 141,8, recebe o fundo de 140,16
+tampa de PP ...... 149,7 x 89,5 mm com as 2 travas. 21,0 g. R$ 0,20 + aro 3,3 g
+tampa de teca .... placa maciça 144,2 x 81,0 x 5,00 mm, 37 g, CNC, sem molde
+                   POUSA no degrau; corda redonda 1,40 em friso, 10,2 kgf
+tampa de correr .. a mesma de PP + bolso, janela 22 x 46 e canal em U. 19,7 g
+                   + gaveta 2,8 g + 2o aro 0,2 g. Maxima 150,1 x 89,5 (labio do bico)
 ```
 
 | | O que segura | Força |
@@ -362,6 +393,10 @@ contra a geometria da revisão 7 e tem de reprovar — verificação que nunca d
 11. Decidir o rótulo: capacidade de borda (como está) ou re-resolver para capacidade útil.
 12. Decidir se a **tampa de correr** vira ferramenta agora ou depois do try-out das outras duas —
     é molde novo, mais a gaveta e o 2º aro.
+13. **Cotar o perfil em U de silicone** (2,80 × 3,10 mm) com o extrusor e pedir amostra antes do
+    try-out: é ele que decide a vedação e não há como imprimi-lo em FDM.
+14. Decidir se a **teca fica com corda redonda** (dois perfis na linha) ou ganha um aro de PP
+    carregando o mesmo U.
 
 ---
 

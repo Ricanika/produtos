@@ -14,14 +14,14 @@ cm = importlib.util.module_from_spec(spec); spec.loader.exec_module(cm)
 potes = cm.linha(cm.footprint())
 p0 = potes[0]
 COLAR, CORPO = p0['colar_l'], p0['corpo_l']
-PERNA = p0['boca'] + 2 * cm.W_IN          # face externa da perna de dentro
+BOCA  = p0['boca']                        # bore da borda
 Y0, PASSO, X0, TH = 300.0, 152.0, 52.0, 9.0
 
 br = lambda v: ('%.1f' % v).replace('.', ',')
 o = []
 a = o.append
 a('      <svg viewBox="0 0 700 340" role="img" aria-label="Elevacao em escala dos '
-  'quatro potes de parede reta com borda alta e oca e rodape reto, sobre a malha '
+  'quatro potes de parede reta, borda de 8 mm com dente e rodape reto, sobre a malha '
   'modular de 60 milimetros">')
 a('        <defs>')
 a('          <pattern id="hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">')
@@ -46,39 +46,35 @@ for p in potes:
     x = X0 + (p['n'] - 1) * PASSO          # x e a face ESQUERDA do corpo reto
     H = p['H']
     yt = Y0 - H
-    y_body = Y0 - p['z_body']              # topo da parede reta
-    y_bord = Y0 - p['z_bord']              # fim do flare / comeco da borda
-    y_saia = yt + cm.SAIA_H                # aresta de baixo da saia
+    y_dente = Y0 - p['z_dente']            # face de baixo do web = o DENTE
     base = p['base_ext']
     tap = (CORPO - base) / 2
-    dp = (PERNA - CORPO) / 2               # quanto o flare abre
-    ds = (COLAR - CORPO) / 2               # quanto a saia sobressai
-    # contorno horario: fundo reto -> parede -> flare -> perna -> saia ->
-    # topo arredondado -> saia -> perna -> flare -> parede -> fundo
+    ds = cm.DENTE                          # quanto a borda sobressai
+    r = cm.ARRED
+    # contorno horario: fundo reto -> parede -> DENTE -> borda -> meia-cana ->
+    # borda -> DENTE -> parede -> fundo
     pts = [(x + tap,              Y0),
-           (x,                    y_body),
-           (x - dp,               y_bord),
-           (x - dp,               y_saia),
-           (x - ds,               y_saia),
-           (x - ds,               yt + 1.2),
-           (x - ds + 1.2,         yt),
-           (x + CORPO + ds - 1.2, yt),
-           (x + CORPO + ds,       yt + 1.2),
-           (x + CORPO + ds,       y_saia),
-           (x + CORPO + dp,       y_saia),
-           (x + CORPO + dp,       y_bord),
-           (x + CORPO,            y_body),
+           (x,                    y_dente),
+           (x - ds,               y_dente),
+           (x - ds,               yt + r),
+           (x - ds + r,           yt),
+           (x + CORPO + ds - r,   yt),
+           (x + CORPO + ds,       yt + r),
+           (x + CORPO + ds,       y_dente),
+           (x + CORPO,            y_dente),
            (x + CORPO - tap,      Y0)]
     d = 'M ' + ' L '.join('%.1f %.1f' % q for q in pts) + ' Z'
     a('        <!-- %s -->' % rot[p['n']])
     a('        <path d="%s" fill="url(#hatch)" stroke="var(--pp)" stroke-width="1.3"/>' % d)
-    # o canal, tracejado, dos dois lados
-    for xx in (x - ds + cm.W_SAIA, x + CORPO + ds - cm.W_SAIA):
-        a('        <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="var(--cota)" '
-          'stroke-width=".7" stroke-dasharray="3 2"/>' % (xx, yt + cm.TOPO_T, xx, y_saia))
+    # o degrau interno, tracejado: e nele que a placa de teca pousa
+    a('        <line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="var(--cota)" '
+      'stroke-width=".7" stroke-dasharray="3 2"/>'
+      % (x - ds + cm.BORDA_PAR, y_dente - cm.WEB_T,
+         x + CORPO + ds - cm.BORDA_PAR, y_dente - cm.WEB_T))
     # tampa, pousada no topo da borda
+    fora = cm.TRAVA_FOLGA + cm.TRAVA_T
     a('        <rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" fill="var(--verde)"/>'
-      % (x - ds - cm.PP_DECK_FORA, yt - TH, CORPO + 2 * ds + 2 * cm.PP_DECK_FORA, TH))
+      % (x - ds - fora, yt - TH, CORPO + 2 * ds + 2 * fora, TH))
     a('        <text x="%.1f" y="320" text-anchor="middle" font-family="Barlow Condensed, sans-serif" '
       'font-weight="700" font-size="15" fill="var(--ink)">%s</text>' % (x + CORPO / 2, rot[p['n']]))
     a('        <text x="%.1f" y="332" text-anchor="middle" font-family="IBM Plex Mono, monospace" '
@@ -98,7 +94,7 @@ a('        <text x="%.1f" y="32" text-anchor="middle" font-family="IBM Plex Mono
 a('        <text x="52" y="32" font-family="IBM Plex Mono, monospace" font-size="10" '
   'fill="var(--muted)">corpo reto %s mm · rodapé reto (IML)</text>' % br(CORPO))
 a('        <text x="52" y="44" font-family="IBM Plex Mono, monospace" font-size="9.5" '
-  'fill="var(--muted)">borda %s mm de altura + flare %s · saia livre desce %s</text>'
-  % (br(cm.BORDA_H), br(cm.FLARE), br(cm.SAIA_H)))
+  'fill="var(--muted)">borda %s mm de altura · dente de %s mm/lado na base dela</text>'
+  % (br(cm.BORDA_H), br(cm.DENTE)))
 a('      </svg>')
 print('\n'.join(o))

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Gera os STL da linha - REVISAO 8 (borda alta e oca, trava de clipe, tampa PP).
+Gera os STL da linha - REVISAO 10 (borda de 8 mm com dente, aro em U).
 
 AS COTAS VEM DE calculo-modular.py
   Nada de constante repetida. Na revisao 7 este arquivo tinha a propria copia
@@ -27,6 +27,13 @@ TRES ARMADILHAS JA PAGAS
      secao_conexa(), que percorre a altura e confere que o material de uma
      altura encosta no da seguinte.
 
+NA REVISAO 10 A BORDA VIROU UM L
+     Parede reta sobe ate o dente; um WEB horizontal de 1,00 mm atravessa para
+     fora; a parede da borda sobe dele ate o topo, que e uma meia-cana. A face
+     de BAIXO do web e o DENTE (onde a trava engata) e a de CIMA e o DEGRAU
+     (onde a placa de teca pousa). Saiu a borda oca inteira - saia livre, canal
+     e flare.
+
 Uso:  python3 gera-3d.py [--seg 12]      (--seg = pontos por canto)
 """
 import importlib.util, json, math, struct, sys, os
@@ -41,20 +48,26 @@ COLAR_L, COLAR_W = POTES[0]['colar_l'], POTES[0]['colar_w']
 CORPO_L = POTES[0]['corpo_l']
 BOCA    = POTES[0]['boca']
 R_EXT, M, T, BASE_T = cm.R_EXT, cm.M, cm.T, cm.BASE_T
-BORDA_H, FLARE, SAIA_H, TOPO_T = cm.BORDA_H, cm.FLARE, cm.SAIA_H, cm.TOPO_T
-W_SAIA, CANAL, W_IN, W_BORDA = cm.W_SAIA, cm.CANAL, cm.W_IN, cm.W_BORDA
-ARRED, CHANF = cm.ARRED, cm.CHANF
+BORDA_H, BORDA_PAR, WEB_T, DENTE = cm.BORDA_H, cm.BORDA_PAR, cm.WEB_T, cm.DENTE
+ARRED = cm.ARRED
 WALL = cm.WALL
 ELEV = {p['n']: p['elev'] for p in POTES}
 
-PLUG_FOLGA, FRISO_PROF = cm.PLUG_FOLGA, cm.FRISO_PROF
-FILETE_D, FILETE_SOB = cm.FILETE_D, cm.FILETE_SOB
-PP_DECK, PP_DECK_FORA = cm.PP_DECK, cm.PP_DECK_FORA
-PP_PLUG_PAR, PP_PLUG_H = cm.PP_PLUG_PAR, cm.PP_PLUG_H
+SAIA_T, SAIA_FOLGA, RECUO = cm.SAIA_T, cm.SAIA_FOLGA, cm.RECUO
+LING_T, LING_H = cm.LING_T, cm.LING_H
+ARO_PAR, ARO_FUNDO, ARO_H = cm.ARO_PAR, cm.ARO_FUNDO, cm.ARO_H
+PP_DECK, PP_FLANGE = cm.PP_DECK, cm.PP_FLANGE
 TRAVA_N, TRAVA_T, TRAVA_FOLGA = cm.TRAVA_N, cm.TRAVA_T, cm.TRAVA_FOLGA
 TRAVA_FARPA, TRAVA_RABO, TRAVA_BULGE = cm.TRAVA_FARPA, cm.TRAVA_RABO, cm.TRAVA_BULGE
 TRAVA_LARG = cm.TRAVA_FRAC * COLAR_L
-TECA_ESP = cm.TECA_ESP
+TECA_ESP, TECA_FRISO, TECA_CORDA = cm.TECA_ESP, cm.TECA_FRISO, cm.TECA_CORDA
+Z_DENTE, Z_DEGRAU, Z_MOD, Z_DECK_B = cm.Z_DENTE, cm.Z_DEGRAU, cm.Z_MOD, cm.Z_DECK_B
+
+SAIA_O = BOCA - 2 * SAIA_FOLGA          # face externa da saia da tampa
+LING_O = SAIA_O - 2 * RECUO             # face externa da lingueta
+LING_I = LING_O - 2 * LING_T            # face interna da lingueta
+DECK_UTIL = SAIA_O - 2 * SAIA_T         # o que sobra de deck para o pote de cima
+TAMPA_O = COLAR_L + 2 * TRAVA_FOLGA     # face externa da aba da tampa
 
 DLW = COLAR_L - COLAR_W
 
@@ -230,54 +243,53 @@ def prisma(perfil, eixo, pos, comp):
 def corpo(n_mod, seg):
     """Um pote. z=0 no plano de apoio (o fundo reto).
 
-    A BORDA, de baixo para cima: a parede sobe reta ate z_body, abre num tronco
-    de cone (FLARE) ate a perna de dentro, que sobe e faz a boca; no topo a
-    faixa chata liga a perna a SAIA, que desce por fora deixando um canal. A
-    face de baixo da saia - W_SAIA mm - e a aresta onde a trava engata.
+    A BORDA, de baixo para cima: a parede reta sobe ate z_dente; ali o WEB
+    horizontal atravessa para FORA (a face de baixo dele e o DENTE, onde a
+    trava engata) e a parede da borda sobe do web ate o topo, que e uma
+    meia-cana de raio BORDA_PAR/2. Por dentro, descendo: boca -> DEGRAU (a face
+    de cima do web, onde a placa de teca pousa) -> corpo.
 
-    Por fora, descendo, a peca so estreita (saia -> perna -> corpo -> fundo) e
-    por dentro tambem (boca -> corpo): nenhuma contra-saida.
+    Por fora, descendo, a peca so estreita (borda -> corpo -> fundo) e por
+    dentro tambem (boca -> degrau -> corpo): nenhuma contra-saida. O dente esta
+    no TOPO, que e onde a cavidade ja e mais larga - a peca sai reta.
     """
     w, elev = WALL[n_mod], ELEV[n_mod]
     H = n_mod * M + BASE_T
-    z_body = H - BORDA_H - FLARE
-    z_bord = H - BORDA_H
+    z_dente  = H - BORDA_H                       # face de baixo do web
+    z_degrau = z_dente + WEB_T                   # face de cima do web
     piso = BASE_T + elev
-    corpo_z = lambda z: CORPO_L - 2 * (z_body - z) * T
+    corpo_z = lambda z: CORPO_L - 2 * (z_dente - z) * T
     boca_z  = lambda z: BOCA - 2 * (H - z) * T
     colar_z = lambda z: COLAR_L - 2 * (H - z) * T
-    skirt_i = lambda z: colar_z(z) - 2 * W_SAIA
-    leg_o   = lambda z: boca_z(z) + 2 * W_IN
 
     c = Casca(seg)
-    A0  = c.add(0.0,          corpo_z(0.0))          # aresta do fundo
-    A1  = c.add(z_body,       CORPO_L)               # topo da parede reta
-    A2  = c.add(z_bord,       leg_o(z_bord))         # topo do flare
-    A3  = c.add(H - TOPO_T,   leg_o(H - TOPO_T))     # teto do canal, lado de dentro
-    A4  = c.add(H - TOPO_T,   skirt_i(H - TOPO_T))   # teto do canal, lado de fora
-    A5  = c.add(H - SAIA_H,   skirt_i(H - SAIA_H))   # face interna da saia, embaixo
-    A6  = c.add(H - SAIA_H,   colar_z(H - SAIA_H))   # ARESTA DE ENGATE
-    A7  = c.add(H - ARRED,    colar_z(H - ARRED))    # face externa da saia
-    A8  = c.add(H,            COLAR_L - 2 * ARRED)   # aresta de cima, arredondada
-    A9  = c.add(H,            BOCA + 2 * CHANF)      # faixa chata do topo
-    A10 = c.add(H - CHANF,    BOCA)                  # chanfro de entrada da boca
-    A11 = c.add(z_bord,       boca_z(z_bord))        # fim da boca
-    A12 = c.add(z_body,       CORPO_L - 2 * w)       # pe do flare, por dentro
-    A13 = c.add(piso,         corpo_z(piso) - 2 * w) # piso interno
-    for a, b in ((A0,A1),(A1,A2),(A2,A3),(A3,A4),(A4,A5),(A5,A6),(A6,A7),(A7,A8),
-                 (A8,A9),(A9,A10),(A10,A11),(A11,A12),(A12,A13)):
+    A = [c.add(0.0,      corpo_z(0.0)),                   # aresta do fundo
+         c.add(z_dente,  corpo_z(z_dente)),               # topo da parede reta
+         c.add(z_dente,  colar_z(z_dente))]               # O DENTE
+    A.append(c.add(H - ARRED, colar_z(H - ARRED)))        # face externa da borda
+    # meia-cana do topo: do raio externo ao raio da boca, sem faixa chata.
+    rc = COLAR_L / 2 - ARRED
+    for k in (1, 2, 3):
+        ang = math.radians(180.0 * k / 4)
+        A.append(c.add(H - ARRED + ARRED * math.sin(ang),
+                       2 * (rc + ARRED * math.cos(ang))))
+    A += [c.add(H - ARRED,  boca_z(H - ARRED)),           # boca, sob a meia-cana
+          c.add(z_degrau,   boca_z(z_degrau)),            # fim da boca
+          c.add(z_degrau,   corpo_z(z_degrau) - 2 * w),   # O DEGRAU INTERNO
+          c.add(piso,       corpo_z(piso) - 2 * w)]       # piso interno
+    for a, b in zip(A, A[1:]):
         c.banda(a, b)
-    c.cap(A13, True)
+    c.cap(A[-1], True)
     if elev >= 0.05:
-        A14 = c.add(elev, corpo_z(elev) - 2 * w)     # face de baixo do piso
-        A15 = c.add(0.0,  corpo_z(0.0) - 2 * w)      # face interna do rodape
-        c.cap(A14, False)
-        c.banda(A14, A15)
-        c.banda(A15, A0)
+        B0 = c.add(elev, corpo_z(elev) - 2 * w)           # face de baixo do piso
+        B1 = c.add(0.0,  corpo_z(0.0) - 2 * w)            # face interna do rodape
+        c.cap(B0, False)
+        c.banda(B0, B1)
+        c.banda(B1, A[0])
     else:
-        A15 = c.add(0.0, corpo_z(0.0) - 2 * w)
-        c.cap(A15, False)
-        c.banda(A15, A0)
+        B1 = c.add(0.0, corpo_z(0.0) - 2 * w)
+        c.cap(B1, False)
+        c.banda(B1, A[0])
     return c, H
 
 
@@ -290,9 +302,9 @@ def secao_conexa(n_mod, passo=0.25):
     """
     w, elev = WALL[n_mod], ELEV[n_mod]
     H = n_mod * M + BASE_T
-    z_body, z_bord = H - BORDA_H - FLARE, H - BORDA_H
+    z_dente, z_degrau = H - BORDA_H, H - BORDA_H + WEB_T
     piso = BASE_T + elev
-    corpo_z = lambda z: CORPO_L - 2 * (z_body - z) * T
+    corpo_z = lambda z: CORPO_L - 2 * (z_dente - z) * T
     boca_z  = lambda z: BOCA - 2 * (H - z) * T
     colar_z = lambda z: COLAR_L - 2 * (H - z) * T
 
@@ -300,18 +312,11 @@ def secao_conexa(n_mod, passo=0.25):
         """Lista de (r_int, r_ext) em meia-largura, no meio de um lado."""
         if z <= piso:
             return [(0.0, corpo_z(z) / 2)]
-        if z <= z_body:
+        if z <= z_dente:
             return [(corpo_z(z) / 2 - w, corpo_z(z) / 2)]
-        if z <= z_bord:                                  # flare
-            f = (z - z_body) / FLARE
-            ext = (CORPO_L + (boca_z(z_bord) + 2 * W_IN - CORPO_L) * f) / 2
-            return [(ext - w, ext)]
-        out = [(boca_z(z) / 2, boca_z(z) / 2 + W_IN)]    # perna de dentro
-        if z >= H - SAIA_H:                              # + saia, com o canal
-            if z >= H - TOPO_T:
-                return [(boca_z(z) / 2, colar_z(z) / 2)]
-            out.append((colar_z(z) / 2 - W_SAIA, colar_z(z) / 2))
-        return out
+        if z <= z_degrau:                                # o web: macico
+            return [(corpo_z(z) / 2 - w, colar_z(z) / 2)]
+        return [(boca_z(z) / 2, colar_z(z) / 2)]         # parede da borda
 
     z = 0.0
     ruim = []
@@ -358,15 +363,15 @@ def cavidade(n_mod, seg):
     """Fecha so a cavidade interna, para conferir a capacidade na malha."""
     w, elev = WALL[n_mod], ELEV[n_mod]
     H = n_mod * M + BASE_T
-    z_body, z_bord = H - BORDA_H - FLARE, H - BORDA_H
+    z_dente, z_degrau = H - BORDA_H, H - BORDA_H + WEB_T
     piso = BASE_T + elev
-    corpo_z = lambda z: CORPO_L - 2 * (z_body - z) * T
+    corpo_z = lambda z: CORPO_L - 2 * (z_dente - z) * T
     boca_z  = lambda z: BOCA - 2 * (H - z) * T
     c = Casca(seg)
-    K0 = c.add(piso,   corpo_z(piso) - 2 * w)
-    K1 = c.add(z_body, CORPO_L - 2 * w)
-    K2 = c.add(z_bord, boca_z(z_bord))
-    K3 = c.add(H,      BOCA)
+    K0 = c.add(piso,     corpo_z(piso) - 2 * w)
+    K1 = c.add(z_degrau, corpo_z(z_degrau) - 2 * w)
+    K2 = c.add(z_degrau, boca_z(z_degrau))
+    K3 = c.add(H,        BOCA)
     c.cap(K0, False)
     for a, b in ((K0,K1),(K1,K2),(K2,K3)):
         c.banda(a, b)
@@ -375,26 +380,30 @@ def cavidade(n_mod, seg):
 
 
 def tampa_teca(seg):
-    """Placa macica de teca com friso na face lateral. z=0 no plano da borda.
+    """Placa macica de teca que POUSA no degrau interno. z=0 no topo da borda.
 
-    O topo da placa fica BASE_T abaixo do topo da borda: e ele o plano modular,
-    e o fundo reto do pote de cima pousa direto nele. Com a borda de 12 mm a
-    madeira aparece emoldurada, 2 mm abaixo do aro.
+    A espessura nao foi escolhida: TECA_ESP = BORDA_H - WEB_T - BASE_T = 5,00.
+    A placa desce ate o degrau e o topo dela cai exatamente no plano modular.
+    O peso do pote de cima vai para o DEGRAU atraves da madeira, em compressao;
+    na revisao 8 a placa tinha 8 mm e vencia o vao sozinha, em flexao.
+
+    Vedacao: friso usinado + corda redonda. A placa NAO leva o aro em U - uma
+    lingueta de 0,80 mm em madeira quebra.
     """
-    plug = BOCA - 2 * PLUG_FOLGA
-    friso = plug - 2 * FRISO_PROF
-    z_top = -BASE_T
-    z_bot = z_top - TECA_ESP
-    zf0, zf1 = z_top - 3.0, z_top - 3.0 - FILETE_D
+    teca_l = SAIA_O
+    friso = teca_l - 2 * TECA_FRISO
+    z_top, z_bot = Z_MOD, Z_DEGRAU
+    zf0 = z_top - 1.8
+    zf1 = zf0 - TECA_CORDA
 
     c = Casca(seg)
-    P0 = c.add(z_top, plug)
-    P1 = c.add(zf0,   plug)
+    P0 = c.add(z_top, teca_l)
+    P1 = c.add(zf0,   teca_l)
     P2 = c.add(zf0,   friso)
     P3 = c.add(zf1,   friso)
-    P4 = c.add(zf1,   plug)
-    P5 = c.add(z_bot + 0.6, plug)
-    P6 = c.add(z_bot, plug - 1.2)
+    P4 = c.add(zf1,   teca_l)
+    P5 = c.add(z_bot + 0.6, teca_l)
+    P6 = c.add(z_bot, teca_l - 1.2)
     for a, b in ((P1,P0),(P2,P1),(P3,P2),(P4,P3),(P5,P4),(P6,P5)):
         c.banda(a, b)
     c.cap(P0, True)
@@ -402,64 +411,84 @@ def tampa_teca(seg):
     return c
 
 
+def corda_teca(seg):
+    """A corda de silicone da placa de teca, desenhada na medida LIVRE.
+
+    A face externa dela passa (TECA_SOB - SAIA_FOLGA) por lado alem da boca:
+    essa diferenca e a interferencia. No 3D as malhas se sobrepoem ai, e e
+    proposital.
+    """
+    teca_l = SAIA_O
+    dentro = teca_l - 2 * TECA_FRISO
+    fora = dentro + 2 * TECA_CORDA
+    zf0 = Z_MOD - 1.8
+    zf1 = zf0 - TECA_CORDA
+    c = Casca(seg)
+    A0 = c.add(zf1, dentro)
+    A1 = c.add(zf1, fora)
+    A2 = c.add(zf0, fora)
+    A3 = c.add(zf0, dentro)
+    for a, b in ((A0,A1),(A1,A2),(A2,A3),(A3,A0)):
+        c.banda(a, b)
+    return c
+
+
 def tampa_pp(seg):
     """Tampa de PP com DUAS travas de clipe. z=0 no plano do topo da borda.
 
-    O layout veio do STL de referencia: duas travas largas, uma por lado
-    COMPRIDO, cobrindo 58% do comprimento, com gancho e rabo para o dedo.
+    Uma saia so, que entra na boca (foi a escolha do Ricardo contra a de saia
+    dupla). O perfil, de dentro para fora:
 
-    Tres coisas, cada uma com uma funcao so:
-      - o PLUG desce na boca, leva o friso e o filete, e veda RADIAL;
-      - a BANDEJA (piso 2,0 mm abaixo do topo) recebe o fundo reto do pote de
-        cima e e o plano modular;
-      - as TRAVAS engatam sob a aresta da saia e dao a forca de fechamento.
+      deck .......... topo em Z_MOD = -2,00, o plano modular; e nele que o
+                      fundo reto do pote de cima pousa;
+      saia .......... sobe do deck ate a aba e desce ate Z_DECK_B;
+      lingueta ...... continua a saia, recuada RECUO em cada face. E nela que o
+                      aro em U CALCA - nao e colado, ele abraca;
+      aba ........... cruza por cima da meia-cana da borda e e o batente
+                      vertical da tampa: e ela que poe o deck em -2,00;
+      travas ........ penduram da aba e engatam sob o DENTE, 8 mm abaixo.
 
-    O que a malha nao tem: a saia decorativa continua que a referencia mostra,
-    interrompida pelas duas fendas das travas. Aqui o deck passa da borda e as
-    travas penduram dele - e o que ja era assim na revisao 7.
+    O que a malha nao tem: a fenda de ~1 mm que recorta as travas nos tres
+    lados livres, e a saia decorativa da referencia.
     """
-    plug = BOCA - 2 * PLUG_FOLGA
-    friso = plug - 2 * FRISO_PROF
-    bandeja = plug - 2 * PP_PLUG_PAR
-    deck_o = COLAR_L + 2 * PP_DECK_FORA
-    z_pf = -PP_PLUG_H
-    zf0, zf1 = -3.0, -3.0 - FILETE_D
-
     c = Casca(seg)
-    D0  = c.add(-BASE_T,       bandeja)                       # plano modular
-    D1  = c.add(PP_DECK,       bandeja)
-    D2  = c.add(PP_DECK,       deck_o)                        # topo do deck
-    D3  = c.add(0.0,           deck_o)                        # face externa
-    D4  = c.add(0.0,           COLAR_L + 2 * TRAVA_FOLGA)
-    D5  = c.add(0.0,           plug)                          # pousa na borda
-    D6  = c.add(zf0,           plug)
-    D7  = c.add(zf0,           friso)
-    D8  = c.add(zf1,           friso)
-    D9  = c.add(zf1,           plug)
-    D10 = c.add(z_pf + 0.5,    plug)
-    D11 = c.add(z_pf,          plug - 1.0)
-    D12 = c.add(z_pf,          bandeja)
-    D13 = c.add(-BASE_T - PP_DECK, bandeja)
+    D0  = c.add(Z_MOD,                DECK_UTIL)   # plano modular, topo do deck
+    D1  = c.add(PP_FLANGE,            DECK_UTIL)   # face interna da saia, ate a aba
+    D2  = c.add(PP_FLANGE,            TAMPA_O)     # topo da aba
+    D3  = c.add(0.0,                  TAMPA_O)     # face externa da aba
+    D4  = c.add(0.0,                  SAIA_O)      # a aba pousa na meia-cana
+    D5  = c.add(Z_DECK_B,             SAIA_O)      # face externa da saia
+    D6  = c.add(Z_DECK_B,             LING_O)      # recuo para a lingueta
+    D7  = c.add(Z_DECK_B - LING_H,    LING_O)      # face externa da lingueta
+    D8  = c.add(Z_DECK_B - LING_H,    LING_I)      # ponta da lingueta
+    D9  = c.add(Z_DECK_B,             LING_I)      # face interna da lingueta
+    D10 = c.add(Z_DECK_B,             DECK_UTIL)   # face de baixo do deck
     for a, b in ((D1,D0),(D2,D1),(D3,D2),(D4,D3),(D5,D4),(D6,D5),(D7,D6),(D8,D7),
-                 (D9,D8),(D10,D9),(D11,D10),(D12,D11),(D13,D12)):
+                 (D9,D8),(D10,D9)):
         c.banda(a, b)
     c.cap(D0, True)
-    c.cap(D13, False)
+    c.cap(D10, False)
 
     poe_travas(c)
     return c
 
 
 def poe_travas(c):
-    """As duas travas de clipe. As duas tampas de PP usam as mesmas."""
+    """As duas travas de clipe. As duas tampas de PP usam as mesmas.
+
+    O gancho engata sob o DENTE, em z = -BORDA_H. O braco e so a altura da
+    borda: 8 mm contra 10 na revisao 8. Como a forca vai com 1/L^3, a trava
+    teve de AFINAR de 1,00 para 0,80 mm - senao fechar pediria 3,7 kgf por
+    trava em vez de 1,9.
+    """
     F, Tt = TRAVA_FOLGA, TRAVA_T
-    Zc = -SAIA_H                                   # nivel da aresta de engate
-    # A farpa e cotada a partir da face da borda NA ALTURA DA ARESTA, nao no
-    # topo: em SAIA_H mm a saida ja estreitou a borda em SAIA_H*tan(0,5°), e
-    # cotar do topo entregaria 0,67 mm de engate em vez dos 0,80 pedidos.
-    # Nenhuma checagem de malha acusa isso - so a conferencia de montagem.
-    FA = TRAVA_FARPA + SAIA_H * T
-    perfil = [(F,                    PP_DECK - 0.5),
+    Zc = Z_DENTE                                   # nivel do dente
+    # A farpa e cotada a partir da face da borda NA ALTURA DO DENTE, nao no
+    # topo: em BORDA_H mm a saida ja estreitou a borda em BORDA_H*tan(0,5°), e
+    # cotar do topo entregaria menos engate do que o pedido. Nenhuma checagem
+    # de malha acusa isso - so a conferencia de montagem.
+    FA = TRAVA_FARPA + BORDA_H * T
+    perfil = [(F,                    PP_FLANGE - 0.5),
               (F,                    Zc),
               (-FA,                  Zc),          # prateleira do gancho
               (-FA,                  Zc - 0.50),
@@ -467,7 +496,7 @@ def poe_travas(c):
               (F + TRAVA_BULGE,      Zc - TRAVA_RABO),
               (F + TRAVA_BULGE + Tt, Zc - TRAVA_RABO + 0.9),
               (F + Tt,               Zc - 0.80),
-              (F + Tt,               PP_DECK - 0.5)]
+              (F + Tt,               PP_FLANGE - 0.5)]
     for pos in (COLAR_W / 2, -COLAR_W / 2):
         c.tris += prisma(perfil, 'y', pos, TRAVA_LARG)
         c.prismas.append(dict(perfil=perfil, eixo='y', pos=pos,
@@ -508,23 +537,24 @@ def tampa_correr(seg):
     subindo pela parede da janela. Topologicamente e uma rosca - genero 1,
     que e o que um furo faz.
 
-    No trecho do ENTALHE tres aneis mudam de lugar: a parede do bolso vira
-    rampa, a parede da bandeja vira vertedouro, e o topo do deck desce de
-    PP_DECK para Z_SEL. Onde o entalhe come uma faixa inteira dois aneis
-    coincidem, e banda() pula o quadrilatero de largura zero.
+    No trecho do ENTALHE dois aneis mudam de lugar: a parede do bolso vira
+    rampa e a parede do deck vira VERTEDOURO. Onde o entalhe come uma faixa
+    inteira dois aneis coincidem, e banda() pula o quadrilatero de largura zero.
+
+    REVISAO 10: o piso da calha (Z_SEL) agora coincide com o topo da aba, e a
+    aba passa POR CIMA da borda do pote. O liquido sobe o vertedouro pela face
+    de DENTRO da saia e sai por cima da aba - nao chega perto da lingueta nem
+    do aro em U, que ficam na face de FORA. Na revisao 9 o vertedouro quase
+    cortou o friso do filete; nesta arquitetura ele nao tem como.
     """
     P = _pos_correr()
     q = Q_RETO
     bw2 = P['bico_w'] / 2
     ZM, ZB, ZS, ZT = ccr.Z_MOD, ccr.Z_BOLSO, ccr.Z_SEL, ccr.Z_TOPO
-    hb = CORPO_L * 0 + ccr.BANDEJA / 2          # parede da bandeja
-    hp = ccr.PLUG / 2
-    hd = ccr.DECK_O / 2
-    x_sel = hb + PP_PLUG_PAR + 2.0              # onde o vertedouro acaba
-    z_plug = ZM + (hp - hb) / (x_sel - hb) * (ZS - ZM)   # altura do vertedouro no plug
-    zf0, zf1 = -3.0, -3.0 - FILETE_D
-    bandeja, plug, deck_o = ccr.BANDEJA, ccr.PLUG, ccr.DECK_O
-    friso = plug - 2 * FRISO_PROF
+    hb = ccr.BANDEJA / 2                        # borda do deck
+    hd = ccr.DECK_O / 2                         # ponta da aba
+    x_sel = hd - 1.0                            # onde o vertedouro acaba
+    bandeja = ccr.BANDEJA
 
     c = Casca(seg)
 
@@ -539,29 +569,24 @@ def tampa_correr(seg):
     bol = dict(L=P['bol_l'], W=P['bol_w'], R=3.0, cx=P['bol_cx'])
     ban = dict(L=bandeja, W=largura(bandeja), R=raio(bandeja))
 
-    A0  = anelx(z=ZB, **jan)                                   # borda da janela
-    A1  = anelx(z=ZB, **bol)                                   # piso do bolso
-    A2  = anelx(z=ZM, ent=(hb, ZM), **bol)                     # parede do bolso / RAMPA
-    A3  = anelx(z=ZM, ent=(hb, ZM), **ban)                     # piso da bandeja
-    A4  = anelx(z=PP_DECK, ent=(x_sel, ZS), **ban)             # parede / VERTEDOURO
-    A5  = anelx(deck_o, largura(deck_o), raio(deck_o), PP_DECK, ent=(hd, ZS))
-    A6  = anelx(deck_o, largura(deck_o), raio(deck_o), 0.0)
-    A7  = anelx(COLAR_L + 2 * TRAVA_FOLGA, largura(COLAR_L + 2 * TRAVA_FOLGA),
-                raio(COLAR_L + 2 * TRAVA_FOLGA), 0.0)
-    A8  = anelx(plug, largura(plug), raio(plug), 0.0, ent=(hp, z_plug))
-    A9  = anelx(plug, largura(plug), raio(plug), zf0)
-    A10 = anelx(friso, largura(friso), raio(friso), zf0)
-    A11 = anelx(friso, largura(friso), raio(friso), zf1)
-    A12 = anelx(plug, largura(plug), raio(plug), zf1)
-    A13 = anelx(plug, largura(plug), raio(plug), -PP_PLUG_H + 0.5)
-    A14 = anelx(plug - 1.0, largura(plug - 1.0), raio(plug - 1.0), -PP_PLUG_H)
-    A15 = anelx(bandeja, largura(bandeja), raio(bandeja), -PP_PLUG_H)
-    A16 = anelx(z=ZM - PP_DECK, **ban)
-    A17 = anelx(z=ZM - PP_DECK, **bol)
-    A18 = anelx(z=ZB - PP_DECK, **bol)
-    A19 = anelx(z=ZB - PP_DECK, **jan)
-    seq = [A0,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14,A15,A16,A17,A18,A19,A0]
-    for a, b in zip(seq, seq[1:]):
+    A = [anelx(z=ZB, **jan),                                 # borda da janela
+         anelx(z=ZB, **bol),                                 # piso do bolso
+         anelx(z=ZM, ent=(hb, ZM), **bol),                   # parede do bolso / RAMPA
+         anelx(z=ZM, **ban),                                 # piso da bandeja = deck
+         anelx(z=PP_FLANGE, ent=(x_sel, ZS), **ban),         # parede / VERTEDOURO
+         anelx(TAMPA_O, largura(TAMPA_O), raio(TAMPA_O), PP_FLANGE),   # topo da aba
+         anelx(TAMPA_O, largura(TAMPA_O), raio(TAMPA_O), 0.0),         # face externa
+         anelx(SAIA_O, largura(SAIA_O), raio(SAIA_O), 0.0),            # aba pousa na borda
+         anelx(SAIA_O, largura(SAIA_O), raio(SAIA_O), Z_DECK_B),       # face externa da saia
+         anelx(LING_O, largura(LING_O), raio(LING_O), Z_DECK_B),       # recuo da lingueta
+         anelx(LING_O, largura(LING_O), raio(LING_O), Z_DECK_B - LING_H),
+         anelx(LING_I, largura(LING_I), raio(LING_I), Z_DECK_B - LING_H),
+         anelx(LING_I, largura(LING_I), raio(LING_I), Z_DECK_B),
+         anelx(z=Z_DECK_B, **ban),                           # face de baixo do deck
+         anelx(z=Z_DECK_B, **bol),
+         anelx(z=ZB - PP_DECK, **bol),
+         anelx(z=ZB - PP_DECK, **jan)]
+    for a, b in zip(A, A[1:] + A[:1]):
         c.banda(b, a)
 
     # ---- paredes da calha, dos dois lados: prismas fundidos ----
@@ -643,25 +668,32 @@ def aro2(seg):
     return c
 
 
-def filete(seg):
-    """Filete de TPE alojado no friso. Desenhado na medida LIVRE: a face
-    externa passa 0,20 mm por lado alem da boca. Esses 0,20 mm sao a
-    interferencia - montado, o filete comprime essa diferenca contra a parede.
-    No 3D as malhas se sobrepoem nesses 0,20 mm, e e proposital."""
-    plug = BOCA - 2 * PLUG_FOLGA
-    dentro = plug - 2 * FRISO_PROF
-    # o filete assenta no FUNDO do friso, entao a face externa dele e
-    # (fundo do friso) + 2*FILETE_D = plug + 2*(FILETE_D - FRISO_PROF).
-    # Escrever plug + 2*(FILETE_SOB - FRISO_PROF) deixa o filete 0,40 mm
-    # AQUEM da boca: nao veda nada, e nenhuma checagem de malha acusa.
-    fora = plug - 2 * FRISO_PROF + 2 * FILETE_D
-    zf0, zf1 = -3.0, -3.0 - FILETE_D
+def aro_u(seg):
+    """O aro em U de silicone, desenhado CALCADO na lingueta.
+
+    A secao tem oito vertices: desce a face externa da perna de fora, cruza o
+    fundo, sobe a face interna da perna de dentro e volta pelo VAO - que e o
+    furo onde a lingueta entra. Varrido em volta, isso e um toro (genero 1),
+    como o filete da revisao 8, so que com secao em U em vez de retangular.
+
+    Desenhado MONTADO: o vao sai com a largura exata da lingueta. Livre, ele e
+    ARO_GRIP mais estreito - e esse aperto que segura o aro sem cola.
+    A face externa passa ARO_COMP por lado alem da boca: no 3D as malhas se
+    sobrepoem ai, e e proposital - e a interferencia de vedacao.
+    """
+    L_oo = LING_O + 2 * ARO_PAR                 # face externa da perna de fora
+    L_ii = LING_I - 2 * ARO_PAR                 # face interna da perna de dentro
+    z_top = Z_DECK_B
+    z_bot = z_top - ARO_H
+    z_vao = z_bot + ARO_FUNDO                   # teto do fundo do U
+
     c = Casca(seg)
-    A0 = c.add(zf1, dentro)
-    A1 = c.add(zf1, fora)
-    A2 = c.add(zf0, fora)
-    A3 = c.add(zf0, dentro)
-    for a, b in ((A0,A1),(A1,A2),(A2,A3),(A3,A0)):
+    # A ordem dos oito vertices e o que da o sinal do volume: percorrida ao
+    # contrario, a casca fecha igual e o volume sai NEGATIVO.
+    U = [c.add(z_top, LING_O), c.add(z_vao, LING_O), c.add(z_vao, LING_I),
+         c.add(z_top, LING_I), c.add(z_top, L_ii), c.add(z_bot, L_ii),
+         c.add(z_bot, L_oo), c.add(z_top, L_oo)]
+    for a, b in zip(U, U[1:] + U[:1]):
         c.banda(a, b)
     return c
 
@@ -711,7 +743,8 @@ def main():
     os.makedirs(out, exist_ok=True)
 
     print(f'cotas de calculo-modular.py: borda {COLAR_L:.1f} x {COLAR_W:.1f} | '
-          f'corpo {CORPO_L:.1f} | boca {BOCA:.1f} | borda {BORDA_H:.0f} + flare {FLARE:.0f} mm')
+          f'corpo {CORPO_L:.1f} | boca {BOCA:.1f} | borda {BORDA_H:.0f} mm com dente '
+          f'de {DENTE:.2f}')
 
     perfis = {'seg': seg, 'pecas': {}}
     checar = []
@@ -749,38 +782,47 @@ def main():
     print(f'{"tampa-pp":<12} {"":13} | {len(tp.tris):5d} tri | {TRAVA_N} travas de '
           f'{TRAVA_LARG:.0f} mm | {volume_assinado(tp.tris) / 1000.0 * 0.905:5.1f} g em PP')
 
-    tc = tampa_correr(seg)
-    grava_stl(os.path.join(out, 'tampa-correr.stl'), tc.tris, 'tampa-correr')
-    perfis['pecas']['tampa-correr'] = dict(loops=tc.loops, bands=tc.bands, caps=tc.caps,
-                                           prismas=tc.prismas)
-    checar.append(('tampa-correr', tc))
-    print(f'{"tampa-correr":<12} {"":13} | {len(tc.tris):5d} tri | janela + calha em U | '
-          f'{volume_assinado(tc.tris) / 1000.0 * 0.905:5.1f} g em PP')
+    if not os.environ.get('SEM_CORRER'):
+        tc = tampa_correr(seg)
+        grava_stl(os.path.join(out, 'tampa-correr.stl'), tc.tris, 'tampa-correr')
+        perfis['pecas']['tampa-correr'] = dict(loops=tc.loops, bands=tc.bands, caps=tc.caps,
+                                               prismas=tc.prismas)
+        checar.append(('tampa-correr', tc))
+        print(f'{"tampa-correr":<12} {"":13} | {len(tc.tris):5d} tri | janela + calha em U | '
+              f'{volume_assinado(tc.tris) / 1000.0 * 0.905:5.1f} g em PP')
 
-    gv = gaveta(seg)
-    grava_stl(os.path.join(out, 'gaveta.stl'), gv.tris, 'gaveta')
-    perfis['pecas']['gaveta'] = dict(loops=gv.loops, bands=gv.bands, caps=gv.caps,
-                                     prismas=gv.prismas,
-                                     curso=_pos_correr()['g']['curso'])
-    checar.append(('gaveta', gv))
-    print(f'{"gaveta":<12} {"":13} | {len(gv.tris):5d} tri | painel que corre | '
-          f'{volume_assinado(gv.tris) / 1000.0 * 0.905:5.1f} g em PP')
+        gv = gaveta(seg)
+        grava_stl(os.path.join(out, 'gaveta.stl'), gv.tris, 'gaveta')
+        perfis['pecas']['gaveta'] = dict(loops=gv.loops, bands=gv.bands, caps=gv.caps,
+                                         prismas=gv.prismas,
+                                         curso=_pos_correr()['g']['curso'])
+        checar.append(('gaveta', gv))
+        print(f'{"gaveta":<12} {"":13} | {len(gv.tris):5d} tri | painel que corre | '
+              f'{volume_assinado(gv.tris) / 1000.0 * 0.905:5.1f} g em PP')
 
-    a2 = aro2(seg)
-    grava_stl(os.path.join(out, 'aro2-tpe.stl'), a2.tris, 'aro2-tpe')
-    perfis['pecas']['aro2'] = dict(loops=a2.loops, bands=a2.bands, caps=a2.caps,
-                                   prismas=a2.prismas)
-    checar.append(('aro2-tpe', a2))
-    print(f'{"aro2-tpe":<12} {"":13} | {len(a2.tris):5d} tri | '
-          f'{volume_assinado(a2.tris) / 1000.0 * 1.10:5.1f} g em TPE')
+        a2 = aro2(seg)
+        grava_stl(os.path.join(out, 'aro2-tpe.stl'), a2.tris, 'aro2-tpe')
+        perfis['pecas']['aro2'] = dict(loops=a2.loops, bands=a2.bands, caps=a2.caps,
+                                       prismas=a2.prismas)
+        checar.append(('aro2-tpe', a2))
+        print(f'{"aro2-tpe":<12} {"":13} | {len(a2.tris):5d} tri | '
+              f'{volume_assinado(a2.tris) / 1000.0 * 1.10:5.1f} g em TPE')
 
-    a = filete(seg)
-    grava_stl(os.path.join(out, 'filete-tpe.stl'), a.tris, 'filete-tpe')
-    perfis['pecas']['filete'] = dict(loops=a.loops, bands=a.bands, caps=a.caps,
-                                     prismas=a.prismas)
-    checar.append(('filete-tpe', a))
-    print(f'{"filete-tpe":<12} {"":13} | {len(a.tris):5d} tri | '
-          f'{volume_assinado(a.tris) / 1000.0 * 1.10:5.1f} g em TPE')
+    au = aro_u(seg)
+    grava_stl(os.path.join(out, 'aro-u.stl'), au.tris, 'aro-u')
+    perfis['pecas']['aro-u'] = dict(loops=au.loops, bands=au.bands, caps=au.caps,
+                                    prismas=au.prismas)
+    checar.append(('aro-u', au))
+    print(f'{"aro-u":<12} {"":13} | {len(au.tris):5d} tri | calca na lingueta | '
+          f'{volume_assinado(au.tris) / 1000.0 * cm.RHO_SIL * 1000:5.1f} g em silicone')
+
+    ct = corda_teca(seg)
+    grava_stl(os.path.join(out, 'corda-teca.stl'), ct.tris, 'corda-teca')
+    perfis['pecas']['corda-teca'] = dict(loops=ct.loops, bands=ct.bands, caps=ct.caps,
+                                         prismas=ct.prismas)
+    checar.append(('corda-teca', ct))
+    print(f'{"corda-teca":<12} {"":13} | {len(ct.tris):5d} tri | friso usinado | '
+          f'{volume_assinado(ct.tris) / 1000.0 * cm.RHO_SIL * 1000:5.1f} g em silicone')
 
     with open(os.path.join(_BASE, 'perfis.json'), 'w') as f:
         json.dump(perfis, f, separators=(',', ':'))

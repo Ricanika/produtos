@@ -103,9 +103,11 @@ def main():
           f" -> INVERTIDA deixa o friso do 2o aro para cima, sem suporte")
 
     print(f"\nem {out}")
-    print("O filete de TPE e o 2o aro nao se imprimem em FDM. Para o prototipo, use "
-          "corda de silicone de 1,4 mm (filete) e de 1,2 mm (2o aro), cortada no "
-          "comprimento e colada de topo.")
+    print("Nenhum dos tres vedantes se imprime em FDM. Para o prototipo: o ARO EM U "
+          "(2,80 x 3,10, calcado na lingueta) so existe como perfil extrudado - peca "
+          "uma amostra ao fornecedor antes do try-out, porque e ele que decide a "
+          "vedacao. A corda da teca (1,4 mm) e o 2o aro (1,2 mm) saem de corda de "
+          "silicone comum, cortada no comprimento e colada de topo.")
     print("A gaveta corre com 0,25 mm de folga por lado - folga de INJECAO. Em FDM "
           "ela vai sair apertada: imprima a gaveta a 99% em X e Y antes de lixar.")
 

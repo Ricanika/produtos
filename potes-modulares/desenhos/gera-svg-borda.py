@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Corte ampliado da borda oca: flare, perna, canal, saia, aresta e trava.
+"""Corte ampliado da borda nova: dente, degrau, lingueta, aro em U e trava.
 
-Tudo sai de calculo-modular.py. So a metade direita da secao, e sem a saida
-de 0,5 graus - em 16 mm de borda ela vale 0,14 mm, que nesta escala e a
-espessura do traco.
+Tudo sai de calculo-modular.py. So a metade direita da secao, e sem a saida de
+0,5 graus - em 10 mm de borda ela vale 0,09 mm, que nesta escala e a espessura
+do traco.
 """
-import importlib.util, os
+import importlib.util, math, os
 CALC = os.path.join(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__))), 'calculo-modular.py')
 spec = importlib.util.spec_from_file_location('cm', CALC)
@@ -16,27 +16,31 @@ p0 = p[0]
 h = lambda v: v / 2.0
 
 COLAR, CORPO, BOCA = p0['colar_l'], p0['corpo_l'], p0['boca']
-PERNA   = BOCA + 2 * cm.W_IN
-PLUG    = BOCA - 2 * cm.PLUG_FOLGA
-FRISO   = PLUG - 2 * cm.FRISO_PROF
-FILETE  = PLUG - 2 * cm.FRISO_PROF + 2 * cm.FILETE_D
-BANDEJA = PLUG - 2 * cm.PP_PLUG_PAR
-DECK_O  = COLAR + 2 * cm.PP_DECK_FORA
+SAIA_O  = BOCA - 2 * cm.SAIA_FOLGA
+LING_O  = SAIA_O - 2 * cm.RECUO
+LING_I  = LING_O - 2 * cm.LING_T
+DECK_U  = SAIA_O - 2 * cm.SAIA_T
+TAMPA_O = COLAR + 2 * cm.TRAVA_FOLGA
+U_OO    = LING_O + 2 * cm.ARO_PAR
+U_II    = LING_I - 2 * cm.ARO_PAR
 BASE600 = p0['base_ext']
 W       = cm.WALL[1]
-ZB      = -cm.BORDA_H              # fim da boca / comeco do flare
-ZF      = ZB - cm.FLARE            # pe do flare = topo da parede reta
-ZS      = -cm.SAIA_H               # aresta de engate
+ZD      = cm.Z_DENTE               # face de baixo do web = o DENTE
+ZG      = cm.Z_DEGRAU              # face de cima do web = o DEGRAU
+ZL      = cm.Z_DECK_B              # topo da lingueta / da banda do aro
+ZLF     = ZL - cm.LING_H           # ponta da lingueta
+ZUF     = ZL - cm.ARO_H            # fundo do U
+ZUV     = ZUF + cm.ARO_FUNDO       # teto do vao do U
 
-S, R0, Z0 = 14.0, 68.4, 120.0      # escala, origem em x, origem em y
+S, R0, Z0 = 22.0, 69.0, 117.0      # escala, origem em x, origem em y
 X = lambda v: (h(v) - R0) * S + 62
 Y = lambda z: Z0 - z * S
 pt = lambda v, z: '%.1f %.1f' % (X(v), Y(z))
-CUT = 136.9                        # o quadro corta aqui, a esquerda
+CUT = 2 * R0                       # o quadro corta aqui, a esquerda
 
 o = []; a = o.append
-a('      <svg viewBox="0 0 600 450" role="img" aria-label="Corte ampliado da borda oca: '
-  'flare, perna de dentro, canal, saia livre, aresta de engate e a trava de clipe da tampa">')
+a('      <svg viewBox="0 0 600 450" role="img" aria-label="Corte ampliado da borda de '
+  '8 mm: dente, degrau interno, lingueta com o aro de silicone em U e a trava de clipe">')
 a('        <defs>')
 a('          <pattern id="hb" width="5" height="5" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">')
 a('            <line x1="0" y1="0" x2="0" y2="5" stroke="var(--pp)" stroke-width="1" opacity=".5"/>')
@@ -44,75 +48,77 @@ a('          </pattern>')
 a('        </defs>')
 
 # ---- tampa de PP (desenhada primeiro; os contornos dos potes ficam por cima) ----
-seq = [(CUT, -cm.BASE_T), (BANDEJA, -cm.BASE_T), (BANDEJA, cm.PP_DECK),
-       (DECK_O, cm.PP_DECK), (DECK_O, 0.0), (PLUG, 0.0),
-       (PLUG, -3.0), (FRISO, -3.0), (FRISO, -4.4), (PLUG, -4.4),
-       (PLUG, -cm.PP_PLUG_H + 0.5), (PLUG - 2.0, -cm.PP_PLUG_H),
-       (BANDEJA, -cm.PP_PLUG_H),
-       (BANDEJA, -cm.BASE_T - cm.PP_DECK), (CUT, -cm.BASE_T - cm.PP_DECK)]
+seq = [(CUT, cm.Z_MOD), (DECK_U, cm.Z_MOD), (DECK_U, cm.PP_FLANGE),
+       (TAMPA_O, cm.PP_FLANGE), (TAMPA_O, 0.0), (SAIA_O, 0.0),
+       (SAIA_O, ZL), (LING_O, ZL), (LING_O, ZLF), (LING_I, ZLF), (LING_I, ZL),
+       (DECK_U, ZL), (CUT, ZL)]
 d = 'M ' + ' L '.join(pt(v, z) for v, z in seq) + ' Z'
 a('        <path d="%s" fill="var(--verde)" opacity=".55"/>' % d)
 a('        <path d="%s" fill="none" stroke="var(--verde)" stroke-width="1.5"/>' % d)
 
-# trava de clipe: gancho sob a aresta da saia + rabo para o dedo
+# trava de clipe: gancho sob o DENTE + rabo para o dedo
 F, TT = cm.TRAVA_FOLGA, cm.TRAVA_T
-# mesma correcao de gera-3d.py: a farpa e cotada da face da borda NA ALTURA
-# DA ARESTA, nao no topo.
-FA = cm.TRAVA_FARPA + cm.SAIA_H * cm.T
+# mesma correcao de gera-3d.py: a farpa e cotada da face da borda NA ALTURA DO
+# DENTE, nao no topo.
+FA = cm.TRAVA_FARPA + cm.BORDA_H * cm.T
 BU, RA = cm.TRAVA_BULGE, cm.TRAVA_RABO
-tv = [(COLAR + 2 * F,                 cm.PP_DECK),
-      (COLAR + 2 * F,                 ZS),
-      (COLAR - 2 * FA,                ZS),
-      (COLAR - 2 * FA,                ZS - 0.50),
-      (COLAR + 2 * (F + 0.20),        ZS - 1.70),
-      (COLAR + 2 * (F + BU),          ZS - RA),
-      (COLAR + 2 * (F + BU + TT),     ZS - RA + 0.9),
-      (COLAR + 2 * (F + TT),          ZS - 0.80),
-      (COLAR + 2 * (F + TT),          cm.PP_DECK)]
+tv = [(COLAR + 2 * F,                 cm.PP_FLANGE),
+      (COLAR + 2 * F,                 ZD),
+      (COLAR - 2 * FA,                ZD),
+      (COLAR - 2 * FA,                ZD - 0.50),
+      (COLAR + 2 * (F + 0.20),        ZD - 1.70),
+      (COLAR + 2 * (F + BU),          ZD - RA),
+      (COLAR + 2 * (F + BU + TT),     ZD - RA + 0.9),
+      (COLAR + 2 * (F + TT),          ZD - 0.80),
+      (COLAR + 2 * (F + TT),          cm.PP_FLANGE)]
 dt = 'M ' + ' L '.join(pt(v, z) for v, z in tv) + ' Z'
 a('        <path d="%s" fill="var(--verde)" opacity=".8"/>' % dt)
 a('        <path d="%s" fill="none" stroke="var(--verde)" stroke-width="1.5"/>' % dt)
 
-# filete de TPE, na medida livre (invade 0,20 mm a boca - e a interferencia)
-fl = [(FRISO, -3.0), (FILETE, -3.0), (FILETE, -4.4), (FRISO, -4.4)]
-a('        <path d="M %s Z" fill="var(--tpe)"/>' % ' L '.join(pt(v, z) for v, z in fl))
+# aro em U, CALCADO na lingueta e na medida livre: a perna de fora passa
+# ARO_COMP por lado alem da boca, e e essa a interferencia.
+u = [(U_OO, ZL), (U_OO, ZUF), (U_II, ZUF), (U_II, ZL),
+     (LING_I, ZL), (LING_I, ZUV), (LING_O, ZUV), (LING_O, ZL)]
+a('        <path d="M %s Z" fill="var(--tpe)"/>' % ' L '.join(pt(v, z) for v, z in u))
 
-# ---- pote de baixo: a borda OCA ----
-pb = [(BOCA, ZB), (BOCA, -cm.CHANF), (BOCA + 2 * cm.CHANF, 0.0),
-      (COLAR - 2 * cm.ARRED, 0.0), (COLAR, -cm.ARRED),
-      (COLAR, ZS), (COLAR - 2 * cm.W_SAIA, ZS),
-      (COLAR - 2 * cm.W_SAIA, -cm.TOPO_T), (PERNA, -cm.TOPO_T), (PERNA, ZB),
-      (CORPO, ZF), (CORPO, ZF - 6.0),
-      (CORPO - 2 * W, ZF - 6.0), (CORPO - 2 * W, ZF)]
+# ---- pote de baixo: a borda em L, com a meia-cana no topo ----
+pb = [(BOCA, ZG), (BOCA, -cm.ARRED)]
+for k in range(1, 8):                       # meia-cana do topo
+    ang = math.radians(180 - 180 * k / 8)
+    pb.append((COLAR - 2 * cm.ARRED + 2 * cm.ARRED * math.cos(ang),
+               -cm.ARRED + cm.ARRED * math.sin(ang)))
+pb += [(COLAR, -cm.ARRED), (COLAR, ZD), (CORPO, ZD), (CORPO, ZD - 6.0),
+       (CORPO - 2 * W, ZD - 6.0), (CORPO - 2 * W, ZG)]
 a('        <path d="M %s Z" fill="url(#hb)" stroke="var(--pp)" stroke-width="1.8"/>'
   % ' L '.join(pt(v, z) for v, z in pb))
 
-# ---- pote de cima: fundo RETO pousando na bandeja ----
-pc = [(BASE600, -cm.BASE_T), (BASE600, 6.0), (CUT, 6.0), (CUT, -cm.BASE_T)]
+# ---- pote de cima: fundo RETO pousando no deck ----
+pc = [(BASE600, cm.Z_MOD), (BASE600, 3.5), (CUT, 3.5), (CUT, cm.Z_MOD)]
 a('        <path d="M %s Z" fill="url(#hb)" stroke="var(--pp)" stroke-width="1.8"/>'
   % ' L '.join(pt(v, z) for v, z in pc))
 
 # ---- chamadas ----
-CH = [(COLAR - cm.W_SAIA, ZS, 52, 'ARESTA DE ENGATE',
-       'face de baixo da saia livre, %.2f mm/lado' % cm.W_SAIA,
-       'a saia e livre: e material, nao um anel flutuando'),
-      (COLAR - cm.W_SAIA - cm.CANAL, -cm.SAIA_H / 2, 118, 'CANAL',
-       '%.2f mm de largura, %.1f mm de profundidade' % (cm.CANAL, cm.SAIA_H - cm.TOPO_T),
-       'nervura de aco de %.1f:1 no molde' % ((cm.SAIA_H - cm.TOPO_T) / cm.CANAL)),
-      (COLAR - 2 * FA, ZS - 0.25, 184, 'GANCHO DA TRAVA',
-       'avanca %.2f mm sob a aresta (%.0f%% de engate)'
-       % (cm.TRAVA_FARPA, 100 * cm.TRAVA_FARPA / cm.W_SAIA),
+CH = [(COLAR - cm.DENTE, ZD, 48, 'O DENTE',
+       'face de BAIXO do web, %.2f mm/lado' % cm.DENTE,
+       'a parede da borda esta em cima dele: e material, nao aba flutuando'),
+      (BOCA, ZG, 112, 'DEGRAU INTERNO',
+       'face de CIMA do web, %.2f mm/lado' % (cm.DENTE + W - cm.BORDA_PAR),
+       'e nele que a placa de teca pousa - e isso fixa os %.2f mm dela' % cm.TECA_ESP),
+      (COLAR - 2 * FA, ZD - 0.25, 178, 'GANCHO DA TRAVA',
+       'avanca %.2f mm sob o dente (%.0f%% dele)'
+       % (cm.TRAVA_FARPA, 100 * cm.TRAVA_FARPA / cm.DENTE),
        '2 travas de %.0f mm, uma por lado comprido' % (cm.TRAVA_FRAC * COLAR)),
-      (FILETE, -3.7, 250, 'FILETE DE TPE',
-       'comprime %.2f mm/lado contra a boca' % (cm.FILETE_SOB - cm.PLUG_FOLGA),
-       'o MESMO filete na teca, num friso 2,0 mm mais fundo'),
-      (BANDEJA, -cm.BASE_T, 316, 'PLANO MODULAR',
-       'piso da bandeja, 2,0 mm abaixo do topo da borda',
+      (U_OO, (ZL + ZUF) / 2, 244, 'ARO EM U DE SILICONE',
+       'comprime %.2f mm/lado contra a parede da boca' % cm.ARO_COMP,
+       'calcado na lingueta: nao e colado, ele abraca'),
+      (LING_O, ZLF + 0.6, 308, 'LINGUETA',
+       '%.2f x %.2f mm, recuada %.2f em cada face da saia'
+       % (cm.LING_T, cm.LING_H, cm.RECUO),
+       'a teca NAO leva o U: em madeira essa lingueta quebra'),
+      (DECK_U, cm.Z_MOD, 368, 'PLANO MODULAR',
+       'topo do deck, %.1f mm abaixo do topo da borda' % cm.BASE_T,
        'recebe o FUNDO RETO do pote de cima - nao ha pe'),
-      (PERNA, ZB + 1.0, 372, 'PERNA DE DENTRO',
-       'parede %.2f mm, faz a boca de %.1f mm' % (cm.W_IN, BOCA),
-       'o flare abre %.2f mm/lado em %.1f mm' % ((PERNA - CORPO) / 2, cm.FLARE)),
-      (CORPO, ZF - 4.0, 412, 'CORPO RETO',
+      (CORPO, ZD - 4.0, 420, 'CORPO RETO',
        '%.1f mm, secao constante ate o fundo' % CORPO,
        'e o que o IML pede')]
 a('        <g stroke="var(--cota)" stroke-width=".9" fill="none">')
@@ -131,9 +137,9 @@ for v, z, yy, t, s1, s2 in CH:
         a('          <text x="268" y="%d" font-size="10.5" fill="var(--muted)">%s</text>' % (yy + 29, s2))
 a('        </g>')
 a('        <g font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">')
-a('          <text x="66" y="%.0f">POTE DE CIMA</text>' % Y(4.2))
-a('          <text x="66" y="%.0f" fill="var(--verde)">TAMPA PP</text>' % Y(-3.0))
-a('          <text x="66" y="%.0f">POTE DE BAIXO</text>' % Y(ZF - 4.2))
+a('          <text x="66" y="%.0f">POTE DE CIMA</text>' % Y(3.4))
+a('          <text x="66" y="%.0f" fill="var(--verde)">TAMPA PP</text>' % Y(-2.9))
+a('          <text x="66" y="%.0f">POTE DE BAIXO</text>' % Y(ZD - 4.2))
 a('        </g>')
 a('        <text x="62" y="22" font-family="IBM Plex Mono, monospace" font-size="10.5" '
   'fill="var(--muted)">CORTE NA BORDA · escala %d:1 · só a metade direita · sem a saída de 0,5°</text>' % S)

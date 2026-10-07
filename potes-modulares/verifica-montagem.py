@@ -143,13 +143,23 @@ def correr():
     diz('canal aberto em cima', bool(eixo) and bool(lado) and eixo[-1][1] < lado[-1][1] - 2.0,
         '%.2f mm de profundidade util' % ((lado[-1][1] - eixo[-1][1]) if eixo and lado else 0))
 
-    print('\n10) O VERTEDOURO NAO CORTA O FILETE')
-    plug = intervalos(raio_z(L, ccr.PLUG / 2 - 0.3, 0.0))
-    print('   raio na parede do plug, no eixo do bico:', plug)
-    diz('parede do plug some acima do friso', bool(plug) and plug[-1][1] < -0.9,
-        'topo do plug no entalhe em %+.2f (friso comeca em -3,00)' % plug[-1][1])
-    diz('plug inteiro abaixo do friso', bool(plug) and plug[0][0] < -4.4,
-        'vai ate %+.2f' % plug[0][0])
+    print('\n10) O VERTEDOURO NAO CORTA A LINGUETA NEM O ARO')
+    import importlib.util as _il
+    _s2 = _il.spec_from_file_location('cm2', os.path.join(BASE, 'calculo-modular.py'))
+    cm = _il.module_from_spec(_s2); _s2.loader.exec_module(cm)
+    saia_o = ccr.PLUG
+    ling = intervalos(raio_z(L, saia_o / 2 - cm.RECUO - cm.LING_T / 2, 0.0))
+    print('   raio no meio da lingueta, NO EIXO DO BICO:', ling)
+    print('   (era aqui que a revisao 9 cortava o friso do filete)')
+    fundo_ling = cm.Z_DECK_B - cm.LING_H
+    diz('a lingueta existe inteira sob o bico', bool(ling)
+        and ling[0][0] <= fundo_ling + 0.01 and ling[-1][1] >= cm.Z_DECK_B - 0.01,
+        'de %+.2f a %+.2f (lingueta vai de %+.2f a %+.2f)'
+        % (ling[0][0], ling[-1][1], fundo_ling, cm.Z_DECK_B))
+    diz('o piso da calha fica ACIMA da banda do aro',
+        ccr.Z_SEL > cm.Z_DECK_B,
+        'calha em %+.2f, topo do aro em %+.2f: %.2f mm de distancia'
+        % (ccr.Z_SEL, cm.Z_DECK_B, ccr.Z_SEL - cm.Z_DECK_B))
     return ok
 
 
@@ -157,9 +167,15 @@ cm_PP_DECK = 1.50
 
 
 def main():
+    import importlib.util
+    sp = importlib.util.spec_from_file_location('cm', os.path.join(BASE, 'calculo-modular.py'))
+    cm = importlib.util.module_from_spec(sp); sp.loader.exec_module(cm)
+    T05 = 0.008727                       # tan(0,5°)
+
     P = ler('pote-600.stl')
     L = ler('tampa-pp.stl')
-    F = ler('filete-tpe.stl')
+    U = ler('aro-u.stl')
+    K = ler('tampa-teca.stl')
     H = max(v[2] for t in P for v in t)
     dz = lambda z: H + z
     ok = True
@@ -171,61 +187,91 @@ def main():
 
     print('pote 600: topo da borda em z = %.1f mm' % H)
 
-    print('\n1) FILETE x BOCA  (z = -3,7 mm, lado curto)')
-    pot = cruzamentos(P, dz(-3.7), 'x')
-    fil = cruzamentos(F, -3.7, 'x')
-    print('   pote:', pot, '\n   filete:', fil)
+    print('\n1) ARO EM U x BOCA  (z = -5,0 mm, lado curto)')
+    pot = cruzamentos(P, dz(-5.0), 'x')
+    aro = cruzamentos(U, -5.0, 'x')
+    print('   pote:', pot, '\n   aro em U:', aro)
     boca = min(pot)                       # face interna da boca
-    # o filete e de secao constante e a boca tem saida: a 3,7 mm do topo a boca
-    # ja fechou 0,03 mm/lado, e a interferencia sobe na mesma medida.
-    alvo = 0.20 + 3.7 * 0.008727
-    diz('filete invade a boca', abs((max(fil) - boca) - alvo) < 0.02,
-        '%.3f mm/lado (alvo %.3f com a saida)' % (max(fil) - boca, alvo))
+    # a boca tem saida: a 5 mm do topo ela ja fechou 0,04 mm/lado, e a
+    # interferencia sobe na mesma medida.
+    alvo = cm.ARO_COMP + 5.0 * T05
+    diz('o U invade a boca', abs((max(aro) - boca) - alvo) < 0.02,
+        '%.3f mm/lado (alvo %.3f com a saida)' % (max(aro) - boca, alvo))
+    diz('o U e OCO: quatro faces no raio', len(aro) == 4,
+        'perna de fora, vao da lingueta e perna de dentro')
 
-    print('\n2) GANCHO x ARESTA DE ENGATE  (z = -10 mm, lado comprido)')
-    acima = cruzamentos(P, dz(-9.9), 'y')
-    abaixo = cruzamentos(P, dz(-10.1), 'y')
-    gancho = cruzamentos(L, -10.25, 'y')
-    print('   pote acima da aresta:', acima, '\n   pote abaixo:', abaixo,
+    print('\n2) GANCHO x DENTE  (z = -8 mm, lado comprido)')
+    acima = cruzamentos(P, dz(-7.9), 'y')
+    abaixo = cruzamentos(P, dz(-8.1), 'y')
+    gancho = cruzamentos(L, -8.25, 'y')
+    print('   pote acima do dente:', acima, '\n   pote abaixo:', abaixo,
           '\n   tampa no gancho:', gancho)
-    saia_o, saia_i = max(acima), sorted(acima)[-2]
+    borda_o, corpo_o = max(acima), max(abaixo)
     gancho_i = min(gancho)
-    diz('aresta de engate', abs((saia_o - saia_i) - 1.20) < 0.06,
-        '%.2f mm/lado (alvo 1,20)' % (saia_o - saia_i))
-    diz('gancho entra sob a aresta', saia_o - gancho_i > 0.7,
-        'avanca %.2f mm da face da saia (aresta tem %.2f)'
-        % (saia_o - gancho_i, saia_o - saia_i))
-    diz('gancho nao bate na perna', gancho_i >= max(abaixo) - 0.01,
-        'perna em %.2f, ponta do gancho em %.2f' % (max(abaixo), gancho_i))
+    # O alvo NAO e DENTE cheio: entre -7,9 e -8,1 a saida ja tirou 7,8*tan(0,5°)
+    # da face da borda. E a malha e facetada - anel() nao poe vertice a 90°, so
+    # pontas de arco, entao a corda do meio do lado comprido passa ~0,04 mm por
+    # DENTRO da superficie real, e tanto mais quanto maior o raio do canto. Os
+    # dois efeitos sao da ordem da cota que se esta medindo; ignorar qualquer um
+    # faz a conferencia reprovar uma peca certa.
+    alvo_dente = cm.DENTE - 7.8 * T05
+    diz('o dente existe e tem a largura certa',
+        abs((borda_o - corpo_o) - alvo_dente) < 0.05,
+        '%.3f mm/lado (alvo %.3f: dente %.2f menos a saida)'
+        % (borda_o - corpo_o, alvo_dente, cm.DENTE))
+    # mesma faceta do lado do pote; a trava e prisma reto e nao tem faceta.
+    diz('gancho entra sob o dente',
+        abs((borda_o - gancho_i) - cm.TRAVA_FARPA) < 0.06,
+        'avanca %.3f mm da face da borda (alvo %.2f)'
+        % (borda_o - gancho_i, cm.TRAVA_FARPA))
+    diz('gancho nao bate no corpo', gancho_i >= corpo_o - 0.01,
+        'corpo em %.2f, ponta do gancho em %.2f' % (corpo_o, gancho_i))
 
     print('\n3) TRAVA x FACE EXTERNA DA BORDA  (z = -5 mm, lado comprido)')
     pot5 = cruzamentos(P, dz(-5.0), 'y')
     tam5 = cruzamentos(L, -5.0, 'y')
     print('   pote:', pot5, '\n   tampa:', tam5)
-    # a trava e a primeira face da tampa que fica FORA da borda; as menores
-    # sao o plug e a parede da bandeja, que estao dentro.
     trava_i = min(v for v in tam5 if v > max(pot5))
     diz('folga da trava sobre a borda', 0.28 <= (trava_i - max(pot5)) <= 0.45,
-        '%.2f mm (0,30 no topo, mais o que a saida abre)' % (trava_i - max(pot5)))
+        '%.2f mm (%.2f no topo, mais o que a saida abre)'
+        % (trava_i - max(pot5), cm.TRAVA_FOLGA))
 
-    print('\n4) DECK x TOPO DA BORDA  (z = -0,5 mm, lado curto)')
-    topo = cruzamentos(P, dz(-0.5), 'x')
-    deck = cruzamentos(L, 0.75, 'x')
-    print('   pote:', topo, '\n   tampa (deck):', deck)
-    diz('deck cobre a borda inteira', max(deck) > max(topo),
-        'deck %.2f x borda %.2f' % (max(deck), max(topo)))
+    print('\n4) ABA x MEIA-CANA DO TOPO  (lado curto)')
+    topo = cruzamentos(P, dz(-0.3), 'x')
+    aba = cruzamentos(L, 0.6, 'x')
+    print('   pote junto ao topo:', topo, '\n   tampa (aba):', aba)
+    diz('a aba cobre a borda inteira', max(aba) > max(topo),
+        'aba %.2f x borda %.2f' % (max(aba), max(topo)))
+    diz('a aba pousa na meia-cana', min(aba) < (max(topo) + min(topo)) / 2,
+        'a aba chega a %.2f, o apice da meia-cana esta em %.2f'
+        % (min(aba), (max(topo) + min(topo)) / 2))
 
-    print('\n5) BANDEJA x FUNDO DO POTE DE CIMA  (lado curto)')
+    print('\n5) DECK x FUNDO DO POTE DE CIMA  (lado curto)')
     fundo = max(cruzamentos(P, 0.05, 'x'))
     band = cruzamentos(L, -1.9, 'x')
-    print('   fundo do pote: %.2f' % fundo, '\n   bandeja:', band)
-    # a bandeja tem duas faces: a de DENTRO (onde o fundo encosta) e a de fora.
-    diz('folga do fundo na bandeja', 0.5 < (min(band) - fundo) < 1.2,
-        '%.2f mm/lado' % (min(band) - fundo))
+    print('   fundo do pote: %.2f' % fundo, '\n   saia da tampa:', band)
+    diz('folga do fundo dentro da saia', 0.4 < (min(band) - fundo) < 1.3,
+        '%.2f mm/lado (pedia %.2f)' % (min(band) - fundo, cm.BANDEJA_FE))
 
     print('\n6) PLANO MODULAR')
-    piso = cruzamentos(L, -2.0, 'x')
-    diz('piso da bandeja existe em z=-2,00', bool(piso), '2,0 mm abaixo do topo da borda')
+    piso = cruzamentos(L, -2.0 + 0.05, 'x')
+    diz('o deck existe em z=-2,00', bool(piso), '2,0 mm abaixo do topo da borda')
+
+    print('\n7) A PLACA DE TECA POUSA NO DEGRAU  (lado curto)')
+    z_teca = min(v[2] for t in K for v in t)
+    z_top_teca = max(v[2] for t in K for v in t)
+    # o degrau do pote: a boca acima dele, o corpo abaixo
+    acima_d = cruzamentos(P, dz(cm.Z_DEGRAU + 0.3), 'x')
+    abaixo_d = cruzamentos(P, dz(cm.Z_DEGRAU - 0.3), 'x')
+    print('   placa de %.2f a %.2f | boca acima do degrau %.2f | corpo abaixo %.2f'
+          % (z_teca, z_top_teca, min(acima_d), min(abaixo_d)))
+    diz('a placa chega ao degrau', abs(z_teca - cm.Z_DEGRAU) < 0.01,
+        'fundo da placa em %+.2f, degrau em %+.2f' % (z_teca, cm.Z_DEGRAU))
+    diz('e o topo dela cai no plano modular', abs(z_top_teca - cm.Z_MOD) < 0.01,
+        'topo em %+.2f' % z_top_teca)
+    teca_x = max(cruzamentos(K, -4.0, 'x'))
+    diz('a placa nao passa pelo degrau', teca_x > min(abaixo_d),
+        'placa %.2f contra o corpo %.2f: ela POUSA, nao cai' % (teca_x, min(abaixo_d)))
 
     ok2 = correr()
     print('\nMONTAGEM:', 'OK' if (ok and ok2) else 'FALHOU')

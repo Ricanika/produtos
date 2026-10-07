@@ -51,9 +51,10 @@ P0 = P[0]
 COLAR_L, COLAR_W = P0['colar_l'], P0['colar_w']
 DLW = COLAR_L - COLAR_W
 BOCA = P0['boca']
-PLUG = BOCA - 2 * cm.PLUG_FOLGA
-BANDEJA = PLUG - 2 * cm.PP_PLUG_PAR          # vao livre da bandeja
-DECK_O = COLAR_L + 2 * cm.PP_DECK_FORA
+PLUG = BOCA - 2 * cm.SAIA_FOLGA              # face externa da saia da tampa
+BANDEJA = PLUG - 2 * cm.SAIA_T               # vao livre do deck
+DECK_O = COLAR_L + 2 * cm.TRAVA_FOLGA        # face externa da aba
+PLUG_FIM = cm.Z_DECK_B - cm.LING_H           # ponta da lingueta (-5,90)
 BAND_W = BANDEJA - DLW
 R_BAND = cm.raio(BANDEJA, COLAR_L)
 
@@ -218,12 +219,16 @@ def geometria(p):
     # comeca em -3,00 na face do plug. E ele que decide quanto se inclina o pote.
     run1 = GAV_PAREDE
     rampa1 = math.degrees(math.atan2(Z_MOD - Z_BOLSO, run1))
-    run2 = cm.PP_PLUG_PAR + 2.0
+    # O run do vertedouro nao e escolhido: e o que sobra entre a borda do deck
+    # e a ponta da aba, deixando 1,0 mm de piso chato antes do labio. Na
+    # revisao 8 a aba passava 1,80 mm da borda e sobrava folga; a aba da
+    # revisao 10 passa so TRAVA_FOLGA + TRAVA_T, e o run ficou curto.
+    run2 = (DECK_O / 2 - 1.0) - BANDEJA / 2
     vert = Z_SEL - Z_MOD
     rampa2 = math.degrees(math.atan2(vert, run2))
     area = jan_w * jan_d - (4 - math.pi) * 3.0 ** 2      # cantos R3 na janela
     aro_per = perim_ret(jan_w + 4.0, jan_d + 4.0, 3.0)   # friso 2 mm fora da janela
-    aro_g = aro_per * math.pi * (ARO2_D / 2) ** 2 * cm.RHO_TPE
+    aro_g = aro_per * math.pi * (ARO2_D / 2) ** 2 * cm.RHO_SIL
     gav_g = (L['gav_w'] * L['gav_l'] - (4 - math.pi) * 3.0 ** 2) * GAV_T * cm.RHO_PP
     # forca para fechar: atrito do aro comprimido ARO2_COMP
     Etpe, forma, mu = 1.8, 1.8, 0.75
@@ -267,13 +272,18 @@ def verifica():
     a tampa deixar de vedar, a gaveta nao caber, o bico virar tubo fechado.
     """
     falhas = []
-    z_friso = -3.00                                  # topo do friso do filete
+    # Na revisao 9 o datum era o friso do filete, em -3,00 na face do plug, e o
+    # vertedouro quase o cortou. Na revisao 10 quem veda e o aro em U, e a banda
+    # dele vai de Z_DECK_B para baixo na face EXTERNA da saia. O vertedouro sobe
+    # pela face INTERNA e sai por cima da aba: nao chega perto. Mas o teste fica,
+    # com o datum novo - foi ele que pegou o erro da outra vez.
+    z_aro = cm.Z_DECK_B                              # topo da banda do aro em U
     if Z_SEL <= 0.0:
         falhas.append('piso da calha em %+.2f: abaixo de z=0 ele corta o apoio '
                       'da tampa na borda' % Z_SEL)
-    if Z_SEL <= z_friso + 1.0:
-        falhas.append('piso da calha em %+.2f: encosta no friso do filete (%+.2f) '
-                      '-> a tampa nao veda nem fechada' % (Z_SEL, z_friso))
+    if Z_SEL <= z_aro + 1.0:
+        falhas.append('piso da calha em %+.2f: encosta na banda do aro em U (%+.2f) '
+                      '-> a tampa nao veda nem fechada' % (Z_SEL, z_aro))
     if Z_SEL - 0.0 < cm.PP_DECK - 0.4:
         falhas.append('so %.2f mm de material entre o piso da calha e o apoio na '
                       'borda' % (Z_SEL - 0.0))
@@ -281,9 +291,9 @@ def verifica():
         falhas.append('o bolso e raso demais para a gaveta de %.2f mm' % GAV_T)
     if Z_TOPO <= Z_SEL + 1.5:
         falhas.append('a calha tem so %.2f mm de profundidade' % (Z_TOPO - Z_SEL))
-    if Z_BOLSO - cm.PP_DECK <= -cm.PP_PLUG_H:
-        falhas.append('o fundo do bolso (%+.2f) passa da ponta do plug (%+.2f)'
-                      % (Z_BOLSO - cm.PP_DECK, -cm.PP_PLUG_H))
+    if Z_BOLSO - cm.PP_DECK <= PLUG_FIM:
+        falhas.append('o fundo do bolso (%+.2f) passa da ponta da lingueta (%+.2f)'
+                      % (Z_BOLSO - cm.PP_DECK, PLUG_FIM))
     if GAV_T - ARO2_PROF < 0.8:
         falhas.append('sob o friso do 2o aro sobram so %.2f mm de gaveta'
                       % (GAV_T - ARO2_PROF))
@@ -351,8 +361,8 @@ def main():
     print("=" * 79)
     print(f"Base (nao muda): deck {DECK_O:.1f} x {DECK_O - DLW:.1f} | plug {PLUG:.1f} | "
           f"bandeja {BANDEJA:.1f} x {BAND_W:.1f} (canto R{R_BAND:.1f})")
-    print(f"Plano modular em z = {Z_MOD:+.2f} | vedacao ao pote: o MESMO filete de "
-          f"{cm.FILETE_D:.2f} mm na boca")
+    print(f"Plano modular em z = {Z_MOD:+.2f} | vedacao ao pote: o MESMO aro em U "
+          f"({cm.ARO_W:.2f} x {cm.ARO_H:.2f}) calcado na lingueta")
     print(f"Travas de clipe: {cm.TRAVA_N} de {cm.TRAVA_FRAC * COLAR_L:.0f} mm, "
           f"centradas nos lados COMPRIDOS")
 
@@ -482,13 +492,15 @@ def main():
     print("FERRAMENTAL")
     print("-" * 79)
     print( "  A tampa de correr e um molde NOVO (5 -> 6 pecas injetadas na linha):")
-    print( "    corpo x4 . tampa de PP . tampa de correr . filete . 2o aro")
+    print( "    corpo x4 . tampa de PP . tampa de correr . aro em U . 2o aro")
     print( "  O corpo NAO muda: a terceira tampa usa a mesma borda, a mesma boca e o")
-    print( "  mesmo filete. Foi por isso que o mecanismo ficou todo dentro da tampa.")
+    print( "  mesmo aro em U. Foi por isso que o mecanismo ficou todo dentro da tampa.")
     print( "  A gaveta e peca separada: molde proprio ou cavidade no mesmo bloco.")
-    print(f"  O 2o aro e outro perfil de TPE ({ARO2_D:.2f} mm contra "
-          f"{cm.FILETE_D:.2f} do filete) - vale perguntar ao fornecedor se sai do")
-    print( "  mesmo material com duas matrizes de extrusao, para nao abrir contrato novo.")
+    print(f"  O 2o aro e corda redonda de {ARO2_D:.2f} mm, outro perfil que o U "
+          f"({cm.ARO_W:.2f} x {cm.ARO_H:.2f}).")
+    print( "  Com a revisao 10 a linha ja tem tres perfis de silicone extrudado: o U")
+    print( "  das tampas de PP, a corda da teca e esta. Vale perguntar ao fornecedor")
+    print( "  se saem do mesmo composto com tres matrizes, para nao abrir contrato novo.")
 
     print("\n" + "-" * 79)
     print("CONFERENCIAS")

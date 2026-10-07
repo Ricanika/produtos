@@ -1,6 +1,6 @@
 # Linha Potes Retangulares Modulares em PP
 
-**Status:** estudo de viabilidade técnica · **Revisão 9** · 23/09/2026
+**Status:** estudo de viabilidade técnica · **Revisão 10** · 07/10/2026
 **Origem:** evolução do Projeto 115 do ERP ("Conjunto Potes Modular") · **Planta:** Nitron – Fábrica (CODPLP 1)
 
 Linha retangular em PP transparente, **parede reta com cantos arredondados**, quatro litragens
@@ -10,6 +10,49 @@ combinação empilhada chega à altura do maior.
 Todos os números de máquina, matéria-prima, custo e ferramental saíram do Sankhya, não de
 estimativa de catálogo. Fontes citadas em cada seção.
 
+> **Revisão 10 — a borda oca saiu; entrou uma borda de 8 mm com DENTE.** O Ricardo trouxe
+> uma referência física (um pote cinza com tampa canelada e um perfil de silicone em U) e
+> pediu três coisas: borda superior de ~8 mm com um **dente em toda a volta na base dela**,
+> onde a trava engata; a borda **expandindo ~3 mm para fora**, e nessa expansão encaixa a
+> parte interna da tampa; e a tampa entrando no corpo com um **vão na lateral** onde vai um
+> silicone **extrudado em formato de U**.
+>
+> **A seção, de baixo para cima.** A parede reta sobe até −8,00 (cotado do topo). Ali um
+> **web** horizontal de 1,00 mm atravessa para fora, e a parede da borda sobe dele até o topo,
+> que é uma **meia-cana** de R0,60. A face de **baixo** do web é o **dente** (3,18 mm/lado); a
+> de **cima** é um **degrau interno**; entre o web e o topo sobram 7,00 mm de **boca**, e é
+> nela que a saia da tampa entra.
+>
+> **O que isso devolveu, sem ninguém pedir:**
+>
+> | | revisão 8 | revisão 10 |
+> |---|---|---|
+> | footprint | 153,7 × 87,8 | **147,5 × 84,3 mm** |
+> | peso do 600 ml | 52,9 g | **47,1 g** (−11%) |
+> | área projetada do corpo | 134 cm² | **123 cm²** |
+> | aresta de engate | 1,20 mm (gancho usa 67%) | **3,18 mm** (gancho usa 25%) |
+> | feição nova no molde | nervura de 1,20 × 8,6 mm (7,2:1) | **nenhuma** — a nervura sumiu |
+> | placa de teca | 8,0 mm, vence o vão em flexão | **5,0 mm**, pousa no degrau em compressão |
+>
+> **A vedação virou um U.** A tampa de PP tem **uma saia só** (foi a escolha do Ricardo contra
+> uma de saia dupla), com uma **lingueta** de 0,80 × 2,40 mm recuada 0,20 em cada face. O aro
+> de silicone extrudado **calça** nela — não é colado, ele abraça com 0,10 mm de aperto — e a
+> perna de fora comprime **0,35 mm/lado** contra a parede da boca. Uma perna de 1,00 mm
+> comprimida 0,35 é muito mais mole que um cordão maciço de 1,40 comprimido 0,20: fecha mais
+> leve com a mesma vedação.
+>
+> **O que custou.** A borda deixou de ser um caixão fechado de 3,80 × 12,0 mm e virou um **L**
+> (web + parede): menos rígida na boca. E ela encurtou de 16 para 10 mm, então o painel reto da
+> parede ficou 6 mm mais alto — no 600 ml, onde a altura é o vão menor, o painel ficou
+> **1,61× mais flexível** que na revisão 8 (ainda assim mais rígido que na 7). Do 1,8 L para
+> cima melhorou. **A pergunta do protótipo continua a mesma: a boca ovaliza o bastante para
+> soltar o aro?**
+>
+> **A teca perdeu o vedante comum.** O U calça numa lingueta de 0,80 mm, e em madeira essa
+> lingueta quebra. A placa fica com **corda redonda em friso usinado** — 10,2 kgf de atrito,
+> que é o que a segura, já que ela não tem trava. Quem quiser um vedante só na linha inteira
+> precisa de um aro de PP carregando o U, com a placa encaixada nele. Fica como decisão aberta.
+>
 > **Revisão 9 — a terceira tampa: de correr, com bico aberto em U.** Ela parte da tampa de PP
 > (mesmo plug, mesmo filete, as mesmas duas travas) e acrescenta quatro coisas: um **bolso** no piso
 > da bandeja, uma **janela** de 22 × 46 mm no lado curto, uma **gaveta** de 30 × 60 × 1,8 mm que
@@ -85,17 +128,17 @@ estimativa de catálogo. Fontes citadas em cada seção.
 |---|---|
 | Modularidade de empilhamento | **Viável** — passo único de 60 mm |
 | Litragens 600 / 1200 / 1800 / 2400 ml | **Viável e exatas** — a parede reta elimina o conflito com o passo |
-| Parede reta com cantos arredondados | **Viável** com 0,5°/lado e R10 na borda — o aninhamento a vazio **não piorou** (seção 3.4) |
-| Rodapé reto para IML | **Viável** — seção constante do flare ao fundo, 46 mm no 600 ml |
+| Parede reta com cantos arredondados | **Viável** com 0,5°/lado e R10 na borda — nem a borda alta nem o degrau interno estragaram o aninhamento a vazio: 1049 mm para seis 2,4 L (seção 3.4) |
+| Rodapé reto para IML | **Viável** — seção constante do dente ao fundo, 54 mm no 600 ml |
 | Trava na borda, nas duas tampas | **Só na de PP.** Teca é placa maciça com friso: segura por atrito |
-| Capacidade útil com a tampa fechada | **Decisão aberta**: 486 ml no pote de 600 de borda (seção 5.6) |
+| Capacidade útil com a tampa fechada | **Decisão aberta**: 519 ml no pote de 600 de borda (seção 5.6) — melhorou com a placa de 5 mm |
 | Tampa única para os 4 tamanhos | **Viável** — já é prática da casa (ref. 321-T serve três alturas) |
-| Vedação das duas tampas | **Um filete de TPE** em friso, radial contra a boca, 0,20 mm de compressão (seção 5) |
+| Vedação | **Aro em U de silicone** calçado na lingueta das tampas de PP, radial, 0,35 mm de compressão. A teca fica com **corda redonda** em friso: a lingueta de 0,80 mm quebraria em madeira (seção 5) |
 | Tampa de teca empilhar | **Resolvido na revisão 7**: o topo da placa É o plano modular, sem poço a usinar |
-| Tampa com trava | **Viável** — 2 travas de clipe em PP RP 141, 24,5 g, R$ 0,23 + filete |
-| Injeção dos 4 corpos no parque atual | **Cabe no que já temos**, sem máquina nova |
+| Tampa com trava | **Viável** — 2 travas de clipe em PP RP 141, 21,0 g, R$ 0,20 + aro. O dente dá **3,18 mm** de aresta e o gancho usa 0,80 |
+| Injeção dos 4 corpos no parque atual | **Cabe no que já temos**, sem máquina nova — e com o footprint menor caiu para 114–136 t |
 | Confirmação documental de curso/extração | **Bloqueio de dado**: ficha das injetoras vazia (seção 4.4) |
-| Rigidez da face comprida | **600 ml 2,4× mais rígido, 2,4 L 12% mais flexível** — a borda alta encurta a parede e alarga o painel (seção 3.3) |
+| Rigidez da face comprida | **600 ml 1,61× mais flexível que na revisão 8**, 2,4 L 14% mais rígido — a borda encurtou de 16 para 10 mm e o painel ficou mais alto (seção 3.3) |
 
 ---
 
@@ -176,41 +219,45 @@ fundo, e no 2,4 L isso vira 6 a 12 mm de espaço morto.
 Esta é a parte que não pode ser negociada no design, porque é ela que sustenta a modularidade:
 
 1. **Fundo de 2,0 mm, igual nos quatro potes.**
-2. **A tampa é uma bandeja cujo piso fica 2,0 mm abaixo do topo da borda** — recuado para dentro da
-   boca, não apoiado em cima dela. Esse piso é o plano modular: é nele que o pote de cima se apoia.
-3. **O fundo reto do pote de cima desce dentro da bandeja.** Com o rodapé reto exigido pelo IML não
-   há pé embutido: **o próprio fundo faz o serviço**.
+2. **O topo do deck da tampa fica 2,0 mm abaixo do topo da borda** — recuado para dentro da boca,
+   não apoiado em cima dela. Esse topo é o plano modular: é nele que o pote de cima se apoia.
+3. **O fundo reto do pote de cima desce dentro da boca.** Com o rodapé reto exigido pelo IML não
+   há pé embutido: **o próprio fundo faz o serviço**. Quem *localiza* o pote de cima é a boca do
+   pote de baixo, não a tampa.
 
-**E é a regra 3, junto com a borda oca, que dimensiona o rebaixo.** O fundo reto tem de caber
-dentro da boca, e a boca fica atrás de toda a largura da borda:
+**E é a regra 3 que dimensiona o dente.** O fundo reto tem de caber dentro da boca, e a boca fica
+atrás da parede da borda, da folga da saia e da própria saia da tampa:
 
 ```
-borda 3,80 (saia 1,20 + canal 1,20 + perna 1,40)
-     + folga de encaixe 0,50 + parede do plug 0,80 + folga do plug 0,60   = 5,70 mm/lado
-a saída já estreita, no corpo do 600 ml                                    = 0,40 mm
-logo rebaixo = 5,70 - 0,40 + margem 0,30                                   = 5,60 mm
-confere: bandeja 143,27 recebe o fundo de 141,67 com +0,80 mm/lado
+parede da borda 1,20 + folga da saia 0,45 + parede da saia 1,20 + folga do fundo 0,50 = 3,35 mm/lado
+a saída já estreita, no corpo do 600 ml                                               = 0,47 mm
+logo dente = 3,35 - 0,47 + margem 0,30                                                = 3,18 mm
+confere: a boca de 145,06 recebe o fundo de 140,16 com +2,45 mm/lado
 ```
 
-**É aqui que a revisão 8 cobra.** Na revisão 7 a borda era uma parede só, 1,80 mm, e o rebaixo
-fechava com 3,50. Mas aquela borda não podia ter aresta de engate: para o anel horizontal de baixo
-existir como material, a saia precisa de **ponta livre**, e ponta livre exige canal, e canal exige
-largura. São 2,00 mm a mais de borda, que viram 2,10 mm a mais de rebaixo — e como o módulo fixa a
-seção interna (600 ml por 60 mm de altura), a diferença só pode sair do footprint:
+**E é aqui que a revisão 10 devolve o que a 8 tinha cobrado.** Para a borda oca ter uma aresta de
+engate que fosse material, a saia precisava de **ponta livre**, e ponta livre exigia canal, e canal
+exigia largura: 3,80 mm de borda contra 1,80 de uma parede só, o que levou o rebaixo de 3,50 para
+5,60. O dente faz o mesmo trabalho com **uma parede e um web**, e custa 3,18. Como o módulo fixa a
+seção interna (600 ml por 60 mm de altura), a diferença volta toda para o footprint:
 
-| | revisão 7 | revisão 8 |
-|---|---|---|
-| medida máxima do corpo | 148,6 × 84,9 | **153,7 × 87,8** |
-| corpo reto | 141,6 × 77,9 | **142,5 × 76,6** |
-| boca | 145,0 | **146,1** |
-| peso do 600 ml | 47,0 g | **52,9 g** |
-| área projetada do corpo | 125 cm² | **134 cm²** |
-| aresta de engate | 1,80 mm — **sobre material que não existia** | 1,20 mm, material de verdade |
+| | revisão 7 | revisão 8 | **revisão 10** |
+|---|---|---|---|
+| medida máxima do corpo | 148,6 × 84,9 | 153,7 × 87,8 | **147,5 × 84,3** |
+| corpo reto | 141,6 × 77,9 | 142,5 × 76,6 | **141,1 × 77,9** |
+| boca | 145,0 | 146,1 | **145,1** |
+| peso do 600 ml | 47,0 g | 52,9 g | **47,1 g** |
+| área projetada do corpo | 125 cm² | 134 cm² | **123 cm²** |
+| aresta de engate | 1,80 mm — **sobre material que não existia** | 1,20 mm, material de verdade | **3,18 mm**, material de verdade |
 
-**Caminho de carga:** fundo do pote de cima → piso da bandeja → parede do plug → topo da borda →
-perna de dentro → flare → parede do pote. O filete de TPE fica no friso do plug, mais abaixo,
-vedando radialmente contra a boca — fora do caminho de carga, para não ser comprimido pelo peso da
-pilha.
+O footprint da revisão 10 ficou **abaixo** do da 7, com uma aresta de engate quase o dobro da dela
+— e aquela nem existia como material.
+
+**Caminho de carga:** fundo do pote de cima → topo do deck → saia da tampa → aba → meia-cana da
+borda → parede da borda → web → parede do pote. O aro em U fica na lingueta, abaixo do deck,
+vedando radialmente contra a boca — **fora do caminho de carga**, para não ser comprimido pelo peso
+da pilha. Na tampa de teca o caminho é mais curto ainda: placa → **degrau interno** → parede do
+pote, e a madeira só trabalha em compressão.
 
 ### 3.3 O que a borda alta fez com a rigidez
 
@@ -281,18 +328,18 @@ Condições para a parede reta funcionar na extração:
 
 | Tamanho | Área proj. | Fecham. 2 cav | Curso abert. mín. | Altura de molde | Injeção 2 cav | L/t |
 |---|---|---|---|---|---|---|
-| 600 ml | 134 cm² | 124 t | 136 mm | ~252 mm | 136 cm³ | 116 |
-| 1,2 L | 134 cm² | 133 t | 268 mm | ~312 mm | 208 cm³ | 161 |
-| 1,8 L | 134 cm² | 142 t | 400 mm | ~372 mm | 292 cm³ | 195 |
-| 2,4 L | 134 cm² | 147 t | 532 mm | ~432 mm | 388 cm³ | 224 |
+| 600 ml | 123 cm² | 114 t | 136 mm | ~252 mm | 120 cm³ | 115 |
+| 1,2 L | 123 cm² | 122 t | 268 mm | ~312 mm | 191 cm³ | 160 |
+| 1,8 L | 123 cm² | 130 t | 400 mm | ~372 mm | 275 cm³ | 194 |
+| 2,4 L | 123 cm² | 136 t | 532 mm | ~432 mm | 370 cm³ | 223 |
 
 **Correção de número publicado.** A revisão 7 trazia 146 cm² para os quatro corpos — mas 146 é a
 silhueta do **deck da tampa**, calculada como retângulo cheio, maior que a peça. A área projetada
-do corpo é a da borda, com os cantos R10 descontados: **134 cm²**. A tampa, essa sim, tem 146 cm².
+do corpo é a da borda, com os cantos R10 descontados: **123 cm²** na revisão 10 (eram 134 na 8, antes de o footprint encolher). A tampa tem 133 cm².
 Cada peça agora usa a sua.
 
 Mesmo corrigido, o 600 ml **não volta para a classe de 160 t** que a revisão 6 tinha conquistado: a
-124 t ele usaria 78% de uma 160 t, acima do limite prático de 70–80% da casa. Fica na de 200 t,
+114 t ele usaria **71,3%** de uma 160 t — faltaram 2 t para o limite de 70% da casa. Fica na de 200 t,
 junto com o 1,2 L.
 
 Os quatro têm a **mesma área projetada**: quem decide a máquina não é tonelagem, é profundidade.
@@ -328,7 +375,7 @@ para as 46 injetoras antes de liberar o molde: `CURSOABERT`, `CURSOEXTR`, `FORCA
 
 ---
 
-## 5. A vedação — um filete de TPE para as duas tampas
+## 5. A vedação — um aro de silicone em U nas tampas de PP
 
 Duas revisões erradas antes de chegar aqui, e vale registrar as duas.
 
@@ -338,10 +385,15 @@ do mesmo engano: tratar a vedação como **axial** — aro ou lábio esmagado en
 Vedação axial num retângulo sem trava não funciona, e o número é implacável: 32 kgf de força
 permanente ao longo dos 435 mm de perímetro.
 
-**A vedação certa é radial.** Uma saia da tampa — o *plug* — desce dentro do pote e leva o aro de
-TPE numa canaleta na sua face externa. **O aro trabalha contra a parede do pote, não contra a
-borda.** Não existe força permanente de fechamento: quem segura é a interferência lateral. Por isso
-dispensa trava, e por isso a tampa pode ser lisa por fora.
+**A vedação certa é radial.** Uma saia da tampa desce dentro do pote e leva o vedante na sua face
+externa. **O aro trabalha contra a parede do pote, não contra a borda.** Não existe força permanente
+de fechamento: quem segura é a interferência lateral.
+
+**Na revisão 10 o perfil mudou, a física não.** Em vez de um cordão maciço alojado num friso, o
+vedante é um **U extrudado que calça numa lingueta** da saia — com 0,10 mm de aperto, segurando
+sozinho, sem cola. Quem veda é a **perna de fora**, comprimida 0,35 mm contra a boca. Uma perna de
+1,00 mm comprimida 0,35 é bem mais mole que um cordão de 1,40 comprimido 0,20: fecha mais leve com
+a mesma vedação, e não há como montar errado — o U só entra de um jeito.
 
 ### 5.1 Por que a objeção da revisão 3 não se aplica
 
@@ -371,15 +423,18 @@ segurar a tampa, para manter a boca redonda.
 ### 5.2 Cotas
 
 ```
-boca do pote ......... 146,1 mm (perna de dentro 1,40 mm nos quatro tamanhos)
-face do plug ......... 144,9 mm — folga de 0,60 mm por lado
-parede do plug ....... 0,80 mm  (= parede da bandeja)
-friso ................ 0,60 mm de profundidade, entre 3,0 e 4,4 mm abaixo do topo
-filete de TPE ........ corda de 1,40 mm, sobra 0,80 mm do fundo do friso
-                       -> 0,20 mm de compressão contra a parede da boca
-plug desce ........... 8,0 mm dentro do pote (a boca tem 12,0 mm)
-vão da bandeja ....... 143,3 mm, recebe o FUNDO RETO de 141,67 mm (+0,80/lado)
-filete ............... 0,9 g, perímetro 438 mm
+boca do pote ......... 145,1 mm (parede da borda 1,20 mm nos quatro tamanhos)
+face da saia ......... 144,2 mm — folga de 0,45 mm por lado
+parede da saia ....... 1,20 mm
+lingueta ............. 0,80 x 2,40 mm, recuada 0,20 em CADA face da saia
+aro em U ............. 2,80 x 3,10 mm, perna 1,00, fundo 0,70, vão 0,70
+                       calça na lingueta com 0,10 mm de aperto
+                       -> 0,35 mm de compressão contra a parede da boca
+saia + aro descem .... 6,60 mm dentro do pote (a boca tem 7,00 mm)
+vão do deck .......... 141,8 mm, recebe o FUNDO RETO de 140,16 mm (+0,80/lado)
+aro em U ............. 3,3 g, perímetro 435 mm
+teca ................. corda redonda Ø1,40 em friso de 0,60, comprime 0,20 mm
+                       -> 10,2 kgf de atrito, que é o que segura a placa
 ```
 
 O plug faz três coisas de uma vez: **veda**, **forma a parede da bandeja** onde o pote de cima
@@ -449,18 +504,18 @@ módulo novo.
 
 ## 6. As três tampas
 
-Três tampas, **um só filete de TPE** e um só bocal. A de PP passa a fechar com **duas travas de clipe**, uma por
+Três tampas e um só bocal. **O vedante deixou de ser um só:** as duas de PP levam o aro em U calçado na lingueta; a teca ficou com corda redonda em friso, porque uma lingueta de 0,80 mm em madeira quebra. A de PP passa a fechar com **duas travas de clipe**, uma por
 lado comprido, cobrindo 58% do comprimento — é o layout do STL de referência, e é o oposto das
 6 abas de 18 mm da revisão 7.
 
 | | **Teca** | **PP com 2 travas** | **PP de correr** |
 |---|---|---|---|
-| O que é | placa maciça 144,9 × 79,0 × 8,0 mm | plug + deck + 2 travas de 89 mm | a de PP + bolso, janela e canal em U |
-| Vedação | filete de TPE em friso usinado, radial | o **mesmo** filete, em friso moldado | o mesmo filete **+ 2º aro** Ø1,20 na gaveta |
-| Retenção | **só atrito**: 7,4 kgf reto, 1,2 descascando | **trava geométrica**: sair exige abrir 0,80 mm | as mesmas duas travas |
-| Plano modular | o **topo da placa** é o plano | o piso da bandeja | o piso da bandeja *e* o topo da gaveta |
-| Medida máxima | 144,9 × 79,0 mm | 157,3 × 93,4 mm | 157,7 × 93,4 mm (o lábio do bico) |
-| Peso / custo | 59 g em teca · CNC, sem molde | 24,5 g em RP 141 · R$ 0,23 | 23,2 + 2,8 + 0,2 g nas três peças |
+| O que é | placa maciça 144,2 × 81,0 × **5,0** mm | saia + deck + aba + 2 travas de 86 mm | a de PP + bolso, janela e canal em U |
+| Vedação | corda de silicone Ø1,40 em friso usinado | **aro em U** (2,80 × 3,10) calçado na lingueta | o mesmo aro em U **+ 2º aro** Ø1,20 na gaveta |
+| Retenção | **só atrito**: 10,2 kgf reto, 1,7 descascando | **trava geométrica**: sair exige abrir 0,80 mm | as mesmas duas travas |
+| Plano modular | o **topo da placa**, que *pousa no degrau* | o topo do deck | o topo do deck *e* o da gaveta |
+| Medida máxima | 144,2 × 81,0 mm | 149,7 × 89,5 mm | 150,1 × 89,5 mm (o lábio do bico) |
+| Peso / custo | 37 g em teca · CNC, sem molde | 21,0 g em RP 141 · R$ 0,20 | 19,7 + 2,8 + 0,2 g nas três peças |
 
 **A tampa volta a ser PP.** Nas revisões 6 e 7 ela era PEAD HA 7260, escolhido por ser a resina mais
 barata da casa. Em PP RP 141 (R$ 9,55/kg contra 9,34) a tampa custa R$ 0,23 em vez de R$ 0,21 — dois
@@ -682,7 +737,7 @@ Preços reais de compra dos últimos 12 meses (`TGFITE`/`TGFCAB`):
 
 | Item | Peso | Resina |
 |---|---|---|
-| Corpo 600 ml | 52,9 g | R$ 0,59 |
+| Corpo 600 ml | 47,1 g | R$ 0,52 |
 | Corpo 1,2 L | 80,8 g | R$ 0,90 |
 | Corpo 1,8 L | 113,8 g | R$ 1,27 |
 | Corpo 2,4 L | 150,9 g | R$ 1,69 |
@@ -756,10 +811,10 @@ o de 1 kg de feijão — que era justamente o que a escala anterior (500/1000/15
 
 ## 11. Próximos passos
 
-1. **Aprovar o footprint de 153,7 × 87,8 mm** (era 148,6 × 84,9). Tudo abaixo depende disso: é o
-   preço da borda oca, e se ele não passar, a borda volta a ser parede só — e a aresta de engate
-   volta a não existir como material.
-2. **Orçar a nervura do canal** (1,20 × 8,6 mm, contínua) com a ferramentaria. É a feição nova.
+1. **Aprovar o footprint de 147,5 × 84,3 mm** (era 153,7 × 87,8 na revisão 8). Ele *encolheu*: o
+   dente custa 3,18 mm/lado onde a borda oca custava 5,60.
+2. **Cotar o perfil em U de silicone** (2,80 × 3,10 mm, perímetro 435 mm) com o extrusor, e pedir
+   amostra antes do try-out — é ele que decide a vedação, e não existe maneira de imprimi-lo.
 3. **Confirmar a saída de 0,5°** com o design — é o que separa "reto" de "aninha no frete".
 4. **Preencher `AD_INJETORAFICHA`** (curso de abertura, curso e força de extração) para as 46 injetoras.
 5. **Reabrir o Projeto 115** e renegociar com a MR Plastic Mould a partir da cotação aprovada.
@@ -789,8 +844,8 @@ Memória de cálculo: `calculo-modular.py`.
 ## 12. Modelo 3D
 
 `gera-3d.py` constrói o sólido a partir das mesmas cotas — **importadas de `calculo-modular.py`, não
-copiadas** — e escreve **dez** STL em `stl/`: os quatro corpos, a placa de teca, a tampa de PP com as
-duas travas, a tampa de correr, a gaveta, o 2º aro e o filete de TPE. O visualizador interativo
+copiadas** — e escreve **onze** STL em `stl/`: os quatro corpos, a placa de teca, a tampa de PP com
+as duas travas, a tampa de correr, a gaveta, o 2º aro, o aro em U e a corda da teca. O visualizador interativo
 remonta a malha a partir da mesma receita de anéis, bandas e tampos (`perfis.json`), então desenho e
 STL não divergem.
 
@@ -811,13 +866,13 @@ de 20 anéis, mais os prismas do canal, dos trilhos e das duas travas.
 
 | Verificação | Resultado |
 |---|---|
-| Volume assinado positivo **e normais consistentes** nas dez peças | casca fechada e orientada para fora |
+| Volume assinado positivo **e normais consistentes** nas onze peças | casca fechada e orientada para fora |
 | **Seção conexa em toda a altura** nos quatro corpos | o material de cada nível encosta no do nível seguinte |
 | Autoteste: o mesmo critério roda contra a geometria da **revisão 7** | tem de **reprovar** — e reprova |
 | Cavidade × capacidade nominal | 599,6 / 1199,3 / 1799,1 / 2398,9 ml contra 600 / 1200 / 1800 / 2400 — dentro de **0,07%** |
 | Peso da malha × `calculo-modular.py` | 52,9 / 80,8 / 113,8 / 150,9 g nos corpos, 59 g na teca, 24,5 g na tampa de PP, 23,2 na de correr |
-| Malha do visualizador × STL do Python | `verifica-malha.js`: 0,00% nas **dez** peças |
-| Montagem: pote × tampa × filete, medido por raio na malha | `verifica-montagem.py` — inclui, desde a revisão 9, **a janela é furo mesmo**, **a gaveta cobre a janela**, **o canal é aberto em cima** e **o vertedouro não corta o friso** |
+| Malha do visualizador × STL do Python | `verifica-malha.js`: 0,00% nas **onze** peças |
+| Montagem: pote × tampa × vedante, medido por raio na malha | `verifica-montagem.py`, **16 conferências** — o U invade a boca 0,39 mm, o dente mede 3,10 na altura em que o gancho pega, o gancho avança 0,76, a placa de teca para no degrau, a janela é furo mesmo, a gaveta a cobre, o canal é aberto em cima e o vertedouro não corta a lingueta |
 | A página inteira do visualizador, não só a malha | `verifica-pagina.js` monta as 16 combinações de vista × tampa com um three.js de mentira |
 
 **A verificação nova da revisão 8, e por que ela existe.** Na revisão 7 a boca media 144,95 mm e a
@@ -850,8 +905,8 @@ modelo: a **fenda de ~1 mm** que recorta as duas travas nos três lados livres, 
 tampa que a referência mostra, e os batentes de fim de curso e o puxador da gaveta (6.4). O filete está
 desenhado na medida livre, e por isso invade 0,2 mm a boca no modelo — é justamente a interferência.
 
-O corte do visualizador é onde se vê a borda oca: o flare, a perna de dentro, o canal, a saia livre
-e o gancho da trava por baixo dela.
+O corte do visualizador é onde se vê a borda nova: a parede reta, o web, o dente com o gancho por
+baixo dele, o degrau interno e o aro em U calçado na lingueta.
 
 ---
 
