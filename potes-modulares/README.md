@@ -1,6 +1,6 @@
 # Linha Potes Retangulares Modulares em PP
 
-**Status:** estudo de viabilidade técnica · **Revisão 11** · 07/10/2026
+**Status:** estudo de viabilidade técnica · **Revisão 12** · 07/10/2026
 **Origem:** evolução do Projeto 115 do ERP ("Conjunto Potes Modular") · **Planta:** Nitron – Fábrica (CODPLP 1)
 
 Linha retangular em PP transparente, **parede reta com cantos arredondados**, quatro litragens
@@ -10,6 +10,56 @@ combinação empilhada chega à altura do maior.
 Todos os números de máquina, matéria-prima, custo e ferramental saíram do Sankhya, não de
 estimativa de catálogo. Fontes citadas em cada seção.
 
+> **Revisão 12 — mini lombadas, e a tampa de correr dá lugar à tampa de bico.**
+>
+> **1. Os reforços viraram lombadas.** Pedido do Ricardo, pensando em extração, e
+> ele tem razão: ponta chata segura vácuo e arrasta aresta viva no aço; meia-cana sai
+> por rolamento. A crista virou **meia-cana de R0,34**, a lombada ficou 0,90 na raiz e
+> 2,40 de altura (era 0,80 × 3,00). **Custou rigidez** — a crista redonda tira área
+> justamente no alto, onde o braço é maior —, e o que recuperou foi o **passo**: grade
+> **7 × 4** em vez de 5 × 3. Resultado: I **2,13×** por 1,65 g, contra 2,2× por 1,29 g
+> da ponta chata. Praticamente a mesma rigidez, 0,36 g a mais, e uma peça que sai
+> limpa do molde.
+>
+> **2. A tampa de correr saiu.** *"Não ficou legal... preciso de algo mais robusto...
+> algo que não vaze tmb e seja hermético com o bico... essa versão não precisa
+> empilhar."* É justo: ela tinha uma gaveta de 1,80 mm correndo em trilhos com
+> **0,25 mm de folga por lado** e um 2º aro vedando por **compressão axial** — que é
+> exatamente o que este projeto descartou na revisão 4.
+>
+> **Entra a tampa de bico.** A ideia que a de correr não tinha: **separar quem veda de
+> quem escorre**. Lá, a janela por onde o produto saía era também o que tinha de
+> vedar, e por isso precisava de gaveta, trilho e um segundo aro.
+>
+> | | o que é | por quê |
+> |---|---|---|
+> | **Gargalo** | colar de parede fechada, 24 × 46 mm, subindo 7,5 mm do deck | o topo dele é um **anel plano**: a linha de vedação é plana, não uma curva 3D |
+> | **Calha** | canal aberto em U saindo do gargalo, por cima da aba, até um lábio 9 mm além da tampa | aberto é o que o Ricardo pede desde a revisão 9 — para escorrer e para lavar |
+> | **Fecho** | plug cônico de 1° entrando num gargalo de 5°, dobradiça viva atrás | cones **diferentes**: entra folgado 0,15 na boca e aperta até 0,18 mm/lado no pé |
+>
+> **Por que os cones são diferentes.** Se fossem iguais, as faces ficariam paralelas e
+> o aperto dependeria de tolerância de interferência reta — que é o que não se controla
+> em injeção. Com cones diferentes, o ponto de contato é onde as duas retas se cruzam,
+> e ele **anda sozinho** conforme a peça desgasta ou flui. Fica na parte baixa do colar,
+> que é onde o deck o apoia; vedar junto da boca seria vedar na aresta livre, que é a
+> que mais abre.
+>
+> **Esta versão não empilha** — foi o Ricardo que liberou, e isso paga: o gargalo pode
+> subir acima do plano modular, a calha pode passar por cima da aba sem cortar nada, e
+> o fecho pode ter crista de pega.
+>
+> **A altura do colar não é estilo.** A primeira tentativa (4,40 mm) punha o piso da
+> calha em +0,80 e o lábio em +0,20, **ambos abaixo da aba de +1,20**: a calha cortaria
+> o apoio da tampa na borda e pingaria no pote. Foi a verificação que pegou, não o
+> desenho. O mínimo é 7,30; ficou 7,50.
+>
+> **Hermeticidade — o que prometo e o que não prometo.** Prometo que não vaza deitado
+> nem virado, que é o caso de uso: plug cônico em PP contra PP sela líquido à pressão
+> atmosférica, e é assim que funciona qualquer tampa de detergente ou de azeite. **Não
+> prometo** vedação da classe da tampa principal — aquela é radial com silicone. Se o
+> ensaio de água colorida acusar, a resposta é um filete de silicone no plug: seria o
+> *quarto* perfil extrudado da linha, e por isso não entrou de saída.
+>
 > **Revisão 11 — tampa encorpada, farpa no aro, e a conta dos 3° de saída.** Três
 > pedidos do Ricardo, e o terceiro conflita com um requisito antigo dele.
 >
@@ -582,7 +632,7 @@ lado comprido, cobrindo 58% do comprimento — é o layout do STL de referência
 | Retenção | **só atrito**: 10,2 kgf reto, 1,7 descascando | **trava geométrica**: sair exige abrir 0,80 mm | as mesmas duas travas |
 | Plano modular | o **topo da placa**, que *pousa no degrau* | o topo do deck | o topo do deck *e* o da gaveta |
 | Medida máxima | 144,2 × 81,0 mm | 149,7 × 89,5 mm | 150,1 × 89,5 mm (o lábio do bico) |
-| Peso / custo | 37 g em teca · CNC, sem molde | 22,6 g em RP 141 · R$ 0,22 | 20,8 + 2,8 + 0,2 g nas três peças |
+| Peso / custo | 37 g em teca · CNC, sem molde | 23,2 g em RP 141 · R$ 0,22 | 24,2 g + fecho de 2,7 g |
 
 **A tampa volta a ser PP.** Nas revisões 6 e 7 ela era PEAD HA 7260, escolhido por ser a resina mais
 barata da casa. Em PP RP 141 (R$ 9,55/kg contra 9,34) a tampa custa R$ 0,23 em vez de R$ 0,21 — dois

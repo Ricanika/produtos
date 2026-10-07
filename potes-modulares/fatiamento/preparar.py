@@ -28,14 +28,27 @@ def prep(stl, flip, dx=0.0, dy=0.0):
     m.apply_translation([-c[0] + dx + CX, -c[1] + dy + CY, -m.bounds[0][2]])
     return m
 
-feito, erros = {}, []
+feito, erros, avisos = {}, [], []
 for p in CFG['pecas']:
     m = prep(p['stl'], p.get('flip', False))
     b = m.bounds
     feito[p['nome']] = p
     fora = b[0][0] < 0 or b[1][0] > BEDX or b[0][1] < 0 or b[1][1] > BEDY
     if fora: erros.append('%s fora da mesa' % p['nome'])
-    if not m.is_watertight: erros.append('%s nao e watertight' % p['nome'])
+    # is_watertight na malha INTEIRA e o teste errado aqui. Estas pecas sao
+    # uniao de solidos fechados que se SOBREPOEM de proposito - casca + travas
+    # + lombadas -, e as lombadas ainda se cruzam entre si. Onde dois solidos
+    # compartilham vertice depois do merge por proximidade, nasce uma aresta
+    # nao-manifold que nao e furo nenhum: o fatiador une tudo antes de fatiar.
+    # O teste certo e por COMPONENTE: se algum deles nao fecha, ai sim ha furo.
+    partes_m = m.split(only_watertight=False)
+    abertas = [i for i, c in enumerate(partes_m) if not c.is_watertight]
+    if abertas:
+        erros.append('%s: %d de %d solidos nao fecham' % (p['nome'], len(abertas),
+                                                          len(partes_m)))
+    elif not m.is_watertight:
+        avisos.append('%s: %d solidos sobrepostos, todos fechados (o fatiador une)'
+                      % (p['nome'], len(partes_m)))
     m.export(f'{OUT}/{p["nome"]}.stl')
     print('%-14s XY %6.2f x %6.2f  altura %5.2f  fechada=%s  %s'
           % (p['nome'], b[1][0]-b[0][0], b[1][1]-b[0][1], b[1][2], m.is_watertight,
@@ -63,6 +76,8 @@ if ch:
                                           'FORA DA MESA' if fora else 'ok'))
     print('  arquivos da chapa: ' + ' '.join(f'{OUT}/{ch["nome"]}__{it["peca"]}.stl'
                                              for it in ch['itens']))
+if avisos:
+    print('\nAVISOS (nao impedem fatiar):'); [print('  -', a) for a in avisos]
 if erros:
     print('\nPROBLEMAS:'); [print('  -', e) for e in erros]; sys.exit(1)
 print('\nok')

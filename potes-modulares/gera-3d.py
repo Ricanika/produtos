@@ -495,23 +495,25 @@ def lingueta(c):
 
 
 def poe_nervuras(c, pula=None):
-    """Grade de nervuras sob o deck. E o que deixa a tampa 'encorpada'.
+    """Grade de MINI LOMBADAS sob o deck. E o que deixa a tampa 'encorpada'.
 
-    Um deck de 1,50 mm vencendo 79 mm de vao e um painel mole. A grade sobe o
-    I da secao 2,2x por 1,3 g de PP - rigidez sobe com o quadrado do braco,
-    peso sobe so com a area da nervura.
+    Nao sao nervuras de ponta chata: a crista e meia-cana. Ponta chata segura
+    vacuo e arrasta aresta viva no aco; meia-cana sai por rolamento. Custa
+    rigidez (a area some justamente no alto, onde o braco e maior), e a grade
+    ficou mais densa para compensar - 7x4 em vez de 5x3.
 
-    Saida de 3° por face, que e o que a maquina pede: numa nervura de 3 mm isso
-    custa 0,31 mm de espessura na ponta e nada mais. (Na parede do pote a mesma
-    saida custaria o produto - ver calculo-modular.py.)
+    Saida de 3° por face, que e o que a maquina pede: numa lombada de 2,4 mm
+    isso custa 0,22 mm de espessura na ponta e nada mais. (Na parede do pote a
+    mesma saida custaria o produto - ver calculo-modular.py.)
 
-    pula(x, y) -> True para nao por nervura ali: e como a tampa de correr tira
-    as que cairiam dentro do bolso.
+    pula(x, y) -> True para nao por lombada ali.
     """
     nv = cm.nervuras(DECK_UTIL, DECK_UTIL - DLW)
-    t0, t1 = NERV_T / 2, nv['t_pta'] / 2
-    z0, z1 = Z_DECK_B + 0.5, Z_DECK_B - NERV_H
-    perfil = [(+t0, z0), (+t1, z1), (-t1, z1), (-t0, z0)]
+    pts = nv['perfil']
+    perfil = ([(+NERV_T / 2, Z_DECK_B + 0.5)]
+              + [(+w, Z_DECK_B - h) for w, h in pts]
+              + [(-w, Z_DECK_B - h) for w, h in reversed(pts[:-1])]
+              + [(-NERV_T / 2, Z_DECK_B + 0.5)])
     uso_l, uso_w = nv['uso']
     for y in nv['ys']:
         if pula and pula(None, y):
@@ -558,167 +560,161 @@ def poe_travas(c):
 
 
 # ---------------------------------------------------------------------------
-# TAMPA DE CORRER (revisao 9) - a que obrigou o gerador a aprender furo e
-# entalhe. Tudo o que toca o pote vem da tampa de PP: deck, plug, filete,
-# travas e o piso da bandeja em z=-2,00. O corpo nao muda.
+# TAMPA DE BICO (revisao 12) - substitui a tampa de correr da revisao 9, que o
+# Ricardo reprovou ("nao ficou legal, preciso de algo mais robusto"). Tudo o
+# que toca o pote vem da tampa de PP: saia, lingueta, aro em U e as travas. O
+# corpo nao muda. O que entra: GARGALO (veda), CALHA (escorre) e FECHO.
+#
+# A ideia que a de correr nao tinha: SEPARAR quem veda de quem escorre. La a
+# janela por onde o produto saia era tambem o que tinha de vedar, e por isso
+# precisava de gaveta, trilho e um segundo aro. Aqui o gargalo e um colar
+# fechado de topo plano - a linha de vedacao e plana - e a calha e so um canal
+# aberto depois dele.
 # ---------------------------------------------------------------------------
-_sc = importlib.util.spec_from_file_location('ccr', os.path.join(_BASE, 'calculo-correr.py'))
-ccr = importlib.util.module_from_spec(_sc)
-_sc.loader.exec_module(ccr)
+_sb = importlib.util.spec_from_file_location('cb', os.path.join(_BASE, 'calculo-bico.py'))
+cb = importlib.util.module_from_spec(_sb)
+_sb.loader.exec_module(cb)
 
-Q_RETO = 6          # pontos por trecho reto do contorno (o entalhe pede vertice)
-
-
-def _pos_correr():
-    """Onde ficam janela, bolso e calha na posicao A, tudo vindo do calculo."""
-    p = next(q for q in ccr.POSICOES if q['cod'] == 'curto')
-    g = ccr.geometria(p)
-    jan_cx = ccr.BANDEJA / 2 - g['rec']
-    return dict(g=g, bico_w=p['bico_w'], jan_cx=jan_cx,
-                jan_l=g['jan_d'], jan_w=g['jan_w'],
-                bol_cx=jan_cx - g['curso'] / 2,
-                bol_l=g['bolso_l'], bol_w=g['gav_w'] + 2 * ccr.GAV_FOLGA,
-                gav_l=g['gav_l'], gav_w=g['gav_w'])
+Q_RETO = 6          # pontos por trecho reto do contorno
 
 
-def tampa_correr(seg):
-    """Tampa de correr: bolso, janela, gaveta e calha em U aberta.
+def tampa_bico(seg):
+    """A tampa de bico. Casca de genero 1: o furo do gargalo e a rosca.
 
-    A casca e uma so, com FURO: comeca na borda de cima da janela, sobe pelo
-    bolso, cruza o piso da bandeja, sobe a parede (ou a rampa do bico), passa
-    por cima do deck, desce por fora, volta por baixo, desce o plug e fecha
-    subindo pela parede da janela. Topologicamente e uma rosca - genero 1,
-    que e o que um furo faz.
-
-    No trecho do ENTALHE dois aneis mudam de lugar: a parede do bolso vira
-    rampa e a parede do deck vira VERTEDOURO. Onde o entalhe come uma faixa
-    inteira dois aneis coincidem, e banda() pula o quadrilatero de largura zero.
-
-    REVISAO 10: o piso da calha (Z_SEL) agora coincide com o topo da aba, e a
-    aba passa POR CIMA da borda do pote. O liquido sobe o vertedouro pela face
-    de DENTRO da saia e sai por cima da aba - nao chega perto da lingueta nem
-    do aro em U, que ficam na face de FORA. Na revisao 9 o vertedouro quase
-    cortou o friso do filete; nesta arquitetura ele nao tem como.
+    A sequencia de aneis fecha um LOOP (o ultimo liga de volta no primeiro),
+    sem tampo nenhum - e isso que faz o furo ser furo. Comeca na boca do
+    gargalo, desce por fora dele ate o deck, cruza o deck, sobe na aba, da a
+    volta por fora, desce a saia e a lingueta, volta pela face de baixo do deck
+    e sobe pelo furo ate fechar.
     """
-    P = _pos_correr()
     q = Q_RETO
-    bw2 = P['bico_w'] / 2
-    ZM, ZB, ZS, ZT = ccr.Z_MOD, ccr.Z_BOLSO, ccr.Z_SEL, ccr.Z_TOPO
-    hb = ccr.BANDEJA / 2                        # borda do deck
-    hd = ccr.DECK_O / 2                         # ponta da aba
-    x_sel = hd - 1.0                            # onde o vertedouro acaba
-    bandeja = ccr.BANDEJA
+    ZC, ZM, ZB = cb.Z_COL, Z_MOD, Z_DECK_B
+    gl, gw, gr = cb.GARG_L, cb.GARG_W, cb.GARG_R
+    gp, cx = cb.GARG_PAR, cb.X_GARG
+    tg = cb.T_GARG
 
     c = Casca(seg)
 
-    def anelx(L, W, R, z, cx=0.0, corte=bw2, ent=None):
-        pts, msk = contorno(L, W, R, seg, q, cx, 0.0, corte)
-        out = []
-        for (x, y), m in zip(pts, msk):
-            out.append((ent[0], y, ent[1]) if (ent is not None and m) else (x, y, z))
-        return c.add(None, None, pts=out)
+    def anelx(L, W, R, z, cx=0.0):
+        pts, _ = contorno(L, W, R, seg, q, cx, 0.0, None)
+        return c.add(None, None, pts=[(x, y, z) for x, y in pts])
 
-    jan = dict(L=P['jan_l'], W=P['jan_w'], R=3.0, cx=P['jan_cx'], corte=None)
-    bol = dict(L=P['bol_l'], W=P['bol_w'], R=3.0, cx=P['bol_cx'])
-    ban = dict(L=bandeja, W=largura(bandeja), R=raio(bandeja))
+    # o furo e CONICO: mais largo na boca, para o macho sair e para o plug
+    # apertar progressivamente. A cota que manda na vazao e a do pe.
+    def furo(z):
+        d = ZC - z
+        return gl - 2 * d * tg, gw - 2 * d * tg
 
-    A = [anelx(z=ZB, **jan),                                 # borda da janela
-         anelx(z=ZB, **bol),                                 # piso do bolso
-         anelx(z=ZM, ent=(hb, ZM), **bol),                   # parede do bolso / RAMPA
-         anelx(z=ZM, **ban),                                 # piso da bandeja = deck
-         anelx(z=PP_FLANGE, ent=(x_sel, ZS), **ban),         # parede / VERTEDOURO
-         anelx(TAMPA_O, largura(TAMPA_O), raio(TAMPA_O), PP_FLANGE),   # topo da aba
-         anelx(TAMPA_O, largura(TAMPA_O), raio(TAMPA_O), 0.0),         # face externa
-         anelx(SAIA_O, largura(SAIA_O), raio(SAIA_O), 0.0),            # aba pousa na borda
-         anelx(SAIA_O, largura(SAIA_O), raio(SAIA_O), Z_DECK_B),       # face externa da saia
+    f0l, f0w = furo(ZC)
+    fbl, fbw = furo(ZB)
+
+    A = [anelx(f0l, f0w, gr, ZC, cx),                      # boca do gargalo
+         anelx(gl + 2 * gp, gw + 2 * gp, gr + gp, ZC, cx), # topo do colar, por fora
+         anelx(gl + 2 * gp, gw + 2 * gp, gr + gp, ZM, cx), # pe do colar
+         anelx(DECK_UTIL, largura(DECK_UTIL), raio(DECK_UTIL), ZM),   # deck
+         anelx(DECK_UTIL, largura(DECK_UTIL), raio(DECK_UTIL), PP_FLANGE),
+         anelx(TAMPA_O, largura(TAMPA_O), raio(TAMPA_O), PP_FLANGE),  # aba
+         anelx(TAMPA_O, largura(TAMPA_O), raio(TAMPA_O), 0.0),
+         anelx(SAIA_O, largura(SAIA_O), raio(SAIA_O), 0.0),
          ] + [anelx(L, largura(L), raio(L), z) for L, z in perfil_lingueta()] + [
-         anelx(z=Z_DECK_B, **ban),                           # face de baixo do deck
-         anelx(z=Z_DECK_B, **bol),
-         anelx(z=ZB - PP_DECK, **bol),
-         anelx(z=ZB - PP_DECK, **jan)]
+         anelx(DECK_UTIL, largura(DECK_UTIL), raio(DECK_UTIL), ZB),   # deck por baixo
+         anelx(fbl, fbw, gr, ZB, cx)]                      # pe do furo
     for a, b in zip(A, A[1:] + A[:1]):
         c.banda(b, a)
 
-    # ---- paredes da calha, dos dois lados: prismas fundidos ----
-    par = [(0.0, ZS), (ccr.BICO_PAR, ZS), (ccr.BICO_PAR, ZT), (0.0, ZT)]
-    x0, x1 = hb, hd + ccr.BICO_LIP
-    for pos in (bw2, -bw2):
-        for t in prisma(par, 'y', pos, x1 - x0):
-            c.tris.append(tuple((x + (x0 + x1) / 2, y, z) for x, y, z in t))
-        c.prismas.append(dict(perfil=par, eixo='y', pos=pos, comp=x1 - x0,
-                              off=(x0 + x1) / 2))
-
-    # ---- trilhos: pegam a gaveta por cima, nas duas laterais do bolso ----
-    tr = [(0.5, ZM), (0.5, ZM - ccr.TRILHO_T), (-ccr.TRILHO_L, ZM - ccr.TRILHO_T),
-          (-ccr.TRILHO_L, ZM)]
-    for pos in (P['bol_w'] / 2, -P['bol_w'] / 2):
-        for t in prisma(tr, 'y', pos, P['bol_l'] - 1.0):
-            c.tris.append(tuple((x + P['bol_cx'], y, z) for x, y, z in t))
-        c.prismas.append(dict(perfil=tr, eixo='y', pos=pos, comp=P['bol_l'] - 1.0,
-                              off=P['bol_cx']))
-
-    poe_travas(c)                       # as MESMAS travas da tampa de PP
-    # nervuras, menos as que cairiam dentro do bolso da gaveta
-    bx0, bx1 = P['bol_cx'] - P['bol_l'] / 2, P['bol_cx'] + P['bol_l'] / 2
-    poe_nervuras(c, pula=lambda x, y: (abs(y) < P['bol_w'] / 2 + 2.0) if x is None
-                 else (bx0 - 2.0 < x < bx1 + 2.0))
+    poe_calha(c)
+    poe_travas(c)
+    # lombadas so no trecho do deck que sobra entre o colar e o lado -X
+    poe_nervuras(c, pula=lambda x, y: (False if x is None
+                                       else x > cx - gl / 2 - gp - 4.0))
     return c
 
 
-def gaveta(seg):
-    """O painel que corre, com o friso do 2o aro na face de BAIXO.
+def poe_calha(c):
+    """A calha aberta em U: piso que cai e duas paredes que a seguram.
 
-    Desenhado na posicao FECHADA: o topo dele e o plano modular.
+    O piso sai do colar no nivel do topo dele e cai ate o labio. As paredes
+    nao sao so guia: sao a VIGA que segura o piso em balanco. Por isso o perfil
+    delas desce ate o deck no trecho de dentro e ate a aba no trecho de cima da
+    borda - sem isso o piso seria uma ponte no ar.
     """
-    P = _pos_correr()
-    q = Q_RETO
-    ZM = ccr.Z_MOD
-    zb = ZM - ccr.GAV_T
-    zg = zb + ccr.ARO2_PROF                      # teto do friso
-    go_l, go_w = P['jan_l'] + 4.0, P['jan_w'] + 4.0          # friso, face de fora
-    gi_l, gi_w = go_l - 2 * ccr.ARO2_D, go_w - 2 * ccr.ARO2_D
-    c = Casca(seg)
+    ZC = cb.Z_COL
+    u1 = cb.DECK / 2 - cb.X_SAIDA          # onde acaba o deck
+    u2 = cb.TAMPA_O / 2 - cb.X_SAIDA       # onde acaba a aba
+    L = cb.X_LABIO - cb.X_SAIDA
+    queda_lab = 2.5 * math.tan(math.radians(cb.BICO_CURVA))
+    zf = lambda u: ZC - cb.BICO_QUEDA * u / L
+    esp = lambda u: cb.CALHA_T + (cb.BICO_LIP - cb.CALHA_T) * u / L
 
-    def anelx(L, W, z):
-        pts, _ = contorno(L, W, 3.0, seg, q, P['jan_cx'], 0.0, None)
-        return c.add(None, None, pts=[(x, y, z) for x, y in pts])
+    piso = [(0.0, ZC), (L - 2.5, zf(L - 2.5)),
+            (L, zf(L) - queda_lab), (L, zf(L) - queda_lab - cb.BICO_LIP),
+            (L - 2.5, zf(L - 2.5) - esp(L - 2.5)), (0.0, ZC - cb.CALHA_T)]
+    for t in prisma(piso, 'x', cb.X_SAIDA, cb.GARG_W):
+        c.tris.append(t)
+    c.prismas.append(dict(perfil=piso, eixo='x', pos=cb.X_SAIDA,
+                          comp=cb.GARG_W, off=0.0))
 
-    G0 = anelx(P['gav_l'], P['gav_w'], ZM)
-    G1 = anelx(P['gav_l'], P['gav_w'], zb)
-    G2 = anelx(go_l, go_w, zb)
-    G3 = anelx(go_l, go_w, zg)
-    G4 = anelx(gi_l, gi_w, zg)
-    G5 = anelx(gi_l, gi_w, zb)
-    c.cap(G0, True)
-    for a, b in ((G0,G1),(G1,G2),(G2,G3),(G3,G4),(G4,G5)):
-        c.banda(b, a)
-    c.cap(G5, False)
+    par = [(0.0, Z_MOD), (0.0, ZC + cb.BICO_ALT),
+           (L, zf(L) - queda_lab + cb.BICO_ALT * 0.45),
+           (L, zf(L) - queda_lab - cb.BICO_LIP),
+           (u2, zf(u2) - esp(u2)), (u2, PP_FLANGE),
+           (u1, PP_FLANGE), (u1, Z_MOD)]
+    for pos in (cb.GARG_W / 2 + cb.BICO_PAR / 2, -(cb.GARG_W / 2 + cb.BICO_PAR / 2)):
+        for t in prisma(par, 'x', cb.X_SAIDA, cb.BICO_PAR):
+            c.tris.append(tuple((x, y + pos, z) for x, y, z in t))
+        c.prismas.append(dict(perfil=par, eixo='x', pos=cb.X_SAIDA,
+                              comp=cb.BICO_PAR, off=pos))
     return c
 
 
-def aro2(seg):
-    """O 2o aro de TPE, na medida LIVRE: sobra ARO2_SOB do friso, e essa sobra
-    menos a folga de corrida e a interferencia. Como o filete, a malha se
-    sobrepoe de proposito."""
-    P = _pos_correr()
+def fecho_bico(seg):
+    """O fecho do bico, desenhado FECHADO. Plug conico de 1° no gargalo de 5°.
+
+    Desenhado na posicao de vedacao: as malhas se sobrepoem onde o plug aperta,
+    e e proposital - e a interferencia. Na peca injetada o fecho e o mesmo
+    tiro da tampa, ligado por dobradica viva atras; a dobradica nao esta na
+    malha, como a fenda das travas nao esta.
+    """
     q = Q_RETO
-    zb = ccr.Z_MOD - ccr.GAV_T
-    zt = zb + ccr.ARO2_PROF
-    go_l, go_w = P['jan_l'] + 4.0, P['jan_w'] + 4.0
-    gi_l, gi_w = go_l - 2 * ccr.ARO2_D, go_w - 2 * ccr.ARO2_D
+    ZC = cb.Z_COL
+    gl, gw, gr = cb.GARG_L, cb.GARG_W, cb.GARG_R
+    cx, tp = cb.X_GARG, cb.T_PLUG
+    topo = ZC + cb.FECHO_TOPO
+    fim = ZC - cb.PLUG_H
+
     c = Casca(seg)
 
-    def anelx(L, W, z):
-        pts, _ = contorno(L, W, 3.0, seg, q, P['jan_cx'], 0.0, None)
+    def anelx(L, W, R, z):
+        pts, _ = contorno(L, W, R, seg, q, cx, 0.0, None)
         return c.add(None, None, pts=[(x, y, z) for x, y in pts])
 
-    zl = zt - ccr.ARO2_D
-    B0 = anelx(gi_l, gi_w, zl)
-    B1 = anelx(go_l, go_w, zl)
-    B2 = anelx(go_l, go_w, zt)
-    B3 = anelx(gi_l, gi_w, zt)
-    for a, b in ((B0,B1),(B1,B2),(B2,B3),(B3,B0)):
-        c.banda(a, b)
+    # o plug: na boca entra folgado PLUG_BOCA; como o cone dele e MENOS aberto
+    # que o do gargalo, ele vai apertando conforme desce.
+    pl = lambda d, base: base - 2 * cb.PLUG_BOCA - 2 * d * tp
+    tampo_l, tampo_w = gl + 2 * cb.GARG_PAR, gw + 2 * cb.GARG_PAR
+
+    F = [anelx(tampo_l, tampo_w, gr + cb.GARG_PAR, topo),          # tampo, por cima
+         anelx(tampo_l, tampo_w, gr + cb.GARG_PAR, ZC),            # face externa
+         anelx(pl(0, gl), pl(0, gw), gr, ZC),                      # raiz do plug
+         anelx(pl(cb.PLUG_H, gl), pl(cb.PLUG_H, gw), gr, fim),     # ponta do plug
+         anelx(pl(cb.PLUG_H, gl) - 2 * cb.PLUG_PAR,
+               pl(cb.PLUG_H, gw) - 2 * cb.PLUG_PAR, max(gr - cb.PLUG_PAR, 0.3), fim),
+         anelx(pl(0, gl) - 2 * cb.PLUG_PAR, pl(0, gw) - 2 * cb.PLUG_PAR,
+               max(gr - cb.PLUG_PAR, 0.3), ZC - cb.FECHO_TOPO * 0 + 0.0)]
+    for a, b in zip(F, F[1:]):
+        c.banda(b, a)
+    c.cap(F[0], True)
+    c.cap(F[-1], False)
+
+    # crista de pega: o fecho nao tem abano nem saia (bateriam na calha), entao
+    # a pega e um ressalto no proprio tampo.
+    cr = [(-cb.CRISTA_W / 2, topo), (cb.CRISTA_W / 2, topo),
+          (cb.CRISTA_W / 2 - 0.6, topo + cb.CRISTA_H),
+          (-cb.CRISTA_W / 2 + 0.6, topo + cb.CRISTA_H)]
+    comp = gw - 6.0
+    for t in prisma(cr, 'x', cx, comp):
+        c.tris.append(t)
+    c.prismas.append(dict(perfil=cr, eixo='x', pos=cx, comp=comp, off=0.0))
     return c
 
 
@@ -844,31 +840,21 @@ def main():
     print(f'{"tampa-pp":<12} {"":13} | {len(tp.tris):5d} tri | {TRAVA_N} travas de '
           f'{TRAVA_LARG:.0f} mm | {volume_assinado(tp.tris) / 1000.0 * 0.905:5.1f} g em PP')
 
-    if not os.environ.get('SEM_CORRER'):
-        tc = tampa_correr(seg)
-        grava_stl(os.path.join(out, 'tampa-correr.stl'), tc.tris, 'tampa-correr')
-        perfis['pecas']['tampa-correr'] = dict(loops=tc.loops, bands=tc.bands, caps=tc.caps,
-                                               prismas=tc.prismas)
-        checar.append(('tampa-correr', tc))
-        print(f'{"tampa-correr":<12} {"":13} | {len(tc.tris):5d} tri | janela + calha em U | '
-              f'{volume_assinado(tc.tris) / 1000.0 * 0.905:5.1f} g em PP')
+    tb = tampa_bico(seg)
+    grava_stl(os.path.join(out, 'tampa-bico.stl'), tb.tris, 'tampa-bico')
+    perfis['pecas']['tampa-bico'] = dict(loops=tb.loops, bands=tb.bands, caps=tb.caps,
+                                         prismas=tb.prismas)
+    checar.append(('tampa-bico', tb))
+    print(f'{"tampa-bico":<12} {"":13} | {len(tb.tris):5d} tri | gargalo + calha em U | '
+          f'{volume_assinado(tb.tris) / 1000.0 * 0.905:5.1f} g em PP')
 
-        gv = gaveta(seg)
-        grava_stl(os.path.join(out, 'gaveta.stl'), gv.tris, 'gaveta')
-        perfis['pecas']['gaveta'] = dict(loops=gv.loops, bands=gv.bands, caps=gv.caps,
-                                         prismas=gv.prismas,
-                                         curso=_pos_correr()['g']['curso'])
-        checar.append(('gaveta', gv))
-        print(f'{"gaveta":<12} {"":13} | {len(gv.tris):5d} tri | painel que corre | '
-              f'{volume_assinado(gv.tris) / 1000.0 * 0.905:5.1f} g em PP')
-
-        a2 = aro2(seg)
-        grava_stl(os.path.join(out, 'aro2-tpe.stl'), a2.tris, 'aro2-tpe')
-        perfis['pecas']['aro2'] = dict(loops=a2.loops, bands=a2.bands, caps=a2.caps,
-                                       prismas=a2.prismas)
-        checar.append(('aro2-tpe', a2))
-        print(f'{"aro2-tpe":<12} {"":13} | {len(a2.tris):5d} tri | '
-              f'{volume_assinado(a2.tris) / 1000.0 * 1.10:5.1f} g em TPE')
+    fb = fecho_bico(seg)
+    grava_stl(os.path.join(out, 'fecho-bico.stl'), fb.tris, 'fecho-bico')
+    perfis['pecas']['fecho-bico'] = dict(loops=fb.loops, bands=fb.bands, caps=fb.caps,
+                                         prismas=fb.prismas)
+    checar.append(('fecho-bico', fb))
+    print(f'{"fecho-bico":<12} {"":13} | {len(fb.tris):5d} tri | plug conico | '
+          f'{volume_assinado(fb.tris) / 1000.0 * 0.905:5.1f} g em PP')
 
     au = aro_u(seg)
     grava_stl(os.path.join(out, 'aro-u.stl'), au.tris, 'aro-u')

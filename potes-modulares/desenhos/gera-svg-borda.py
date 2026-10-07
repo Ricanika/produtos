@@ -95,8 +95,8 @@ a('        <path d="M %s Z" fill="var(--tpe)"/>' % ' L '.join(pt(v, z) for v, z 
 # ---- nervura sob o deck, no recorte da esquerda ----
 nv = cm.nervuras(DECK_U, DECK_U - (p0['colar_l'] - p0['colar_w']))
 xn = CUT + 2 * 6.0                        # uma nervura a 6 mm do recorte
-nerv = [(xn - cm.NERV_T, ZL), (xn - nv['t_pta'], ZL - cm.NERV_H),
-        (xn + nv['t_pta'], ZL - cm.NERV_H), (xn + cm.NERV_T, ZL)]
+nerv = ([(xn - 2 * w, ZL - h) for w, h in nv['perfil']]
+        + [(xn + 2 * w, ZL - h) for w, h in reversed(nv['perfil'][:-1])])
 a('        <path d="M %s Z" fill="var(--verde)" opacity=".8" stroke="var(--verde)" '
   'stroke-width="1.2"/>' % ' L '.join(pt(v, z) for v, z in nerv))
 
@@ -133,10 +133,10 @@ CH = [(COLAR - cm.DENTE, ZD, 48, 'O DENTE',
       (PTA_O, (ZOMB + ZFIM) / 2, 300, 'FARPA + BOLSA',
        'farpa de %.2f/face; o U tem bolsa e RELAXA em cima dela' % cm.DENTE_ARO,
        'entra por rampa de 36°, sai por degrau de 90°'),
-      (xn + cm.NERV_T / 2, ZL - cm.NERV_H / 2, 356, 'NERVURA',
-       '%.2f na raiz, %.2f na ponta, %.2f de altura'
-       % (cm.NERV_T, nv['t_pta'], cm.NERV_H),
-       'grade %dx%d, saida de %.0f° por face, I sobe %.1fx'
+      (xn + cm.NERV_T, ZL - cm.NERV_H / 2, 356, 'MINI LOMBADA',
+       '%.2f na raiz, %.2f na ponta, crista R%.2f'
+       % (cm.NERV_T, nv['t_pta'], nv['raio']),
+       'grade %dx%d, saida de %.0f° por face, I sobe %.2fx'
        % (len(nv['xs']), len(nv['ys']), cm.SAIDA_NERV, nv['ganho'])),
       (DECK_U, cm.Z_MOD, 404, 'PLANO MODULAR',
        'topo do deck, %.1f mm abaixo do topo da borda' % cm.BASE_T,

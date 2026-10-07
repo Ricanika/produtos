@@ -1,6 +1,6 @@
 # Potes retangulares modulares em PP — resumo para retomar em outro chat
 
-**Projeto 115 do ERP (Nitron) · Revisão 11 · 07/10/2026**
+**Projeto 115 do ERP (Nitron) · Revisão 12 · 07/10/2026**
 Branch: `claude/serene-johnson-ja8az8` · pasta `potes-modulares/`
 
 Este arquivo é auto-contido: cole ele num chat novo e o contexto está todo aqui.
@@ -21,7 +21,34 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
 4. **Parede reta**, não conada, com cantos arredondados.
 5. **Sem trava**, acabamento liso.
 6. Validar tudo contra o parque de injetoras real (via MCP Sankhya / Nitron).
-7. **(revisão 11 — tampa encorpada, farpa no aro, e os 3° de saída)** Três pedidos, e o
+7. **(revisão 12 — mini lombadas, e a de correr vira tampa de BICO)** Dois pedidos.
+   **Lombadas:** os reforços de ponta chata viraram crista em MEIA-CANA de R0,34 (0,90
+   na raiz, 2,40 de altura, 3°/face). Ponta chata segura vacuo e arrasta aresta viva no
+   aco; meia-cana sai por rolamento. Custou rigidez (a crista tira area no alto, onde o
+   braco e maior) e o PASSO recuperou: grade 7x4 em vez de 5x3 -> I 2,13x por 1,65 g,
+   contra 2,2x por 1,29 g da ponta chata.
+   **A tampa de CORRER SAIU.** "nao ficou legal... preciso de algo mais robusto... algo
+   que nao vaze tmb e seja hermetico com o bico... essa versao nao precisa empilhar".
+   Justo: ela tinha gaveta de 1,80 correndo em trilhos com 0,25 mm de folga por lado e
+   um 2o aro vedando por compressao AXIAL - o que o projeto descartou na revisao 4.
+   **Entra a TAMPA DE BICO.** A ideia que faltava: SEPARAR quem veda de quem escorre.
+   - GARGALO: colar fechado de 24 x 46 subindo 7,50 mm do deck. O topo e ANEL PLANO -
+     linha de vedacao plana, nao curva 3D. 983 mm2 de passagem na secao mais estreita.
+   - CALHA: canal aberto em U saindo do gargalo por cima da aba ate um labio 9 mm alem
+     da tampa, caindo 7,2°, labio de 0,50 virando 15° para baixo.
+   - FECHO: plug conico de 1° num gargalo de 5°. Cones DIFERENTES de proposito: entra
+     folgado 0,15/lado na boca, as retas se cruzam em 2,14 mm e aperta ate 0,18/lado no
+     pe. O ponto de contato ANDA conforme desgasta ou flui. Dobradica viva atras.
+   **NAO EMPILHA** (liberado pelo Ricardo) - e e isso que deixa o gargalo subir acima do
+   plano modular e a calha passar por cima da aba.
+   **A altura do colar nao e estilo:** a primeira tentativa (4,40) punha o piso da calha
+   em +0,80 e o labio em +0,20, ABAIXO da aba de +1,20 - cortaria o apoio na borda e
+   pingaria no pote. Foi a verificacao que pegou. Minimo 7,30; ficou 7,50.
+   **Hermeticidade:** prometo que nao vaza deitado nem virado (PP contra PP conico sela
+   liquido a pressao atmosferica). NAO prometo a classe da tampa principal, que e radial
+   com silicone. Se o ensaio de agua colorida acusar, a resposta e um filete de silicone
+   no plug - o QUARTO perfil extrudado da linha.
+8. **(revisão 11 — tampa encorpada, farpa no aro, e os 3° de saída)** Três pedidos, e o
    terceiro conflita com um requisito antigo dele.
    **Nervuras sob o deck:** grade 5 × 3 (célula 33 × 34, nervura 0,80 na raiz / 0,49 na
    ponta / 3,00 de altura, **saída de 3° por face**). I da seção T sobe **2,2×**, flecha cai
@@ -40,7 +67,7 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
    O que resolve extração sem saída já está no projeto: polimento A2, placa impulsora e
    válvula de ar. **Recomendação: manter 0,5° e levar a tabela à ferramentaria antes de
    fechar o molde — se 0,5° não sair, muda o produto, não só o molde.**
-8. **(revisão 10 — a borda com DENTE e o aro em U)** O Ricardo mandou fotos de uma referência
+9. **(revisão 10 — a borda com DENTE e o aro em U)** O Ricardo mandou fotos de uma referência
    física (pote cinza, tampa canelada, um perfil de silicone em U na mão) e pediu: borda de
    **~8 mm** com um **dente em toda a volta na base dela** (é onde a trava engata); a borda
    **expandindo ~3 mm para fora**, e nessa expansão encaixa a parte interna da tampa; e a tampa
@@ -67,7 +94,7 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
    **E a teca perdeu o vedante comum:** o U calça numa lingueta de 0,80 mm e em madeira ela
    quebra, então a placa ficou com corda redonda em friso usinado (10,2 kgf de atrito). Decisão
    aberta: aceitar dois perfis ou pôr um aro de PP carregando o U sob a placa.
-9. **(revisão 9 — a terceira tampa)** Pedido do Ricardo: *"uma tampa de correr com outro aro de
+10. **(revisão 9 — a terceira tampa, APOSENTADA na 12)** Pedido do Ricardo: *"uma tampa de correr com outro aro de
    TPE... colocar na tampa mesmo um bico mas não fechado e sim aberto tipo 'U' e não 'O' para poder
    escorrer o líquido"*. Base: a tampa de PP — mesmo plug, mesmo filete, as mesmas duas travas.
    **Mecanismo (escolha dele):** *gaveta na tampa* — painel que corre em trilhos num bolso no piso
@@ -88,7 +115,7 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
    **No gerador:** anéis passaram a poder vir como lista de **pontos livres** e `banda()` pula o
    quadrilátero de largura zero — é o que permite furo, entalhe e rampa. A tampa de correr é uma
    casca de **gênero 1**. São **dez** peças agora, todas a 0,00% do STL.
-10. **(revisão 8 — a borda, a partir do STL de referência `REF_231.stl`)** O Ricardo mandou um STL
+11. **(revisão 8 — a borda, a partir do STL de referência `REF_231.stl`)** O Ricardo mandou um STL
    com um pote e uma tampa em escala 1:10 (a parede medida, 0,113 mm, é o que fixa a escala) e
    pediu: **manter alturas, larguras, comprimentos e o raio de canto**, e refazer a **borda
    superior do corpo** e a **tampa de PP**, pegando dali o **layout de tampa e travas**.
@@ -113,7 +140,7 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
    corpos — 146 é a silhueta do **deck da tampa**. O corpo tem 134.
    **O que NÃO piorou, contra a minha expectativa:** o aninhamento a vazio. A 0,5° a pilha de seis
    2,4 L continua em 1044 mm (−28%) — quem manda ali é a saída, não a borda.
-11. **(revisão 7 — mudança de arquitetura, a partir de referência física)** Saem a **aba em U**, o
+12. **(revisão 7 — mudança de arquitetura, a partir de referência física)** Saem a **aba em U**, o
    **pé embutido** e a garra da tampa. Entram o **colar de borda** (liso, arredondado em cima,
    sobressaindo 3,50 mm/lado, cuja face de baixo é a aresta de engate), o **rodapé reto** para IML
    e **6 abas de trava** na tampa. As duas tampas passam a usar **o mesmo filete de TPE** (objetivo
@@ -128,7 +155,7 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
    **Três erros pegos por verificação, não por leitura:** filete 0,40 mm aquém da boca (não vedaria
    nada), metade das abas espelhada no visualizador (volume negativo cancelando as outras), e o STL
    saindo com Y para cima em vez de Z. Nenhum deles é acusado por volume assinado ou normais.
-12. **(revisão 6)** A tampa PE **fecha por fora**: saia por fora da borda, garra engatando sob o
+13. **(revisão 6)** A tampa PE **fecha por fora**: saia por fora da borda, garra engatando sob o
    lábio da aba em U. Princípio oposto ao plug da teca, na mesma borda, **sem mudar uma cota do
    pote** — o lábio já dava 3,04 mm/lado de ressalto e a garra usa 0,80. Resina **PEAD HA 7260
    IF 20 a R$ 9,34/kg** (a mais barata da casa depois do moído), tampa de 27,6 g a R$ 0,26.
@@ -138,13 +165,13 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
    Dois pontos abertos: a retenção depende da rigidez do deck (o aro da saia dá 3 gf, então pede
    elemento finito ou protótipo), e a **tampa de teca não pode ser o plug de parede fina** — em
    maciço, precisa do poço da bandeja usinado ou não empilha.
-13. **(estudo, 21/09/2026 — não implementado)** Pedido de referência à vedação da Tupperware.
+14. **(estudo, 21/09/2026 — não implementado)** Pedido de referência à vedação da Tupperware.
    Mecanismo levantado: canal em U na tampa que engole um cordão da borda, apertando-o de
    **faces opostas** (US2487400, de 1949, expirada, "nonsnap"). O burp não dá para copiar — a
    tampa deles é membrana, a nossa é datum de empilhamento. Dois caminhos orçados (com e sem
    mexer no molde do corpo), 4,3 e 5,1 kgf de arranque. **Decisão: fica como estudo**, seção 13
    do README. A linha segue na revisão 6.
-14. **(revisão 5)** O pote tinha ficado largo e muito arredondado em relação ao render de
+15. **(revisão 5)** O pote tinha ficado largo e muito arredondado em relação ao render de
    referência. Corrigido para **frente estreita e pote fundo, canto R10** — escolhido de propósito
    o caminho que mantém altura, módulo, curso de abertura e classe de injetora. Custou **+17,6 g**
    de resina nos quatro corpos e deixou a face comprida do 2,4 L **3,8× mais flexível** (única
@@ -225,13 +252,14 @@ boca do pote ..... 145,1 mm      face da saia ..... 144,2 mm (folga 0,45 por lad
 parede da saia ... 1,20 mm       lingueta ......... 0,80 x 2,40, recuada 0,20/face
 aro em U ......... 2,80 x 3,10, perna 1,00 -> comprime 0,35 contra a parede
 saia+aro descem .. 6,60 mm       vao do deck ...... 141,8, recebe o fundo de 140,16
-tampa de PP ...... 149,7 x 89,5 mm com as 2 travas. 22,6 g. R$ 0,22 + aro 3,1 g
-nervuras ......... grade 5x3 sob o deck, 0,80 x 3,00, saida 3°/face, I +2,2x
+tampa de PP ...... 149,7 x 89,5 mm com as 2 travas. 23,2 g. R$ 0,22 + aro 3,0 g
+lombadas ......... grade 7x4 sob o deck, 0,90 x 2,40, crista R0,34, I +2,13x
 farpa ............ 0,25/face na ponta da lingueta + bolsa de 1,40 x 0,95 no U
 tampa de teca .... placa maciça 144,2 x 81,0 x 5,00 mm, 37 g, CNC, sem molde
                    POUSA no degrau; corda redonda 1,40 em friso, 10,2 kgf
-tampa de correr .. a mesma de PP + bolso, janela 22 x 46 e canal em U. 19,7 g
-                   + gaveta 2,8 g + 2o aro 0,2 g. Maxima 150,1 x 89,5 (labio do bico)
+tampa de bico .... a mesma de PP + gargalo 24 x 46 (sobe 7,50) e calha aberta.
+                   24,2 g + fecho 2,7 g. Maxima 166,1 x 89,5 (o labio passa 9 mm)
+                   NAO EMPILHA. Plug conico 1° no gargalo 5°: 0,18 mm/lado no pe
 ```
 
 | | O que segura | Força |

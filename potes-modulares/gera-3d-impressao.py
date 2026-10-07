@@ -15,11 +15,11 @@ As areas de contato sao MEDIDAS na malha, nao digitadas: numero fixo aqui ja
 ficou defasado uma vez, quando o footprint mudou de 121,2 para 139,7 mm.
   tampa-pp.stl             tampa de PP com 2 travas de clipe. Imprime em pe.
   tampa-teca.stl           placa macica - so para conferir encaixe (em teca e CNC).
-  tampa-correr.stl         a de correr, com a janela e a calha em U.
-  gaveta.stl               o painel que corre. E o par que mais precisa de
-                           prototipo: a folga de projeto e 0,25 mm por lado, e
-                           nenhuma FDM entrega isso sem ajuste - conte com
-                           lixar a gaveta ou reimprimir com escala.
+  tampa-bico.stl           a de bico, com o gargalo e a calha em U aberta.
+  fecho-bico.stl           o fecho de plug conico. E o par que mais precisa de
+                           prototipo: a vedacao e um cone de 1° apertando num
+                           furo de 5°, e em FDM a parede sai ~0,1 mm mais
+                           grossa - o plug vai assentar mais raso que o nominal.
 
 Uso:  python3 gera-3d-impressao.py
 """
@@ -87,20 +87,24 @@ def main():
           f"contato {contato(tc.tris):5.0f} mm2 de pe, {contato(inv):5.0f} mm2 invertida"
           f" -> placa macica, tanto faz; em producao e CNC em teca")
 
-    tr = g.tampa_correr(SEG)
-    g.grava_stl(os.path.join(out, 'tampa-correr.stl'), tr.tris, 'tampa-correr')
+    tr = g.tampa_bico(SEG)
+    g.grava_stl(os.path.join(out, 'tampa-bico.stl'), tr.tris, 'tampa-bico')
     inv_tr = [[(v[0], -v[1], -v[2]) for v in tri] for tri in tr.tris]
-    print(f"tampa-correr.stl         {len(tr.tris):5d} tri | altura {altura(tr.tris):.1f} mm | "
+    print(f"tampa-bico.stl           {len(tr.tris):5d} tri | altura {altura(tr.tris):.1f} mm | "
           f"contato {contato(tr.tris):5.0f} mm2 de pe, {contato(inv_tr):5.0f} mm2 invertida"
-          f" -> INVERTIDA, mas com SUPORTE: apoia so nas 2 paredes da calha e o"
-          f" deck fica 2,5 mm no ar")
+          f" -> NENHUMA DAS DUAS APOIA. De pe ela fica na ponta das travas;"
+          f" invertida, nas duas paredes da calha, que tem o topo em rampa."
+          f" Imprima INVERTIDA com RAFT e suporte - e o preco de uma peca que"
+          f" nao tem face plana no extremo nenhum dos dois sentidos.")
 
-    gv = g.gaveta(SEG)
-    g.grava_stl(os.path.join(out, 'gaveta.stl'), gv.tris, 'gaveta')
-    inv_gv = [[(v[0], -v[1], -v[2]) for v in tri] for tri in gv.tris]
-    print(f"gaveta.stl               {len(gv.tris):5d} tri | altura {altura(gv.tris):.1f} mm | "
-          f"contato {contato(gv.tris):5.0f} mm2 de pe, {contato(inv_gv):5.0f} mm2 invertida"
-          f" -> INVERTIDA deixa o friso do 2o aro para cima, sem suporte")
+    fb = g.fecho_bico(SEG)
+    g.grava_stl(os.path.join(out, 'fecho-bico.stl'), fb.tris, 'fecho-bico')
+    inv_fb = [[(v[0], -v[1], -v[2]) for v in tri] for tri in fb.tris]
+    print(f"fecho-bico.stl           {len(fb.tris):5d} tri | altura {altura(fb.tris):.1f} mm | "
+          f"contato {contato(fb.tris):5.0f} mm2 de pe, {contato(inv_fb):5.0f} mm2 invertida"
+          f" -> DE PE (como modelado): apoia no anel da ponta do plug. O tampo"
+          f" fica em cima e a crista de pega cresce por ultimo, sem suporte."
+          f" Invertida seria pior: apoiaria so na crista.")
 
     print(f"\nem {out}")
     print("Nenhum dos tres vedantes se imprime em FDM. Para o prototipo: o ARO EM U "
@@ -108,8 +112,9 @@ def main():
           "uma amostra ao fornecedor antes do try-out, porque e ele que decide a "
           "vedacao. A corda da teca (1,4 mm) e o 2o aro (1,2 mm) saem de corda de "
           "silicone comum, cortada no comprimento e colada de topo.")
-    print("A gaveta corre com 0,25 mm de folga por lado - folga de INJECAO. Em FDM "
-          "ela vai sair apertada: imprima a gaveta a 99% em X e Y antes de lixar.")
+    print("O plug do fecho veda por CONE, nao por interferencia reta: em FDM ele vai "
+          "assentar mais raso que o nominal (parede ~0,1 mm mais grossa). Isso NAO "
+          "invalida o teste - o que o prototipo responde e se ele veda, e onde para.")
 
 
 if __name__ == '__main__':

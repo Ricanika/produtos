@@ -116,14 +116,19 @@ DENTE_ARO_R = 0.35    # altura da rampa de entrada
 # "mais encorpada" nao e so sensacao: um deck de 1,50 mm vencendo 78 mm de vao
 # e um painel mole. Nervura e o jeito barato de enrijecer - rigidez sobe com o
 # quadrado do braco, peso sobe so com a area da nervura.
-NERV_T     = 0.80   # espessura da nervura na raiz (53% do deck: abaixo dos 60%
-                    # em que a marca de chupagem aparece na face de cima)
-NERV_H     = 3.00   # altura. Limitada pelo DEGRAU interno do pote, nao por
-                    # moldagem: mais que isso e a nervura da borda bate nele.
+# Nao sao nervuras de ponta chata: sao MINI LOMBADAS - a crista e meia-cana de
+# raio igual a metade da ponta. Pedido do Ricardo, pensando em extracao, e ele
+# tem razao: ponta chata segura vacuo e faz aresta viva arrastar no aco. A
+# meia-cana sai por rolamento, nao por arraste. O preco esta na secao NERVURAS.
+NERV_T     = 0.90   # espessura na raiz (60% do deck - o limite da chupagem)
+NERV_H     = 2.40   # altura ate o alto da lombada. Mais baixa que a nervura de
+                    # ponta chata (eram 3,00): e o que a crista redonda custa.
 SAIDA_NERV = 3.00   # saida das nervuras, por face - o que a maquina do Ricardo
                     # pede. Numa nervura isso e de graca; na parede do pote nao
                     # (secao SAIDA DE EXTRACAO).
-NERV_MARG  = 5.00   # quanto a nervura para antes da borda do deck
+NERV_MARG  = 5.00   # quanto a lombada para antes da borda do deck
+NERV_NX    = 7      # lombadas ao longo da LARGURA (mais e mais curtas: parte do
+NERV_NY    = 4      # que a crista redonda tirou volta pelo passo menor)
 
 # ---- tampa de PP com trava de clipe ----
 PP_DECK   = 1.50    # espessura do deck (o piso que recebe o pote de cima)
@@ -314,14 +319,17 @@ def verifica(potes):
     deck_u = saia_o - 2 * SAIA_T
     nv = nervuras(deck_u, deck_u - p['dLW'])
     exige(Z_DECK_B - NERV_H > Z_DEGRAU,
-          f"a nervura ({Z_DECK_B - NERV_H:+.2f}) nao bate no degrau interno "
+          f"a lombada ({Z_DECK_B - NERV_H:+.2f}) nao bate no degrau interno "
           f"({Z_DEGRAU:+.2f}): {Z_DECK_B - NERV_H - Z_DEGRAU:.2f} mm de folga")
     exige(nv['t_pta'] >= 0.40,
-          f"com {SAIDA_NERV:.0f}° por face a nervura chega na ponta com "
+          f"com {SAIDA_NERV:.0f}° por face a lombada chega na ponta com "
           f"{nv['t_pta']:.2f} mm (abaixo de 0,40 nao enche)")
-    exige(NERV_T / PP_DECK <= 0.60,
-          f"nervura de {NERV_T:.2f} sobre deck de {PP_DECK:.2f} = "
+    exige(NERV_T / PP_DECK <= 0.60 + 1e-9,
+          f"lombada de {NERV_T:.2f} sobre deck de {PP_DECK:.2f} = "
           f"{NERV_T / PP_DECK * 100:.0f}% (acima de 60% marca chupagem por fora)")
+    exige(nv['raio'] > 0.2,
+          f"a crista e meia-cana de raio {nv['raio']:.3f} - sem ponta chata, "
+          f"sem aresta viva arrastando no aco")
     exige(all(q['elev'] >= -1e-6 for q in potes),
           "elevacao de fundo >= 0 nos quatro (nenhum pote pede fundo negativo)")
     for combo in ((1, 1, 1, 1), (2, 2), (1, 1, 2), (1, 3), (4,)):
@@ -363,34 +371,63 @@ def aninha(p, s, boca, colar_l):
     return H - lo
 
 
-def nervuras(deck_l, deck_w):
-    """Grade de nervuras sob o deck: posicoes, comprimento, peso e rigidez.
+def perfil_lombada(n_arco=5):
+    """Meia secao da lombada, (meia-largura, altura) da raiz ate o alto.
 
-    A conta de rigidez e a de uma secao T: a nervura so serve se o deck andar
-    junto com ela, e quem faz isso e a aba do T - por isso o ganho nao e o
-    I da nervura sozinha, e sim o do conjunto em torno do centroide comum.
+    Tronco com SAIDA_NERV por face ate onde a largura chega em t_pta, e dali
+    uma MEIA-CANA de raio t_pta/2 fechando a crista. Resolver t_pta pede uma
+    equacao: a altura do trecho reto depende do raio, e o raio depende da
+    largura no fim do trecho reto.
+        t1 = T0 - 2*tan*(H - t1/2)  ->  t1*(1 - tan) = T0 - 2*tan*H
+    """
+    tg = math.tan(math.radians(SAIDA_NERV))
+    t1 = (NERV_T - 2 * tg * NERV_H) / (1 - tg)
+    r = t1 / 2
+    h_reto = NERV_H - r
+    pts = [(NERV_T / 2, 0.0), (r, h_reto)]
+    for k in range(1, n_arco + 1):
+        ang = math.radians(90.0 * k / n_arco)
+        pts.append((r * math.cos(ang), h_reto + r * math.sin(ang)))
+    return pts, t1, r
+
+
+def nervuras(deck_l, deck_w):
+    """Grade de MINI LOMBADAS sob o deck: posicoes, comprimento, peso e rigidez.
+
+    A conta de rigidez e a de uma secao T: a lombada so serve se o deck andar
+    junto com ela, e quem faz isso e a aba do T - por isso o ganho nao e o I da
+    lombada sozinha, e sim o do conjunto em torno do centroide comum. Area e I
+    da lombada saem do perfil REAL, integrado por faixas: a meia-cana tira area
+    justamente no alto, que e onde o braco e maior, e e por isso que ela custa
+    rigidez e nao so material.
     """
     uso_l, uso_w = deck_l - 2 * NERV_MARG, deck_w - 2 * NERV_MARG
-    n_trans = 5                      # nervuras ao longo da LARGURA (cortam o comprimento)
-    n_long = 3                       # nervuras ao longo do COMPRIMENTO
-    px, py = uso_l / (n_trans - 1), uso_w / (n_long - 1)
-    xs = [-uso_l / 2 + i * px for i in range(n_trans)]
-    ys = [-uso_w / 2 + i * py for i in range(n_long)]
-    t_pta = NERV_T - 2 * NERV_H * math.tan(math.radians(SAIDA_NERV))
-    t_med = (NERV_T + t_pta) / 2
-    comp = n_trans * uso_w + n_long * uso_l
-    vol = comp * t_med * NERV_H
+    px, py = uso_l / (NERV_NX - 1), uso_w / (NERV_NY - 1)
+    xs = [-uso_l / 2 + i * px for i in range(NERV_NX)]
+    ys = [-uso_w / 2 + i * py for i in range(NERV_NY)]
+    pts, t_pta, r = perfil_lombada(12)
+    # area e momento estatico da lombada, integrados por faixas
+    a_n = m_n = i_n = 0.0
+    for (w0, z0), (w1, z1) in zip(pts, pts[1:]):
+        dz = z1 - z0
+        if dz <= 0:
+            continue
+        w = (w0 + w1)              # largura cheia media da faixa
+        a_n += w * dz
+        m_n += w * dz * (z0 + z1) / 2
+        i_n += w * dz * ((z0 + z1) / 2) ** 2 + w * dz ** 3 / 12
+    y_n = m_n / a_n
+    comp = NERV_NX * uso_w + NERV_NY * uso_l
+    vol = comp * a_n
 
-    # secao T equivalente, por passo da grade (usa o passo menor, o que manda)
     p = min(px, py)
     a_f, y_f = p * PP_DECK, PP_DECK / 2
-    a_n, y_n = t_med * NERV_H, PP_DECK + NERV_H / 2
-    yb = (a_f * y_f + a_n * y_n) / (a_f + a_n)
+    yb = (a_f * y_f + a_n * (PP_DECK + y_n)) / (a_f + a_n)
     I_t = (p * PP_DECK ** 3 / 12 + a_f * (yb - y_f) ** 2
-           + t_med * NERV_H ** 3 / 12 + a_n * (y_n - yb) ** 2)
+           + (i_n - a_n * y_n ** 2) + a_n * (PP_DECK + y_n - yb) ** 2)
     I_0 = p * PP_DECK ** 3 / 12
-    return dict(xs=xs, ys=ys, px=px, py=py, t_pta=t_pta, t_med=t_med,
-                comp=comp, vol=vol, peso=vol * RHO_PP, ganho=I_t / I_0,
+    return dict(xs=xs, ys=ys, px=px, py=py, t_pta=t_pta, raio=r, perfil=pts,
+                area=a_n, comp=comp, vol=vol, peso=vol * RHO_PP, ganho=I_t / I_0,
                 celula=(px, py), uso=(uso_l, uso_w))
 
 
@@ -603,27 +640,34 @@ def main():
     nv = nervuras(deck_util, deck_util - dLW)
     eps_strip = 3 * LING_T * DENTE_ARO / (2 * LING_H ** 2)
     print("\n" + "=" * 79)
-    print("NERVURAS SOB O DECK - a tampa 'encorpada'")
+    print("MINI LOMBADAS SOB O DECK - a tampa 'encorpada'")
     print("=" * 79)
     print(f"  grade {len(nv['xs'])} x {len(nv['ys'])} dentro de "
           f"{nv['uso'][0]:.0f} x {nv['uso'][1]:.0f} mm (margem {NERV_MARG:.1f} da borda)")
-    print(f"  celula {nv['px']:.1f} x {nv['py']:.1f} mm | nervura {NERV_T:.2f} na raiz, "
+    print(f"  celula {nv['px']:.1f} x {nv['py']:.1f} mm | lombada {NERV_T:.2f} na raiz, "
           f"{nv['t_pta']:.2f} na ponta, {NERV_H:.2f} de altura")
-    print(f"  saida {SAIDA_NERV:.0f}° por face - numa nervura isso nao custa nada: "
-          f"{NERV_T - nv['t_pta']:.2f} mm de diferenca em {NERV_H:.1f} mm")
-    print(f"  {nv['comp']:.0f} mm de nervura | {nv['vol'] / 1e3:.2f} cm3 | "
-          f"+{nv['peso']:.2f} g na tampa ({nv['peso'] / 21.0 * 100:.0f}%)")
+    print(f"  CRISTA EM MEIA-CANA de raio {nv['raio']:.3f} - nao ha ponta chata")
+    print(f"  saida {SAIDA_NERV:.0f}° por face: {NERV_T - nv['t_pta']:.2f} mm de "
+          f"diferenca em {NERV_H:.1f} mm de altura")
+    print(f"  {nv['comp']:.0f} mm de lombada | secao {nv['area']:.2f} mm2 | "
+          f"{nv['vol'] / 1e3:.2f} cm3 | +{nv['peso']:.2f} g na tampa")
     print(f"  RIGIDEZ: secao T de passo {min(nv['px'], nv['py']):.1f} mm -> "
-          f"I sobe {nv['ganho']:.1f}x contra o deck liso")
+          f"I sobe {nv['ganho']:.2f}x contra o deck liso")
     print(f"  (flecha cai na mesma proporcao: o deck de {PP_DECK:.2f} mm vencendo "
-          f"{deck_util - dLW:.0f} mm")
-    print(f"   de vao passa a flechar {1 / nv['ganho']:.2f} do que flechava.)")
-    print(f"  altura limitada pelo DEGRAU do pote, nao por moldagem: a nervura para "
-          f"em {Z_DECK_B - NERV_H:+.2f}")
-    print(f"  e o degrau esta em {Z_DEGRAU:+.2f}. Para subir a nervura teria de "
-          f"subir a borda.")
-    print(f"  CUSTO ESCONDIDO: as nervuras tiram {nv['vol'] / 1e3:.1f} ml da "
-          f"capacidade util - 0,2% no 600 ml.")
+          f"{deck_util - dLW:.0f} mm de vao passa a flechar "
+          f"{1 / nv['ganho']:.2f} do que flechava.)")
+    print( "  POR QUE LOMBADA E NAO NERVURA DE PONTA CHATA: ponta chata segura vacuo")
+    print( "  na extracao e arrasta aresta viva no aco; meia-cana sai por rolamento.")
+    print( "  O preco e rigidez - a crista redonda tira area justamente no alto, que")
+    print( "  e onde o braco e maior. A nervura de ponta chata de 0,80 x 3,00 numa")
+    print( "  grade 5x3 dava 2,2x por 1,29 g; esta da "
+          f"{nv['ganho']:.2f}x por {nv['peso']:.2f} g.")
+    print( "  O que recuperou a rigidez foi o PASSO: 7x4 em vez de 5x3. Passo menor")
+    print( "  vale mais que lombada alta, e de quebra a lombada baixa cabe folgada")
+    print(f"  acima do degrau - ela para em {Z_DECK_B - NERV_H:+.2f} e o degrau esta "
+          f"em {Z_DEGRAU:+.2f}.")
+    print(f"  CUSTO ESCONDIDO: as lombadas tiram {nv['vol'] / 1e3:.1f} ml da "
+          f"capacidade util - 0,3% no 600 ml.")
 
     print("\n" + "=" * 79)
     print("O MINI DENTE QUE SEGURA O ARO")
