@@ -640,113 +640,86 @@ def poe_travas(c):
 # fechado de topo plano - a linha de vedacao e plana - e a calha e so um canal
 # aberto depois dele.
 # ---------------------------------------------------------------------------
-_sb = importlib.util.spec_from_file_location('cb', os.path.join(_BASE, 'calculo-bico.py'))
+_sb = importlib.util.spec_from_file_location('cb', os.path.join(_BASE, 'calculo-bocal.py'))
 cb = importlib.util.module_from_spec(_sb)
 _sb.loader.exec_module(cb)
 
 Q_RETO = 6          # pontos por trecho reto do contorno
 
 
-def tampa_bico(seg):
-    """A tampa de bico. Casca de genero 1: o furo do gargalo e a rosca.
+def tampa_bocal(seg):
+    """A tampa de bocal. Casca de genero 1: o furo do gargalo e a rosca.
 
     A sequencia de aneis fecha um LOOP (o ultimo liga de volta no primeiro),
-    sem tampo nenhum - e isso que faz o furo ser furo. Comeca na boca do
+    sem tampo nenhum - e isso que faz o furo ser furo. Comeca no aro do
     gargalo, desce por fora dele ate o deck, cruza o deck, sobe na aba, da a
     volta por fora, desce a saia e a lingueta, volta pela face de baixo do deck
     e sobe pelo furo ate fechar.
+
+    Da revisao 13 para a 14 a calha saiu inteira e o colar dobrou de altura.
+    Nenhum anel novo: os mesmos tres aneis do colar, com a cota de altura
+    outra e a face externa agora com 3° de saida. Era o que a geometria velha
+    ja permitia - a calha e que era o apendice.
     """
     q = Q_RETO
-    ZC, ZM, ZB = cb.Z_COL, Z_MOD, Z_DECK_B
-    gl, gw, gr = cb.GARG_L, cb.GARG_W, cb.GARG_R
-    gp, cx = cb.GARG_PAR, cb.X_GARG
-    tg = cb.T_GARG
+    ZM, ZB = Z_MOD, Z_DECK_B
+    cx = cb.X_GARG
 
     c = Casca(seg)
 
-    def anelx(L, W, R, z, cx=0.0):
-        pts, _ = contorno(L, W, R, seg, q, cx, 0.0, None)
+    def anelx(LWR, z, ox=0.0):
+        L, W, R = LWR
+        pts, _ = contorno(L, W, R, seg, q, ox, 0.0, None)
         return c.add(None, None, pts=[(x, y, z) for x, y in pts])
 
-    # o furo e CONICO: mais largo na boca, para o macho sair e para o plug
-    # apertar progressivamente. A cota que manda na vazao e a do pe.
-    def furo(z):
-        d = ZC - z
-        return gl - 2 * d * tg, gw - 2 * d * tg
+    def chato(L, z):
+        return anelx((L, largura(L), raio(L)), z)
 
-    f0l, f0w = furo(ZC)
-    fbl, fbw = furo(ZB)
-
-    A = [anelx(f0l, f0w, gr, ZC, cx),                      # boca do gargalo
-         anelx(gl + 2 * gp, gw + 2 * gp, gr + gp, ZC, cx), # topo do colar, por fora
-         anelx(gl + 2 * gp, gw + 2 * gp, gr + gp, ZM, cx), # pe do colar
-         anelx(DECK_UTIL, largura(DECK_UTIL), raio(DECK_UTIL), ZM),   # deck
-         anelx(DECK_UTIL, largura(DECK_UTIL), raio(DECK_UTIL), PP_FLANGE),
-         anelx(TAMPA_O, largura(TAMPA_O), raio(TAMPA_O), PP_FLANGE),  # aba
-         anelx(TAMPA_O, largura(TAMPA_O), raio(TAMPA_O), 0.0),
-         anelx(SAIA_O, largura(SAIA_O), raio(SAIA_O), 0.0),
-         ] + [anelx(L, largura(L), raio(L), z) for L, z in perfil_lingueta()] + [
-         anelx(DECK_UTIL, largura(DECK_UTIL), raio(DECK_UTIL), ZB),   # deck por baixo
-         anelx(fbl, fbw, gr, ZB, cx)]                      # pe do furo
+    # furo e colar vem de calculo-bocal.py: quem desloca um estadio para dentro
+    # tem de tirar o deslocamento TAMBEM do raio, e e la que isso esta escrito.
+    A = [anelx(cb.furo(cb.Z_COL), cb.Z_COL, cx),           # aro do gargalo
+         anelx(cb.colar_ext(cb.Z_COL), cb.Z_COL, cx),      # aro, por fora
+         anelx(cb.colar_ext(ZM), ZM, cx),                  # pe do colar
+         chato(DECK_UTIL, ZM),                             # deck
+         chato(DECK_UTIL, PP_FLANGE),
+         chato(TAMPA_O, PP_FLANGE),                        # aba
+         chato(TAMPA_O, 0.0),
+         chato(SAIA_O, 0.0),
+         ] + [chato(L, z) for L, z in perfil_lingueta()] + [
+         chato(DECK_UTIL, ZB),                             # deck por baixo
+         anelx(cb.furo(ZB), ZB, cx)]                       # pe do furo
     for a, b in zip(A, A[1:] + A[:1]):
         c.banda(b, a)
 
-    poe_calha(c)
     poe_travas(c)
-    # lombadas so no trecho do deck que sobra entre o colar e o lado -X
-    poe_nervuras(c, pula=lambda x, y: (False if x is None
-                                       else x > cx - gl / 2 - gp - 4.0))
+    # lombadas so no trecho do deck que sobra entre o colar e o lado -X.
+    # O que exclui e o PE do colar, que com 3° de saida e mais largo que o aro.
+    lim = cx - cb.colar_ext(ZM)[0] / 2 - 4.0
+    poe_nervuras(c, pula=lambda x, y: (False if x is None else x > lim))
     return c
 
 
-def poe_calha(c):
-    """A calha: UMA secao em U varrida, que abre e cai ao mesmo tempo.
+def fecho_bocal(seg):
+    """O fecho do bocal, desenhado FECHADO. Plug conico de 1° num furo de 3°.
 
-    Na revisao 12 isto eram tres solidos - um piso em rampa reta e duas paredes
-    retas que desciam ate o deck para segurar o piso. Funcionava e parecia
-    cortado: tres chapas encostadas. O Ricardo pediu "mais organico, mais
-    clean, mais curvado, integrado na tampa", e a resposta nao e arredondar
-    cantos: e deixar de ter tres pecas.
+    CASCA QUE ABRE PARA BAIXO EM TODO PONTO, e e essa a regra que desenha a
+    peca. O Ricardo pediu o fecho "alto"; a tentacao e crescer para cima, e
+    nao se molda: botao oco sobre um tampo macico e um vazio fechado, que
+    nenhum macho forma, e botao macico e 4 mm de PP solido chupando na face que
+    se ve. Entao a altura vem da SAIA, que desce por fora do colar. O vazio
+    sai pelo lado aberto, a secao fica em 1,30-1,60 em qualquer corte, e de
+    quebra a saia e uma pega de 13 cm2 - contra a crista de 4 x 1,5 mm que a
+    revisao 13 tinha.
 
-    Agora e um unico U varrido do colar ate o labio, e as tres coisas que o
-    fazem parecer desenhado acontecem juntas ao longo do curso:
-      ABRE    a secao cresce BICO_FLARE - na raiz e um canal, na ponta e uma
-              concha, e o liquido abre junto com ela;
-      BAIXA   a parede cai BICO_DECAI numa curva t^1,3 - a parede alta fica
-              onde o liquido corre rapido e vai sumindo onde ele ja saiu;
-      CAI     o piso desce em t^1,8, manso na raiz e firme na ponta. Rampa reta
-              e o que faz bico de brinquedo; a curva e o que faz a gota se
-              soltar na ponta em vez de voltar por baixo.
-    A mesma escala que baixa a parede afina o piso, e por isso o labio sai com
-    0,48 mm sem ninguem pedir - veja BICO_LIP em calculo-bico.py.
+    A secao, de fora para dentro: domo -> ombro -> saia por fora -> borda de
+    baixo -> saia por dentro -> ARO PLANO (o batente, onde o aro do colar
+    encosta) -> plug por fora -> ponta -> plug por dentro -> domo por dentro.
+    Dezesseis aneis, duas tampas, nenhum vazio fechado.
 
-    A calha nasce DENTRO do colar (BICO_ENTRA) e e BALANCO: nao desce mais ate
-    o deck nem se apoia na aba. Perdeu os dois pes e ficou mais rigida do que
-    precisa (flecha de 0,05 mm com 2 kgf na ponta), porque a secao em U ja e
-    uma viga. E por baixo dela agora nao ha nada: nenhum canto fechado entre
-    parede e aba, que era onde a agua de lavagem ficava.
-    """
-    ZC = cb.Z_COL
-    w, pw = cb.GARG_W / 2, cb.BICO_PAR
-    # secao em U: desce a face externa, cruza o fundo, sobe a face externa do
-    # outro lado, volta pelas duas faces internas e pelo piso.
-    perfil = [(-(w + pw), ZC - cb.CALHA_T), ((w + pw), ZC - cb.CALHA_T),
-              ((w + pw), ZC + cb.BICO_ALT), (w, ZC + cb.BICO_ALT),
-              (w, ZC), (-w, ZC),
-              (-w, ZC + cb.BICO_ALT), (-(w + pw), ZC + cb.BICO_ALT)]
-    est = cb.estacoes_calha()
-    comp = cb.X_LABIO - cb.X_RAIZ
-    off = (cb.X_LABIO + cb.X_RAIZ) / 2
-    # pos=0: a secao e simetrica em Y, entao o espelho que varrido() faz quando
-    # pos nao e positivo nao muda o solido - e o sinal sai pelo volume.
-    c.tris += varrido(perfil, 'y', 0.0, comp, ZC, est, off)
-    c.prismas.append(dict(perfil=perfil, eixo='y', pos=0.0, comp=comp,
-                          off=off, z0=ZC, estacoes=est))
-    return c
-
-
-def fecho_bico(seg):
-    """O fecho do bico, desenhado FECHADO. Plug conico de 1° no gargalo de 5°.
+    O domo nasce na ARESTA INTERNA DO PLUG (D_MOLA) de proposito: assim a face
+    de dentro dele e a mesma curva FECHO_TOPO abaixo e a mola cai exatamente
+    no aro plano. Casca constante sai de onde a curva nasce, nao de cuidado
+    depois.
 
     Desenhado na posicao de vedacao: as malhas se sobrepoem onde o plug aperta,
     e e proposital - e a interferencia. Na peca injetada o fecho e o mesmo
@@ -754,49 +727,34 @@ def fecho_bico(seg):
     malha, como a fenda das travas nao esta.
     """
     q = Q_RETO
-    ZC = cb.Z_COL
-    gl, gw, gr = cb.GARG_L, cb.GARG_W, cb.GARG_R
-    cx, tp = cb.X_GARG, cb.T_PLUG
-    topo = ZC + cb.FECHO_TOPO
-    fim = ZC - cb.PLUG_H
+    ZC, ZS, ZP = cb.Z_COL, cb.Z_SAIA, cb.Z_PLUG
+    cx, n_domo = cb.X_GARG, 4
 
     c = Casca(seg)
 
-    def anelx(L, W, R, z, ox):
-        pts, _ = contorno(L, W, R, seg, q, ox, 0.0, None)
+    def anelx(LWR, z):
+        L, W, R = LWR
+        pts, _ = contorno(L, W, R, seg, q, cx, 0.0, None)
         return c.add(None, None, pts=[(x, y, z) for x, y in pts])
 
-    # o plug: na boca entra folgado PLUG_BOCA; como o cone dele e MENOS aberto
-    # que o do gargalo, ele vai apertando conforme desce.
-    pl = lambda d, base: base - 2 * cb.PLUG_BOCA - 2 * d * tp
-
-    # O DOMO. A revisao 12 tinha um tampo chato com uma crista colada em cima:
-    # duas formas brigando, e a crista era o unico lugar da peca com ponta. O
-    # domo faz o mesmo servico (pega) sendo a propria superficie do tampo.
-    # Encolhe FECHO_RUN da borda ate um PLANALTO - nao um pico: pico em molde e
-    # ponto que nao enche, e planalto e onde o dedao apoia de verdade.
-    # O raio de canto encolhe junto com o anel, senao o domo sai facetado.
-    run = cb.FECHO_RUN
-    D = []
-    for k in range(3, -1, -1):
-        d = run * k / 3
-        L, W = cb.FECHO_L - 2 * d, cb.FECHO_W - 2 * d
-        R = min(cb.FECHO_R, min(L, W) / 2 - 0.6)
-        D.append(anelx(L, W, R, topo + cb.FECHO_DOMO * math.sin(math.pi / 2 * d / run),
-                       cb.FECHO_CX))
-
-    # por dentro o teto acompanha o domo em vez de preencher: assim o tampo
-    # tem 1,4 a 2,0 mm em qualquer corte, e nao 3,6 de PP macico no meio - que
-    # e marca de chupagem garantida justo na face que se ve.
-    teto = ZC + cb.FECHO_TOPO
-    F = D + [anelx(cb.FECHO_L, cb.FECHO_W, cb.FECHO_R, ZC, cb.FECHO_CX),  # face externa
-         anelx(pl(0, gl), pl(0, gw), gr, ZC, cx),                     # raiz do plug
-         anelx(pl(cb.PLUG_H, gl), pl(cb.PLUG_H, gw), gr, fim, cx),    # ponta do plug
-         anelx(pl(cb.PLUG_H, gl) - 2 * cb.PLUG_PAR,
-               pl(cb.PLUG_H, gw) - 2 * cb.PLUG_PAR,
-               max(gr - cb.PLUG_PAR, 0.3), fim, cx),
-         anelx(pl(0, gl) - 2 * cb.PLUG_PAR, pl(0, gw) - 2 * cb.PLUG_PAR,
-               max(gr - cb.PLUG_PAR, 0.3), teto, cx)]
+    # de fora para dentro. Os aneis do domo vem de cb.domo(): o raio encolhe
+    # junto com o anel, senao o domo sai facetado no canto.
+    F = [anelx(cb.domo(1.0 - k / n_domo)[:3], cb.domo(1.0 - k / n_domo)[3])
+         for k in range(n_domo + 1)]                       # planalto -> mola
+    F = F[:-1] + [
+        anelx(cb.saia_ext(ZC), ZC + cb.FECHO_TOPO),        # ombro, por cima
+        anelx(cb.saia_ext(ZS), ZS),                        # saia, por fora
+        anelx(cb.saia_int(ZS), ZS),                        # borda de baixo
+        anelx(cb.saia_int(ZC), ZC),                        # saia, por dentro
+        anelx(cb.plug_ext(ZC), ZC),                        # ARO PLANO: o batente
+        anelx(cb.plug_ext(ZP), ZP),                        # plug, por fora
+        anelx(cb.plug_int(ZP), ZP),                        # ponta do plug
+        anelx(cb.plug_int(ZC), ZC),                        # plug, por dentro
+    ] + [anelx(cb.domo(k / n_domo)[:3], cb.domo(k / n_domo)[3] - cb.FECHO_TOPO)
+         for k in range(n_domo + 1)]                       # domo, por dentro
+    # o anel da mola do domo aparece duas vezes na lista de cima (fim do domo
+    # externo e inicio do interno). O externo foi tirado em F[:-1] porque o
+    # ombro ja esta naquela cota - deixar os dois criaria banda de altura zero.
     for a, b in zip(F, F[1:]):
         c.banda(b, a)
     c.cap(F[0], True)
@@ -926,20 +884,20 @@ def main():
     print(f'{"tampa-pp":<12} {"":13} | {len(tp.tris):5d} tri | {TRAVA_N} travas de '
           f'{TRAVA_LARG:.0f} mm | {volume_assinado(tp.tris) / 1000.0 * 0.905:5.1f} g em PP')
 
-    tb = tampa_bico(seg)
-    grava_stl(os.path.join(out, 'tampa-bico.stl'), tb.tris, 'tampa-bico')
-    perfis['pecas']['tampa-bico'] = dict(loops=tb.loops, bands=tb.bands, caps=tb.caps,
-                                         prismas=tb.prismas)
-    checar.append(('tampa-bico', tb))
-    print(f'{"tampa-bico":<12} {"":13} | {len(tb.tris):5d} tri | gargalo + calha em U | '
-          f'{volume_assinado(tb.tris) / 1000.0 * 0.905:5.1f} g em PP')
+    tb = tampa_bocal(seg)
+    grava_stl(os.path.join(out, 'tampa-bocal.stl'), tb.tris, 'tampa-bocal')
+    perfis['pecas']['tampa-bocal'] = dict(loops=tb.loops, bands=tb.bands, caps=tb.caps,
+                                          prismas=tb.prismas)
+    checar.append(('tampa-bocal', tb))
+    print(f'{"tampa-bocal":<12} {"":13} | {len(tb.tris):5d} tri | gargalo de '
+          f'{cb.GARG_H:.0f} mm | {volume_assinado(tb.tris) / 1000.0 * 0.905:5.1f} g em PP')
 
-    fb = fecho_bico(seg)
-    grava_stl(os.path.join(out, 'fecho-bico.stl'), fb.tris, 'fecho-bico')
-    perfis['pecas']['fecho-bico'] = dict(loops=fb.loops, bands=fb.bands, caps=fb.caps,
-                                         prismas=fb.prismas)
-    checar.append(('fecho-bico', fb))
-    print(f'{"fecho-bico":<12} {"":13} | {len(fb.tris):5d} tri | plug conico | '
+    fb = fecho_bocal(seg)
+    grava_stl(os.path.join(out, 'fecho-bocal.stl'), fb.tris, 'fecho-bocal')
+    perfis['pecas']['fecho-bocal'] = dict(loops=fb.loops, bands=fb.bands, caps=fb.caps,
+                                          prismas=fb.prismas)
+    checar.append(('fecho-bocal', fb))
+    print(f'{"fecho-bocal":<12} {"":13} | {len(fb.tris):5d} tri | saia + plug conico | '
           f'{volume_assinado(fb.tris) / 1000.0 * 0.905:5.1f} g em PP')
 
     au = aro_u(seg)

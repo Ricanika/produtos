@@ -16,13 +16,14 @@
    "stl": "../stl/impressao/tampa-teca.stl"
   },
   {
-   "nome": "tampa_bico",
-   "stl": "../stl/impressao/tampa-bico.stl",
+   "nome": "tampa_bocal",
+   "stl": "../stl/impressao/tampa-bocal.stl",
    "flip": true
   },
   {
-   "nome": "fecho_bico",
-   "stl": "../stl/impressao/fecho-bico.stl"
+   "nome": "fecho_bocal",
+   "stl": "../stl/impressao/fecho-bocal.stl",
+   "flip": true
   },
   {
    "nome": "pote600_fundoplano",

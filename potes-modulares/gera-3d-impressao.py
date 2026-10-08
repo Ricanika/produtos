@@ -15,8 +15,8 @@ As areas de contato sao MEDIDAS na malha, nao digitadas: numero fixo aqui ja
 ficou defasado uma vez, quando o footprint mudou de 121,2 para 139,7 mm.
   tampa-pp.stl             tampa de PP com 2 travas de clipe. Imprime em pe.
   tampa-teca.stl           placa macica - so para conferir encaixe (em teca e CNC).
-  tampa-bico.stl           a de bico, com o gargalo e a calha em U aberta.
-  fecho-bico.stl           o fecho de plug conico. E o par que mais precisa de
+  tampa-bocal.stl          a de bocal, com o gargalo de 14 mm.
+  fecho-bocal.stl          o fecho de saia e plug conico. E o par que mais precisa de
                            prototipo: a vedacao e um cone de 1° apertando num
                            furo de 5°, e em FDM a parede sai ~0,1 mm mais
                            grossa - o plug vai assentar mais raso que o nominal.
@@ -87,30 +87,27 @@ def main():
           f"contato {contato(tc.tris):5.0f} mm2 de pe, {contato(inv):5.0f} mm2 invertida"
           f" -> placa macica, tanto faz; em producao e CNC em teca")
 
-    tr = g.tampa_bico(SEG)
-    g.grava_stl(os.path.join(out, 'tampa-bico.stl'), tr.tris, 'tampa-bico')
+    tr = g.tampa_bocal(SEG)
+    g.grava_stl(os.path.join(out, 'tampa-bocal.stl'), tr.tris, 'tampa-bocal')
     inv_tr = [[(v[0], -v[1], -v[2]) for v in tri] for tri in tr.tris]
-    print(f"tampa-bico.stl           {len(tr.tris):5d} tri | altura {altura(tr.tris):.1f} mm | "
+    print(f"tampa-bocal.stl          {len(tr.tris):5d} tri | altura {altura(tr.tris):.1f} mm | "
           f"contato {contato(tr.tris):5.0f} mm2 de pe, {contato(inv_tr):5.0f} mm2 invertida"
-          f" -> NENHUMA DAS DUAS APOIA. De pe ela fica na ponta das travas;"
-          f" invertida, no topo das paredes da calha, que agora CAI numa curva"
-          f" - a varredura da revisao 13 tirou a ultima face plana que havia"
-          f" nesse extremo. Imprima INVERTIDA com RAFT e suporte: e o preco de"
-          f" uma peca que nao tem face plana em nenhum dos dois extremos."
-          f" Em injecao isso nao custa nada - a peca sai do macho, nao da mesa.")
+          f" -> De pe ela fica na ponta das travas. INVERTIDA ela apoia no ARO"
+          f" do gargalo, que com a calha fora virou um anel plano de verdade -"
+          f" a revisao 13 nao tinha onde apoiar em nenhum dos dois sentidos."
+          f" Imprima INVERTIDA: o aro vira a primeira camada e o colar cresce"
+          f" como uma torre de 14 mm, que o PETG faz sem suporte.")
 
-    fb = g.fecho_bico(SEG)
-    g.grava_stl(os.path.join(out, 'fecho-bico.stl'), fb.tris, 'fecho-bico')
+    fb = g.fecho_bocal(SEG)
+    g.grava_stl(os.path.join(out, 'fecho-bocal.stl'), fb.tris, 'fecho-bocal')
     inv_fb = [[(v[0], -v[1], -v[2]) for v in tri] for tri in fb.tris]
-    print(f"fecho-bico.stl           {len(fb.tris):5d} tri | altura {altura(fb.tris):.1f} mm | "
+    print(f"fecho-bocal.stl          {len(fb.tris):5d} tri | altura {altura(fb.tris):.1f} mm | "
           f"contato {contato(fb.tris):5.0f} mm2 de pe, {contato(inv_fb):5.0f} mm2 invertida"
-          f" -> DE PE (como modelado): apoia no anel da ponta do plug. O DOMO"
-          f" fica em cima e cresce por ultimo - 12° de inclinacao, que o bico"
-          f" vence sem suporte. O que precisa de atencao e por DENTRO: o teto"
-          f" do domo e uma ponte de ~21 x 43 mm sobre o vazio do plug (e era"
-          f" igual antes do domo, 1,6 mm mais baixa). Ponha suporte interno ou"
-          f" aceite a primeira camada feia - ela nao e face de vedacao."
-          f" Invertida seria pior: apoiaria so no planalto do domo.")
+          f" -> INVERTIDA (domo para baixo): o planalto do domo vira a base e a"
+          f" saia cresce como uma saia, que e exatamente o sentido em que a"
+          f" casca abre. De pe seria pior: apoiaria na borda de 1,30 mm da saia"
+          f" e o domo ficaria em ponte sobre o vazio. Com o fecho invertido a"
+          f" face de vedacao do plug sai lisa, que e a que importa no ensaio.")
 
     print(f"\nem {out}")
     print("Nenhum dos tres vedantes se imprime em FDM. Para o prototipo: o ARO EM U "

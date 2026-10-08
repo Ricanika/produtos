@@ -1,6 +1,6 @@
 # Linha Potes Retangulares Modulares em PP
 
-**Status:** estudo de viabilidade técnica · **Revisão 13** · 08/10/2026
+**Status:** estudo de viabilidade técnica · **Revisão 14** · 08/10/2026
 **Origem:** evolução do Projeto 115 do ERP ("Conjunto Potes Modular") · **Planta:** Nitron – Fábrica (CODPLP 1)
 
 Linha retangular em PP transparente, **parede reta com cantos arredondados**, quatro litragens
@@ -10,6 +10,77 @@ combinação empilhada chega à altura do maior.
 Todos os números de máquina, matéria-prima, custo e ferramental saíram do Sankhya, não de
 estimativa de catálogo. Fontes citadas em cada seção.
 
+> **Revisão 14 — o bico saiu, o bocal subiu, e o fecho ficou alto pela saia.**
+>
+> *"Tire esse bico, e deixe mais alto o buraco e a tampinha do buraco deixe alto
+> tmb."*
+>
+> **1. O bico saiu — e isso soma em três frentes.** A calha era a feição mais
+> trabalhada da peça (seção em U varrida, abrindo 12%, baixando 70%, caindo em
+> t^1,8) e saiu inteira. Vale registrar por que isso não é perda:
+>
+> - ela era um **balanço de 16,7 mm fora da silhueta** da tampa. Com ela a peça
+>   media 166,1 mm; sem ela volta a **149,7** — a *mesma* das outras duas tampas.
+>   Embalagem, palete e gôndola voltam a ser comuns à linha inteira.
+> - ela **amarrava a altura do colar**: o piso dela tinha de passar acima da aba,
+>   mínimo 7,30 mm. Sem calha a amarra sumiu — e é exatamente a cota que o
+>   Ricardo pediu na frase seguinte.
+> - quem verte agora é o **próprio bocal**, e bocal alto verte melhor que bocal
+>   raso pela mesma razão que garrafa verte melhor que lata: o jato se forma longe
+>   da parede da peça e não tem por onde voltar.
+>
+> O que **fica** da calha é o código: `varrido()` continua no gerador, porque as
+> 9 lombadas sob o deck usam o mesmo mecanismo.
+>
+> **2. O bocal dobrou de altura — e a troca é o cone.** O colar vai de 7,50 para
+> **14,00 mm** acima do deck (aro em +12,00). Aí aparece uma amarra nova: 5°/face
+> de cone em 14 mm de colar estrangularia o furo em **2,7 mm de lado a lado**, e o
+> raio de canto de 11 não caberia mais num lado menor de 21,3. O cone caiu para
+> **3°** — o mínimo que a máquina pede em feição — e a passagem no pé ficou em
+> **904 mm²**, 90% da do aro. E o que se perdeu de aperto por grau voltou como
+> **curso**: o plug desce 9 mm em vez de 5, e a banda de vedação foi de 2,86 para
+> **4,71 mm**. *Colar alto paga curso, e curso é o que faz vedação com cone
+> pequeno.* A face externa do colar também ganhou os **3° de saída** que não tinha
+> — 14 mm de arrasto reto no aço não se justifica.
+>
+> **3. A altura do fecho vem da SAIA, e isso não é escolha de estilo.** A tentação
+> é crescer para cima, e não se molda: botão oco em cima de um tampo maciço é um
+> **vazio fechado**, que nenhum macho forma; botão maciço são 4 mm de PP sólido,
+> que chupa justo na face que se vê. Casca de tampa tem de **abrir para baixo em
+> todo ponto** — e é isso que a saia faz. Ela desce **9 mm por fora do colar** com
+> 0,35 de folga: a altura aparece por fora, o vazio sai pelo lado aberto, a seção
+> fica em 1,30–1,60 em qualquer corte, e de quebra a saia é uma **pega de 13 cm²**
+> contra a crista de 4 × 1,5 mm da revisão 13. Entre a saia e o plug fica o **aro
+> plano**, que é o batente: o fecho para no aro do colar, não no fundo do furo.
+> Sobram **5 mm de pescoço à vista** sob a saia.
+>
+> | | revisão 13 (bico) | revisão 14 (bocal) |
+> |---|---:|---:|
+> | medida máxima da tampa | 166,1 mm | **149,7 mm** |
+> | colar acima do deck | 7,50 mm | **14,00 mm** |
+> | cone do furo | 5°/face | 3°/face |
+> | curso do plug | 5,00 mm | **9,00 mm** |
+> | banda de vedação | 2,86 mm | **4,71 mm** |
+> | altura do fecho | 8,6 mm | **13,1 mm** |
+> | pega do fecho | crista 4 × 1,5 mm | **13 cm² de saia** |
+> | peso (tampa + fecho) | 23,3 + 2,8 g | 24,0 + 4,9 g |
+>
+> **Por que a peça mudou de nome.** Ela deixou de ter bico, então deixou de se
+> chamar `tampa-bico`: virou `tampa-bocal`, e `calculo-bico.py` virou
+> `calculo-bocal.py`. Nome de peça que descreve uma feição que já saiu mente na
+> primeira vez que alguém procura a calha no arquivo — é o mesmo motivo pelo qual
+> os desenhos da ficha saem do cálculo e não da mão.
+>
+> **O que a geometria ensinou nesta revisão.** Deslocar um retângulo arredondado
+> para dentro em *d* tira *d* de cada lado **e tira *d* do raio**. Quem mantém o
+> raio fixo não está fazendo um cone, está fazendo um estádio escalado — com colar
+> de 7,50 isso passava, mas com 14,00 o raio de 11 não cabe num lado menor de 21,3
+> e o contorno se cruza. Agora furo, colar, saia, plug e domo saem todos de uma
+> função `desloca(d)` só, em `calculo-bocal.py`, e há uma conferência que olha o
+> **menor raio de qualquer anel da peça**.
+>
+> ---
+>
 > **Revisão 13 — tirar metade das nervuras deixou a tampa mais rígida, e o bico
 > deixou de ser três chapas.**
 >
@@ -1319,86 +1390,121 @@ Feito isso, sai STL e gcode como nas outras peças, e as conferências que já e
 
 ---
 
-## 16. A tampa de bico, como ficou
+## 16. A tampa de bocal, como ficou
 
-A terceira tampa da linha, que entrou na revisão 12 no lugar da de correr e ganhou forma
-na 13. A seção 15 acima é o registro da que saiu; esta é a que está no 3D.
+A terceira tampa da linha. Entrou na revisão 12 no lugar da de correr, ganhou forma
+na 13 como **tampa de bico**, e na 14 perdeu o bico. A seção 15 acima é o registro da
+de correr; esta é a que está no 3D.
 
 ### 16.1 A ideia: separar quem veda de quem escorre
 
-Na de correr, a janela por onde o produto saía **era também** o que tinha de vedar — e é
-por isso que ela não vedava. Aqui são duas peças de geometria com um trabalho cada:
+Na de correr, a janela por onde o produto saía **era também** o que tinha de vedar — e
+é por isso que ela não vedava. Aqui são duas peças de geometria com um trabalho cada:
 
 | | O que é | O que faz |
 |---|---|---|
-| **Gargalo** | colar de parede fechada subindo 7,50 mm do deck; furo em **estádio** de 24 × 46 mm, raio de canto **11** | é quem **veda**. O furo é cônico (5°/face): sai do macho sem esforço e o plug aperta progressivamente |
-| **Calha** | **uma seção em U varrida** do colar até um lábio 9 mm além da tampa, em balanço | é quem **escorre**. Aberta em cima — para escoar e para lavar |
-| **Fecho** | tampo de 27,2 × 52 com **domo oco** de 2,00 mm e **plug cônico de 1°** | é quem **fecha**. Dobradiça viva atrás (não está na malha) |
+| **Gargalo** | colar de parede fechada subindo **14,00 mm** do deck; furo em **estádio** de 24 × 46 mm, raio de canto 11; furo cônico de 3°/face e face externa com 3° de saída | é quem **veda** e, desde a revisão 14, é quem **verte** |
+| **Fecho** | **saia** de 1,30 descendo 9 mm por fora do colar, **plug cônico** de 1° descendo 9 mm por dentro dele, e um **aro plano** entre os dois | é quem **fecha**, quem dá **pega** e quem **para** no aro. Dobradiça viva atrás (não está na malha) |
 
-A altura do colar **não é escolha de estilo**: é ela que põe o piso da calha acima da aba.
-A primeira tentativa, com 4,40 mm, punha o piso em +0,80 e o lábio em +0,20 — ambos
-**abaixo** da aba de +1,20. A calha cortaria o apoio da tampa na borda e pingaria no pote.
-Foi a conferência que pegou; o mínimo é 7,30 e ficou 7,50.
+### 16.2 Por que o bico saiu, e o que ele devolveu
 
-### 16.2 A calha varrida — por que não são três chapas
+A calha da revisão 13 era a feição mais trabalhada da peça: uma seção em U varrida do
+colar ao lábio, abrindo 12%, baixando 70% e caindo em t^1,8, com lábio de 0,48 mm que
+saía da própria conta. Saiu inteira na 14, e isso **soma**:
 
-Na revisão 12 a calha eram três sólidos: piso em rampa reta e duas paredes retas que
-desciam até o deck para segurá-lo. Funcionava e parecia cortado, e o pedido era *"mais
-orgânico, mais clean, mais curvado, mais harmônico, integrado na tampa"*. Arredondar
-cantos não responde isso — o que responde é **deixar de ter três peças**.
+- era um **balanço de 16,7 mm fora da silhueta** da tampa. A peça media 166,1 mm e
+  agora volta a **149,7** — a mesma das outras duas tampas. Embalagem, palete e gôndola
+  voltam a ser comuns à linha.
+- **amarrava a altura do colar**: o piso dela tinha de passar acima da aba (mínimo
+  7,30 mm). Sem calha, a altura ficou livre — e é exatamente o que se pediu em seguida.
+- quem verte agora é o **próprio bocal**. Bocal alto verte melhor que bocal raso pela
+  mesma razão que garrafa verte melhor que lata: o jato se forma longe da parede da
+  peça e não tem por onde voltar.
 
-Hoje é um único U varrido, e três coisas acontecem juntas ao longo dos 16,7 mm de curso:
+E a **aresta externa do aro fica viva**, de propósito. Raio na saída de um bocal é o
+que faz o líquido envolver e escorrer pela parede; gota só se solta de aresta. É a
+única feição do projeto que *não* leva raio, e o motivo está escrito no código.
 
-| | Lei | Na raiz | No lábio |
-|---|---|---|---|
-| **abre** | `1 + 0,12·t` | canal de 23,0 de meia-largura | concha de 25,8 |
-| **baixa** | `1 − 0,70·t^1,3` | parede de 4,00 | 1,20 |
-| **cai** | `−2,20·t^1,8` | piso em +5,50 | +3,30 |
+O que **fica** da calha é o mecanismo: `varrido()` continua em `gera-3d.py`, porque as
+9 lombadas sob o deck o usam.
 
-A curva `t^1,8` importa: rampa reta é o que faz bico de brinquedo, e a queda que acelera
-na ponta é o que **solta a gota** em vez de deixá-la voltar por baixo do lábio.
+### 16.3 A troca que a altura trouxe: o cone
 
-E o **lábio de 0,48 mm não é cota digitada**. A mesma escala que baixa a parede 70% afina
-o piso de 1,60, então o lábio **sai da conta**. Duas cotas que concordam por construção
-valem mais que duas cotas que precisam ser conferidas — e `BICO_LIP` é hoje uma linha
-derivada em `calculo-bico.py`, não um número que alguém pode mexer sozinho.
+Com 7,50 mm de colar, 5°/face de cone no furo era de graça. Com 14,00 não é: 5° em
+14 mm estrangularia o furo em **2,7 mm de lado a lado**, e o raio de canto de 11 não
+caberia mais num lado menor de 21,3 — o contorno se cruzaria. O cone caiu para **3°**,
+o mínimo que a máquina pede em feição, e a passagem no pé ficou em **904 mm²**, 90% da
+do aro.
 
-A calha é **balanço** a partir do colar: perdeu os dois pés da revisão 12 e ficou **mais
-rígida do que precisa** — 0,059 mm de flecha com 2 kgf na ponta do lábio, porque seção
-em U já é uma viga (I = 472 mm⁴). O que se ganhou com isso é lavagem: por baixo dela
-agora não há nenhum canto fechado entre parede e aba.
+O que se perdeu de aperto por grau voltou como **curso**. A vedação não depende do
+cone sozinho, depende da *diferença* entre os dois cones multiplicada pelo curso:
 
-### 16.3 O domo do fecho
+| | revisão 13 | revisão 14 |
+|---|---:|---:|
+| cone do furo | 5°/face | 3°/face |
+| cone do plug | 1°/face | 1°/face |
+| curso do plug | 5,00 mm | **9,00 mm** |
+| folga no aro | 0,15 mm/lado | 0,15 mm/lado |
+| aperto no fim | 0,18 mm/lado | 0,17 mm/lado |
+| **banda de vedação** | 2,86 mm | **4,71 mm** |
 
-A crista colada no tampo saiu. Eram duas formas brigando, e a crista era o único lugar da
-peça com ponta. No lugar, um **domo de 2,00 mm** que é a própria superfície do tampo,
-encolhendo 9 mm até um **planalto** — pico em molde é ponto que não enche, e planalto é
-onde o dedão apoia de verdade. Por dentro o teto **acompanha** a curva: no meio há
-2,00 mm de PP e não 3,60 maciços, então a chupagem fica fora da face que se vê.
+Colar alto **paga** curso, e curso é o que faz vedação com cone pequeno.
 
-O tampo passa **1,5 mm** do colar em −X e nos lados e para **0,30 mm** antes da raiz da
-calha (se avançasse, bateria nela). Esse deslocamento é o que dá a unha, de graça.
+### 16.4 A altura do fecho vem da saia, e isso não é estilo
 
-Como os dois contornos têm **centros diferentes**, "o tampo cobre o furo" não é
-`(L_tampo − L_furo)/2`: a sobra varia com o ângulo. É conferido **ponto a ponto** em 240
-ângulos, e sobra 0,60 mm no pior deles. `BICO_ENTRA` — quanto a calha entra no colar para
-fundir — teve de cair de 1,00 para 0,60 justamente porque empurrava a borda do fecho para
-dentro e derrubava essa sobra a 0,20 mm.
+O pedido foi "a tampinha do buraco deixe alto também". A tentação é crescer para
+cima, e **não se molda**:
 
-### 16.4 Hermeticidade — o que prometo e o que não
+- **botão oco** em cima de um tampo maciço é um **vazio fechado**. Nenhum macho forma
+  um vazio que não abre para fora da peça.
+- **botão maciço** são ~4 mm de PP sólido no meio da face que se vê: marca de
+  chupagem garantida.
 
-**Prometo:** não vaza deitado nem virado, que é o caso de uso. Plug cônico em PP contra PP
-sela líquido à pressão atmosférica — é assim que funciona qualquer tampa de detergente ou
-de azeite. O cone do gargalo (5°) é **mais aberto** que o do plug (1°) de propósito: se
-fossem iguais, as faces ficariam paralelas e o aperto dependeria de tolerância de
-interferência reta, que é o que não se controla em injeção. Com cones diferentes o plug
-entra folgado 0,15 mm na boca, as duas retas se cruzam a 2,1 mm e dali ele aperta até
-0,18 mm/lado no pé — que é onde o colar é apoiado pelo deck. O ponto de contato **anda**
-conforme a peça desgasta ou flui.
+Casca de tampa tem de **abrir para baixo em todo ponto**. É isso que a saia faz: a
+altura aparece por fora, o vazio sai pelo lado aberto, e a seção fica em **1,30–1,60
+em qualquer corte**. O fecho passou de 8,6 para **13,1 mm**, e a pega passou de uma
+crista de 4 × 1,5 mm para **13 cm² de parede de saia** — que é o que o dedo aperta de
+verdade.
+
+Entre a saia e o plug fica o **aro plano**: é o batente. O fecho para no aro do colar,
+não no fundo do furo, e por isso a cota que posiciona a vedação é uma face plana, não
+uma profundidade.
+
+O **domo** subiu para 2,50 mm e continua *oco*: a face de dentro é a mesma curva
+1,60 abaixo, e ela nasce na **aresta interna do plug** justamente para que a mola caia
+no aro plano. Casca constante sai de onde a curva nasce, não de cuidado depois.
+
+Sobram **5 mm de pescoço à vista** sob a saia — o pescoço continua lendo como pescoço,
+e a conferência vigia isso: saia comprida demais encosta no deck antes de assentar no
+aro.
+
+### 16.5 Uma função só para os anéis
+
+Furo, colar, saia, plug e domo são todos o **mesmo estádio deslocado** para dentro ou
+para fora. Deslocar um retângulo arredondado para dentro em *d* tira *d* de cada lado
+**e tira *d* do raio** — quem mantém o raio fixo não está fazendo um cone, está fazendo
+um estádio escalado. Com colar de 7,50 isso passava; com 14,00 estoura. Hoje tudo sai
+de `desloca(d)` em `calculo-bocal.py`, e uma conferência olha o **menor raio de
+qualquer anel da peça** (2,65 mm, no planalto do domo).
+
+É a mesma lição de `secao_calha()` na revisão 13: quem precisa medir a peça pergunta à
+fonte, não recalcula por fora. As conferências de montagem de número 11 a 14 pedem
+todas as posições a `calculo-bocal.py` antes de medir na malha.
+
+### 16.6 Hermeticidade — o que prometo e o que não
+
+**Prometo:** não vaza deitado nem virado, que é o caso de uso. Plug cônico em PP contra
+PP sela líquido à pressão atmosférica — é assim que funciona qualquer tampa de
+detergente ou de azeite. O cone do furo (3°) é **mais aberto** que o do plug (1°) de
+propósito: se fossem iguais, as faces ficariam paralelas e o aperto dependeria de
+tolerância de interferência reta, que é o que não se controla em injeção. Com cones
+diferentes o plug entra folgado 0,15 mm no aro, as duas retas se cruzam a 4,3 mm e dali
+ele aperta até 0,17 mm/lado no fim. O ponto de contato **anda** conforme a peça desgasta
+ou flui.
 
 **Não prometo** a classe da tampa principal: aquela é radial com silicone, esta é PP
 contra PP. Se o ensaio de água colorida acusar, a resposta é um filete de silicone no
 plug — seria o **quarto** perfil extrudado da linha, e por isso não entrou de saída.
 
-**Esta versão não empilha** — foi o Ricardo que liberou, e é isso que deixa o gargalo
-subir acima do plano modular, a calha passar por cima da aba e o fecho ter aba de dedo.
+**Esta versão não empilha** — foi o Ricardo que liberou, e é isso que deixa o colar
+subir 14 mm acima do plano modular e o fecho ter saia.

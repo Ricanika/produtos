@@ -90,14 +90,15 @@ def intervalos(zs):
     return [(round(zs[i], 2), round(zs[i + 1], 2)) for i in range(0, len(zs) - 1, 2)]
 
 
-def bico():
-    """A tampa de bico: o furo e furo, o plug aperta, a calha nao corta a aba."""
+def bocal():
+    """A tampa de bocal: o furo e furo, o colar sobe, o plug aperta, a saia
+    do fecho veste o colar sem bater nele e sem bater no deck."""
     import importlib.util
-    sp = importlib.util.spec_from_file_location('cb', os.path.join(BASE, 'calculo-bico.py'))
+    sp = importlib.util.spec_from_file_location('cb', os.path.join(BASE, 'calculo-bocal.py'))
     cb = importlib.util.module_from_spec(sp); sp.loader.exec_module(cb)
 
-    L = ler('tampa-bico.stl')
-    F = ler('fecho-bico.stl')
+    L = ler('tampa-bocal.stl')
+    F = ler('fecho-bocal.stl')
     ok = True
 
     def diz(rot, cond, txt):
@@ -105,125 +106,118 @@ def bico():
         ok = ok and cond
         print('  %-38s %s  %s' % (rot, 'OK ' if cond else 'FALHA', txt))
 
-    print('\n=== TAMPA DE BICO ===')
+    print('\n=== TAMPA DE BOCAL ===')
 
-    print('\n11) O GARGALO E FURO MESMO')
+    print('\n11) O GARGALO E FURO MESMO, E SOBE OS 14 mm')
     dentro = intervalos(raio_z(L, cb.X_GARG, 0.0))
-    parede = intervalos(raio_z(L, cb.X_GARG, cb.GARG_W / 2 + cb.GARG_PAR / 2))
+    # a parede do colar e inclinada 3°: medir no meio dela, na altura do aro,
+    # e perguntar a cb onde ela esta - nao supor que esta onde estava embaixo
+    y_par = (cb.GARG_W / 2 + cb.colar_ext(cb.Z_COL)[1] / 2) / 2
+    parede = intervalos(raio_z(L, cb.X_GARG, y_par))
     print('   raio no eixo do furo:', dentro)
-    print('   raio na parede do colar:', parede)
+    print('   raio na parede do colar (y=%.2f):' % y_par, parede)
     diz('nada de tampa no eixo do furo', not dentro,
         'o furo atravessa o deck inteiro')
-    diz('o colar sobe ate +%.2f' % cb.Z_COL,
+    diz('o colar sobe ate %+.2f' % cb.Z_COL,
         bool(parede) and abs(parede[-1][1] - cb.Z_COL) < 0.01,
-        'topo do colar em %+.2f' % (parede[-1][1] if parede else 0))
+        'aro do colar em %+.2f (eram +5,50 na revisao 13)'
+        % (parede[-1][1] if parede else 0))
     diz('e desce ate a face de baixo do deck',
         bool(parede) and abs(parede[0][0] - cm_Z_DECK_B) < 0.01,
         'pe em %+.2f' % (parede[0][0] if parede else 0))
+    # os 3° de saida: a face externa tem de ser MAIS LARGA embaixo
+    topo = cruzamentos(L, cb.Z_COL - 0.3, 'x', 0.0)
+    base = cruzamentos(L, Z_MOD + 0.3, 'x', 0.0)
+    alvo = cb.X_GARG + cb.GARG_L / 2 + cb.GARG_PAR
+    perto = lambda v, a: min((q for q in v if abs(q - a) < 2.5),
+                             key=lambda q: abs(q - a)) if v else 0.0
+    xt, xb = perto(topo, alvo), perto(base, alvo + 1.0)
+    esperado = (cb.colar_ext(Z_MOD + 0.3)[0] - cb.colar_ext(cb.Z_COL - 0.3)[0]) / 2
+    print('   face externa do colar: %.3f no aro, %.3f no pe (+%.3f)'
+          % (xt, xb, xb - xt))
+    diz('a face externa tem os 3° de saida', abs((xb - xt) - esperado) < 0.05,
+        'alarga %.3f mm do aro ao pe; a conta pede %.3f' % (xb - xt, esperado))
 
     print('\n12) O PLUG APERTA DENTRO DO GARGALO')
-    # na BOCA o plug entra folgado; no PE ele aperta. Medir nos dois.
-    for nome, d, sinal in (('boca', 0.3, -1), ('pe', cb.PLUG_H - 0.3, +1)):
+    # no ARO o plug entra folgado; no fim do curso ele aperta. Medir nos dois.
+    for nome, d, sinal in (('aro', 0.3, -1), ('fim', cb.PLUG_H - 0.3, +1)):
         z = cb.Z_COL - d
         g = cruzamentos(L, z, 'x', 0.0)
         pg = cruzamentos(F, z, 'x', 0.0)
-        # Nessa altura o raio pega o colar, o piso da calha e a aba. Pegar "o
-        # maior cruzamento" entregava a ABA, nao o furo. A face do furo e a que
-        # cai perto de X_GARG + GARG_L/2 - selecionar por posicao, nao por ordem.
+        # Nessa altura o raio pega o colar e a saia do fecho. A face do furo e
+        # a que cai perto de X_GARG + GARG_L/2 - selecionar por POSICAO, nao
+        # por ordem: pegar "o maior cruzamento" entregava a saia.
         alvo = cb.X_GARG + cb.GARG_L / 2
-        perto = lambda v: min((q for q in v if abs(q - alvo) < 1.5),
-                              key=lambda q: abs(q - alvo))
-        furo, plug = perto(g), perto(pg)
+        furo, plug = perto(g, alvo), perto(pg, alvo)
         delta = plug - furo
         print('   em %-4s (z=%+.2f): furo %.3f | plug %.3f -> %+.3f'
               % (nome, z, furo, plug, delta))
         if sinal < 0:
-            diz('na boca o plug entra folgado', delta < 0,
+            diz('no aro o plug entra folgado', delta < 0,
                 '%.3f mm/lado de folga (pedia %.2f)' % (-delta, cb.PLUG_BOCA))
         else:
-            diz('no pe o plug aperta', delta > 0.1,
+            diz('no fim do curso o plug aperta', delta > 0.1,
                 '%.3f mm/lado de interferencia' % delta)
 
-    print('\n13) A CALHA NAO CORTA A ABA, E O LABIO NAO PINGA NO POTE')
-    # medir no MEIO DO CURSO, e pedindo as cotas a secao_calha(): a calha abre
-    # 6% ate aqui, entao a parede nao esta mais onde estava na raiz. Metade do
-    # curso cai numa estacao da varredura, logo nao ha interpolacao na medida.
-    xm = cb.X_RAIZ + (cb.X_LABIO - cb.X_RAIZ) * 0.5
-    sc = cb.secao_calha(xm)
-    eixo = intervalos(raio_z(L, xm, 0.0))
-    lado = intervalos(raio_z(L, xm, sc['y_par']))
-    print('   previsto em x=%.2f: piso %+.2f/%+.2f, parede %+.2f, canal %.2f'
-          % (xm, sc['piso_fundo'], sc['piso_topo'], sc['parede'], sc['alt']))
-    print('   raio no meio da calha, no eixo:', eixo)
-    print('   raio na parede da calha (y=%.2f):' % sc['y_par'], lado)
-    diz('o piso da calha fica acima da aba', bool(eixo) and eixo[-1][0] > cm_PP_FLANGE,
-        'face de baixo do piso em %+.2f, aba em %+.2f'
-        % (eixo[-1][0] if eixo else 0, cm_PP_FLANGE))
-    diz('o piso esta onde a varredura promete', bool(eixo)
-        and abs(eixo[-1][0] - sc['piso_fundo']) < 0.10
-        and abs(eixo[-1][1] - sc['piso_topo']) < 0.10,
-        'medido %+.2f/%+.2f contra %+.2f/%+.2f previsto'
-        % ((eixo[-1][0] if eixo else 0, eixo[-1][1] if eixo else 0,
-            sc['piso_fundo'], sc['piso_topo'])))
-    diz('a parede sobe acima do piso', bool(lado) and bool(eixo)
-        and lado[-1][1] > eixo[-1][1] + 1.0,
-        '%.2f mm de canal aberto (previsto %.2f)'
-        % ((lado[-1][1] - eixo[-1][1]) if eixo and lado else 0, sc['alt']))
-    diz('a parede esta na altura prevista', bool(lado)
-        and abs(lado[-1][1] - sc['parede']) < 0.15,
-        'topo medido %+.2f contra %+.2f previsto'
-        % (lado[-1][1] if lado else 0, sc['parede']))
-    xl = cb.X_LABIO - 0.4
-    sl = cb.secao_calha(xl)
-    labio = intervalos(raio_z(L, xl, 0.0))
-    print('   raio no labio:', labio)
-    diz('o labio fica acima da aba', bool(labio) and labio[0][0] > cm_PP_FLANGE,
-        'ponta do labio em %+.2f' % (labio[0][0] if labio else 0))
-    diz('o labio e mais fino que o piso', bool(labio)
-        and (labio[0][1] - labio[0][0]) < cb.CALHA_T * 0.5,
-        '%.2f mm contra %.2f do piso (a varredura preve %.2f)'
-        % ((labio[0][1] - labio[0][0]) if labio else 0, cb.CALHA_T, sl['esp']))
-    # a calha e balanco: por baixo dela, fora da projecao do colar, nao pode
-    # haver mais nenhum apoio - e o que deixa a peca lavavel com um pano.
-    sob = [iv for iv in lado if iv[0] < cm_PP_FLANGE - 0.05]
-    print('   o que existe sob a parede, abaixo da aba:', sob)
-    diz('nada desce da calha ate a aba', not sob,
-        'balanco limpo: %d solido(s) sob a parede' % len(sob))
+    print('\n13) A SAIA DO FECHO VESTE O COLAR SEM ENCOSTAR')
+    # no meio da saia: a saia do fecho e a parede do colar tem de aparecer
+    # como dois solidos SEPARADOS no mesmo raio horizontal
+    zm = (cb.Z_COL + cb.Z_SAIA) / 2
+    xs_f = cruzamentos(F, zm, 'x', 0.0)
+    xs_l = cruzamentos(L, zm, 'x', 0.0)
+    # Nesta altura o raio pega QUATRO faces do fecho (plug por dentro e por
+    # fora, saia por dentro e por fora) e duas do colar. Pegar por ordem
+    # entrega o plug no lugar da saia - a primeira versao desta conferencia
+    # mediu exatamente isso e acusou folga negativa de 3 mm. Selecionar por
+    # POSICAO, com a posicao vindo de cb: a mesma licao de secao_calha().
+    p_col = cb.X_GARG + cb.colar_ext(zm)[0] / 2
+    p_si = cb.X_GARG + cb.saia_int(zm)[0] / 2
+    p_se = cb.X_GARG + cb.saia_ext(zm)[0] / 2
+    col, si, se = perto(xs_l, p_col), perto(xs_f, p_si), perto(xs_f, p_se)
+    print('   em z=%+.2f: colar %.3f | saia %.3f por dentro, %.3f por fora'
+          % (zm, col, si, se))
+    diz('ha folga entre a saia e o colar', (si - col) > 0.05,
+        '%.3f mm de folga (a conta pede %.2f)' % (si - col, cb.FECHO_FOLGA))
+    diz('a saia tem a parede prevista', abs((se - si) - cb.FECHO_PAR) < 0.06,
+        '%.3f mm de parede contra %.2f previsto' % (se - si, cb.FECHO_PAR))
+    # a borda de baixo da saia nao pode chegar no deck
+    diz('a borda da saia para acima do deck',
+        abs(min(v[2] for t in F for v in t) - cb.Z_SAIA) < 0.01
+        and cb.Z_SAIA > Z_MOD + 1.0,
+        'borda em %+.2f, deck em %+.2f: %.2f mm de pescoco a vista'
+        % (cb.Z_SAIA, Z_MOD, cb.PESCOCO))
 
-    print('\n14) O FECHO: DOMO OCO, DESLOCADO, E SEM BATER NA CALHA')
-    meio = intervalos(raio_z(F, cb.FECHO_CX, 0.0))
+    print('\n14) O FECHO: ARO PLANO DE BATENTE, DOMO OCO, SEM VAZIO FECHADO')
+    meio = intervalos(raio_z(F, cb.X_GARG, 0.0))
     print('   raio no alto do domo:', meio)
-    diz('o domo sobe ate a crista', bool(meio)
+    diz('o domo sobe ate o planalto', bool(meio)
         and abs(meio[-1][1] - cb.Z_DOMO) < 0.05,
-        'crista medida %+.2f, prevista %+.2f'
+        'planalto medido %+.2f, previsto %+.2f'
         % (meio[-1][1] if meio else 0, cb.Z_DOMO))
     diz('o domo e OCO, nao macico', bool(meio)
-        and abs((meio[-1][1] - meio[-1][0]) - cb.FECHO_DOMO) < 0.05,
-        '%.2f mm de PP no meio do tampo (macico daria %.2f)'
-        % ((meio[-1][1] - meio[-1][0]) if meio else 0,
-           cb.FECHO_TOPO + cb.FECHO_DOMO))
-    # a unha: o tampo passa da face do colar em -X, e e so la que ele passa
-    unha = intervalos(raio_z(F, cb.FECHO_X0 + 0.4, 0.0))
-    # o que tem de faltar debaixo da unha e o COLAR, nao o deck: o deck passa
-    # por baixo de todo o tampo, e e justamente nele que a unha se apoia
-    colar = [iv for iv in intervalos(raio_z(L, cb.FECHO_X0 + 0.4, 0.0))
-             if iv[1] > cb.Z_MOD + 0.1]
-    print('   raio na aba de unha: fecho', unha, '| colar', colar)
-    diz('ha tampo onde nao ha colar', bool(unha) and not colar,
-        'a unha pega %.2f mm de aba livre, com o deck por baixo' % cb.FECHO_ABA)
-    # e a interferencia que importa: a raiz da parede da calha
-    sc0 = cb.secao_calha(cb.X_RAIZ + 0.2)
-    bate_f = intervalos(raio_z(F, cb.X_RAIZ + 0.2, sc0['y_par']))
-    bate_l = intervalos(raio_z(L, cb.X_RAIZ + 0.2, sc0['y_par']))
-    print('   na raiz da parede: fecho', bate_f, '| calha', bate_l)
-    diz('o fecho nao invade a raiz da calha', bool(bate_l) and not bate_f,
-        'a calha ocupa, o fecho nao: %.2f mm de folga em X' % cb.FECHO_FOLGA)
-    diz('o tampo cobre o furo em todo o perimetro', cb.cobre_o_furo(),
-        'sobra %.2f mm no pior ponto do perimetro' % cb.margem_do_tampo())
+        and abs((meio[-1][1] - meio[-1][0]) - cb.FECHO_TOPO) < 0.05,
+        '%.2f mm de PP no planalto, igual a casca' % (meio[-1][1] - meio[-1][0]))
+    diz('abre para baixo: nada de vazio fechado', len(meio) == 1,
+        'um solido so no eixo - vazio fechado apareceria como dois')
+    # o ARO PLANO: no meio do aro do colar, o fecho tem de ter material
+    # exatamente EM CIMA de Z_COL, que e o batente
+    y_aro = (cb.GARG_W / 2 + cb.colar_ext(cb.Z_COL)[1] / 2) / 2
+    bat_f = intervalos(raio_z(F, cb.X_GARG, y_aro))
+    bat_l = intervalos(raio_z(L, cb.X_GARG, y_aro))
+    print('   sobre o aro do colar (y=%.2f): fecho %s | colar %s'
+          % (y_aro, bat_f, bat_l))
+    diz('o fecho assenta no aro do colar', bool(bat_f) and bool(bat_l)
+        and abs(bat_f[0][0] - cb.Z_COL) < 0.01
+        and abs(bat_l[-1][1] - cb.Z_COL) < 0.01,
+        'as duas faces se encontram em %+.2f - o fecho para no aro, nao no fundo'
+        % cb.Z_COL)
+    diz('e a altura do fecho e de pegar', (cb.Z_DOMO - cb.Z_SAIA) >= 10.0,
+        '%.2f mm de fecho (eram 8,60 na revisao 13)' % (cb.Z_DOMO - cb.Z_SAIA))
     return ok
 
 
 cm_Z_DECK_B = -3.50
+Z_MOD = -2.00
 cm_PP_FLANGE = 1.20
 cm_PP_DECK = 1.50
 
@@ -389,7 +383,7 @@ def main():
         '%.2f mm de folga para o degrau em %+.2f'
         % ((col[0][0] - cm.Z_DEGRAU) if col else 0, cm.Z_DEGRAU))
 
-    ok2 = bico()
+    ok2 = bocal()
     print('\nMONTAGEM:', 'OK' if (ok and ok2) else 'FALHOU')
     return 0 if (ok and ok2) else 1
 

@@ -4,7 +4,7 @@ APOSENTADO NA REVISAO 12 - nao e mais importado por gera-3d.py.
 
 O Ricardo reprovou a tampa de correr ("nao ficou legal... preciso de algo mais
 robusto... algo que nao vaze tmb e seja hermetico com o bico"), e ela deu lugar
-a TAMPA DE BICO - ver calculo-bico.py. O arquivo fica porque o ESTUDO DE
+a TAMPA DE BOCAL - ver calculo-bocal.py. O arquivo fica porque o ESTUDO DE
 POSICAO continua valendo: foi aqui que as tres posicoes foram cotadas com teste
 de caber de verdade, e foi daqui que saiu o lado curto como melhor lugar. O
 gargalo da revisao 12 esta nesse mesmo lugar.

@@ -49,7 +49,7 @@ function volSTL(caminho){
 }
 const ARQ = {'pote-600':'pote-600','pote-1200':'pote-1200','pote-1800':'pote-1800',
              'pote-2400':'pote-2400','tampa-teca':'tampa-teca',
-             'tampa-pp':'tampa-pp','tampa-bico':'tampa-bico','fecho-bico':'fecho-bico',
+             'tampa-pp':'tampa-pp','tampa-bocal':'tampa-bocal','fecho-bocal':'fecho-bocal',
              'aro-u':'aro-u','corda-teca':'corda-teca'};
 const DIR = process.argv[2] || 'stl';
 const py = {};
