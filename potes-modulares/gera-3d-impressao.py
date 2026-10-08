@@ -93,18 +93,24 @@ def main():
     print(f"tampa-bico.stl           {len(tr.tris):5d} tri | altura {altura(tr.tris):.1f} mm | "
           f"contato {contato(tr.tris):5.0f} mm2 de pe, {contato(inv_tr):5.0f} mm2 invertida"
           f" -> NENHUMA DAS DUAS APOIA. De pe ela fica na ponta das travas;"
-          f" invertida, nas duas paredes da calha, que tem o topo em rampa."
-          f" Imprima INVERTIDA com RAFT e suporte - e o preco de uma peca que"
-          f" nao tem face plana no extremo nenhum dos dois sentidos.")
+          f" invertida, no topo das paredes da calha, que agora CAI numa curva"
+          f" - a varredura da revisao 13 tirou a ultima face plana que havia"
+          f" nesse extremo. Imprima INVERTIDA com RAFT e suporte: e o preco de"
+          f" uma peca que nao tem face plana em nenhum dos dois extremos."
+          f" Em injecao isso nao custa nada - a peca sai do macho, nao da mesa.")
 
     fb = g.fecho_bico(SEG)
     g.grava_stl(os.path.join(out, 'fecho-bico.stl'), fb.tris, 'fecho-bico')
     inv_fb = [[(v[0], -v[1], -v[2]) for v in tri] for tri in fb.tris]
     print(f"fecho-bico.stl           {len(fb.tris):5d} tri | altura {altura(fb.tris):.1f} mm | "
           f"contato {contato(fb.tris):5.0f} mm2 de pe, {contato(inv_fb):5.0f} mm2 invertida"
-          f" -> DE PE (como modelado): apoia no anel da ponta do plug. O tampo"
-          f" fica em cima e a crista de pega cresce por ultimo, sem suporte."
-          f" Invertida seria pior: apoiaria so na crista.")
+          f" -> DE PE (como modelado): apoia no anel da ponta do plug. O DOMO"
+          f" fica em cima e cresce por ultimo - 12° de inclinacao, que o bico"
+          f" vence sem suporte. O que precisa de atencao e por DENTRO: o teto"
+          f" do domo e uma ponte de ~21 x 43 mm sobre o vazio do plug (e era"
+          f" igual antes do domo, 1,6 mm mais baixa). Ponha suporte interno ou"
+          f" aceite a primeira camada feia - ela nao e face de vedacao."
+          f" Invertida seria pior: apoiaria so no planalto do domo.")
 
     print(f"\nem {out}")
     print("Nenhum dos tres vedantes se imprime em FDM. Para o prototipo: o ARO EM U "

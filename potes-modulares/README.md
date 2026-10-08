@@ -1,6 +1,6 @@
 # Linha Potes Retangulares Modulares em PP
 
-**Status:** estudo de viabilidade técnica · **Revisão 12** · 07/10/2026
+**Status:** estudo de viabilidade técnica · **Revisão 13** · 08/10/2026
 **Origem:** evolução do Projeto 115 do ERP ("Conjunto Potes Modular") · **Planta:** Nitron – Fábrica (CODPLP 1)
 
 Linha retangular em PP transparente, **parede reta com cantos arredondados**, quatro litragens
@@ -10,6 +10,61 @@ combinação empilhada chega à altura do maior.
 Todos os números de máquina, matéria-prima, custo e ferramental saíram do Sankhya, não de
 estimativa de catálogo. Fontes citadas em cada seção.
 
+> **Revisão 13 — tirar metade das nervuras deixou a tampa mais rígida, e o bico
+> deixou de ser três chapas.**
+>
+> Dois pedidos do Ricardo, os dois de **forma**, não de cota: *"essa parte aqui, em vez
+> de tiras, quero colocar lombadas, precisamos pensar em deixar o projeto fácil de
+> lavar... Quanto ao bico, ficou bom, mas quero algo mais orgânico, essa parte do bico
+> ser mais clean, mais curvado, mais harmônico, integrado na tampa."*
+>
+> **1. As tiras viraram lombadas — e o projeto ficou lavável.** A grade 7 × 4 da
+> revisão 12 fazia **18 células fechadas** sob o deck: 18 caixinhas onde a água da pia
+> entra e não sai. Tirando as tiras do sentido **longo** sobraram **9 lombadas
+> transversais** de 69 mm, passo 16,5 mm, com **15,6 mm de pista aberta de ponta a
+> ponta** — a esponja atravessa. E a rigidez **subiu**: I de 2,13× para **2,49×** o
+> deck liso, com **0,64 g menos** de PP. Não é sorte: num painel de 128 × 79 mm a
+> curvatura que manda é a do **vão curto**, e as tiras longitudinais estavam pagando
+> material para resistir à curvatura que não governa. Cada lombada agora *nasce do nada
+> e morre no deck* por uma rampa, sem face vertical em ponta — que é o outro lugar onde
+> a sujeira para e a esponja não chega.
+>
+> |                       | grade 7 × 4 (rev. 12) | 9 transversais (rev. 13) |
+> |-----------------------|----------------------:|-------------------------:|
+> | rigidez (I/I₀)        |                 2,13× |                **2,49×** |
+> | peso em PP            |                1,65 g |              **1,01 g** |
+> | células fechadas      |                    18 |                 **zero** |
+> | pista livre p/ esponja|                     — |            **15,6 mm** |
+>
+> **2. O bico é uma seção varrida, não três chapas.** Na revisão 12 a calha eram **três
+> sólidos**: piso em rampa reta e duas paredes retas que desciam até o deck para
+> segurá-lo. Funcionava e parecia cortado. Arredondar cantos não resolveria isso — o que
+> resolve é **deixar de ter três peças**. Agora é um **único U varrido** do colar ao
+> lábio, e três coisas acontecem juntas ao longo do curso: a seção **abre 12%** (na raiz
+> é canal, na ponta é concha), a parede **baixa 70%** em t^1,3 e o piso **cai em t^1,8**
+> — manso na raiz, firme na ponta, que é o que solta a gota em vez de deixá-la voltar
+> por baixo. O **lábio de 0,48 mm não é cota digitada**: a mesma escala que baixa a
+> parede afina o piso de 1,60, e as duas concordam por construção em vez de por
+> conferência. O furo virou **estádio** (raio 11 num lado menor de 24), e a calha ficou
+> em **balanço** — perdeu os dois pés e ficou mais rígida do que precisa (0,059 mm de
+> flecha com 2 kgf na ponta), porque seção em U já é viga. Por baixo dela não há mais
+> nenhum canto fechado entre parede e aba.
+>
+> **3. O fecho trocou a crista por um domo oco.** A crista colada no tampo era o único
+> lugar da peça com ponta — duas formas brigando. Em vez dela, um **domo de 2,00 mm**
+> que é a própria superfície do tampo, encolhendo 9 mm até um *planalto* (pico em molde
+> é ponto que não enche). Por dentro o teto acompanha a curva: no meio há 2,00 mm de PP
+> e não 3,60 maciços. O tampo passa **1,5 mm** do colar em −X e nos lados e para 0,30 mm
+> antes da raiz da calha — **a unha saiu de graça do deslocamento**.
+>
+> **O que o autoteste pegou nesta revisão.** A conferência "o tampo cobre o furo" tem de
+> comparar dois retângulos arredondados de **centros diferentes**, e a primeira versão
+> cancelava o deslocamento na própria conta (`abs(x - cx)` depois de `x = cx + r·dx`):
+> ela mediria OK para qualquer tampo. Quem acusou foi a regra de que **toda conferência
+> tem de reprovar a cota que vigia**. Conferência que nunca disparou não prova nada.
+>
+> ---
+>
 > **Revisão 12 — mini lombadas, e a tampa de correr dá lugar à tampa de bico.**
 >
 > **1. Os reforços viraram lombadas.** Pedido do Ricardo, pensando em extração, e
@@ -1261,3 +1316,89 @@ O que falta no gerador, concretamente:
 
 Feito isso, sai STL e gcode como nas outras peças, e as conferências que já existem
 (normais consistentes, seção conexa, montagem) passam a valer para esta tampa também.
+
+---
+
+## 16. A tampa de bico, como ficou
+
+A terceira tampa da linha, que entrou na revisão 12 no lugar da de correr e ganhou forma
+na 13. A seção 15 acima é o registro da que saiu; esta é a que está no 3D.
+
+### 16.1 A ideia: separar quem veda de quem escorre
+
+Na de correr, a janela por onde o produto saía **era também** o que tinha de vedar — e é
+por isso que ela não vedava. Aqui são duas peças de geometria com um trabalho cada:
+
+| | O que é | O que faz |
+|---|---|---|
+| **Gargalo** | colar de parede fechada subindo 7,50 mm do deck; furo em **estádio** de 24 × 46 mm, raio de canto **11** | é quem **veda**. O furo é cônico (5°/face): sai do macho sem esforço e o plug aperta progressivamente |
+| **Calha** | **uma seção em U varrida** do colar até um lábio 9 mm além da tampa, em balanço | é quem **escorre**. Aberta em cima — para escoar e para lavar |
+| **Fecho** | tampo de 27,2 × 52 com **domo oco** de 2,00 mm e **plug cônico de 1°** | é quem **fecha**. Dobradiça viva atrás (não está na malha) |
+
+A altura do colar **não é escolha de estilo**: é ela que põe o piso da calha acima da aba.
+A primeira tentativa, com 4,40 mm, punha o piso em +0,80 e o lábio em +0,20 — ambos
+**abaixo** da aba de +1,20. A calha cortaria o apoio da tampa na borda e pingaria no pote.
+Foi a conferência que pegou; o mínimo é 7,30 e ficou 7,50.
+
+### 16.2 A calha varrida — por que não são três chapas
+
+Na revisão 12 a calha eram três sólidos: piso em rampa reta e duas paredes retas que
+desciam até o deck para segurá-lo. Funcionava e parecia cortado, e o pedido era *"mais
+orgânico, mais clean, mais curvado, mais harmônico, integrado na tampa"*. Arredondar
+cantos não responde isso — o que responde é **deixar de ter três peças**.
+
+Hoje é um único U varrido, e três coisas acontecem juntas ao longo dos 16,7 mm de curso:
+
+| | Lei | Na raiz | No lábio |
+|---|---|---|---|
+| **abre** | `1 + 0,12·t` | canal de 23,0 de meia-largura | concha de 25,8 |
+| **baixa** | `1 − 0,70·t^1,3` | parede de 4,00 | 1,20 |
+| **cai** | `−2,20·t^1,8` | piso em +5,50 | +3,30 |
+
+A curva `t^1,8` importa: rampa reta é o que faz bico de brinquedo, e a queda que acelera
+na ponta é o que **solta a gota** em vez de deixá-la voltar por baixo do lábio.
+
+E o **lábio de 0,48 mm não é cota digitada**. A mesma escala que baixa a parede 70% afina
+o piso de 1,60, então o lábio **sai da conta**. Duas cotas que concordam por construção
+valem mais que duas cotas que precisam ser conferidas — e `BICO_LIP` é hoje uma linha
+derivada em `calculo-bico.py`, não um número que alguém pode mexer sozinho.
+
+A calha é **balanço** a partir do colar: perdeu os dois pés da revisão 12 e ficou **mais
+rígida do que precisa** — 0,059 mm de flecha com 2 kgf na ponta do lábio, porque seção
+em U já é uma viga (I = 472 mm⁴). O que se ganhou com isso é lavagem: por baixo dela
+agora não há nenhum canto fechado entre parede e aba.
+
+### 16.3 O domo do fecho
+
+A crista colada no tampo saiu. Eram duas formas brigando, e a crista era o único lugar da
+peça com ponta. No lugar, um **domo de 2,00 mm** que é a própria superfície do tampo,
+encolhendo 9 mm até um **planalto** — pico em molde é ponto que não enche, e planalto é
+onde o dedão apoia de verdade. Por dentro o teto **acompanha** a curva: no meio há
+2,00 mm de PP e não 3,60 maciços, então a chupagem fica fora da face que se vê.
+
+O tampo passa **1,5 mm** do colar em −X e nos lados e para **0,30 mm** antes da raiz da
+calha (se avançasse, bateria nela). Esse deslocamento é o que dá a unha, de graça.
+
+Como os dois contornos têm **centros diferentes**, "o tampo cobre o furo" não é
+`(L_tampo − L_furo)/2`: a sobra varia com o ângulo. É conferido **ponto a ponto** em 240
+ângulos, e sobra 0,60 mm no pior deles. `BICO_ENTRA` — quanto a calha entra no colar para
+fundir — teve de cair de 1,00 para 0,60 justamente porque empurrava a borda do fecho para
+dentro e derrubava essa sobra a 0,20 mm.
+
+### 16.4 Hermeticidade — o que prometo e o que não
+
+**Prometo:** não vaza deitado nem virado, que é o caso de uso. Plug cônico em PP contra PP
+sela líquido à pressão atmosférica — é assim que funciona qualquer tampa de detergente ou
+de azeite. O cone do gargalo (5°) é **mais aberto** que o do plug (1°) de propósito: se
+fossem iguais, as faces ficariam paralelas e o aperto dependeria de tolerância de
+interferência reta, que é o que não se controla em injeção. Com cones diferentes o plug
+entra folgado 0,15 mm na boca, as duas retas se cruzam a 2,1 mm e dali ele aperta até
+0,18 mm/lado no pé — que é onde o colar é apoiado pelo deck. O ponto de contato **anda**
+conforme a peça desgasta ou flui.
+
+**Não prometo** a classe da tampa principal: aquela é radial com silicone, esta é PP
+contra PP. Se o ensaio de água colorida acusar, a resposta é um filete de silicone no
+plug — seria o **quarto** perfil extrudado da linha, e por isso não entrou de saída.
+
+**Esta versão não empilha** — foi o Ricardo que liberou, e é isso que deixa o gargalo
+subir acima do plano modular, a calha passar por cima da aba e o fecho ter aba de dedo.

@@ -145,25 +145,81 @@ def bico():
                 '%.3f mm/lado de interferencia' % delta)
 
     print('\n13) A CALHA NAO CORTA A ABA, E O LABIO NAO PINGA NO POTE')
-    eixo = intervalos(raio_z(L, (cb.X_SAIDA + cb.X_LABIO) / 2, 0.0))
-    lado = intervalos(raio_z(L, (cb.X_SAIDA + cb.X_LABIO) / 2,
-                             cb.GARG_W / 2 + cb.BICO_PAR / 2))
+    # medir no MEIO DO CURSO, e pedindo as cotas a secao_calha(): a calha abre
+    # 6% ate aqui, entao a parede nao esta mais onde estava na raiz. Metade do
+    # curso cai numa estacao da varredura, logo nao ha interpolacao na medida.
+    xm = cb.X_RAIZ + (cb.X_LABIO - cb.X_RAIZ) * 0.5
+    sc = cb.secao_calha(xm)
+    eixo = intervalos(raio_z(L, xm, 0.0))
+    lado = intervalos(raio_z(L, xm, sc['y_par']))
+    print('   previsto em x=%.2f: piso %+.2f/%+.2f, parede %+.2f, canal %.2f'
+          % (xm, sc['piso_fundo'], sc['piso_topo'], sc['parede'], sc['alt']))
     print('   raio no meio da calha, no eixo:', eixo)
-    print('   raio na parede da calha:', lado)
+    print('   raio na parede da calha (y=%.2f):' % sc['y_par'], lado)
     diz('o piso da calha fica acima da aba', bool(eixo) and eixo[-1][0] > cm_PP_FLANGE,
         'face de baixo do piso em %+.2f, aba em %+.2f'
         % (eixo[-1][0] if eixo else 0, cm_PP_FLANGE))
+    diz('o piso esta onde a varredura promete', bool(eixo)
+        and abs(eixo[-1][0] - sc['piso_fundo']) < 0.10
+        and abs(eixo[-1][1] - sc['piso_topo']) < 0.10,
+        'medido %+.2f/%+.2f contra %+.2f/%+.2f previsto'
+        % ((eixo[-1][0] if eixo else 0, eixo[-1][1] if eixo else 0,
+            sc['piso_fundo'], sc['piso_topo'])))
     diz('a parede sobe acima do piso', bool(lado) and bool(eixo)
-        and lado[-1][1] > eixo[-1][1] + 2.0,
-        '%.2f mm de canal aberto' % ((lado[-1][1] - eixo[-1][1]) if eixo and lado else 0))
-    labio = intervalos(raio_z(L, cb.X_LABIO - 0.4, 0.0))
+        and lado[-1][1] > eixo[-1][1] + 1.0,
+        '%.2f mm de canal aberto (previsto %.2f)'
+        % ((lado[-1][1] - eixo[-1][1]) if eixo and lado else 0, sc['alt']))
+    diz('a parede esta na altura prevista', bool(lado)
+        and abs(lado[-1][1] - sc['parede']) < 0.15,
+        'topo medido %+.2f contra %+.2f previsto'
+        % (lado[-1][1] if lado else 0, sc['parede']))
+    xl = cb.X_LABIO - 0.4
+    sl = cb.secao_calha(xl)
+    labio = intervalos(raio_z(L, xl, 0.0))
     print('   raio no labio:', labio)
     diz('o labio fica acima da aba', bool(labio) and labio[0][0] > cm_PP_FLANGE,
         'ponta do labio em %+.2f' % (labio[0][0] if labio else 0))
     diz('o labio e mais fino que o piso', bool(labio)
-        and (labio[0][1] - labio[0][0]) < cb.CALHA_T,
-        '%.2f mm contra %.2f do piso'
-        % ((labio[0][1] - labio[0][0]) if labio else 0, cb.CALHA_T))
+        and (labio[0][1] - labio[0][0]) < cb.CALHA_T * 0.5,
+        '%.2f mm contra %.2f do piso (a varredura preve %.2f)'
+        % ((labio[0][1] - labio[0][0]) if labio else 0, cb.CALHA_T, sl['esp']))
+    # a calha e balanco: por baixo dela, fora da projecao do colar, nao pode
+    # haver mais nenhum apoio - e o que deixa a peca lavavel com um pano.
+    sob = [iv for iv in lado if iv[0] < cm_PP_FLANGE - 0.05]
+    print('   o que existe sob a parede, abaixo da aba:', sob)
+    diz('nada desce da calha ate a aba', not sob,
+        'balanco limpo: %d solido(s) sob a parede' % len(sob))
+
+    print('\n14) O FECHO: DOMO OCO, DESLOCADO, E SEM BATER NA CALHA')
+    meio = intervalos(raio_z(F, cb.FECHO_CX, 0.0))
+    print('   raio no alto do domo:', meio)
+    diz('o domo sobe ate a crista', bool(meio)
+        and abs(meio[-1][1] - cb.Z_DOMO) < 0.05,
+        'crista medida %+.2f, prevista %+.2f'
+        % (meio[-1][1] if meio else 0, cb.Z_DOMO))
+    diz('o domo e OCO, nao macico', bool(meio)
+        and abs((meio[-1][1] - meio[-1][0]) - cb.FECHO_DOMO) < 0.05,
+        '%.2f mm de PP no meio do tampo (macico daria %.2f)'
+        % ((meio[-1][1] - meio[-1][0]) if meio else 0,
+           cb.FECHO_TOPO + cb.FECHO_DOMO))
+    # a unha: o tampo passa da face do colar em -X, e e so la que ele passa
+    unha = intervalos(raio_z(F, cb.FECHO_X0 + 0.4, 0.0))
+    # o que tem de faltar debaixo da unha e o COLAR, nao o deck: o deck passa
+    # por baixo de todo o tampo, e e justamente nele que a unha se apoia
+    colar = [iv for iv in intervalos(raio_z(L, cb.FECHO_X0 + 0.4, 0.0))
+             if iv[1] > cb.Z_MOD + 0.1]
+    print('   raio na aba de unha: fecho', unha, '| colar', colar)
+    diz('ha tampo onde nao ha colar', bool(unha) and not colar,
+        'a unha pega %.2f mm de aba livre, com o deck por baixo' % cb.FECHO_ABA)
+    # e a interferencia que importa: a raiz da parede da calha
+    sc0 = cb.secao_calha(cb.X_RAIZ + 0.2)
+    bate_f = intervalos(raio_z(F, cb.X_RAIZ + 0.2, sc0['y_par']))
+    bate_l = intervalos(raio_z(L, cb.X_RAIZ + 0.2, sc0['y_par']))
+    print('   na raiz da parede: fecho', bate_f, '| calha', bate_l)
+    diz('o fecho nao invade a raiz da calha', bool(bate_l) and not bate_f,
+        'a calha ocupa, o fecho nao: %.2f mm de folga em X' % cb.FECHO_FOLGA)
+    diz('o tampo cobre o furo em todo o perimetro', cb.cobre_o_furo(),
+        'sobra %.2f mm no pior ponto do perimetro' % cb.margem_do_tampo())
     return ok
 
 

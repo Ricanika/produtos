@@ -243,6 +243,73 @@ def prisma(perfil, eixo, pos, comp):
     return [t[::-1] for t in tris] if v < 0 else tris
 
 
+def varrido(perfil, eixo, pos, comp, z0, estacoes, off=0.0):
+    """Prisma de secao VARIAVEL: o perfil e escalado estacao a estacao.
+
+    prisma() so faz secao constante, e secao constante so sabe fazer tira e
+    caixa - foi exatamente a critica do Ricardo as nervuras em grade e ao bico.
+    Aqui cada estacao leva (fracao do curso, escala em largura, escala em
+    altura, deslocamento em z), e o solido e lofteado entre elas.
+
+    A escala em altura e sempre EM TORNO DE z0, que e o plano de onde a feicao
+    nasce: assim a raiz fica colada na peca e so a crista se move.
+
+    Quadrilatero de largura zero e PULADO, como em banda(): nas pontas, onde a
+    escala vai quase a zero, varios pontos coincidem.
+    """
+    n = len(perfil)
+    sg = 1.0 if pos > 0 else -1.0
+
+    def P(d, z, u):
+        v = pos + sg * d
+        return (u + off, v, z) if eixo == 'y' else (v, u + off, z)
+
+    aneis = []
+    for uf, sx, sz, dz in estacoes:
+        u = (uf - 0.5) * comp
+        aneis.append([P(d * sx, z0 + (z - z0) * sz + dz, u) for d, z in perfil])
+
+    tris = []
+    for A, B in zip(aneis, aneis[1:]):
+        for k in range(n):
+            k2 = (k + 1) % n
+            i0, i1 = A[k] == B[k], A[k2] == B[k2]
+            if A[k] == A[k2] and B[k] == B[k2]:
+                continue
+            if not i0:
+                tris.append((A[k], A[k2], B[k]))
+            if not i1:
+                tris.append((A[k2], B[k2], B[k]))
+    for X, cima in ((aneis[0], False), (aneis[-1], True)):
+        c = tuple(sum(q[i] for q in X) / n for i in range(3))
+        for k in range(n):
+            t = (c, X[k], X[(k + 1) % n])
+            tris.append(t if cima else t[::-1])
+    v = sum((a[0] * (b[1] * c[2] - b[2] * c[1]) - a[1] * (b[0] * c[2] - b[2] * c[0])
+             + a[2] * (b[0] * c[1] - b[1] * c[0])) / 6.0 for a, b, c in tris)
+    return [t[::-1] for t in tris] if v < 0 else tris
+
+
+def estacoes_lombada(n_meio=3, n_rampa=5, rampa=0.18, minimo=0.04):
+    """Estacoes de uma lombada: nasce do nada, engrossa, segue e morre.
+
+    E isso que tira a face vertical das pontas. Face vertical na ponta de
+    nervura e onde a sujeira para e a esponja nao chega - e foi esse o pedido.
+    """
+    out = []
+    for k in range(n_rampa + 1):
+        t = k / n_rampa
+        e = minimo + (1 - minimo) * math.sin(math.pi / 2 * t)
+        out.append([rampa * t, e, e, 0.0])
+    for k in range(1, n_meio):
+        out.append([rampa + (1 - 2 * rampa) * k / n_meio, 1.0, 1.0, 0.0])
+    for k in range(n_rampa + 1):
+        t = 1 - k / n_rampa
+        e = minimo + (1 - minimo) * math.sin(math.pi / 2 * t)
+        out.append([1 - rampa * t, e, e, 0.0])
+    return out
+
+
 def corpo(n_mod, seg):
     """Um pote. z=0 no plano de apoio (o fundo reto).
 
@@ -495,16 +562,21 @@ def lingueta(c):
 
 
 def poe_nervuras(c, pula=None):
-    """Grade de MINI LOMBADAS sob o deck. E o que deixa a tampa 'encorpada'.
+    """LOMBADAS TRANSVERSAIS sob o deck. Nao e grade - e de proposito.
 
-    Nao sao nervuras de ponta chata: a crista e meia-cana. Ponta chata segura
-    vacuo e arrasta aresta viva no aco; meia-cana sai por rolamento. Custa
-    rigidez (a area some justamente no alto, onde o braco e maior), e a grade
-    ficou mais densa para compensar - 7x4 em vez de 5x3.
+    A grade da revisao 12 fazia 18 celulas FECHADAS sob a tampa, e celula
+    fechada e onde a agua para e a esponja nao chega. Tirando as tiras
+    longitudinais sobram pistas abertas de ponta a ponta, que a esponja
+    atravessa num passe.
 
-    Saida de 3° por face, que e o que a maquina pede: numa lombada de 2,4 mm
-    isso custa 0,22 mm de espessura na ponta e nada mais. (Na parede do pote a
-    mesma saida custaria o produto - ver calculo-modular.py.)
+    E a conta mostrou que isso nao custa rigidez - PAGA: as tiras longitudinais
+    resistiam a curvatura no sentido COMPRIDO, que nao e a que manda. Com o
+    peso que elas gastavam da para por mais lombadas transversais, que e a
+    direcao que importa. A grade 7x4 dava 2,13x por 1,65 g; nove lombadas
+    transversais dao 2,49x por 1,01 g.
+
+    Cada lombada NASCE DO NADA e MORRE no deck (estacoes_lombada): sem face
+    vertical na ponta, que e o outro lugar onde a sujeira para.
 
     pula(x, y) -> True para nao por lombada ali.
     """
@@ -514,17 +586,14 @@ def poe_nervuras(c, pula=None):
               + [(+w, Z_DECK_B - h) for w, h in pts]
               + [(-w, Z_DECK_B - h) for w, h in reversed(pts[:-1])]
               + [(-NERV_T / 2, Z_DECK_B + 0.5)])
-    uso_l, uso_w = nv['uso']
-    for y in nv['ys']:
-        if pula and pula(None, y):
-            continue
-        c.tris += prisma(perfil, 'y', y, uso_l)
-        c.prismas.append(dict(perfil=perfil, eixo='y', pos=y, comp=uso_l, off=0.0))
+    est = estacoes_lombada()
+    uso_w = nv['uso'][1]
     for x in nv['xs']:
         if pula and pula(x, None):
             continue
-        c.tris += prisma(perfil, 'x', x, uso_w)
-        c.prismas.append(dict(perfil=perfil, eixo='x', pos=x, comp=uso_w, off=0.0))
+        c.tris += varrido(perfil, 'x', x, uso_w, Z_DECK_B, est)
+        c.prismas.append(dict(perfil=perfil, eixo='x', pos=x, comp=uso_w,
+                              off=0.0, z0=Z_DECK_B, estacoes=est))
     return c
 
 
@@ -631,39 +700,48 @@ def tampa_bico(seg):
 
 
 def poe_calha(c):
-    """A calha aberta em U: piso que cai e duas paredes que a seguram.
+    """A calha: UMA secao em U varrida, que abre e cai ao mesmo tempo.
 
-    O piso sai do colar no nivel do topo dele e cai ate o labio. As paredes
-    nao sao so guia: sao a VIGA que segura o piso em balanco. Por isso o perfil
-    delas desce ate o deck no trecho de dentro e ate a aba no trecho de cima da
-    borda - sem isso o piso seria uma ponte no ar.
+    Na revisao 12 isto eram tres solidos - um piso em rampa reta e duas paredes
+    retas que desciam ate o deck para segurar o piso. Funcionava e parecia
+    cortado: tres chapas encostadas. O Ricardo pediu "mais organico, mais
+    clean, mais curvado, integrado na tampa", e a resposta nao e arredondar
+    cantos: e deixar de ter tres pecas.
+
+    Agora e um unico U varrido do colar ate o labio, e as tres coisas que o
+    fazem parecer desenhado acontecem juntas ao longo do curso:
+      ABRE    a secao cresce BICO_FLARE - na raiz e um canal, na ponta e uma
+              concha, e o liquido abre junto com ela;
+      BAIXA   a parede cai BICO_DECAI numa curva t^1,3 - a parede alta fica
+              onde o liquido corre rapido e vai sumindo onde ele ja saiu;
+      CAI     o piso desce em t^1,8, manso na raiz e firme na ponta. Rampa reta
+              e o que faz bico de brinquedo; a curva e o que faz a gota se
+              soltar na ponta em vez de voltar por baixo.
+    A mesma escala que baixa a parede afina o piso, e por isso o labio sai com
+    0,48 mm sem ninguem pedir - veja BICO_LIP em calculo-bico.py.
+
+    A calha nasce DENTRO do colar (BICO_ENTRA) e e BALANCO: nao desce mais ate
+    o deck nem se apoia na aba. Perdeu os dois pes e ficou mais rigida do que
+    precisa (flecha de 0,05 mm com 2 kgf na ponta), porque a secao em U ja e
+    uma viga. E por baixo dela agora nao ha nada: nenhum canto fechado entre
+    parede e aba, que era onde a agua de lavagem ficava.
     """
     ZC = cb.Z_COL
-    u1 = cb.DECK / 2 - cb.X_SAIDA          # onde acaba o deck
-    u2 = cb.TAMPA_O / 2 - cb.X_SAIDA       # onde acaba a aba
-    L = cb.X_LABIO - cb.X_SAIDA
-    queda_lab = 2.5 * math.tan(math.radians(cb.BICO_CURVA))
-    zf = lambda u: ZC - cb.BICO_QUEDA * u / L
-    esp = lambda u: cb.CALHA_T + (cb.BICO_LIP - cb.CALHA_T) * u / L
-
-    piso = [(0.0, ZC), (L - 2.5, zf(L - 2.5)),
-            (L, zf(L) - queda_lab), (L, zf(L) - queda_lab - cb.BICO_LIP),
-            (L - 2.5, zf(L - 2.5) - esp(L - 2.5)), (0.0, ZC - cb.CALHA_T)]
-    for t in prisma(piso, 'x', cb.X_SAIDA, cb.GARG_W):
-        c.tris.append(t)
-    c.prismas.append(dict(perfil=piso, eixo='x', pos=cb.X_SAIDA,
-                          comp=cb.GARG_W, off=0.0))
-
-    par = [(0.0, Z_MOD), (0.0, ZC + cb.BICO_ALT),
-           (L, zf(L) - queda_lab + cb.BICO_ALT * 0.45),
-           (L, zf(L) - queda_lab - cb.BICO_LIP),
-           (u2, zf(u2) - esp(u2)), (u2, PP_FLANGE),
-           (u1, PP_FLANGE), (u1, Z_MOD)]
-    for pos in (cb.GARG_W / 2 + cb.BICO_PAR / 2, -(cb.GARG_W / 2 + cb.BICO_PAR / 2)):
-        for t in prisma(par, 'x', cb.X_SAIDA, cb.BICO_PAR):
-            c.tris.append(tuple((x, y + pos, z) for x, y, z in t))
-        c.prismas.append(dict(perfil=par, eixo='x', pos=cb.X_SAIDA,
-                              comp=cb.BICO_PAR, off=pos))
+    w, pw = cb.GARG_W / 2, cb.BICO_PAR
+    # secao em U: desce a face externa, cruza o fundo, sobe a face externa do
+    # outro lado, volta pelas duas faces internas e pelo piso.
+    perfil = [(-(w + pw), ZC - cb.CALHA_T), ((w + pw), ZC - cb.CALHA_T),
+              ((w + pw), ZC + cb.BICO_ALT), (w, ZC + cb.BICO_ALT),
+              (w, ZC), (-w, ZC),
+              (-w, ZC + cb.BICO_ALT), (-(w + pw), ZC + cb.BICO_ALT)]
+    est = cb.estacoes_calha()
+    comp = cb.X_LABIO - cb.X_RAIZ
+    off = (cb.X_LABIO + cb.X_RAIZ) / 2
+    # pos=0: a secao e simetrica em Y, entao o espelho que varrido() faz quando
+    # pos nao e positivo nao muda o solido - e o sinal sai pelo volume.
+    c.tris += varrido(perfil, 'y', 0.0, comp, ZC, est, off)
+    c.prismas.append(dict(perfil=perfil, eixo='y', pos=0.0, comp=comp,
+                          off=off, z0=ZC, estacoes=est))
     return c
 
 
@@ -684,37 +762,45 @@ def fecho_bico(seg):
 
     c = Casca(seg)
 
-    def anelx(L, W, R, z):
-        pts, _ = contorno(L, W, R, seg, q, cx, 0.0, None)
+    def anelx(L, W, R, z, ox):
+        pts, _ = contorno(L, W, R, seg, q, ox, 0.0, None)
         return c.add(None, None, pts=[(x, y, z) for x, y in pts])
 
     # o plug: na boca entra folgado PLUG_BOCA; como o cone dele e MENOS aberto
     # que o do gargalo, ele vai apertando conforme desce.
     pl = lambda d, base: base - 2 * cb.PLUG_BOCA - 2 * d * tp
-    tampo_l, tampo_w = gl + 2 * cb.GARG_PAR, gw + 2 * cb.GARG_PAR
 
-    F = [anelx(tampo_l, tampo_w, gr + cb.GARG_PAR, topo),          # tampo, por cima
-         anelx(tampo_l, tampo_w, gr + cb.GARG_PAR, ZC),            # face externa
-         anelx(pl(0, gl), pl(0, gw), gr, ZC),                      # raiz do plug
-         anelx(pl(cb.PLUG_H, gl), pl(cb.PLUG_H, gw), gr, fim),     # ponta do plug
+    # O DOMO. A revisao 12 tinha um tampo chato com uma crista colada em cima:
+    # duas formas brigando, e a crista era o unico lugar da peca com ponta. O
+    # domo faz o mesmo servico (pega) sendo a propria superficie do tampo.
+    # Encolhe FECHO_RUN da borda ate um PLANALTO - nao um pico: pico em molde e
+    # ponto que nao enche, e planalto e onde o dedao apoia de verdade.
+    # O raio de canto encolhe junto com o anel, senao o domo sai facetado.
+    run = cb.FECHO_RUN
+    D = []
+    for k in range(3, -1, -1):
+        d = run * k / 3
+        L, W = cb.FECHO_L - 2 * d, cb.FECHO_W - 2 * d
+        R = min(cb.FECHO_R, min(L, W) / 2 - 0.6)
+        D.append(anelx(L, W, R, topo + cb.FECHO_DOMO * math.sin(math.pi / 2 * d / run),
+                       cb.FECHO_CX))
+
+    # por dentro o teto acompanha o domo em vez de preencher: assim o tampo
+    # tem 1,4 a 2,0 mm em qualquer corte, e nao 3,6 de PP macico no meio - que
+    # e marca de chupagem garantida justo na face que se ve.
+    teto = ZC + cb.FECHO_TOPO
+    F = D + [anelx(cb.FECHO_L, cb.FECHO_W, cb.FECHO_R, ZC, cb.FECHO_CX),  # face externa
+         anelx(pl(0, gl), pl(0, gw), gr, ZC, cx),                     # raiz do plug
+         anelx(pl(cb.PLUG_H, gl), pl(cb.PLUG_H, gw), gr, fim, cx),    # ponta do plug
          anelx(pl(cb.PLUG_H, gl) - 2 * cb.PLUG_PAR,
-               pl(cb.PLUG_H, gw) - 2 * cb.PLUG_PAR, max(gr - cb.PLUG_PAR, 0.3), fim),
+               pl(cb.PLUG_H, gw) - 2 * cb.PLUG_PAR,
+               max(gr - cb.PLUG_PAR, 0.3), fim, cx),
          anelx(pl(0, gl) - 2 * cb.PLUG_PAR, pl(0, gw) - 2 * cb.PLUG_PAR,
-               max(gr - cb.PLUG_PAR, 0.3), ZC - cb.FECHO_TOPO * 0 + 0.0)]
+               max(gr - cb.PLUG_PAR, 0.3), teto, cx)]
     for a, b in zip(F, F[1:]):
         c.banda(b, a)
     c.cap(F[0], True)
     c.cap(F[-1], False)
-
-    # crista de pega: o fecho nao tem abano nem saia (bateriam na calha), entao
-    # a pega e um ressalto no proprio tampo.
-    cr = [(-cb.CRISTA_W / 2, topo), (cb.CRISTA_W / 2, topo),
-          (cb.CRISTA_W / 2 - 0.6, topo + cb.CRISTA_H),
-          (-cb.CRISTA_W / 2 + 0.6, topo + cb.CRISTA_H)]
-    comp = gw - 6.0
-    for t in prisma(cr, 'x', cx, comp):
-        c.tris.append(t)
-    c.prismas.append(dict(perfil=cr, eixo='x', pos=cx, comp=comp, off=0.0))
     return c
 
 

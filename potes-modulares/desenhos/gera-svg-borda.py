@@ -136,8 +136,8 @@ CH = [(COLAR - cm.DENTE, ZD, 48, 'O DENTE',
       (xn + cm.NERV_T, ZL - cm.NERV_H / 2, 356, 'MINI LOMBADA',
        '%.2f na raiz, %.2f na ponta, crista R%.2f'
        % (cm.NERV_T, nv['t_pta'], nv['raio']),
-       'grade %dx%d, saida de %.0f° por face, I sobe %.2fx'
-       % (len(nv['xs']), len(nv['ys']), cm.SAIDA_NERV, nv['ganho'])),
+       '%d TRANSVERSAIS de pista aberta %.1f mm, saida %.0f°, I sobe %.2fx'
+       % (len(nv['xs']), nv['pista'], cm.SAIDA_NERV, nv['ganho'])),
       (DECK_U, cm.Z_MOD, 404, 'PLANO MODULAR',
        'topo do deck, %.1f mm abaixo do topo da borda' % cm.BASE_T,
        'recebe o FUNDO RETO do pote de cima - nao ha pe'),

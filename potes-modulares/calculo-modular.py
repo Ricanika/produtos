@@ -127,8 +127,11 @@ SAIDA_NERV = 3.00   # saida das nervuras, por face - o que a maquina do Ricardo
                     # pede. Numa nervura isso e de graca; na parede do pote nao
                     # (secao SAIDA DE EXTRACAO).
 NERV_MARG  = 5.00   # quanto a lombada para antes da borda do deck
-NERV_NX    = 7      # lombadas ao longo da LARGURA (mais e mais curtas: parte do
-NERV_NY    = 4      # que a crista redonda tirou volta pelo passo menor)
+# SO TRANSVERSAIS, sem grade. Grade faz celula fechada, e celula fechada e
+# onde a agua para e a esponja nao chega - foi o pedido do Ricardo. E a conta
+# mostrou que tirar as longitudinais PAGA: elas resistiam a curvatura no
+# sentido comprido, que nao e a que manda num painel 142 x 79.
+NERV_NX    = 9      # lombadas transversais (atravessam a LARGURA)
 
 # ---- tampa de PP com trava de clipe ----
 PP_DECK   = 1.50    # espessura do deck (o piso que recebe o pote de cima)
@@ -402,9 +405,9 @@ def nervuras(deck_l, deck_w):
     rigidez e nao so material.
     """
     uso_l, uso_w = deck_l - 2 * NERV_MARG, deck_w - 2 * NERV_MARG
-    px, py = uso_l / (NERV_NX - 1), uso_w / (NERV_NY - 1)
+    px = uso_l / (NERV_NX - 1)
     xs = [-uso_l / 2 + i * px for i in range(NERV_NX)]
-    ys = [-uso_w / 2 + i * py for i in range(NERV_NY)]
+    ys = []
     pts, t_pta, r = perfil_lombada(12)
     # area e momento estatico da lombada, integrados por faixas
     a_n = m_n = i_n = 0.0
@@ -417,18 +420,19 @@ def nervuras(deck_l, deck_w):
         m_n += w * dz * (z0 + z1) / 2
         i_n += w * dz * ((z0 + z1) / 2) ** 2 + w * dz ** 3 / 12
     y_n = m_n / a_n
-    comp = NERV_NX * uso_w + NERV_NY * uso_l
+    comp = NERV_NX * uso_w
     vol = comp * a_n
 
-    p = min(px, py)
+    p = px
     a_f, y_f = p * PP_DECK, PP_DECK / 2
     yb = (a_f * y_f + a_n * (PP_DECK + y_n)) / (a_f + a_n)
     I_t = (p * PP_DECK ** 3 / 12 + a_f * (yb - y_f) ** 2
            + (i_n - a_n * y_n ** 2) + a_n * (PP_DECK + y_n - yb) ** 2)
     I_0 = p * PP_DECK ** 3 / 12
-    return dict(xs=xs, ys=ys, px=px, py=py, t_pta=t_pta, raio=r, perfil=pts,
+    return dict(xs=xs, ys=ys, px=px, py=px, t_pta=t_pta, raio=r, perfil=pts,
+                pista=px - NERV_T, celulas=0,
                 area=a_n, comp=comp, vol=vol, peso=vol * RHO_PP, ganho=I_t / I_0,
-                celula=(px, py), uso=(uso_l, uso_w))
+                celula=(px, uso_w), uso=(uso_l, uso_w))
 
 
 def cenario(saida_graus):
@@ -642,10 +646,12 @@ def main():
     print("\n" + "=" * 79)
     print("MINI LOMBADAS SOB O DECK - a tampa 'encorpada'")
     print("=" * 79)
-    print(f"  grade {len(nv['xs'])} x {len(nv['ys'])} dentro de "
-          f"{nv['uso'][0]:.0f} x {nv['uso'][1]:.0f} mm (margem {NERV_MARG:.1f} da borda)")
-    print(f"  celula {nv['px']:.1f} x {nv['py']:.1f} mm | lombada {NERV_T:.2f} na raiz, "
-          f"{nv['t_pta']:.2f} na ponta, {NERV_H:.2f} de altura")
+    print(f"  {len(nv['xs'])} lombadas TRANSVERSAIS de {nv['uso'][1]:.0f} mm, passo "
+          f"{nv['px']:.1f} mm (margem {NERV_MARG:.1f} da borda)")
+    print(f"  lombada {NERV_T:.2f} na raiz, {nv['t_pta']:.2f} na ponta, "
+          f"{NERV_H:.2f} de altura")
+    print(f"  PISTA LIVRE entre elas: {nv['pista']:.1f} mm, aberta de ponta a ponta")
+    print(f"  CELULAS FECHADAS: {nv['celulas']} (a grade 7x4 da revisao 12 fazia 18)")
     print(f"  CRISTA EM MEIA-CANA de raio {nv['raio']:.3f} - nao ha ponta chata")
     print(f"  saida {SAIDA_NERV:.0f}° por face: {NERV_T - nv['t_pta']:.2f} mm de "
           f"diferenca em {NERV_H:.1f} mm de altura")
@@ -658,14 +664,20 @@ def main():
           f"{1 / nv['ganho']:.2f} do que flechava.)")
     print( "  POR QUE LOMBADA E NAO NERVURA DE PONTA CHATA: ponta chata segura vacuo")
     print( "  na extracao e arrasta aresta viva no aco; meia-cana sai por rolamento.")
-    print( "  O preco e rigidez - a crista redonda tira area justamente no alto, que")
-    print( "  e onde o braco e maior. A nervura de ponta chata de 0,80 x 3,00 numa")
-    print( "  grade 5x3 dava 2,2x por 1,29 g; esta da "
-          f"{nv['ganho']:.2f}x por {nv['peso']:.2f} g.")
-    print( "  O que recuperou a rigidez foi o PASSO: 7x4 em vez de 5x3. Passo menor")
-    print( "  vale mais que lombada alta, e de quebra a lombada baixa cabe folgada")
-    print(f"  acima do degrau - ela para em {Z_DECK_B - NERV_H:+.2f} e o degrau esta "
-          f"em {Z_DEGRAU:+.2f}.")
+    print( "  POR QUE SO TRANSVERSAIS: grade faz celula fechada, e celula fechada e")
+    print( "  onde a agua para e a esponja nao chega. E tirar as longitudinais nao")
+    print( "  custou rigidez - PAGOU: elas resistiam a curvatura no sentido COMPRIDO,")
+    print( "  que nao e a que manda num painel de 142 x 79. Com o peso que elas")
+    print( "  gastavam da para por mais lombadas na direcao que importa:")
+    print( "")
+    print( "     grade 7x4 (revisao 12) .... 2,13x de rigidez por 1,65 g, 18 celulas")
+    print(f"     {len(nv['xs'])} transversais .......... {nv['ganho']:.2f}x por "
+          f"{nv['peso']:.2f} g, nenhuma celula")
+    print( "")
+    print( "  Cada lombada NASCE DO NADA e MORRE no deck, sem face vertical na ponta -")
+    print( "  o outro lugar onde a sujeira para.")
+    print(f"  Altura limitada pelo DEGRAU do pote: a lombada para em "
+          f"{Z_DECK_B - NERV_H:+.2f} e o degrau esta em {Z_DEGRAU:+.2f}.")
     print(f"  CUSTO ESCONDIDO: as lombadas tiram {nv['vol'] / 1e3:.1f} ml da "
           f"capacidade util - 0,3% no 600 ml.")
 
