@@ -20,7 +20,7 @@ estimativa de catálogo. Fontes citadas em cada seção.
 > t^1,8) e saiu inteira. Vale registrar por que isso não é perda:
 >
 > - ela era um **balanço de 16,7 mm fora da silhueta** da tampa. Com ela a peça
->   media 166,1 mm; sem ela volta a **149,7** — a *mesma* das outras duas tampas.
+>   media 166,1 mm; sem ela volta a **148,1** — a *mesma* das outras duas tampas.
 >   Embalagem, palete e gôndola voltam a ser comuns à linha inteira.
 > - ela **amarrava a altura do colar**: o piso dela tinha de passar acima da aba,
 >   mínimo 7,30 mm. Sem calha a amarra sumiu — e é exatamente a cota que o
@@ -56,7 +56,7 @@ estimativa de catálogo. Fontes citadas em cada seção.
 >
 > | | revisão 13 (bico) | revisão 14 (bocal) |
 > |---|---:|---:|
-> | medida máxima da tampa | 166,1 mm | **149,7 mm** |
+> | medida máxima da tampa | 166,1 mm | **148,1 mm** |
 > | colar acima do deck | 7,50 mm | **14,00 mm** |
 > | cone do furo | 5°/face | 3°/face |
 > | curso do plug | 5,00 mm | **9,00 mm** |
@@ -64,6 +64,13 @@ estimativa de catálogo. Fontes citadas em cada seção.
 > | altura do fecho | 8,6 mm | **13,1 mm** |
 > | pega do fecho | crista 4 × 1,5 mm | **13 cm² de saia** |
 > | peso (tampa + fecho) | 23,3 + 2,8 g | 24,0 + 4,9 g |
+>
+> **Correção de número publicado.** A medida máxima da tampa era publicada como
+> 149,7 × 89,5 mm, de uma conta que supunha trava nos quatro lados (`colar_l +
+> 2·(folga + espessura da trava)`). As travas são **duas, nos lados compridos**:
+> elas engrossam a *largura*, não o comprimento. A malha mede **148,06 × 89,47**,
+> e é esse o número. 1,6 mm de erro não muda nada no produto e muda caixa master —
+> ver `calculo-cubagem.py`.
 >
 > **Por que a peça mudou de nome.** Ela deixou de ter bico, então deixou de se
 > chamar `tampa-bico`: virou `tampa-bocal`, e `calculo-bico.py` virou
@@ -757,7 +764,7 @@ lado comprido, cobrindo 58% do comprimento — é o layout do STL de referência
 | Vedação | corda de silicone Ø1,40 em friso usinado | **aro em U** (2,80 × 3,10) calçado na lingueta | o mesmo aro em U **+ 2º aro** Ø1,20 na gaveta |
 | Retenção | **só atrito**: 10,2 kgf reto, 1,7 descascando | **trava geométrica**: sair exige abrir 0,80 mm | as mesmas duas travas |
 | Plano modular | o **topo da placa**, que *pousa no degrau* | o topo do deck | o topo do deck *e* o da gaveta |
-| Medida máxima | 144,2 × 81,0 mm | 149,7 × 89,5 mm | 150,1 × 89,5 mm (o lábio do bico) |
+| Medida máxima | 144,2 × 81,0 mm | 148,1 × 89,5 mm | 150,1 × 89,5 mm (o lábio do bico) |
 | Peso / custo | 37 g em teca · CNC, sem molde | 23,2 g em RP 141 · R$ 0,22 | 24,2 g + fecho de 2,7 g |
 
 **A tampa volta a ser PP.** Nas revisões 6 e 7 ela era PEAD HA 7260, escolhido por ser a resina mais
@@ -1413,7 +1420,7 @@ colar ao lábio, abrindo 12%, baixando 70% e caindo em t^1,8, com lábio de 0,48
 saía da própria conta. Saiu inteira na 14, e isso **soma**:
 
 - era um **balanço de 16,7 mm fora da silhueta** da tampa. A peça media 166,1 mm e
-  agora volta a **149,7** — a mesma das outras duas tampas. Embalagem, palete e gôndola
+  agora volta a **148,1** — a mesma das outras duas tampas. Embalagem, palete e gôndola
   voltam a ser comuns à linha.
 - **amarrava a altura do colar**: o piso dela tinha de passar acima da aba (mínimo
   7,30 mm). Sem calha, a altura ficou livre — e é exatamente o que se pediu em seguida.

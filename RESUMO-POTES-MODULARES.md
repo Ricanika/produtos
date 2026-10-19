@@ -27,7 +27,7 @@ Linha nova de potes retangulares em PP transparente, inspirada num render de ref
    **O BICO SAIU, E ISSO SOMA.** A calha (secao em U varrida, abrindo 12%, baixando
    70%, caindo em t^1,8) saiu inteira. Por que nao e perda:
    - era um BALANCO de 16,7 mm fora da silhueta. Com ela a peca media 166,1 mm; sem
-     ela volta a 149,7 - a MESMA das outras duas tampas. Embalagem, palete e gondola
+     ela volta a 148,1 - a MESMA das outras duas tampas. Embalagem, palete e gondola
      voltam a ser comuns a linha.
    - ela AMARRAVA a altura do colar (o piso tinha de passar acima da aba, min 7,30).
      Sem calha a amarra sumiu - e e exatamente a cota pedida na frase seguinte.
@@ -321,7 +321,7 @@ boca do pote ..... 145,1 mm      face da saia ..... 144,2 mm (folga 0,45 por lad
 parede da saia ... 1,20 mm       lingueta ......... 0,80 x 2,40, recuada 0,20/face
 aro em U ......... 2,80 x 3,10, perna 1,00 -> comprime 0,35 contra a parede
 saia+aro descem .. 6,60 mm       vao do deck ...... 141,8, recebe o fundo de 140,16
-tampa de PP ...... 149,7 x 89,5 mm com as 2 travas. 22,2 g. R$ 0,21 + aro 3,1 g
+tampa de PP ...... 148,1 x 89,5 mm com as 2 travas. 22,2 g. R$ 0,21 + aro 3,1 g
 lombadas ......... 9 TRANSVERSAIS sob o deck, passo 16,5, pista aberta 15,6 mm,
                    0,90 na raiz / 0,68 na ponta (3°/face), crista R0,34, I +2,49x,
                    1,01 g. Nenhuma celula fechada (a grade 7x4 fazia 18)
@@ -330,7 +330,7 @@ tampa de teca .... placa maciça 144,2 x 81,0 x 5,00 mm, 37 g, CNC, sem molde
                    POUSA no degrau; corda redonda 1,40 em friso, 10,2 kgf
 tampa de bocal ... a mesma de PP + gargalo em ESTADIO 24 x 46 raio 11, subindo
                    14,00 mm (aro em +12,00). SEM CALHA desde a revisao 14.
-                   Maxima 149,7 x 89,5 - a MESMA da de PP. 24,0 g.
+                   Maxima 148,1 x 89,5 - a MESMA da de PP. 24,0 g.
                    Furo conico 3°/face, passagem 904 mm2 no pe (90% do aro).
                    Face externa com 3° de saida. ARESTA DO ARO VIVA (gota so
                    se solta de aresta). NAO EMPILHA.
