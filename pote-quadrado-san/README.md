@@ -1,4 +1,30 @@
-# Pote modular 13 × 10 cm em SAN, revisão 7
+# Pote modular 13 × 10 cm em SAN, revisão 8
+
+## Revisão 8: bico na borda, rebaixo do copo e drenos
+
+Pedido: *"traga todo o bico para próximo da borda; a base da tampa precisa ter um rebaixo onde entra
+o copo medidor; coloque uma abertura para, caso o líquido escorra do copo, ele cair dentro do corpo."*
+
+- **Bico perto da borda:** o conjunto inteiro (gargalo, parede, rebaixo, copo) foi **16,5 mm para o
+  lado curto**, o do beiço. É o máximo antes de o rebaixo encostar na saia do plug: o copo fica a
+  16 mm da borda externa da tampa. O beiço aponta para fora, que é o lado de verter.
+- **Rebaixo:** o copo senta num rebaixo quadrado de **6 mm** no tampo (piso 3 mm abaixo da borda do
+  pote), com 0,5 mm de folga em volta. O copo fica mais baixo e protegido, e a tampa com o copo tem
+  4,4 cm acima da borda (era 4,8).
+- **Drenos:** 4 rasgos de **2,6 × 12 mm**, um por lado, no piso do vão entre o gargalo e a parede
+  do copo (o vão subiu de 2,0 para 3,5 mm para virar calha). O topo da parede cai para dentro. O que
+  escorre do copo emborcado cai no vão e volta para o pote.
+- **Por que os drenos ficam no vão e não no rebaixo:** a parede é a linha de vedação do copo. Um
+  furo fora dela ligaria o pote ao ar e a tampa de bico deixaria de ser hermética. No vão, com o copo
+  no lugar, o furo fica do lado de dentro da vedação.
+- **Abertura quadrada de 47,8 × 47,8 mm** (gargalo um pouco menor para o vão de 3,5 caber no mesmo
+  copo). Copo medidor de SAN: **156 ml**, marcas a 14,7 / 29,2 / 43,4 mm do fundo para 50 / 100 /
+  150 ml. Tampa de bico 42,0 g, copo 26,9 g.
+- Os drenos são cortados por subtração booleana (`manifold3d`), e a verificação confere o volume
+  retirado e a malha fechada.
+
+---
+
 
 ## Revisão 7: bico de abertura quadrada e copo medidor de SAN
 

@@ -42,14 +42,14 @@
   },
   "tampa-bico": {
    "material": "PP",
-   "volume_cm3": 44.39,
-   "massa_g": 40.0,
-   "triangulos": 19200
+   "volume_cm3": 46.65,
+   "massa_g": 42.0,
+   "triangulos": 20656
   },
   "copo": {
    "material": "SAN",
-   "volume_cm3": 25.23,
-   "massa_g": 27.2,
+   "volume_cm3": 24.95,
+   "massa_g": 26.9,
    "triangulos": 4320
   },
   "fita-tpe": {
@@ -173,11 +173,11 @@
  },
  "copo": {
   "material": "SAN",
-  "capacidade_ml": 157,
+  "capacidade_ml": 156,
   "marcas_mm": {
-   "50": 14.6,
-   "100": 28.9,
-   "150": 43.0
+   "50": 14.7,
+   "100": 29.2,
+   "150": 43.4
   },
   "medida_externa": "64.4 x 64.4 x 47.1"
  },

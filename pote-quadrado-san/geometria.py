@@ -92,29 +92,32 @@ TAMPA_T = 2.0   # espessura de casca da tampa
 ABA_H = 3.0     # aba da tampa acima da borda = profundidade do bolsao
 
 # tampa de bico + copo
-# rev. 7: o bico tem ABERTURA QUADRADA (aneis 'q', nao seguem o retangulo da
-# tampa), e a PAREDE que segura o copo fica colada no gargalo, com um vao de
-# 2 mm. O copo e de SAN (Sangel), por isso nao tem cordao nem encaixe: e liso
-# e rigido, e quem flexiona e a parede de PP, que entra 0,2 no vao ao vestir
-# o copo. O copo veste a parede POR FORA e apoia na bandeja.
-BICO_X = 0.0
-GARG_O, GARG_R, GARG_T = 27.0, 8.0, 1.6      # gargalo: meio-lado externo, raio, parede
-GARG_H = 22.0                                 # topo do gargalo (z acima da borda)
+# rev. 8: o bico inteiro vai para PERTO DA BORDA (lado curto +X, onde fica o
+# beico). O copo encaixa num REBAIXO da tampa. E o que escorre do copo cai no
+# VAO entre o gargalo e a parede e volta para o pote por 4 DRENOS no piso do
+# vao - por DENTRO da linha em que o copo veda, entao com o copo no lugar a
+# tampa continua hermetica. Os aneis 'q' sao quadrados centrados no bico.
+BICO_X = 16.5                                 # centro do bico: o mais perto da borda que a saia deixa
+GARG_O, GARG_R, GARG_T = 25.5, 8.0, 1.6      # gargalo: abertura 47,8 x 47,8 por dentro
+GARG_H = 19.0                                 # topo do gargalo (z acima da borda)
 BEICO_A, BEICO_B, BEICO_P = 2.5, 4.0, 4.0     # beico: abre 2,5, sobe 4 (cabe no copo)
-VAO_COPO = 2.0                                # gargalo -> parede: a parede flexiona aqui
-ANEL_T, ANEL_H = 1.6, 10.0                    # parede que segura o copo
+VAO_COPO = 3.5                                # gargalo -> parede: mola da parede e calha do dreno
+ANEL_T, ANEL_H = 1.6, 7.0                     # parede que segura o copo (topo em z=7)
 ANEL_I = GARG_O + VAO_COPO                    # 29,0
 ANEL_O = ANEL_I + ANEL_T                      # 30,6
-CANAL_Z = 1.0                                 # piso do vao e da bandeja
-BANDEJA_Z = 1.0
-BANDEJA_U = 48.0                              # borda da bandeja (retangulo, meia-largura 33)
+REBAIXO_Z = -3.0                              # piso do vao e do rebaixo (6 mm abaixo do tampo)
+CANAL_Z = REBAIXO_Z
+PISO_T = 2.0
+DRENO_L, DRENO_W = 12.0, 2.6                  # 4 drenos, um por lado, no piso do vao
 COPO_T = 1.8                                  # parede de SAN
 COPO_APERTO = 0.2                             # copo na parede de PP, por lado
 COPO_SAIDA = math.tan(math.radians(1.0))      # 1 grau por face
 COPO_FUNDO = 45.0                             # profundidade interna (vira copo medidor)
 COPO_CI = ANEL_O - COPO_APERTO                # face interna do copo na borda: 30,4
-COPO_ZB = BANDEJA_Z + 0.3                     # borda do copo, 0,3 acima da bandeja
+COPO_ZB = REBAIXO_Z + 0.3                     # borda do copo, 0,3 acima do piso do rebaixo
 COPO_TETO = COPO_ZB + COPO_FUNDO
+REBAIXO_I = COPO_CI + COPO_T + 0.5            # parede do rebaixo: 0,5 de folga em volta do copo
+REBAIXO_T = 1.6
 
 N_ANEL = 240    # pontos por anel no STL
 N_VIEW = 144    # pontos por anel no visualizador
@@ -137,12 +140,12 @@ def thetas(n):
     return t + 0.18 * np.sin(4 * t)
 
 
-def anel_quadrado(u, r, c, th, dif=None):
+def anel_quadrado(u, r, c, th, dif=None, ctr=(0.0, 0.0)):
     """Interseca raios saindo de c com o RETANGULO arredondado de meios-lados
     (u, u - DIF) e raio r. Bissecao na funcao de distancia: robusta para c
     fora do centro. u = 0 e o eixo (anel colapsado num ponto)."""
     if u <= 1e-9:
-        return np.zeros((len(th), 2))
+        return np.tile(np.array(ctr, float), (len(th), 1))
     dif = DIF if dif is None else dif
     assert u - dif > 0.5, f'anel estreito demais: u={u}'
     hs = np.array([u, u - dif])
@@ -153,7 +156,7 @@ def anel_quadrado(u, r, c, th, dif=None):
     cc = np.array(c)
     for _ in range(48):
         m = (lo + hi) / 2
-        p = np.abs(cc + d * m[:, None])
+        p = np.abs(cc + d * m[:, None] - np.array(ctr))
         q = p - (hs - r)
         sd = (np.linalg.norm(np.maximum(q, 0), axis=1)
               + np.minimum(np.maximum(q[:, 0], q[:, 1]), 0) - r)
@@ -174,7 +177,8 @@ def anel(spec, c, th):
     if spec[0] in ('s', 'q'):
         u, z, r = spec[1:4]
         A, B = (spec[4], spec[5]) if len(spec) > 4 else (0.0, 0.0)
-        xy = anel_quadrado(u, r, c, th, 0.0 if spec[0] == 'q' else None)
+        q = spec[0] == 'q'
+        xy = anel_quadrado(u, r, c, th, 0.0 if q else None, (BICO_X, 0.0) if q else (0.0, 0.0))
         if A or B:
             f = beico(th)
             d = np.stack([np.cos(th), np.sin(th)], 1)
@@ -374,12 +378,13 @@ def tampa_teca(n=N_ANEL):
 
 
 def tampa_bico(n=N_ANEL):
-    """Tampa de BICO (rev. 7). PP. Peca de genero 1.
+    """Tampa de BICO (rev. 8). PP. Bico deslocado BICO_X para a borda.
 
-    De fora para dentro, por cima: aba -> faixa plana -> BANDEJA rebaixada
-    (retangular, acompanha a tampa) -> PAREDE do copo (quadrada) -> VAO de
-    2 mm -> GARGALO de abertura QUADRADA, cujo labio abre num BEICO no lado
-    +X. Por baixo a laje e plana, 2 mm abaixo da bandeja.
+    Por cima, de fora para dentro: aba -> tampo plano -> REBAIXO quadrado
+    (6 mm, onde o copo senta) -> PAREDE que segura o copo -> VAO de 3,5 com
+    os DRENOS -> GARGALO de abertura quadrada com o beico em +X.
+    O laco e varrido com raios saindo do centro do bico; os drenos saem por
+    subtracao booleana (manifold3d).
     """
     P = []
     def q(u, z, r, A=0.0, B=0.0):
@@ -389,9 +394,13 @@ def tampa_bico(n=N_ANEL):
     t = TAMPA_T
     ri = GARG_R - GARG_T
     gi = GARG_O - GARG_T
+    zf = REBAIXO_Z - PISO_T
+    rv = GARG_R + VAO_COPO                     # raio da face interna da parede
+    rw = rv + ANEL_T                           # raio da face externa da parede
+    rr = rw + (REBAIXO_I - ANEL_O)             # raio do rebaixo
     # gargalo por fora, subindo e abrindo no beico
-    q(GARG_O + 0.5, CANAL_Z, GARG_R + 0.5)
-    q(GARG_O, CANAL_Z + 0.5, GARG_R)
+    q(GARG_O + 0.5, REBAIXO_Z, GARG_R + 0.5)
+    q(GARG_O, REBAIXO_Z + 0.5, GARG_R)
     q(GARG_O - 0.15, GARG_H - 7.0, GARG_R)
     q(GARG_O - 0.2, GARG_H - 4.0, GARG_R, 0.6 * BEICO_A, 0.35 * BEICO_B)
     q(GARG_O - 0.25, GARG_H - 1.5, GARG_R, 0.9 * BEICO_A, 0.8 * BEICO_B)
@@ -402,27 +411,61 @@ def tampa_bico(n=N_ANEL):
     q(gi, GARG_H - 1.8, ri, 0.9 * BEICO_A, 0.8 * BEICO_B)
     q(gi + 0.05, GARG_H - 4.3, ri, 0.6 * BEICO_A, 0.35 * BEICO_B)
     q(gi + 0.15, GARG_H - 7.3, ri)
-    q(gi + 0.35, CANAL_Z - t, ri)                                  # abertura com saida
-    # por baixo: laje plana ate a saia
-    q(ANEL_O + 1.0, CANAL_Z - t, GARG_R + VAO_COPO + ANEL_T + 1.0)
-    s(saia_int(CANAL_Z - t), CANAL_Z - t)
+    q(gi + 0.3, zf, ri)                                             # abertura com saida
+    # por baixo: piso do vao e do rebaixo, parede do rebaixo, laje ate a saia
+    q(REBAIXO_I + REBAIXO_T, zf, rr + REBAIXO_T)
+    q(REBAIXO_I + REBAIXO_T, ABA_H - t, rr + REBAIXO_T)
+    s(saia_int(ABA_H - t), ABA_H - t)
     s(saia_int(-PLUG), -PLUG)
     tmp = []
     _aba_e_plug(tmp, lambda u, z, r=None: tmp.append(('s', u, z, r_par(u, z) if r is None else r, 0.0, 0.0)))
     P += tmp[::-1]
-    # por cima, voltando: faixa plana, bandeja, parede do copo, vao
-    s(BANDEJA_U + 6.0, ABA_H)
-    s(BANDEJA_U, BANDEJA_Z, 10.0)
-    ro = GARG_R + VAO_COPO + ANEL_T                  # 11,6
-    q(ANEL_O + 0.4, BANDEJA_Z, ro + 0.4)
-    q(ANEL_O, BANDEJA_Z + 0.4, ro)
-    q(ANEL_O, ANEL_H - 1.2, ro)
-    q(ANEL_O - 0.6, ANEL_H, ro - 0.6)                 # chanfro: o copo entra sozinho
-    q(ANEL_I + 0.3, ANEL_H, ro - ANEL_T + 0.3)
-    q(ANEL_I, ANEL_H - 0.3, ro - ANEL_T)
-    q(ANEL_I, CANAL_Z + 0.4, ro - ANEL_T)
-    q(ANEL_I - 0.4, CANAL_Z, ro - ANEL_T - 0.4)
-    return varre(P, n=n), P
+    # por cima, voltando: tampo, rebaixo, parede do copo, vao
+    q(REBAIXO_I + 0.5, ABA_H, rr + 0.5)
+    q(REBAIXO_I, ABA_H - 0.5, rr)
+    q(REBAIXO_I, REBAIXO_Z + 0.4, rr)
+    q(REBAIXO_I - 0.4, REBAIXO_Z, rr - 0.4)
+    q(ANEL_O + 0.4, REBAIXO_Z, rw + 0.4)
+    q(ANEL_O, REBAIXO_Z + 0.4, rw)
+    q(ANEL_O, ANEL_H - 1.2, rw)
+    q(ANEL_O - 0.6, ANEL_H, rw - 0.6)                 # chanfro: o copo entra sozinho
+    q(ANEL_I + 0.3, ANEL_H - 0.4, rv + 0.3)           # topo cai para DENTRO: a gota vai ao vao
+    q(ANEL_I, ANEL_H - 0.8, rv)
+    q(ANEL_I, REBAIXO_Z + 0.4, rv)
+    q(ANEL_I - 0.4, REBAIXO_Z, rv - 0.4)
+    casca = varre(P, c=(BICO_X, 0.0), n=n)
+    return com_drenos(casca), P
+
+
+def com_drenos(T_):
+    """Fura os 4 drenos no piso do vao: um no meio de cada lado do bico."""
+    import manifold3d as mf
+    m = para_manifold(T_)
+    meio = (GARG_O + ANEL_I) / 2
+    zc = REBAIXO_Z - PISO_T / 2
+    for ang in range(4):
+        cx, cy = BICO_X + meio * math.cos(ang * math.pi / 2), meio * math.sin(ang * math.pi / 2)
+        lx, ly = (DRENO_W, DRENO_L) if ang % 2 == 0 else (DRENO_L, DRENO_W)
+        furo = mf.Manifold.cube([lx, ly, PISO_T + 2.0], True).translate([cx, cy, zc])
+        m = m - furo
+    return de_manifold(m)
+
+
+def para_manifold(T_):
+    import manifold3d as mf
+    v = np.round(T_.reshape(-1, 3), 6)
+    u, idx = np.unique(v, axis=0, return_inverse=True)
+    m = mf.Manifold(mf.Mesh(vert_properties=u.astype(np.float32),
+                            tri_verts=idx.reshape(-1, 3).astype(np.uint32)))
+    assert str(m.status()).endswith('NoError'), f'malha nao e solida: {m.status()}'
+    return m
+
+
+def de_manifold(m):
+    mesh = m.to_mesh()
+    V = np.array(mesh.vert_properties)[:, :3].astype(float)
+    F = np.array(mesh.tri_verts)
+    return orienta(V[F])
 
 
 def copo(n=N_ANEL):
@@ -451,7 +494,7 @@ def copo(n=N_ANEL):
     q(ci(COPO_TETO - 2.0), COPO_TETO - 2.0, rci)
     q(ci(COPO_TETO) - 2.0, COPO_TETO, rci - 2.0)          # fundo do copo arredondado: lava facil
     q(0, COPO_TETO, 0)
-    return varre(P, n=n), P
+    return varre(P, c=(BICO_X, 0.0), n=n), P
 
 
 def copo_ml(ate=None):
@@ -667,9 +710,14 @@ def verifica():
     ok(0.1 <= COPO_APERTO <= 0.3, 'aperto do copo fora da faixa')
     ok(VAO_COPO >= 1.5, 'vao da parede pequeno: nao flexiona nem lava')
     ok(copo_ml() >= 150, f'copo com menos de 150 ml: {copo_ml():.0f}')
-    # 8. o copo apoia na bandeja, e a bandeja cabe dentro da saia
-    ok(COPO_CI + COPO_T + 0.5 <= BANDEJA_U - DIF, 'copo nao cabe na bandeja')
-    ok(BANDEJA_U - DIF + 2 < saia_int(CANAL_Z - TAMPA_T) - DIF, 'bandeja encosta na saia')
+    # 8. o copo senta no rebaixo, e o rebaixo cabe dentro da saia (nos dois eixos)
+    ok(COPO_CI + COPO_T + 0.3 <= REBAIXO_I, 'copo nao entra no rebaixo')
+    lim = saia_int(ABA_H - TAMPA_T)
+    ok(BICO_X + REBAIXO_I + REBAIXO_T + 0.8 <= lim, 'rebaixo encosta na saia (lado do beico)')
+    ok(REBAIXO_I + REBAIXO_T + 0.8 <= lim - DIF, 'rebaixo encosta na saia (lado comprido)')
+    # 8b. os drenos ficam dentro do vao, por dentro da linha de vedacao do copo
+    ok(DRENO_W <= VAO_COPO - 0.6, 'dreno mais largo que o vao')
+    ok(DRENO_L <= 2 * (GARG_O - GARG_R), 'dreno invade o canto')
     # 9. a fita cabe entre a aba e a aleta: 10 mm desenvolvidos
     ok(Z_FENDA_TETO - Z_FENDA_PISO >= 1.5 and Z_ALETA_TOPO - Z_FENDA_TETO >= 1.2, 'aleta ou vao fino demais')
     return erros, p
@@ -688,8 +736,8 @@ def main():
     principais = {'corpo-4': varre(corpo(ALTURAS[3])[1], n=96),
                   'tampa-fechada': varre(tampa_pp()[1], n=96),
                   'tampa-teca': varre(tampa_teca()[1], n=96),
-                  'tampa-bico': varre(tampa_bico()[1], n=96),
-                  'copo': varre(copo()[1], n=96),
+                  'tampa-bico': tampa_bico(96)[0],
+                  'copo': varre(copo()[1], c=(BICO_X, 0), n=96),
                   'fita-tpe': varre(fita()[1], n=96),
                   'fita-teca': varre(fita_teca()[1], n=96)}
     for nome, T_ in principais.items():

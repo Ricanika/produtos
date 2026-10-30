@@ -84,7 +84,7 @@
 
 <div class="sheet">
   <header>
-    <div class="eyebrow">Nitron · produto novo · estudo 3D rev. 7</div>
+    <div class="eyebrow">Nitron · produto novo · estudo 3D rev. 8</div>
     <h1>Pote modular 13 × 10 em SAN</h1>
     <p class="sub">Corpo em SAN cristal, 13 × 10 cm por fora na borda, uma boca para as quatro alturas e uma tampa de PP com uma fita de TPE de 2 × 10 mm. Três tampas: fechada, teca e bico com copo. As paredes têm 2° de saída por face, e é isso que deixa os potes entrarem um no outro no frete.</p>
   </header>
@@ -146,7 +146,7 @@
     </div>
     <div class="bloco">
       <h2>Três tampas, uma fita</h2>
-      <p><b>Fechada</b>, em PP, sem orelha: abre pela aba. <b>Teca</b> maciça usinada em CNC, com a mesma fita numa cava (aleta de 1 mm em madeira quebraria), escavada por baixo. <b>Bico</b>: abertura quadrada de 51 × 51 mm, com o lábio abrindo num beiço de verter num lado curto. Uma parede de PP colada no gargalo, com 2 mm de vão, segura o copo. O <b>copo medidor é de SAN</b>, quadrado, com 157 ml e marcas de 50, 100 e 150 ml: dá para dosar sabão em pó. Como o SAN não aceita encaixe, o copo é liso e quem flexiona é a parede de PP, que aperta o copo 0,2 mm por lado.</p>
+      <p><b>Fechada</b>, em PP, sem orelha: abre pela aba. <b>Teca</b> maciça usinada em CNC, com a mesma fita numa cava (aleta de 1 mm em madeira quebraria), escavada por baixo. <b>Bico</b>: fica perto da borda, num lado curto. A abertura é quadrada, de 48 × 48 mm, com o lábio abrindo num beiço de verter para fora. O copo encaixa num rebaixo de 6 mm da tampa e é preso por uma parede de PP a 3,5 mm do gargalo. O que escorre do copo cai nesse vão e volta para o pote por 4 drenos no piso. Os drenos ficam por dentro da linha em que o copo veda, então a tampa continua hermética com o copo no lugar. O <b>copo medidor é de SAN</b>, com 156 ml e marcas de 50, 100 e 150 ml.</p>
       <p>A fechada e a de bico podem sair do mesmo molde, trocando o postiço do tampo.</p>
     </div>
   </div>
@@ -195,7 +195,7 @@ const D = __DADOS__;
     tr.innerHTML = `<td class="mono">${fmt(a.altura)} mm</td><td class="mono">${a.n}</td><td class="mono">${fmt(a.solto)} mm</td><td class="mono">${fmt(a.aninhado)} mm</td><td class="mono">${a.ganho_pct}%</td>`;
     tn.appendChild(tr);
   });
-  const nomes = {'corpo-1':'Corpo 57','corpo-2':'Corpo 114','corpo-3':'Corpo 171','corpo-4':'Corpo 228','tampa-fechada':'Tampa fechada','tampa-teca':'Tampa de teca','tampa-bico':'Tampa de bico','copo':'Copo medidor (157 ml)','fita-tpe':'Fita de vedação (em gancho)','fita-teca':'Fita de vedação (na teca)'};
+  const nomes = {'corpo-1':'Corpo 57','corpo-2':'Corpo 114','corpo-3':'Corpo 171','corpo-4':'Corpo 228','tampa-fechada':'Tampa fechada','tampa-teca':'Tampa de teca','tampa-bico':'Tampa de bico','copo':'Copo medidor (156 ml)','fita-tpe':'Fita de vedação (em gancho)','fita-teca':'Fita de vedação (na teca)'};
   const proc = {SAN:'injeção', PP:'injeção', teca:'CNC', TPE:'extrusão, corte e solda (ou injeção)'};
   const tp = document.querySelector('#t-pecas tbody');
   Object.entries(R.pecas).forEach(([k,p]) => {
@@ -268,10 +268,10 @@ const D = __DADOS__;
     tampas:{t:'Três tampas na mesma boca', d:'Fechada (PP) · teca maciça (CNC) · bico com copo medidor de SAN. A fita de TPE é a mesma nas três.', fazer(){
       ['fechada','teca','bico'].forEach((t,i)=>{ const x=-160+160*i; poe('corpo-1',x,0); tampa(t,x,H[0]); });
     }, alvo:[0,50,0], dist:720, az:.35, el:.55},
-    bico:{t:'Bico e copo', d:'Abertura quadrada de 51 mm com beiço de verter à direita, e a parede que segura o copo colada no gargalo. À direita, o copo medidor de SAN (157 ml) vestido na parede.', fazer(){
+    bico:{t:'Bico e copo', d:'Bico perto da borda, abertura quadrada de 48 mm e beiço para fora. Em volta, o rebaixo onde o copo encaixa e o vão com 4 drenos que devolvem ao pote o que escorre do copo.', fazer(){
       poe('corpo-1',-85,0); tampa('bico',-85,H[0],false);
       poe('corpo-1',85,0); tampa('bico',85,H[0]);
-    }, alvo:[0,60,0], dist:470, az:-.12, el:.22},
+    }, alvo:[0,55,0], dist:430, az:-.12, el:.85},
     vedacao:{t:'Vedação: fita reta no vão', d:'Vão de 5 mm entre duas aletas finas. A fita reta entra deitada no vão, dobra na ponta da aleta de cima e sobe encostada no SAN, com 0,15 mm de aperto.', fazer(){
       poe('corpo-1',0,0); tampa('fechada',0,H[0]);
     }, alvo:[-57,47,0], dist:95, az:0, el:.04, corte:true},
