@@ -196,7 +196,7 @@ def orienta(T_):
 
 
 def caixa(secoes):
-    """Solido lofteado entre secoes de 4 pontos (x,y,z). Nervura, orelha."""
+    """Solido lofteado entre secoes de 4 pontos (x,y,z). Nervura."""
     tris = []
     S = [np.array(s, float) for s in secoes]
     for a, b in zip(S, S[1:]):
@@ -336,7 +336,7 @@ def tampa_pp(n=N_ANEL):
     s(BOLSAO + 1.0 + TAMPA_T, ABA_H - TAMPA_T, 8.0)
     s(BOLSAO + TAMPA_T, -TAMPA_T, 7.0)
     s(0, -TAMPA_T, 0)
-    return orelha(varre(P, n=n)), P
+    return varre(P, n=n), P
 
 
 def tampa_teca(n=N_ANEL):
@@ -403,7 +403,7 @@ def tampa_bico(n=N_ANEL):
     s(ANEL_I + 0.1, ANEL_H - 0.6, 18.4)                     # chanfro de entrada do copo
     s(ANEL_I, CANAL_Z + 0.5, 18.4)
     s(ANEL_I - 0.5, CANAL_Z, 18.4 - 0.5)
-    return orelha(varre(P, n=n)), P
+    return varre(P, n=n), P
 
 
 def copo(n=N_ANEL):
@@ -476,16 +476,6 @@ def fita_area():
     sec = fita(8)[1]
     pts = [(p[1] - u_int(p[2]), p[2]) for p in sec]
     return abs(sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(pts, pts[1:] + pts[:1]))) / 2
-
-
-def orelha(T_):
-    """Orelha de abrir num canto: e por ela que se descasca a tampa."""
-    d = math.sqrt(2) * (U_BORDA - r_par(U_BORDA, 0)) + r_par(U_BORDA, 0)
-    a, b, w = d - 3.0, d + 11.0, 11.0
-    def sec(z):
-        return [(a, -w, z), (b, -w * 0.55, z), (b, w * 0.55, z), (a, w, z)]
-    tab = caixa([sec(ABA_H - 1.6), sec(ABA_H)])
-    return np.concatenate([T_, roda(tab, -math.pi / 4)])
 
 
 # ---------------------------------------------------------------- contas
@@ -655,7 +645,7 @@ def main():
     P_ = pecas(N_ANEL)
     for nome, T_ in P_.items():
         grava_stl(nome + '.stl', T_)
-    # malha conferida peca a peca (as nervuras e a orelha sao cascas a parte)
+    # malha conferida peca a peca (as nervuras sao cascas a parte)
     principais = {'corpo-4': varre(corpo(ALTURAS[3])[1], n=96),
                   'tampa-fechada': varre(tampa_pp()[1], n=96),
                   'tampa-teca': varre(tampa_teca()[1], n=96),

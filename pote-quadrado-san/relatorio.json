@@ -30,9 +30,9 @@
   },
   "tampa-fechada": {
    "material": "PP",
-   "volume_cm3": 55.81,
-   "massa_g": 50.2,
-   "triangulos": 9612
+   "volume_cm3": 55.43,
+   "massa_g": 49.9,
+   "triangulos": 9600
   },
   "tampa-teca": {
    "material": "teca",
@@ -42,9 +42,9 @@
   },
   "tampa-bico": {
    "material": "PP",
-   "volume_cm3": 51.54,
-   "massa_g": 46.4,
-   "triangulos": 19692
+   "volume_cm3": 51.16,
+   "massa_g": 46.0,
+   "triangulos": 19680
   },
   "copo": {
    "material": "PP",

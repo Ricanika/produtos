@@ -1,4 +1,12 @@
-# Pote quadrado modular em SAN, revisão 4
+# Pote quadrado modular em SAN, revisão 5
+
+## Revisão 5
+
+- **A orelha de abrir saiu** das tampas fechada e de bico, a pedido. A borda fica lisa nos quatro
+  cantos e as três tampas têm a mesma silhueta. Sem ela, a tampa abre pela borda da aba, que fica
+  rente à borda do pote. Se no protótipo faltar onde pegar, a saída sem orelha é deixar a aba
+  sobrar ~1 mm para fora do pote, ou fazer um rebaixo para a unha na borda do pote.
+
 
 ## Revisão 4 (vão 3× mais fundo, fita reta)
 
@@ -176,14 +184,14 @@ Ver o corte 2D na página do modelo.
   2,5). No gancho só a faixa sobre a aleta aperta. Começamos com 0,15 mm e **ajustamos a ponta da
   aleta no try-out**. Tirar
   aço é barato; pôr aço de volta não.
-- **Abrir:** a orelha num canto da tampa serve para descascar. Puxar reto com a tampa inteira vai
+- **Abrir:** sem orelha desde a revisão 5, a tampa abre pela borda da aba. Puxar reto com a tampa inteira vai
   precisar de mais força. Só o protótipo dá esse número com confiança.
 
 ## As três tampas
 
 | Tampa | Material | Massa | Notas |
 |---|---|---|---|
-| **Fechada** | PP RP 141 | 50,2 g | orelha de abrir; bolsão de empilhar no tampo; fita reta no vão de 5 mm |
+| **Fechada** | PP RP 141 | 50,2 g | sem orelha (rev. 5); bolsão de empilhar no tampo; fita reta no vão de 5 mm |
 | **Teca** | teca maciça, CNC | 75,8 g | a mesma fita, em cava no maciço; escavada por baixo (5 mm de madeira no centro e na lateral); aba de 3 mm sobre a borda |
 | **Bico** | PP RP 141 | 46,4 g | bandeja rebaixada, anel externo, gargalo quadrado de 74 mm centrado, beiço de verter no lado +X |
 | **Copo** | PP RP 141 | 31,4 g | quadrado, invertido; a borda desce no canal entre anel e gargalo e trava num cordão de 0,3 mm; virado, é copo medidor de ~220 ml |
@@ -230,7 +238,7 @@ abertura), não o fechamento.
 ## Em aberto
 
 1. **Protótipo da vedação.** O aperto de 0,15 mm sobre a aleta é o ponto de partida. Ensaio com água colorida,
-   24 h, deitado e de cabeça para baixo, e medir a força para abrir pela orelha.
+   24 h, deitado e de cabeça para baixo, e medir a força para abrir pela aba.
 2. **Tampa de teca:** a aba de 3 mm de madeira sobre a borda é frágil na quina. Se lascar no
    protótipo, a teca sobe para 5 mm e deixa de ser modular, ou a aba vira um aro de PP.
 3. **Teca e umidade:** ±0,5% de variação dimensional já come a compressão inteira da fita.
