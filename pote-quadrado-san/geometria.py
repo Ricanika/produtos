@@ -57,16 +57,27 @@ NERV_TOPO = 20.0  # comeca 20 mm abaixo da borda: fica fora da zona da fita
 
 # tampa / vedacao
 FOLGA = 0.25    # face do plug ate a parede do corpo, por lado
-# rev. 2: a fita mora num CANAL entre duas ALETAS (foto 3), nao numa cava
-# cortada numa saia grossa. Acima da aleta de cima a saia fica rebaixada.
-ALETA = 1.0     # espessura de cada aleta
-ALETA_Z = -3.0  # face de cima da aleta de cima
-CAVA_Z0 = ALETA_Z - ALETA                 # -4,0: teto do canal
-CAVA_Z1 = CAVA_Z0 - 10.4                  # -14,4: piso do canal (10,4 de altura)
-PLUG = -(CAVA_Z1 - ALETA)                 # 15,4: pe da aleta de baixo
-CAVA_P = 1.62   # profundidade do canal (= quanto a aleta sobressai da saia)
+# rev. 3 (foto 4, perfil da referencia): a fita fica em GANCHO. Embaixo do
+# plug ha duas ALETAS com uma FENDA entre elas; a borda de baixo da fita entra
+# na fenda, a fita contorna a ponta da aleta de cima e sobe encostada no corpo
+# REBAIXADO da tampa ate a aba. Quem veda e a faixa da fita SOBRE A PONTA da
+# aleta de cima: uma linha estreita, nao a fita inteira. Cotas medidas a
+# partir da PAREDE do corpo (u_int), negativo = para dentro.
+REBAIXO = 2.9       # corpo rebaixado: a fita (2,0) fica 0,9 longe da parede
+ALETA_PONTA = 1.85  # ponta da aleta de cima: fita livre passaria 0,15 da parede
+FENDA_FUNDO = 3.4   # fundo da fenda
+ALETA_PONTA2 = 1.4  # ponta da aleta de baixo
+Z_ALETA_RAIZ = -7.0     # a aleta de cima nasce do rebaixo com rampa (saida)
+Z_ALETA_TOPO = -7.55    # topo da aleta de cima, na ponta
+Z_FENDA_TETO = -8.85    # aleta de cima com 1,3 de espessura
+Z_FENDA_PISO = -10.55   # fenda de 1,7: aperta a fita de 2,0 em 15% (segura)
+PLUG = 11.75            # pe da aleta de baixo
+# teca: aleta de 1,3 mm em madeira quebra - fica a cava no macico (rev. 1)
+CAVA_Z0, CAVA_Z1 = -3.0, -13.4
+CAVA_P = 1.62
+PLUG_TECA = 16.0
 FITA_T, FITA_L = 2.0, 10.0       # a fita pedida: 2 x 10 mm
-SAIA_PLUG_T = 1.4  # parede de PP atras da cava
+SAIA_PLUG_T = 1.4  # parede de PP atras da fenda
 TAMPA_T = 2.0   # espessura de casca da tampa
 ABA_H = 3.0     # aba da tampa acima da borda = profundidade do bolsao
 
@@ -267,38 +278,41 @@ def corpo(H, n=N_ANEL):
 def _aba_e_plug(P, s, aletas=True):
     """Trecho comum das tampas, da aba ao pe do plug, por FORA.
 
-    aletas=True (PP): saia fina rebaixada, ALETA de cima, CANAL da fita,
-    ALETA de baixo - o desenho da foto 3. A parede atras da fita e a mesma
-    da saia inteira: acabou o anel macico de 3 mm em volta da cava.
-    aletas=False (teca): cava cortada no macico - aleta de 1 mm em madeira
-    quebra na primeira lavagem.
+    aletas=True (PP, foto 4): corpo rebaixado, aleta de cima com rampa,
+    FENDA, aleta de baixo. A fita entra na fenda e sobe pelo rebaixo.
+    aletas=False (teca): cava cortada no macico, fita deitada nela.
     """
-    pf = lambda z: u_int(z) - FOLGA            # face do plug (ponta das aletas)
-    fc = lambda z: pf(z) - CAVA_P              # fundo do canal = face da saia
+    w = u_int
     s(U_BORDA - 0.5, ABA_H)
     s(U_BORDA, ABA_H - 0.5)
     s(U_BORDA, 0.0)
     if aletas:
-        s(fc(0) + 0.6, 0.0)
-        s(fc(-0.6), -0.6)
-        s(fc(ALETA_Z), ALETA_Z)                # saia rebaixada ate a aleta
-        s(pf(ALETA_Z) - 0.3, ALETA_Z)
-        s(pf(ALETA_Z - 0.3), ALETA_Z - 0.3)
-        s(pf(CAVA_Z0), CAVA_Z0)
-    else:
-        s(pf(0) + 0.6, 0.0)
-        s(pf(-0.8), -0.8)
-        s(pf(CAVA_Z0), CAVA_Z0)
-    s(fc(CAVA_Z0), CAVA_Z0)
-    s(fc(CAVA_Z1), CAVA_Z1)
+        s(w(0) - REBAIXO + 0.6, 0.0)
+        s(w(-0.6) - REBAIXO, -0.6)
+        s(w(Z_ALETA_RAIZ) - REBAIXO, Z_ALETA_RAIZ)
+        s(w(Z_ALETA_TOPO) - ALETA_PONTA, Z_ALETA_TOPO)
+        s(w(Z_FENDA_TETO) - ALETA_PONTA, Z_FENDA_TETO)
+        s(w(Z_FENDA_TETO) - FENDA_FUNDO, Z_FENDA_TETO)
+        s(w(Z_FENDA_PISO) - FENDA_FUNDO, Z_FENDA_PISO)
+        s(w(Z_FENDA_PISO) - ALETA_PONTA2, Z_FENDA_PISO)
+        s(w(-PLUG + 0.4) - ALETA_PONTA2, -PLUG + 0.4)
+        s(w(-PLUG) - ALETA_PONTA2 - 0.4, -PLUG)
+        return lambda z: w(z) - FENDA_FUNDO - SAIA_PLUG_T, PLUG
+    pf = lambda z: w(z) - FOLGA
+    s(pf(0) + 0.6, 0.0)
+    s(pf(-0.8), -0.8)
+    s(pf(CAVA_Z0), CAVA_Z0)
+    s(pf(CAVA_Z0) - CAVA_P, CAVA_Z0)
+    s(pf(CAVA_Z1) - CAVA_P, CAVA_Z1)
     s(pf(CAVA_Z1), CAVA_Z1)
-    if aletas:
-        s(pf(-PLUG + 0.4), -PLUG + 0.4)
-        s(pf(-PLUG) - 0.6, -PLUG)
-    else:
-        s(pf(-PLUG + 0.8), -PLUG + 0.8)
-        s(pf(-PLUG) - 0.8, -PLUG)
-    return pf
+    s(pf(-PLUG_TECA + 0.8), -PLUG_TECA + 0.8)
+    s(pf(-PLUG_TECA) - 0.8, -PLUG_TECA)
+    return pf, PLUG_TECA
+
+
+def saia_int(z):
+    """Face interna da saia das tampas de PP."""
+    return u_int(z) - FENDA_FUNDO - SAIA_PLUG_T
 
 
 def tampa_pp(n=N_ANEL):
@@ -309,8 +323,7 @@ def tampa_pp(n=N_ANEL):
     s(0, 0.0, 0)
     s(BOLSAO, 0.0, 6.6)
     s(BOLSAO + 1.0, ABA_H, 7.6)               # rampa de entrada do pe
-    pf = _aba_e_plug(P, s)
-    si = lambda z: pf(z) - CAVA_P - SAIA_PLUG_T
+    si, _ = _aba_e_plug(P, s)
     s(si(-PLUG), -PLUG)
     s(si(ABA_H - TAMPA_T), ABA_H - TAMPA_T)
     s(BOLSAO + 1.0 + TAMPA_T, ABA_H - TAMPA_T, 8.0)
@@ -328,8 +341,8 @@ def tampa_teca(n=N_ANEL):
     s(0, 0.0, 0)
     s(BOLSAO, 0.0, 6.6)
     s(BOLSAO + 1.0, ABA_H, 7.6)
-    pf = _aba_e_plug(P, s, aletas=False)
-    s(pf(-PLUG) - 5.0, -PLUG)
+    pf, pl = _aba_e_plug(P, s, aletas=False)
+    s(pf(-pl) - 5.0, -pl)
     s(pf(-5.0) - 5.0, -5.0)
     s(0, -5.0, 0)
     return varre(P, n=n), P
@@ -366,8 +379,7 @@ def tampa_bico(n=N_ANEL):
     # por baixo: laje sob o canal e o anel, sobe acompanhando a bandeja
     s(ANEL_I + ANEL_T + 3.0, CANAL_Z - t, 20.0 + 3.0)
     s(60.0, ABA_H - t, r_par(60.0, 0))
-    pf = lambda z: u_int(z) - FOLGA
-    si = lambda z: pf(z) - CAVA_P - SAIA_PLUG_T
+    si = saia_int
     s(si(ABA_H - t), ABA_H - t)
     s(si(-PLUG), -PLUG)
     tmp = []
@@ -420,7 +432,24 @@ def copo(n=N_ANEL):
 
 
 def fita(n=N_ANEL):
-    """A fita de TPE 2 x 10, montada na cava (esticada)."""
+    """A fita de TPE 2 x 10 em GANCHO, como fica com a tampa FECHADA.
+
+    Secao (u medido da parede, z da borda): sobe pelo rebaixo com 0,9 de
+    folga, encosta na parede sobre a ponta da aleta de cima (comprimida de
+    0,15 + a folga de modelo), contorna a ponta e entra na fenda.
+    """
+    w = u_int
+    sec = [(-0.9, -0.8), (-0.9, -6.3), (-0.05, -7.3), (-0.05, -9.2), (-0.6, -10.05),
+           (-ALETA_PONTA2, Z_FENDA_PISO + 0.05), (-FENDA_FUNDO + 0.05, Z_FENDA_PISO + 0.05),
+           (-FENDA_FUNDO + 0.05, Z_FENDA_TETO - 0.05), (-ALETA_PONTA - 0.05, Z_FENDA_TETO - 0.05),
+           (-ALETA_PONTA - 0.05, Z_ALETA_TOPO + 0.05), (-REBAIXO + 0.05, Z_ALETA_RAIZ + 0.05),
+           (-REBAIXO + 0.05, -0.8)]
+    P = [('s', w(z) + du, z, r_par(w(z) + du, z)) for du, z in sec]
+    return varre(P, n=n), P
+
+
+def fita_teca(n=N_ANEL):
+    """A mesma fita, deitada na cava da teca (montagem da rev. 1)."""
     pf = lambda z: u_int(z) - FOLGA - CAVA_P
     z0, z1 = CAVA_Z0 - 0.2, CAVA_Z1 + 0.2
     P = []
@@ -433,6 +462,14 @@ def fita(n=N_ANEL):
     s(pf(z1) + FITA_T - 0.25, z1)
     s(pf(z1), z1)
     return varre(P, n=n), P
+
+
+def fita_area():
+    """Area da secao em gancho: tem de bater com os 20 mm2 da fita reta."""
+    w0 = 0.0
+    sec = fita(8)[1]
+    pts = [(p[1] - u_int(p[2]), p[2]) for p in sec]
+    return abs(sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(pts, pts[1:] + pts[:1]))) / 2
 
 
 def orelha(T_):
@@ -499,13 +536,14 @@ def pecas(n):
     out['tampa-bico'] = tampa_bico(n)[0]
     out['copo'] = copo(n)[0]
     out['fita-tpe'] = fita(n)[0]
+    out['fita-teca'] = fita_teca(n)[0]
     return out
 
 
 DENS = {'corpo': 1.08, 'tampa-fechada': 0.90, 'tampa-bico': 0.90, 'copo': 0.90,
-        'tampa-teca': 0.65, 'fita-tpe': 1.00}
+        'tampa-teca': 0.65, 'fita-tpe': 1.00, 'fita-teca': 1.00}
 MAT = {'corpo': 'SAN', 'tampa-fechada': 'PP', 'tampa-bico': 'PP', 'copo': 'PP',
-       'tampa-teca': 'teca', 'fita-tpe': 'TPE'}
+       'tampa-teca': 'teca', 'fita-tpe': 'TPE', 'fita-teca': 'TPE'}
 
 
 def relatorio(P_):
@@ -521,7 +559,7 @@ def relatorio(P_):
         brim = capacidade(H, H)
         util = capacidade(H, H + deck)
         # o anel do plug (face + cava + saia) ocupa a faixa de -PLUG a deck
-        anel = sum(4 * 2 * (u_int(z)) * (FOLGA + CAVA_P + SAIA_PLUG_T)
+        anel = sum(4 * 2 * (u_int(z)) * (FENDA_FUNDO + SAIA_PLUG_T)
                    for z in np.linspace(-PLUG, deck, 50)) * (PLUG + deck) / 50 / 1000
         fundo_ext = U_I + T - H * K
         R['corpos'].append(dict(
@@ -539,12 +577,14 @@ def relatorio(P_):
             R['aninhamento'].append(dict(altura=H, n=nn, solto=round(solto), aninhado=round(ninho),
                                          ganho_pct=round(100 * (1 - ninho / solto))))
     # vedacao: a fita sobressai da face do plug e encontra a parede
-    sobra = FITA_T - CAVA_P
-    R['vedacao'] = dict(fita=f'{FITA_T} x {FITA_L} mm', cava=f'{CAVA_Z0 - CAVA_Z1:.1f} x {CAVA_P} mm',
-                        folga_plug=FOLGA, sobressai=round(sobra, 2),
-                        compressao=round(sobra - FOLGA, 2),
-                        compressao_pct=round(100 * (sobra - FOLGA) / FITA_T, 1),
-                        curso_vedando=round((sobra - FOLGA) / K, 1))
+    aperto = FITA_T - ALETA_PONTA
+    R['vedacao'] = dict(fita=f'{FITA_T} x {FITA_L} mm', montagem='gancho: borda de baixo na fenda',
+                        fenda=f'{Z_FENDA_TETO - Z_FENDA_PISO:.2f} mm de altura x {FENDA_FUNDO - ALETA_PONTA:.2f} de fundo',
+                        aperto_na_ponta=round(aperto, 2), aperto_pct=round(100 * aperto / FITA_T, 1),
+                        folga_no_rebaixo=round(REBAIXO - FITA_T, 2),
+                        aperto_na_fenda_pct=round(100 * (1 - (Z_FENDA_TETO - Z_FENDA_PISO) / FITA_T)),
+                        area_secao_mm2=round(fita_area(), 1),
+                        curso_vedando=round(aperto / K, 1))
     return R
 
 
@@ -567,9 +607,13 @@ def verifica():
     dp = math.sqrt(2) * (u_p - R_I) + R_I
     ok(abs((dc - dp) - FOLGA) > 0.05, 'autoteste: a checagem do canto nao reprova raio fixo')
     # 2. a fita encosta, e so nos ultimos mm do curso (o ar sai antes)
-    sobra = FITA_T - CAVA_P
-    ok(0.05 <= sobra - FOLGA <= 0.25, f'compressao da fita fora da faixa: {sobra - FOLGA:.2f}')
-    ok(CAVA_Z0 - CAVA_Z1 >= FITA_L + 0.2, 'cava mais estreita que a fita')
+    aperto = FITA_T - ALETA_PONTA
+    ok(0.05 <= aperto <= 0.30, f'aperto da fita fora da faixa: {aperto:.2f}')
+    ok(REBAIXO - FITA_T >= 0.5, 'fita encosta na parede fora da ponta da aleta')
+    ok(Z_FENDA_TETO - Z_FENDA_PISO < FITA_T, 'fenda nao aperta a fita')
+    ok(ALETA_PONTA2 > ALETA_PONTA - FITA_T + 0.3, 'aleta de baixo encosta na parede')
+    ok(abs(fita_area() - FITA_T * FITA_L) / (FITA_T * FITA_L) < 0.15,
+       f'secao em gancho nao bate com a fita 2 x 10: {fita_area():.1f} mm2')
     # 3. modular: n potes empilhados com tampa = o maior com tampa
     for a in range(1, 4):
         ok(abs(ALTURAS[a - 1] + ALTURAS[3 - a] - ALTURAS[3]) < 1e-9, 'alturas nao somam')
@@ -588,10 +632,10 @@ def verifica():
     # 7. o cordao do copo aperta o anel (passa pelo chanfro e fica)
     ok(COPO_CORDAO - COPO_FOLGA > -1e-9 and COPO_CORDAO <= 0.6, 'cordao do copo nao aperta')
     # 8. o anel externo cabe dentro da saia do plug
-    ok(ANEL_I + ANEL_T + 3.0 < u_int(ABA_H - TAMPA_T) - FOLGA - CAVA_P - SAIA_PLUG_T - 2,
+    ok(ANEL_I + ANEL_T + 3.0 < saia_int(ABA_H - TAMPA_T) - 2,
        'bandeja encosta na saia do plug')
-    # 9. as aletas: a de cima fica abaixo da boca, e a fita cabe no canal
-    ok(ALETA_Z <= -2.5, 'aleta de cima muito alta')
+    # 9. a fita cabe entre a aba e a aleta: 10 mm desenvolvidos
+    ok(-Z_FENDA_PISO > 0.8 + 7.0, 'nao cabe a fita entre aba e fenda')
     return erros, p
 
 
@@ -610,7 +654,8 @@ def main():
                   'tampa-teca': varre(tampa_teca()[1], n=96),
                   'tampa-bico': varre(tampa_bico()[1], n=96),
                   'copo': varre(copo()[1], n=96),
-                  'fita-tpe': varre(fita()[1], n=96)}
+                  'fita-tpe': varre(fita()[1], n=96),
+                  'fita-teca': varre(fita_teca()[1], n=96)}
     for nome, T_ in principais.items():
         r = checa_malha(T_)
         if r:

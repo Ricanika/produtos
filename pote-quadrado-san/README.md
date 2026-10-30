@@ -1,4 +1,35 @@
-# Pote quadrado modular em SAN, revisão 2
+# Pote quadrado modular em SAN, revisão 3
+
+## Revisão 3 (foto 4: perfil da tampa de referência)
+
+Pedido: *"esse é o desenho frontal de perfil da tampa referência... uma das pontas da borracha vai
+entrar nesse vão de baixo."*
+
+A referência tem, embaixo do plug, **duas aletas com uma fenda estreita entre elas**, e acima delas o
+corpo da tampa é **rebaixado** até a aba. A fita passou a ser montada **em gancho**:
+
+- A **borda de baixo** da fita de 2 × 10 entra na **fenda de 1,7 mm** (aperta a fita em 15%, é o
+  que segura). A fenda tem 1,55 mm de fundo além da ponta da aleta.
+- A fita **contorna a ponta da aleta de cima** e **sobe pelo corpo rebaixado** até a aba. No
+  rebaixo ela fica **0,9 mm afastada** da parede do pote.
+- **Quem veda é a faixa sobre a ponta da aleta de cima:** ali a fita aperta a parede de SAN em
+  **0,15 mm (7,5%)**. É uma linha estreita, não a fita inteira, e por isso a força para fechar e
+  abrir cai bastante em relação à revisão 2, onde os 10 mm da fita comprimiam juntos. Também tolera
+  melhor a variação de medida do SAN.
+- O ar sai pela folga até os últimos **4,3 mm** de curso.
+- A seção em gancho tem **20,6 mm²**, a mesma da fita reta de 2 × 10 (20 mm²). Uma verificação
+  confere isso a cada geração.
+- O plug ficou **mais curto: 11,75 mm** (era 15,4), e a capacidade útil praticamente não muda.
+- A **teca** continua com a fita deitada numa cava no maciço, porque uma aleta de 1,3 mm em madeira
+  quebra. É a mesma borracha, montada de outro jeito (`fita-teca.stl`).
+
+**Ainda a confirmar com a amostra física:** a profundidade real da fenda da referência e se a fita
+dela é reta (extrudada e soldada) ou já moldada em L. Uma fita reta de 10 mm dobrada em gancho
+enruga um pouco nos cantos; se isso aparecer no protótipo, o raio de canto do plug sobe ou a fita
+passa a ser injetada em L.
+
+---
+
 
 ## Revisão 2 (fotos de referência da tampa de bico)
 
@@ -14,7 +45,7 @@ tem um espaço para deixar a fita de borracha; o pote precisa estar menos angula
   gargalo**. Um cordão de 0,3 mm na borda passa pelo chanfro do anel e fica apertado contra a face
   interna dele. É isso que segura e veda: PP contra PP, radial, como a tampa no pote. O beiço fica
   dentro do copo com 3 mm de folga, verificado.
-- **Fita entre duas aletas (foto 3).** A cava cortada numa saia grossa virou uma **saia fina de
+- **Fita entre duas aletas (foto 3)** (substituída pela montagem em gancho na revisão 3). A cava cortada numa saia grossa virou uma **saia fina de
   1,4 mm com duas aletas de 1 mm**, e a fita mora no canal entre elas, presa por cima e por baixo.
   Acima da aleta de cima a saia fica rebaixada. A tampa fechada caiu de 51,3 para 48,5 g. A teca
   continua com cava no maciço, porque aleta de 1 mm em madeira quebra.
@@ -107,18 +138,19 @@ Isso vale para a fechada e para a de teca. A de bico não empilha.
 
 Ver o corte 2D na página do modelo.
 
-- O **plug** da tampa desce 15,4 mm dentro da boca, com a mesma saída da parede.
-- A saia do plug é fina (1,4 mm) e tem **duas aletas de 1 mm**. Entre elas fica um **canal de
-  10,4 × 1,62 mm**. A fita de **2,0 × 10 mm** mora no canal, esticada uns 3% para não sair na lavagem.
-- A fita sobressai **0,38 mm** da ponta das aletas, a folga até a parede é **0,25 mm**: sobram
-  **0,13 mm de compressão (6,5%)**.
+- O **plug** da tampa desce 11,75 mm dentro da boca, com a mesma saída da parede.
+- Embaixo do plug, **duas aletas com uma fenda de 1,7 mm**. A borda de baixo da fita entra na fenda,
+  a fita contorna a ponta da aleta de cima e sobe pelo corpo rebaixado até a aba (montagem em gancho,
+  revisão 3).
+- Sobre a ponta da aleta de cima a fita aperta a parede em **0,15 mm (7,5%)**. No rebaixo fica
+  0,9 mm afastada.
 - **A vedação é radial:** a fita aperta a parede lateral do corpo. O topo da borda só serve de
   batente. Não precisa de trava, e o SAN, que é quebradiço, não tem nenhum engate.
-- **O cone ajuda a fechar:** a fita só toca a parede nos **últimos 3,7 mm** de curso. Até ali o ar
+- **O cone ajuda a fechar:** a fita só toca a parede nos **últimos 4,3 mm** de curso. Até ali o ar
   sai pela folga, então não há colchão de ar a vencer. No fim fica o "pop" de tampa hermética.
-- **Aperto baixo de propósito.** Uma fita larga e fina, presa entre duas paredes, fica muito rígida
-  na compressão (fator de forma 2,5). Quem dá a mola é a saia de PP, e mesmo assim cada décimo de
-  milímetro conta. Começamos com 0,13 mm e **ajustamos a profundidade do canal no try-out**. Tirar
+- **Aperto numa linha só.** Uma fita larga comprimida inteira fica muito rígida (fator de forma
+  2,5). No gancho só a faixa sobre a aleta aperta. Começamos com 0,15 mm e **ajustamos a ponta da
+  aleta no try-out**. Tirar
   aço é barato; pôr aço de volta não.
 - **Abrir:** a orelha num canto da tampa serve para descascar. Puxar reto com a tampa inteira vai
   precisar de mais força. Só o protótipo dá esse número com confiança.
@@ -127,11 +159,11 @@ Ver o corte 2D na página do modelo.
 
 | Tampa | Material | Massa | Notas |
 |---|---|---|---|
-| **Fechada** | PP RP 141 | 48,5 g | orelha de abrir; bolsão de empilhar no tampo; fita entre aletas |
+| **Fechada** | PP RP 141 | 49,0 g | orelha de abrir; bolsão de empilhar no tampo; fita em gancho na fenda |
 | **Teca** | teca maciça, CNC | 75,8 g | a mesma fita, em cava no maciço; escavada por baixo (5 mm de madeira no centro e na lateral); aba de 3 mm sobre a borda |
-| **Bico** | PP RP 141 | 45,0 g | bandeja rebaixada, anel externo, gargalo quadrado de 74 mm centrado, beiço de verter no lado +X |
+| **Bico** | PP RP 141 | 45,5 g | bandeja rebaixada, anel externo, gargalo quadrado de 74 mm centrado, beiço de verter no lado +X |
 | **Copo** | PP RP 141 | 33,0 g | quadrado, invertido; a borda desce no canal entre anel e gargalo e trava num cordão de 0,3 mm; virado, é copo medidor de ~220 ml |
-| **Fita** | TPE Karinprene 45 | 9,5 g | 2 × 10 mm, perímetro ~470 mm |
+| **Fita** | TPE Karinprene 45 | 9,7 g | 2 × 10 mm, perímetro ~470 mm; em gancho nas tampas de PP, deitada na teca |
 
 A fechada e a de bico podem sair do **mesmo molde com postiço trocável** no tampo.
 
@@ -142,7 +174,7 @@ A fechada e a de bico podem sair do **mesmo molde com postiço trocável** no ta
   transparente e quebradiço, e por isso o corpo não tem trava, clipe nem dobradiça.
 - **Corpo sem contra-saída:** o canal da borda abre para baixo (lâmina na cavidade), a saia afina
   para baixo, e as nervuras ficam no macho.
-- **Tampa de PP:** as aletas formam uma **contra-saída externa de 1,62 mm** na saia. O plug não pode flexionar
+- **Tampa de PP:** as aletas e a fenda formam uma **contra-saída externa** na saia (fenda de 1,55 mm além da ponta). O plug não pode flexionar
   para dentro porque o macho está lá, então são **4 gavetas** (uma por lado). É o item caro do
   molde da tampa. A alternativa é extração em dois estágios com a saia sendo arrancada, e isso
   precisa de estudo com a ferramentaria.
@@ -206,7 +238,7 @@ python3 gera-visualizador.py    # a pagina
 
 **As verificações que rodam a cada geração:** folga no canto igual à folga no lado (com
 **autoteste**: a mesma conta, com raio fixo, tem de reprovar), compressão da fita dentro da faixa,
-canal mais largo que a fita, alturas somando, pé cabendo no bolsão e no fundo do pote mais alto,
+aperto da fita na ponta da aleta, folga no rebaixo, fenda apertando a fita, seção em gancho igual à da fita reta, alturas somando, pé cabendo no bolsão e no fundo do pote mais alto,
 passo de aninhar vindo da nervura, nervura fora da zona da fita, bico longe da saia, cordão do copo
 engatando, e a malha de cada peça fechada (toda aresta usada duas vezes, uma em cada sentido).
 

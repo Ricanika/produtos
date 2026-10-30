@@ -84,7 +84,7 @@
 
 <div class="sheet">
   <header>
-    <div class="eyebrow">Nitron · produto novo · estudo 3D rev. 2</div>
+    <div class="eyebrow">Nitron · produto novo · estudo 3D rev. 3</div>
     <h1>Pote quadrado modular em SAN</h1>
     <p class="sub">Corpo em SAN cristal, uma boca para as quatro alturas, tampa de PP com uma fita de TPE de 2 × 10 mm na lateral. Três tampas: fechada, teca e bico com copo. As paredes têm 2° de saída por face: é isso que deixa os potes entrarem um no outro no frete.</p>
   </header>
@@ -121,7 +121,7 @@
 
   <figure class="corte">
     <div class="corte-svg">__CORTE__</div>
-    <figcaption><b>Corte no meio de um lado, escala aproximada 5:1.</b> A linha tracejada é o topo da borda (plano modular). A fita fica no canal entre as duas aletas da saia da tampa e trabalha contra a parede interna do corpo, na lateral. Nada aperta no topo da borda.</figcaption>
+    <figcaption><b>Corte no meio de um lado, escala aproximada 5:1.</b> A linha tracejada é o topo da borda (plano modular). A borda de baixo da fita entra na fenda entre as duas aletas, contorna a ponta da aleta de cima e sobe pelo corpo rebaixado até a aba. Ela só aperta a parede do corpo sobre a ponta da aleta, numa faixa estreita. No resto fica 0,9 mm afastada. A seção em gancho tem 20,6 mm², a mesma da fita reta de 2 × 10.</figcaption>
   </figure>
 
   <div class="tabela-wrap">
@@ -135,9 +135,9 @@
 
   <div class="grade">
     <div class="bloco">
-      <h2>Fita de TPE entre duas aletas</h2>
-      <p>A saia da tampa é fina e tem duas aletas de 1 mm. Entre elas fica um canal de <span class="mono">10,4 × 1,62 mm</span>, e a fita de 2 × 10 mm mora ali, presa por cima e por baixo. Ela sobressai <span class="mono">0,38 mm</span> da ponta das aletas, a folga até a parede do corpo é <span class="mono">0,25 mm</span>, e sobra <span class="mono cota">0,13 mm</span> de compressão (6,5%).</p>
-      <p>Como a boca também tem saída, a fita só toca a parede nos últimos <span class="mono">3,7 mm</span> de curso. Até ali o ar sai pela folga, e por isso a tampa fecha sem ter que vencer o ar preso.</p>
+      <h2>Fita de TPE em gancho</h2>
+      <p>Embaixo do plug há duas aletas com uma fenda de <span class="mono">1,7 mm</span> entre elas, como na tampa de referência. A borda de baixo da fita de 2 × 10 entra nessa fenda e fica presa (a fenda aperta a fita em 15%). O resto da fita sobe pelo corpo rebaixado da tampa até a aba.</p>
+      <p>Quem veda é o trecho da fita que passa sobre a ponta da aleta de cima: ali ela aperta a parede de SAN em <span class="mono cota">0,15 mm</span>. Acima disso fica 0,9 mm afastada. Por ser uma linha estreita, a tampa fecha com pouca força, e o ar sai pela folga até os últimos <span class="mono">4,3 mm</span> de curso.</p>
     </div>
     <div class="bloco">
       <h2>Empilhar e aninhar</h2>
@@ -194,7 +194,7 @@ const D = __DADOS__;
     tr.innerHTML = `<td class="mono">${fmt(a.altura)} mm</td><td class="mono">${a.n}</td><td class="mono">${fmt(a.solto)} mm</td><td class="mono">${fmt(a.aninhado)} mm</td><td class="mono">${a.ganho_pct}%</td>`;
     tn.appendChild(tr);
   });
-  const nomes = {'corpo-1':'Corpo 57','corpo-2':'Corpo 114','corpo-3':'Corpo 171','corpo-4':'Corpo 228','tampa-fechada':'Tampa fechada','tampa-teca':'Tampa de teca','tampa-bico':'Tampa de bico','copo':'Copo dosador','fita-tpe':'Fita de vedação'};
+  const nomes = {'corpo-1':'Corpo 57','corpo-2':'Corpo 114','corpo-3':'Corpo 171','corpo-4':'Corpo 228','tampa-fechada':'Tampa fechada','tampa-teca':'Tampa de teca','tampa-bico':'Tampa de bico','copo':'Copo dosador','fita-tpe':'Fita de vedação (em gancho)','fita-teca':'Fita de vedação (na teca)'};
   const proc = {SAN:'injeção', PP:'injeção', teca:'CNC', TPE:'extrusão, corte e solda (ou injeção)'};
   const tp = document.querySelector('#t-pecas tbody');
   Object.entries(R.pecas).forEach(([k,p]) => {
@@ -244,7 +244,7 @@ const D = __DADOS__;
     MATS.tpe = new THREE.MeshStandardMaterial(Object.assign({color:c('--tpe'), roughness:.8}, base));
     scene.background = c('--palco');
   }
-  const MAT_DE = {'tampa-fechada':'pp','tampa-teca':'teca','tampa-bico':'ppbico','copo':'ppbico','fita-tpe':'tpe'};
+  const MAT_DE = {'tampa-fechada':'pp','tampa-teca':'teca','tampa-bico':'ppbico','copo':'ppbico','fita-tpe':'tpe','fita-teca':'tpe'};
   const grupo = new THREE.Group(); scene.add(grupo);
   // posicao no sistema do STL (x, y, z) -> three
   function poe(peca, x, z, y=0){
@@ -256,7 +256,7 @@ const D = __DADOS__;
   }
   const H = D.alturas, P = D.passo;
   function tampa(tipo, x, zr, bico=true){
-    poe('tampa-'+tipo, x, zr); poe('fita-tpe', x, zr);
+    poe('tampa-'+tipo, x, zr); poe(tipo==='teca' ? 'fita-teca' : 'fita-tpe', x, zr);
     if(tipo==='bico' && bico) poe('copo', x, zr);
   }
 
@@ -271,7 +271,7 @@ const D = __DADOS__;
       poe('corpo-1',-85,0); tampa('bico',-85,H[0],false);
       poe('corpo-1',85,0); tampa('bico',85,H[0]);
     }, alvo:[0,60,0], dist:470, az:-.12, el:.22},
-    vedacao:{t:'Vedação radial: aletas, canal e fita', d:'Fita 2 × 10 no canal de 10,4 × 1,62 entre duas aletas. Sobressai 0,38, folga 0,25: comprime 0,13 mm contra a parede de SAN.', fazer(){
+    vedacao:{t:'Vedação: fita em gancho na fenda', d:'A borda da fita entra na fenda entre as aletas e sobe pelo rebaixo. Veda sobre a ponta da aleta de cima, com 0,15 mm de aperto contra o SAN.', fazer(){
       poe('corpo-1',0,0); tampa('fechada',0,H[0]);
     }, alvo:[-57,47,0], dist:95, az:0, el:.04, corte:true},
     empilha:{t:'Empilha na mesma altura', d:'57 + 57 + 114 = 228. O pé de cada pote cai no bolsão da tampa de baixo, então a tampa não soma altura.', fazer(){
