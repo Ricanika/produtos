@@ -346,6 +346,7 @@ abertura), não o fechamento.
 | `relatorio.json` | massas, capacidades, aninhamento e vedação, gerados |
 
 ```
+pip install numpy manifold3d    # manifold3d corta os drenos da tampa de bico
 python3 geometria.py            # STL + relatorio + malhas
 python3 geometria.py --teste    # so as verificacoes
 python3 gera-visualizador.py    # a pagina
