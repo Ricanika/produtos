@@ -43,7 +43,7 @@ def corte_svg():
     zf = (G.CAVA_Z0 + G.CAVA_Z1) / 2
     uf = G.u_int(zf) - G.FOLGA - G.CAVA_P + G.FITA_T
     rot = [
-        (G.U_I + G.T + 0.8, -12.0, 'SAN 2,0 · saída 3°', 'start'),
+        (G.U_I + G.T + 0.8, -12.0, 'SAN 2,0 · saída 2°', 'start'),
         (50.4, 1.0, 'PP', 'start'),
         (50.4, zf + 0.3, 'fita TPE 2 × 10', 'start'),
         (G.U_BORDA - 2.6, 4.0, 'aba 3,0 sobre a borda', 'middle'),

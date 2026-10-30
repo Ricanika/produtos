@@ -29,7 +29,7 @@ import numpy as np
 AQUI = os.path.dirname(os.path.abspath(__file__))
 
 # ---------------------------------------------------------------- cotas
-SAIDA = 3.0                       # graus por face: e o que faz aninhar
+SAIDA = 2.0                       # graus por face: e o que faz aninhar (rev. 2: era 3)
 K = math.tan(math.radians(SAIDA))
 MODULO = 57.0                     # altura do menor; os outros sao 2x, 3x, 4x
 ALTURAS = [MODULO * n for n in (1, 2, 3, 4)]
@@ -51,23 +51,41 @@ PE_I, PE_O, PE_H = 45.0, 47.6, 3.0
 BOLSAO = 48.2   # meio-lado do bolsao da tampa (folga 0,6 sobre o pe)
 
 # nervuras anti-travamento no meio de cada lado, por dentro
-NERV_E = 0.6    # quanto avanca para dentro
+NERV_E = 0.4    # quanto avanca para dentro (rev. 2: era 0,6)
 NERV_L = 4.0    # largura
 NERV_TOPO = 20.0  # comeca 20 mm abaixo da borda: fica fora da zona da fita
 
 # tampa / vedacao
 FOLGA = 0.25    # face do plug ate a parede do corpo, por lado
-PLUG = 16.0     # quanto o plug desce na boca
-CAVA_Z0, CAVA_Z1 = -3.0, -13.4   # cava de 10,4 mm de altura
-CAVA_P = 1.62   # profundidade da cava
+# rev. 2: a fita mora num CANAL entre duas ALETAS (foto 3), nao numa cava
+# cortada numa saia grossa. Acima da aleta de cima a saia fica rebaixada.
+ALETA = 1.0     # espessura de cada aleta
+ALETA_Z = -3.0  # face de cima da aleta de cima
+CAVA_Z0 = ALETA_Z - ALETA                 # -4,0: teto do canal
+CAVA_Z1 = CAVA_Z0 - 10.4                  # -14,4: piso do canal (10,4 de altura)
+PLUG = -(CAVA_Z1 - ALETA)                 # 15,4: pe da aleta de baixo
+CAVA_P = 1.62   # profundidade do canal (= quanto a aleta sobressai da saia)
 FITA_T, FITA_L = 2.0, 10.0       # a fita pedida: 2 x 10 mm
 SAIA_PLUG_T = 1.4  # parede de PP atras da cava
 TAMPA_T = 2.0   # espessura de casca da tampa
 ABA_H = 3.0     # aba da tampa acima da borda = profundidade do bolsao
 
 # tampa de bico + copo
-BICO_X = 30.0   # centro do bico, deslocado para o lado +X (lado de verter)
-BICO_RE, BICO_RI_TOPO, BICO_H = 19.0, 16.8, 25.0
+# rev. 2: bico da foto - GARGALO quadrado arredondado, centrado, com bandeja
+# rebaixada em volta, ANEL externo, e o labio abrindo num BEICO no lado +X.
+# O copo e um copo quadrado invertido cuja borda desce no CANAL entre o anel
+# e o gargalo.
+BICO_X = 0.0
+GARG_O, GARG_R, GARG_T = 37.0, 14.0, 1.6     # gargalo: meio-lado externo, raio, parede
+GARG_H = 20.0                                 # topo do gargalo (z acima da borda)
+BEICO_A, BEICO_B, BEICO_P = 6.5, 6.0, 4.0     # beico: abre 6,5, sobe 6, largura (cos^p)
+ANEL_I, ANEL_T, ANEL_H = 48.5, 1.6, 8.0       # anel externo: face interna, parede, topo
+CANAL_Z = 1.0                                 # piso do canal do copo
+BANDEJA_Z = 0.0                               # fundo da bandeja rebaixada
+COPO_T = 1.6
+COPO_FOLGA = 0.3                              # copo -> anel, por lado
+COPO_CORDAO = 0.3                             # cordao de encaixe no pe do copo
+COPO_TETO = GARG_H + BEICO_B + 2.0            # teto interno do copo
 
 N_ANEL = 240    # pontos por anel no STL
 N_VIEW = 144    # pontos por anel no visualizador
@@ -112,10 +130,23 @@ def anel_quadrado(u, r, c, th):
     return cc + d * ((lo + hi) / 2)[:, None]
 
 
+def beico(th, p=BEICO_P):
+    """Calombo suave em volta de theta=0 (lado +X): 1 no meio, 0 a +-90."""
+    return np.maximum(np.cos(th), 0) ** p
+
+
 def anel(spec, c, th):
+    """('s', u, z, r[, A, B]) - A abre o anel para fora e B o levanta no
+    lado +X, na forma de beico(). E o que faz o labio de verter."""
     if spec[0] == 's':
-        _, u, z, r = spec
+        u, z, r = spec[1:4]
+        A, B = (spec[4], spec[5]) if len(spec) > 4 else (0.0, 0.0)
         xy = anel_quadrado(u, r, c, th)
+        if A or B:
+            f = beico(th)
+            d = np.stack([np.cos(th), np.sin(th)], 1)
+            xy = xy + d * (A * f)[:, None]
+            return np.column_stack([xy, z + B * f])
     else:
         _, rho, z = spec[:3]
         xy = np.array(c) + rho * np.stack([np.cos(th), np.sin(th)], 1)
@@ -233,20 +264,40 @@ def corpo(H, n=N_ANEL):
     return np.concatenate([malha] + nerv), P
 
 
-def _aba_e_plug(P, s, ate_cava=True):
-    """Trecho comum das tres tampas, da aba ao pe do plug, por FORA."""
-    pf = lambda z: u_int(z) - FOLGA            # face do plug
+def _aba_e_plug(P, s, aletas=True):
+    """Trecho comum das tampas, da aba ao pe do plug, por FORA.
+
+    aletas=True (PP): saia fina rebaixada, ALETA de cima, CANAL da fita,
+    ALETA de baixo - o desenho da foto 3. A parede atras da fita e a mesma
+    da saia inteira: acabou o anel macico de 3 mm em volta da cava.
+    aletas=False (teca): cava cortada no macico - aleta de 1 mm em madeira
+    quebra na primeira lavagem.
+    """
+    pf = lambda z: u_int(z) - FOLGA            # face do plug (ponta das aletas)
+    fc = lambda z: pf(z) - CAVA_P              # fundo do canal = face da saia
     s(U_BORDA - 0.5, ABA_H)
     s(U_BORDA, ABA_H - 0.5)
     s(U_BORDA, 0.0)
-    s(pf(0) + 0.6, 0.0)
-    s(pf(-0.8), -0.8)
-    s(pf(CAVA_Z0), CAVA_Z0)
-    s(pf(CAVA_Z0) - CAVA_P, CAVA_Z0)
-    s(pf(CAVA_Z1) - CAVA_P, CAVA_Z1)
+    if aletas:
+        s(fc(0) + 0.6, 0.0)
+        s(fc(-0.6), -0.6)
+        s(fc(ALETA_Z), ALETA_Z)                # saia rebaixada ate a aleta
+        s(pf(ALETA_Z) - 0.3, ALETA_Z)
+        s(pf(ALETA_Z - 0.3), ALETA_Z - 0.3)
+        s(pf(CAVA_Z0), CAVA_Z0)
+    else:
+        s(pf(0) + 0.6, 0.0)
+        s(pf(-0.8), -0.8)
+        s(pf(CAVA_Z0), CAVA_Z0)
+    s(fc(CAVA_Z0), CAVA_Z0)
+    s(fc(CAVA_Z1), CAVA_Z1)
     s(pf(CAVA_Z1), CAVA_Z1)
-    s(pf(-PLUG + 0.8), -PLUG + 0.8)
-    s(pf(-PLUG) - 0.8, -PLUG)
+    if aletas:
+        s(pf(-PLUG + 0.4), -PLUG + 0.4)
+        s(pf(-PLUG) - 0.6, -PLUG)
+    else:
+        s(pf(-PLUG + 0.8), -PLUG + 0.8)
+        s(pf(-PLUG) - 0.8, -PLUG)
     return pf
 
 
@@ -277,7 +328,7 @@ def tampa_teca(n=N_ANEL):
     s(0, 0.0, 0)
     s(BOLSAO, 0.0, 6.6)
     s(BOLSAO + 1.0, ABA_H, 7.6)
-    pf = _aba_e_plug(P, s)
+    pf = _aba_e_plug(P, s, aletas=False)
     s(pf(-PLUG) - 5.0, -PLUG)
     s(pf(-5.0) - 5.0, -5.0)
     s(0, -5.0, 0)
@@ -285,65 +336,87 @@ def tampa_teca(n=N_ANEL):
 
 
 def tampa_bico(n=N_ANEL):
-    """Tampa de BICO, PP. Mesmo corpo de tampa, deck plano, bico redondo
-    deslocado para um lado. Peca de genero 1 (tem furo): o perfil e um laco
-    fechado que passa pelo bico e pela tampa, todos os aneis amostrados por
-    raios saindo do CENTRO DO BICO."""
+    """Tampa de BICO (rev. 2, pela foto). PP. Peca de genero 1.
+
+    De fora para dentro, por cima: aba -> faixa plana -> BANDEJA rebaixada
+    (o que respinga escorre para o gargalo) -> ANEL externo (onde o copo
+    calca) -> CANAL do copo -> GARGALO quadrado arredondado, cujo labio abre
+    num BEICO no lado +X. Por baixo a casca acompanha com ~2 mm.
+    """
     P = []
-    c = lambda rho, z: P.append(('c', rho, z))
-    def s(u, z, r=None):
-        P.append(('s', u, z, r_par(u, z) if r is None else r))
-    zt = ABA_H
-    zb = zt + BICO_H
-    # bico por fora, com o cordao de encaixe do copo
-    c(BICO_RE + 1.2, zt)
-    c(BICO_RE, zt + 1.2)
-    c(BICO_RE - 0.35, zt + 19.0)
-    c(BICO_RE + 0.3, zt + 20.6)
-    c(BICO_RE + 0.3, zt + 21.6)
-    c(BICO_RE - 0.5, zt + 23.4)
-    c(BICO_RE - 0.5, zb - 0.4)
-    c(BICO_RE - 0.9, zb)
-    c(BICO_RI_TOPO + 0.4, zb)
-    c(BICO_RI_TOPO, zb - 0.4)
-    c(BICO_RI_TOPO + 0.2, zt - TAMPA_T)      # furo com saida
-    # laje por baixo, depois a saia do plug, depois a aba, volta ao deck
+    def s(u, z, r=None, A=0.0, B=0.0):
+        P.append(('s', u, z, r_par(u, z) if r is None else r, A, B))
+    t = TAMPA_T
+    ri = GARG_R - GARG_T
+    gi = GARG_O - GARG_T
+    # gargalo por fora, subindo e abrindo no beico
+    s(GARG_O + 0.6, CANAL_Z, GARG_R + 0.6)
+    s(GARG_O, CANAL_Z + 0.6, GARG_R)
+    s(GARG_O - 0.15, GARG_H - 7.0, GARG_R, 0.0, 0.0)
+    s(GARG_O - 0.2, GARG_H - 4.0, GARG_R, 0.6 * BEICO_A, 0.35 * BEICO_B)
+    s(GARG_O - 0.25, GARG_H - 1.5, GARG_R, 0.9 * BEICO_A, 0.8 * BEICO_B)
+    s(GARG_O - 0.25, GARG_H - 0.4, GARG_R, BEICO_A, BEICO_B)
+    s(GARG_O - 0.65, GARG_H, GARG_R - 0.4, BEICO_A, BEICO_B)       # labio
+    s(gi + 0.3, GARG_H, ri + 0.3, BEICO_A, BEICO_B)
+    s(gi - 0.05, GARG_H - 0.4, ri, BEICO_A, BEICO_B)                # aresta viva por dentro: corta a gota
+    s(gi, GARG_H - 1.8, ri, 0.9 * BEICO_A, 0.8 * BEICO_B)
+    s(gi + 0.05, GARG_H - 4.3, ri, 0.6 * BEICO_A, 0.35 * BEICO_B)
+    s(gi + 0.15, GARG_H - 7.3, ri)
+    s(gi + 0.35, CANAL_Z - t, ri)                                  # furo com saida
+    # por baixo: laje sob o canal e o anel, sobe acompanhando a bandeja
+    s(ANEL_I + ANEL_T + 3.0, CANAL_Z - t, 20.0 + 3.0)
+    s(60.0, ABA_H - t, r_par(60.0, 0))
     pf = lambda z: u_int(z) - FOLGA
     si = lambda z: pf(z) - CAVA_P - SAIA_PLUG_T
-    s(si(zt - TAMPA_T), zt - TAMPA_T)
+    s(si(ABA_H - t), ABA_H - t)
     s(si(-PLUG), -PLUG)
     tmp = []
-    _aba_e_plug(tmp, lambda u, z, r=None: tmp.append(('s', u, z, r_par(u, z) if r is None else r)))
+    _aba_e_plug(tmp, lambda u, z, r=None: tmp.append(('s', u, z, r_par(u, z) if r is None else r, 0.0, 0.0)))
     P += tmp[::-1]
-    return orelha(varre(P, c=(BICO_X, 0.0), n=n)), P
+    # por cima, voltando: faixa plana, bandeja, anel, canal
+    s(60.0, ABA_H, r_par(60.0, 0))
+    s(ANEL_I + ANEL_T + 2.0, BANDEJA_Z, 20.0 + 2.0)
+    s(ANEL_I + ANEL_T + 0.4, BANDEJA_Z, 20.0 + 0.4)
+    s(ANEL_I + ANEL_T, BANDEJA_Z + 0.4, 20.0)
+    s(ANEL_I + ANEL_T - 0.1, ANEL_H - 0.4, 20.0)
+    s(ANEL_I + ANEL_T - 0.5, ANEL_H, 20.0 - 0.4)
+    s(ANEL_I + 0.4, ANEL_H, 18.4 + 0.4)
+    s(ANEL_I + 0.1, ANEL_H - 0.6, 18.4)                     # chanfro de entrada do copo
+    s(ANEL_I, CANAL_Z + 0.5, 18.4)
+    s(ANEL_I - 0.5, CANAL_Z, 18.4 - 0.5)
+    return orelha(varre(P, n=n)), P
 
 
 def copo(n=N_ANEL):
-    """Copo dosador que fecha o bico, encaixado (posicao montada).
-    Fecha em DUAS frentes: cordao de encaixe por fora (segura) e um anel-plug
-    que entra 4 mm no furo do bico com 0,2 mm de aperto (veda)."""
-    zt = ABA_H
-    zb = zt + BICO_H
+    """Copo quadrado invertido que fecha o bico (posicao montada).
+
+    A borda desce no CANAL entre o anel e o gargalo. Por fora ela tem um
+    CORDAO de 0,3 que passa pelo chanfro do anel e fica apertado contra a
+    face interna dele: e isso que segura e veda, PP contra PP, radial - o
+    mesmo principio da tampa. O beico fica DENTRO do copo com folga.
+    Virado, e copo dosador.
+    """
     P = []
-    c = lambda rho, z: P.append(('c', rho, z))
-    topo = zb + 2.2
-    c(0, topo)
-    c(20.4, topo)
-    c(21.0, topo - 0.6)
-    c(21.4, zt + 0.6)
-    c(19.6, zt + 0.6)
-    c(19.6, zt + 18.4)
-    c(18.95, zt + 19.2)
-    c(18.95, zt + 19.8)
-    c(19.65, zt + 20.4)
-    c(19.65, zb + 0.2)
-    c(BICO_RI_TOPO + 0.2, zb + 0.2)            # anel-plug: 0,2 de aperto
-    c(BICO_RI_TOPO + 0.2, zb - 3.6)
-    c(BICO_RI_TOPO - 0.2, zb - 4.0)
-    c(BICO_RI_TOPO - 1.2, zb - 4.0)
-    c(BICO_RI_TOPO - 1.2, zb + 0.2)
-    c(0, zb + 0.2)
-    return varre(P, c=(BICO_X, 0.0), n=n), P
+    def s(u, z, r):
+        P.append(('s', u, z, r))
+    uo = ANEL_I - COPO_FOLGA                 # face externa do copo
+    ro = 18.4 - COPO_FOLGA
+    ui, ri = uo - COPO_T, ro - COPO_T
+    zb = CANAL_Z + 0.6                        # borda do copo, 0,6 acima do piso
+    topo = COPO_TETO + 2.0
+    s(0, topo, 0)
+    s(uo + 0.6 - 2.0, topo, ro - 1.4)
+    s(uo + 0.6, topo - 2.0, ro + 0.6)        # ombro: o copo alarga um pouco em cima
+    s(uo + 0.6, ANEL_H + 1.2, ro + 0.6)
+    s(uo, ANEL_H + 0.4, ro)
+    s(uo, zb + 2.6, ro)
+    s(uo + COPO_CORDAO, zb + 1.8, ro + COPO_CORDAO)     # cordao
+    s(uo + COPO_CORDAO, zb + 1.2, ro + COPO_CORDAO)
+    s(uo - 0.3, zb, ro - 0.3)
+    s(ui, zb, ri)
+    s(ui, COPO_TETO, ri)
+    s(0, COPO_TETO, 0)
+    return varre(P, n=n), P
 
 
 def fita(n=N_ANEL):
@@ -461,7 +534,8 @@ def relatorio(P_):
     for H in ALTURAS:
         for nn in (6, 12):
             solto = nn * H
-            ninho = H + (nn - 1) * p
+            # pote mais baixo que o passo nao desce: so apoia na borda do outro
+            ninho = H + (nn - 1) * min(p, H)
             R['aninhamento'].append(dict(altura=H, n=nn, solto=round(solto), aninhado=round(ninho),
                                          ganho_pct=round(100 * (1 - ninho / solto))))
     # vedacao: a fita sobressai da face do plug e encontra a parede
@@ -507,11 +581,17 @@ def verifica():
     folga_parede = p * K - T
     ok(abs(folga_parede - NERV_E) < 1e-9, 'passo nao vem da nervura')
     ok(NERV_TOPO > PLUG + 2, 'nervura invade a zona da fita')
-    # 6. o bico cabe no deck
-    ok(BICO_X + BICO_RE + 1.2 < u_int(ABA_H - TAMPA_T) - FOLGA - CAVA_P - SAIA_PLUG_T - 2,
-       'bico encosta na saia do plug')
-    # 7. o copo passa por cima do cordao do bico (encaixe de 0,35 mm)
-    ok(18.95 < BICO_RE + 0.3 < 19.65, 'cordao do copo nao engata')
+    # 6. o beico cabe dentro do copo, com folga, tambem no canto
+    ui_copo = ANEL_I - COPO_FOLGA - COPO_T
+    ok(GARG_O + BEICO_A + 0.5 <= ui_copo, 'beico encosta no copo')
+    ok(COPO_TETO > GARG_H + BEICO_B + 1.0, 'beico encosta no teto do copo')
+    # 7. o cordao do copo aperta o anel (passa pelo chanfro e fica)
+    ok(COPO_CORDAO - COPO_FOLGA > -1e-9 and COPO_CORDAO <= 0.6, 'cordao do copo nao aperta')
+    # 8. o anel externo cabe dentro da saia do plug
+    ok(ANEL_I + ANEL_T + 3.0 < u_int(ABA_H - TAMPA_T) - FOLGA - CAVA_P - SAIA_PLUG_T - 2,
+       'bandeja encosta na saia do plug')
+    # 9. as aletas: a de cima fica abaixo da boca, e a fita cabe no canal
+    ok(ALETA_Z <= -2.5, 'aleta de cima muito alta')
     return erros, p
 
 
@@ -528,8 +608,8 @@ def main():
     principais = {'corpo-4': varre(corpo(ALTURAS[3])[1], n=96),
                   'tampa-fechada': varre(tampa_pp()[1], n=96),
                   'tampa-teca': varre(tampa_teca()[1], n=96),
-                  'tampa-bico': varre(tampa_bico()[1], c=(BICO_X, 0), n=96),
-                  'copo': varre(copo()[1], c=(BICO_X, 0), n=96),
+                  'tampa-bico': varre(tampa_bico()[1], n=96),
+                  'copo': varre(copo()[1], n=96),
                   'fita-tpe': varre(fita()[1], n=96)}
     for nome, T_ in principais.items():
         r = checa_malha(T_)

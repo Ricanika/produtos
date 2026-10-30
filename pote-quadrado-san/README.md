@@ -1,4 +1,37 @@
-# Pote quadrado modular em SAN, revisão 1
+# Pote quadrado modular em SAN, revisão 2
+
+## Revisão 2 (fotos de referência da tampa de bico)
+
+Pedido: *"melhorar o bico para esse da foto, e onde encaixa o copo precisa ser melhorado; na foto 3
+tem um espaço para deixar a fita de borracha; o pote precisa estar menos angulado."*
+
+- **Bico novo, como na foto.** Sai o bico redondo de Ø38 deslocado. Entra um **gargalo quadrado
+  arredondado de 74 mm, centrado**, com **bandeja rebaixada** em volta (o que respinga volta para o
+  gargalo) e um **anel externo**. O lábio do gargalo abre num **beiço de verter** no lado +X: sobe
+  6 mm e sai 6,5 mm, com aresta viva por dentro para cortar a gota.
+- **Encaixe do copo.** O copo deixou de ser uma tampinha redonda sobre um bico. Agora é um **copo
+  quadrado invertido** (33 g, ~220 ml virado) cuja borda **desce no canal entre o anel e o
+  gargalo**. Um cordão de 0,3 mm na borda passa pelo chanfro do anel e fica apertado contra a face
+  interna dele. É isso que segura e veda: PP contra PP, radial, como a tampa no pote. O beiço fica
+  dentro do copo com 3 mm de folga, verificado.
+- **Fita entre duas aletas (foto 3).** A cava cortada numa saia grossa virou uma **saia fina de
+  1,4 mm com duas aletas de 1 mm**, e a fita mora no canal entre elas, presa por cima e por baixo.
+  Acima da aleta de cima a saia fica rebaixada. A tampa fechada caiu de 51,3 para 48,5 g. A teca
+  continua com cava no maciço, porque aleta de 1 mm em madeira quebra.
+- **Corpo menos inclinado: de 3° para 2° por face.** O fundo do pote de 228 sobe de 104 para
+  **112 mm** (12% de conicidade, era 19%). A nervura anti-travamento caiu de 0,6 para 0,4 mm para
+  recuperar parte do passo.
+- **O que isso custou no frete:** o passo de aninhar foi de 49,6 para **68,7 mm**. O pote de 57
+  **deixou de aninhar** (é mais baixo que o passo). Os outros três ainda aninham: 12 potes de 228
+  ocupam 64% menos altura (eram 72%).
+
+Sobre a frase *"ela vai ficar acoplada no pote"*: a leitura adotada é que a fita fica **na
+tampa**, no canal entre as aletas, e é ela que acopla no pote ao fechar. Se a ideia era a fita
+morar **no corpo**, numa canaleta na boca do pote, a geometria muda (canaleta interna no SAN é
+contra-saída no macho) e é preciso decidir isso antes do molde.
+
+---
+
 
 Produto novo, injetado na Nitron. É separado da linha `potes-modulares/` (PP, retangular, parede reta).
 Daquele estudo aproveitamos o parque de injetoras e o cadastro do TPE.
@@ -17,7 +50,7 @@ Daquele estudo aproveitamos o parque de injetoras e o cadastro do TPE.
 
 | | |
 |---|---|
-| Forma | tronco de pirâmide quadrada, **3° de saída por face**, canto R10 por fora (R8 por dentro) |
+| Forma | tronco de pirâmide quadrada, **2° de saída por face**, canto R10 por fora (R8 por dentro) |
 | Boca | **124 × 124 mm** por dentro, igual nos quatro; medida máxima **133,8 mm** na borda |
 | Alturas | **57 · 114 · 171 · 228 mm** (1, 2, 3 e 4 módulos) |
 | Parede / fundo | 2,0 mm / 2,2 mm de SAN |
@@ -26,40 +59,39 @@ Daquele estudo aproveitamos o parque de injetoras e o cadastro do TPE.
 
 | Corpo | Capacidade na borda | Útil, tampa fechada | Fundo externo | Massa SAN | Resina (R$ 14/kg) |
 |---|---|---|---|---|---|
-| 57 mm | 759 ml | 706 ml | 122,0 mm | 98,7 g | R$ 1,38 |
-| 114 mm | 1.518 ml | 1.465 ml | 116,1 mm | 152,1 g | R$ 2,13 |
-| 171 mm | 2.200 ml | 2.147 ml | 110,1 mm | 202,6 g | R$ 2,84 |
-| 228 mm | 2.809 ml | 2.756 ml | 104,1 mm | 250,4 g | R$ 3,51 |
+| 57 mm | 771 ml | 718 ml | 124,0 mm | 100,6 g | R$ 1,41 |
+| 114 mm | 1.567 ml | 1.514 ml | 120,0 mm | 156,3 g | R$ 2,19 |
+| 171 mm | 2.310 ml | 2.257 ml | 116,1 mm | 210,2 g | R$ 2,94 |
+| 228 mm | 3.002 ml | 2.949 ml | 112,1 mm | 262,1 g | R$ 3,67 |
 
-Como nome comercial cabe 700 ml / 1,4 L / 2,1 L / 2,7 L pela capacidade útil, ou 750 ml / 1,5 L /
-2,2 L / 2,8 L pela borda. A decisão é sua.
+Como nome comercial cabe 700 ml / 1,5 L / 2,2 L / 2,9 L pela capacidade útil, ou 750 ml / 1,5 L /
+2,3 L / 3,0 L pela borda. A decisão é sua.
 
-### Por que 3°
+### Por que 2° (era 3° na revisão 1)
 
-É a saída que deixa os potes aninharem sem deixar o pote alto com cara de balde. O passo de aninhar
-é `(parede + nervura) / tan(saída)`:
+Na revisão 1 eram 3°, e o pote ficou inclinado demais. O passo de aninhar é
+`(parede + nervura) / tan(saída)`. Com a nervura de 0,4 mm:
 
 | Saída | Passo aninhado | Fundo do pote de 228 |
 |---|---|---|
-| 2° | 74,5 mm | 112,1 mm |
-| **3°** | **49,6 mm** | **104,1 mm** |
-| 4° | 37,2 mm | 96,1 mm |
-| 5° | 29,7 mm | 88,1 mm |
+| 1,5° | 91,7 mm | 116,1 mm |
+| **2°** | **68,7 mm** | **112,1 mm** |
+| 3° | 45,8 mm | 104,1 mm |
 
 Como a boca e a saída são iguais nos quatro, **o passo é o mesmo para qualquer combinação**: o 114
 entra no 228 do mesmo jeito que o 228 entra no 228.
 
 | 12 potes vazios | Soltos | Aninhados | Ganho |
 |---|---|---|---|
-| 57 mm | 684 mm | 603 mm | 12% |
-| 114 mm | 1.368 mm | 660 mm | 52% |
-| 171 mm | 2.052 mm | 717 mm | 65% |
-| 228 mm | 2.736 mm | 774 mm | 72% |
+| 57 mm | 684 mm | 684 mm | não aninha |
+| 114 mm | 1.368 mm | 870 mm | 36% |
+| 171 mm | 2.052 mm | 927 mm | 55% |
+| 228 mm | 2.736 mm | 984 mm | 64% |
 
-O pote de 57 quase não ganha, porque a altura dele é praticamente o passo. Isso é geometria, não
-detalhe de projeto: para ele aninhar bem a saída teria de ir para uns 5°.
+O pote de 57 é mais baixo que o passo e só apoia na borda do outro. Isso é geometria: para ele
+aninhar, a saída teria de voltar para perto de 3°.
 
-**Nervuras anti-travamento:** quatro nervuras de 0,6 × 4 mm no meio de cada lado, por dentro,
+**Nervuras anti-travamento:** quatro nervuras de 0,4 × 4 mm no meio de cada lado, por dentro,
 começando 20 mm abaixo da borda (fora da zona da fita). Elas param o pote de dentro antes de a
 parede encostar. SAN contra SAN, parede com parede, gruda por atrito e por vácuo; com as nervuras
 o contato fica em quatro linhas e o ar entra pelos lados. Estão no macho, então não criam
@@ -75,19 +107,19 @@ Isso vale para a fechada e para a de teca. A de bico não empilha.
 
 Ver o corte 2D na página do modelo.
 
-- O **plug** da tampa desce 16 mm dentro da boca, com a mesma saída de 3° da parede.
-- Na lateral do plug há uma **cava de 10,4 × 1,62 mm**. A fita de **2,0 × 10 mm** calça nela,
-  esticada uns 3% para não sair na lavagem.
-- A fita sobressai **0,38 mm** da face do plug, a folga até a parede é **0,25 mm**: sobram
+- O **plug** da tampa desce 15,4 mm dentro da boca, com a mesma saída da parede.
+- A saia do plug é fina (1,4 mm) e tem **duas aletas de 1 mm**. Entre elas fica um **canal de
+  10,4 × 1,62 mm**. A fita de **2,0 × 10 mm** mora no canal, esticada uns 3% para não sair na lavagem.
+- A fita sobressai **0,38 mm** da ponta das aletas, a folga até a parede é **0,25 mm**: sobram
   **0,13 mm de compressão (6,5%)**.
 - **A vedação é radial:** a fita aperta a parede lateral do corpo. O topo da borda só serve de
   batente. Não precisa de trava, e o SAN, que é quebradiço, não tem nenhum engate.
-- **O cone ajuda a fechar:** a fita só toca a parede nos **últimos 2,5 mm** de curso. Até ali o ar
+- **O cone ajuda a fechar:** a fita só toca a parede nos **últimos 3,7 mm** de curso. Até ali o ar
   sai pela folga, então não há colchão de ar a vencer. No fim fica o "pop" de tampa hermética.
 - **Aperto baixo de propósito.** Uma fita larga e fina, presa entre duas paredes, fica muito rígida
   na compressão (fator de forma 2,5). Quem dá a mola é a saia de PP, e mesmo assim cada décimo de
-  milímetro conta. Começamos com 0,13 mm e **ajustamos a profundidade da cava no try-out**. Tirar
-  aço da cava é barato; pôr aço de volta não.
+  milímetro conta. Começamos com 0,13 mm e **ajustamos a profundidade do canal no try-out**. Tirar
+  aço é barato; pôr aço de volta não.
 - **Abrir:** a orelha num canto da tampa serve para descascar. Puxar reto com a tampa inteira vai
   precisar de mais força. Só o protótipo dá esse número com confiança.
 
@@ -95,11 +127,11 @@ Ver o corte 2D na página do modelo.
 
 | Tampa | Material | Massa | Notas |
 |---|---|---|---|
-| **Fechada** | PP RP 141 | 51,3 g | orelha de abrir; bolsão de empilhar no tampo |
-| **Teca** | teca maciça, CNC | 76,6 g | a mesma cava e a mesma fita; escavada por baixo (5 mm de madeira no centro e na lateral); aba de 3 mm sobre a borda |
-| **Bico** | PP RP 141 | 52,5 g | laje plana; bico redondo Ø38 × 25 mm deslocado 30 mm para um lado (lado de verter); cordão de encaixe |
-| **Copo dosador** | PP RP 141 | 7,6 g | ~25 ml; encaixa no cordão do bico (0,35 mm) e veda com um anel-plug que entra 4 mm no furo com 0,2 mm de aperto |
-| **Fita** | TPE Karinprene 45 | 9,4 g | 2 × 10 mm, perímetro ~470 mm |
+| **Fechada** | PP RP 141 | 48,5 g | orelha de abrir; bolsão de empilhar no tampo; fita entre aletas |
+| **Teca** | teca maciça, CNC | 75,8 g | a mesma fita, em cava no maciço; escavada por baixo (5 mm de madeira no centro e na lateral); aba de 3 mm sobre a borda |
+| **Bico** | PP RP 141 | 45,0 g | bandeja rebaixada, anel externo, gargalo quadrado de 74 mm centrado, beiço de verter no lado +X |
+| **Copo** | PP RP 141 | 33,0 g | quadrado, invertido; a borda desce no canal entre anel e gargalo e trava num cordão de 0,3 mm; virado, é copo medidor de ~220 ml |
+| **Fita** | TPE Karinprene 45 | 9,5 g | 2 × 10 mm, perímetro ~470 mm |
 
 A fechada e a de bico podem sair do **mesmo molde com postiço trocável** no tampo.
 
@@ -110,7 +142,7 @@ A fechada e a de bico podem sair do **mesmo molde com postiço trocável** no ta
   transparente e quebradiço, e por isso o corpo não tem trava, clipe nem dobradiça.
 - **Corpo sem contra-saída:** o canal da borda abre para baixo (lâmina na cavidade), a saia afina
   para baixo, e as nervuras ficam no macho.
-- **Tampa de PP:** a cava é **contra-saída externa de 1,62 mm** na saia. O plug não pode flexionar
+- **Tampa de PP:** as aletas formam uma **contra-saída externa de 1,62 mm** na saia. O plug não pode flexionar
   para dentro porque o macho está lá, então são **4 gavetas** (uma por lado). É o item caro do
   molde da tampa. A alternativa é extração em dois estágios com a saia sendo arrancada, e isso
   precisa de estudo com a ferramentaria.
@@ -131,7 +163,7 @@ abertura), não o fechamento.
 | 171 | 250 t | |
 | 228 | 380 t (INJ 31–33) | o mais fundo; mesma classe do modular 2,4 L que já roda |
 | Tampa (4 gavetas) | 200–250 t | o molde fica maior por causa das gavetas |
-| Copo | 80–120 t | multicavidade |
+| Copo | 120–160 t | ficou maior (33 g, 98 mm de lado) |
 
 ## Resina
 
@@ -150,7 +182,10 @@ abertura), não o fechamento.
 5. **Pote de 57 no frete:** aceitar os 12% ou subir a saída.
 6. **Cotar SAN em volume** e confirmar o grade com o fornecedor (transparência, resistência a
    lava-louças).
-7. **Ferramentaria:** gavetas da cava × extração em dois estágios.
+7. **Ferramentaria:** gavetas das aletas × extração em dois estágios.
+8. **Onde mora a fita:** na tampa (como está) ou no corpo. Ver a nota da revisão 2.
+9. **Cordão do copo no anel:** a face interna do anel recebe o cordão por arraste no molde (0,3 mm
+   em PP). Se o copo afrouxar com o uso, a resposta é a mesma fita de TPE, menor, no canal.
 
 ## Arquivos
 
@@ -171,7 +206,7 @@ python3 gera-visualizador.py    # a pagina
 
 **As verificações que rodam a cada geração:** folga no canto igual à folga no lado (com
 **autoteste**: a mesma conta, com raio fixo, tem de reprovar), compressão da fita dentro da faixa,
-cava mais larga que a fita, alturas somando, pé cabendo no bolsão e no fundo do pote mais alto,
+canal mais largo que a fita, alturas somando, pé cabendo no bolsão e no fundo do pote mais alto,
 passo de aninhar vindo da nervura, nervura fora da zona da fita, bico longe da saia, cordão do copo
 engatando, e a malha de cada peça fechada (toda aresta usada duas vezes, uma em cada sentido).
 

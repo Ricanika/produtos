@@ -84,9 +84,9 @@
 
 <div class="sheet">
   <header>
-    <div class="eyebrow">Nitron · produto novo · estudo 3D rev. 1</div>
+    <div class="eyebrow">Nitron · produto novo · estudo 3D rev. 2</div>
     <h1>Pote quadrado modular em SAN</h1>
-    <p class="sub">Corpo em SAN cristal, uma boca para as quatro alturas, tampa de PP com uma fita de TPE de 2 × 10 mm na lateral. Três tampas: fechada, teca e bico com copo. As paredes têm 3° de saída por face: é isso que deixa os potes entrarem um no outro no frete.</p>
+    <p class="sub">Corpo em SAN cristal, uma boca para as quatro alturas, tampa de PP com uma fita de TPE de 2 × 10 mm na lateral. Três tampas: fechada, teca e bico com copo. As paredes têm 2° de saída por face: é isso que deixa os potes entrarem um no outro no frete.</p>
   </header>
 
   <div class="barra" role="toolbar" aria-label="Controles do modelo">
@@ -94,6 +94,7 @@
       <div class="botoes" id="modos">
         <button type="button" id="m-linha" data-m="linha" aria-pressed="true">Linha</button>
         <button type="button" id="m-tampas" data-m="tampas" aria-pressed="false">3 tampas</button>
+        <button type="button" id="m-bico" data-m="bico" aria-pressed="false">Bico e copo</button>
         <button type="button" id="m-vedacao" data-m="vedacao" aria-pressed="false">Vedação</button>
         <button type="button" id="m-empilha" data-m="empilha" aria-pressed="false">Empilhar</button>
         <button type="button" id="m-aninha" data-m="aninha" aria-pressed="false">Aninhar</button>
@@ -120,7 +121,7 @@
 
   <figure class="corte">
     <div class="corte-svg">__CORTE__</div>
-    <figcaption><b>Corte no meio de um lado, escala aproximada 5:1.</b> A linha tracejada é o topo da borda (plano modular). A fita calça na cava da saia da tampa e trabalha contra a parede interna do corpo, na lateral. Nada aperta no topo da borda.</figcaption>
+    <figcaption><b>Corte no meio de um lado, escala aproximada 5:1.</b> A linha tracejada é o topo da borda (plano modular). A fita fica no canal entre as duas aletas da saia da tampa e trabalha contra a parede interna do corpo, na lateral. Nada aperta no topo da borda.</figcaption>
   </figure>
 
   <div class="tabela-wrap">
@@ -134,18 +135,18 @@
 
   <div class="grade">
     <div class="bloco">
-      <h2>Fita de TPE na cava</h2>
-      <p>A fita de 2 × 10 mm calça numa cava de <span class="mono">10,4 × 1,62 mm</span> na lateral do plug. Ela sobressai <span class="mono">0,38 mm</span> da face, a folga até a parede do corpo é <span class="mono">0,25 mm</span>, e sobra <span class="mono cota">0,13 mm</span> de compressão (6,5%).</p>
-      <p>Como a boca também tem 3° de saída, a fita só toca a parede nos últimos <span class="mono">2,5 mm</span> de curso. Até ali o ar sai pela folga, e por isso a tampa fecha sem ter que vencer o ar preso.</p>
+      <h2>Fita de TPE entre duas aletas</h2>
+      <p>A saia da tampa é fina e tem duas aletas de 1 mm. Entre elas fica um canal de <span class="mono">10,4 × 1,62 mm</span>, e a fita de 2 × 10 mm mora ali, presa por cima e por baixo. Ela sobressai <span class="mono">0,38 mm</span> da ponta das aletas, a folga até a parede do corpo é <span class="mono">0,25 mm</span>, e sobra <span class="mono cota">0,13 mm</span> de compressão (6,5%).</p>
+      <p>Como a boca também tem saída, a fita só toca a parede nos últimos <span class="mono">3,7 mm</span> de curso. Até ali o ar sai pela folga, e por isso a tampa fecha sem ter que vencer o ar preso.</p>
     </div>
     <div class="bloco">
       <h2>Empilhar e aninhar</h2>
       <p>As alturas são 57, 114, 171 e 228 mm. O pé (um anel de 95 mm) é o mesmo nos quatro e cai num bolsão de 3 mm da tampa. Assim a tampa não soma altura, e 57 + 57 + 114 dá a mesma pilha que um 228.</p>
-      <p>Vazios, os potes entram um no outro com passo de <span class="mono cota" id="passo"></span>, qualquer altura dentro de qualquer outra. Quatro nervuras de 0,6 mm por dentro param o pote antes de a parede encostar, e é isso que impede o SAN de travar no SAN.</p>
+      <p>Vazios, os potes entram um no outro com passo de <span class="mono cota" id="passo"></span>, qualquer altura dentro de qualquer outra. Quatro nervuras de 0,4 mm por dentro param o pote antes de a parede encostar, e é isso que impede o SAN de travar no SAN.</p>
     </div>
     <div class="bloco">
-      <h2>Três tampas, uma cava</h2>
-      <p><b>Fechada</b>, em PP, com orelha de abrir num canto. <b>Teca</b> maciça usinada em CNC, com a mesma cava e a mesma fita, escavada por baixo. <b>Bico</b>: a mesma tampa com laje plana e um bico de Ø38 deslocado para um lado. O copo dosador (~25 ml) encaixa num cordão e veda com um anel que entra 4 mm no bico.</p>
+      <h2>Três tampas, uma fita</h2>
+      <p><b>Fechada</b>, em PP, com orelha de abrir num canto. <b>Teca</b> maciça usinada em CNC, com a mesma fita numa cava (aleta de 1 mm em madeira quebraria), escavada por baixo. <b>Bico</b>: bandeja rebaixada, anel externo e um gargalo quadrado arredondado de 74 mm, com o lábio abrindo num beiço de verter. O copo é quadrado, invertido: a borda desce no canal entre o anel e o gargalo e trava num cordão de 0,3 mm. Virado, é um copo medidor de ~220 ml.</p>
       <p>A fechada e a de bico podem sair do mesmo molde, trocando o postiço do tampo.</p>
     </div>
   </div>
@@ -157,7 +158,7 @@
       <tbody></tbody>
     </table>
   </div>
-  <p class="nota">O pote de 57 mm quase não ganha nada, porque a altura dele é praticamente o próprio passo. Para aninhar melhor o pequeno seria preciso mais saída, e aí o pote alto fica mais piramidal: com 4° o fundo do 228 cai de 104 para 96 mm. Os 3° são o compromisso entre "o mais quadrado possível" e o frete.</p>
+  <p class="nota">Com 2° o pote de 57 mm não aninha: a altura dele é menor que o passo, e ele só apoia na borda do outro. Os outros três aninham com qualquer combinação. Esse é o preço de deixar o pote menos inclinado: com 3° o passo era de 49,6 mm e o de 57 ganhava 12%.</p>
 
   <div class="tabela-wrap">
     <table id="t-pecas">
@@ -266,7 +267,11 @@ const D = __DADOS__;
     tampas:{t:'Três tampas na mesma boca', d:'Fechada (PP) · teca maciça (CNC) · bico com copo dosador (PP). A fita de TPE é a mesma nas três.', fazer(){
       ['fechada','teca','bico'].forEach((t,i)=>{ const x=-160+160*i; poe('corpo-1',x,0); tampa(t,x,H[0]); });
     }, alvo:[0,50,0], dist:720, az:.35, el:.55},
-    vedacao:{t:'Vedação radial: plug, cava e fita', d:'Fita 2 × 10 na cava de 10,4 × 1,62. Sobressai 0,38, folga 0,25: comprime 0,13 mm contra a parede de SAN.', fazer(){
+    bico:{t:'Bico e copo', d:'Gargalo de 74 mm com beiço de verter no lado direito, bandeja rebaixada e anel externo. À direita, o copo encaixado no canal.', fazer(){
+      poe('corpo-1',-85,0); tampa('bico',-85,H[0],false);
+      poe('corpo-1',85,0); tampa('bico',85,H[0]);
+    }, alvo:[0,60,0], dist:470, az:-.12, el:.22},
+    vedacao:{t:'Vedação radial: aletas, canal e fita', d:'Fita 2 × 10 no canal de 10,4 × 1,62 entre duas aletas. Sobressai 0,38, folga 0,25: comprime 0,13 mm contra a parede de SAN.', fazer(){
       poe('corpo-1',0,0); tampa('fechada',0,H[0]);
     }, alvo:[-57,47,0], dist:95, az:0, el:.04, corte:true},
     empilha:{t:'Empilha na mesma altura', d:'57 + 57 + 114 = 228. O pé de cada pote cai no bolsão da tampa de baixo, então a tampa não soma altura.', fazer(){
@@ -276,7 +281,7 @@ const D = __DADOS__;
     aninha:{t:'Aninha no frete', d:'Passo de '+fmt(D.passo,1)+' mm para qualquer combinação. À esquerda o kit dos quatro, à direita seis de 228 mm.', fazer(){
       // kit: o maior por fora, os menores por dentro, cada topo um passo acima
       let topo = H[3]; poe('corpo-4',-110,0);
-      [3,2,1].forEach(n=>{ topo += P; poe('corpo-'+n,-110,topo-H[n-1]); });
+      [3,2,1].forEach(n=>{ topo += Math.min(P, H[n-1]); poe('corpo-'+n,-110,topo-H[n-1]); });
       for(let k=0;k<6;k++) poe('corpo-4',110,k*P);
     }, alvo:[0,240,0], dist:1150, az:.45, el:.22},
     explode:{t:'Explodida', d:'Corpo, fita e tampa fechada. Ao lado, a tampa de bico com o copo dosador.', fazer(){

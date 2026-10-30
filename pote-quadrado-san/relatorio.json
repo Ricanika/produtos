@@ -1,155 +1,155 @@
 {
- "saida_graus": 3.0,
+ "saida_graus": 2.0,
  "modulo": 57.0,
  "boca_interna": 124.0,
  "medida_maxima": 133.8,
  "pecas": {
   "corpo-1": {
    "material": "SAN",
-   "volume_cm3": 91.43,
-   "massa_g": 98.7,
+   "volume_cm3": 93.12,
+   "massa_g": 100.6,
    "triangulos": 13552
   },
   "corpo-2": {
    "material": "SAN",
-   "volume_cm3": 140.81,
-   "massa_g": 152.1,
+   "volume_cm3": 144.73,
+   "massa_g": 156.3,
    "triangulos": 13552
   },
   "corpo-3": {
    "material": "SAN",
-   "volume_cm3": 187.63,
-   "massa_g": 202.6,
+   "volume_cm3": 194.6,
+   "massa_g": 210.2,
    "triangulos": 13552
   },
   "corpo-4": {
    "material": "SAN",
-   "volume_cm3": 231.87,
-   "massa_g": 250.4,
+   "volume_cm3": 242.73,
+   "massa_g": 262.1,
    "triangulos": 13552
   },
   "tampa-fechada": {
    "material": "PP",
-   "volume_cm3": 57.0,
-   "massa_g": 51.3,
-   "triangulos": 8172
+   "volume_cm3": 53.85,
+   "massa_g": 48.5,
+   "triangulos": 9612
   },
   "tampa-teca": {
    "material": "teca",
-   "volume_cm3": 117.9,
-   "massa_g": 76.6,
+   "volume_cm3": 116.69,
+   "massa_g": 75.8,
    "triangulos": 7200
   },
   "tampa-bico": {
    "material": "PP",
-   "volume_cm3": 58.37,
-   "massa_g": 52.5,
-   "triangulos": 11532
+   "volume_cm3": 49.99,
+   "massa_g": 45.0,
+   "triangulos": 19692
   },
   "copo": {
    "material": "PP",
-   "volume_cm3": 8.49,
-   "massa_g": 7.6,
-   "triangulos": 6720
+   "volume_cm3": 36.71,
+   "massa_g": 33.0,
+   "triangulos": 4800
   },
   "fita-tpe": {
    "material": "TPE",
-   "volume_cm3": 9.44,
-   "massa_g": 9.4,
+   "volume_cm3": 9.45,
+   "massa_g": 9.5,
    "triangulos": 2880
   }
  },
  "corpos": [
   {
    "altura": 57.0,
-   "capacidade_borda_ml": 759,
-   "capacidade_util_ml": 706,
-   "fundo_externo": 122.0,
-   "conicidade_pct": 4.7,
-   "massa_g": 98.7
+   "capacidade_borda_ml": 771,
+   "capacidade_util_ml": 718,
+   "fundo_externo": 124.0,
+   "conicidade_pct": 3.1,
+   "massa_g": 100.6
   },
   {
    "altura": 114.0,
-   "capacidade_borda_ml": 1518,
-   "capacidade_util_ml": 1465,
-   "fundo_externo": 116.1,
-   "conicidade_pct": 9.3,
-   "massa_g": 152.1
+   "capacidade_borda_ml": 1567,
+   "capacidade_util_ml": 1514,
+   "fundo_externo": 120.0,
+   "conicidade_pct": 6.2,
+   "massa_g": 156.3
   },
   {
    "altura": 171.0,
-   "capacidade_borda_ml": 2200,
-   "capacidade_util_ml": 2147,
-   "fundo_externo": 110.1,
-   "conicidade_pct": 14.0,
-   "massa_g": 202.6
+   "capacidade_borda_ml": 2310,
+   "capacidade_util_ml": 2257,
+   "fundo_externo": 116.1,
+   "conicidade_pct": 9.3,
+   "massa_g": 210.2
   },
   {
    "altura": 228.0,
-   "capacidade_borda_ml": 2809,
-   "capacidade_util_ml": 2756,
-   "fundo_externo": 104.1,
-   "conicidade_pct": 18.7,
-   "massa_g": 250.4
+   "capacidade_borda_ml": 3002,
+   "capacidade_util_ml": 2949,
+   "fundo_externo": 112.1,
+   "conicidade_pct": 12.4,
+   "massa_g": 262.1
   }
  ],
- "passo_aninhado": 49.6,
+ "passo_aninhado": 68.7,
  "aninhamento": [
   {
    "altura": 57.0,
    "n": 6,
    "solto": 342,
-   "aninhado": 305,
-   "ganho_pct": 11
+   "aninhado": 342,
+   "ganho_pct": 0
   },
   {
    "altura": 57.0,
    "n": 12,
    "solto": 684,
-   "aninhado": 603,
-   "ganho_pct": 12
+   "aninhado": 684,
+   "ganho_pct": 0
   },
   {
    "altura": 114.0,
    "n": 6,
    "solto": 684,
-   "aninhado": 362,
-   "ganho_pct": 47
+   "aninhado": 458,
+   "ganho_pct": 33
   },
   {
    "altura": 114.0,
    "n": 12,
    "solto": 1368,
-   "aninhado": 660,
-   "ganho_pct": 52
+   "aninhado": 870,
+   "ganho_pct": 36
   },
   {
    "altura": 171.0,
    "n": 6,
    "solto": 1026,
-   "aninhado": 419,
-   "ganho_pct": 59
+   "aninhado": 515,
+   "ganho_pct": 50
   },
   {
    "altura": 171.0,
    "n": 12,
    "solto": 2052,
-   "aninhado": 717,
-   "ganho_pct": 65
+   "aninhado": 927,
+   "ganho_pct": 55
   },
   {
    "altura": 228.0,
    "n": 6,
    "solto": 1368,
-   "aninhado": 476,
-   "ganho_pct": 65
+   "aninhado": 572,
+   "ganho_pct": 58
   },
   {
    "altura": 228.0,
    "n": 12,
    "solto": 2736,
-   "aninhado": 774,
-   "ganho_pct": 72
+   "aninhado": 984,
+   "ganho_pct": 64
   }
  ],
  "vedacao": {
@@ -159,7 +159,7 @@
   "sobressai": 0.38,
   "compressao": 0.13,
   "compressao_pct": 6.5,
-  "curso_vedando": 2.5
+  "curso_vedando": 3.7
  },
  "verificacoes": "OK"
 }
