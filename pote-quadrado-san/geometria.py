@@ -63,15 +63,20 @@ FOLGA = 0.25    # face do plug ate a parede do corpo, por lado
 # REBAIXADO da tampa ate a aba. Quem veda e a faixa da fita SOBRE A PONTA da
 # aleta de cima: uma linha estreita, nao a fita inteira. Cotas medidas a
 # partir da PAREDE do corpo (u_int), negativo = para dentro.
-REBAIXO = 2.9       # corpo rebaixado: a fita (2,0) fica 0,9 longe da parede
-ALETA_PONTA = 1.85  # ponta da aleta de cima: fita livre passaria 0,15 da parede
-FENDA_FUNDO = 3.4   # fundo da fenda
+# rev. 4: o VAO (fenda entre as aletas) ficou 3x mais fundo - 5,0 mm alem da
+# ponta, era 1,55 - e a fita e RETA, dobrada na montagem. Para nao virar um
+# anel macico de PP de 6 mm (chupa), as aletas viraram duas LAMINAS saindo
+# de uma saia fina; o fundo do vao e a propria face da saia.
+ALETA_PONTA = 1.85  # ponta da aleta de cima: a fita livre passaria 0,15 da parede
+VAO = 5.0           # fundo do vao alem da ponta da aleta (rev. 3: 1,55)
+VAO_REV3 = 1.55
+FENDA_FUNDO = ALETA_PONTA + VAO     # 6,85: face da saia, medida da parede
 ALETA_PONTA2 = 1.4  # ponta da aleta de baixo
-Z_ALETA_RAIZ = -7.0     # a aleta de cima nasce do rebaixo com rampa (saida)
-Z_ALETA_TOPO = -7.55    # topo da aleta de cima, na ponta
-Z_FENDA_TETO = -8.85    # aleta de cima com 1,3 de espessura
-Z_FENDA_PISO = -10.55   # fenda de 1,7: aperta a fita de 2,0 em 15% (segura)
-PLUG = 11.75            # pe da aleta de baixo
+Z_ALETA_RAIZ = -3.6     # topo da aleta de cima na raiz (rampa = saida da gaveta)
+Z_ALETA_TOPO = -4.0     # topo da aleta de cima, na ponta
+Z_FENDA_TETO = -5.3     # aleta de cima com 1,3 na ponta
+Z_FENDA_PISO = -7.0     # vao de 1,7: aperta a fita de 2,0 em 15% (segura)
+PLUG = 8.2              # pe da aleta de baixo (1,2)
 # teca: aleta de 1,3 mm em madeira quebra - fica a cava no macico (rev. 1)
 CAVA_Z0, CAVA_Z1 = -3.0, -13.4
 CAVA_P = 1.62
@@ -90,7 +95,7 @@ BICO_X = 0.0
 GARG_O, GARG_R, GARG_T = 37.0, 14.0, 1.6     # gargalo: meio-lado externo, raio, parede
 GARG_H = 20.0                                 # topo do gargalo (z acima da borda)
 BEICO_A, BEICO_B, BEICO_P = 6.5, 6.0, 4.0     # beico: abre 6,5, sobe 6, largura (cos^p)
-ANEL_I, ANEL_T, ANEL_H = 48.5, 1.6, 8.0       # anel externo: face interna, parede, topo
+ANEL_I, ANEL_T, ANEL_H = 47.0, 1.6, 8.0       # anel externo: face interna, parede, topo
 CANAL_Z = 1.0                                 # piso do canal do copo
 BANDEJA_Z = 0.0                               # fundo da bandeja rebaixada
 COPO_T = 1.6
@@ -287,13 +292,15 @@ def _aba_e_plug(P, s, aletas=True):
     s(U_BORDA, ABA_H - 0.5)
     s(U_BORDA, 0.0)
     if aletas:
-        s(w(0) - REBAIXO + 0.6, 0.0)
-        s(w(-0.6) - REBAIXO, -0.6)
-        s(w(Z_ALETA_RAIZ) - REBAIXO, Z_ALETA_RAIZ)
-        s(w(Z_ALETA_TOPO) - ALETA_PONTA, Z_ALETA_TOPO)
+        fs = lambda z: w(z) - FENDA_FUNDO          # face da saia = fundo do vao
+        s(fs(0) + 0.6, 0.0)
+        s(fs(-0.6), -0.6)
+        s(fs(Z_ALETA_RAIZ), Z_ALETA_RAIZ)
+        s(w(Z_ALETA_TOPO) - ALETA_PONTA - 0.3, Z_ALETA_TOPO)
+        s(w(Z_ALETA_TOPO - 0.3) - ALETA_PONTA, Z_ALETA_TOPO - 0.3)
         s(w(Z_FENDA_TETO) - ALETA_PONTA, Z_FENDA_TETO)
-        s(w(Z_FENDA_TETO) - FENDA_FUNDO, Z_FENDA_TETO)
-        s(w(Z_FENDA_PISO) - FENDA_FUNDO, Z_FENDA_PISO)
+        s(fs(Z_FENDA_TETO), Z_FENDA_TETO)
+        s(fs(Z_FENDA_PISO), Z_FENDA_PISO)
         s(w(Z_FENDA_PISO) - ALETA_PONTA2, Z_FENDA_PISO)
         s(w(-PLUG + 0.4) - ALETA_PONTA2, -PLUG + 0.4)
         s(w(-PLUG) - ALETA_PONTA2 - 0.4, -PLUG)
@@ -432,18 +439,17 @@ def copo(n=N_ANEL):
 
 
 def fita(n=N_ANEL):
-    """A fita de TPE 2 x 10 em GANCHO, como fica com a tampa FECHADA.
+    """A fita RETA de TPE 2 x 10, dobrada em gancho, com a tampa FECHADA.
 
-    Secao (u medido da parede, z da borda): sobe pelo rebaixo com 0,9 de
-    folga, encosta na parede sobre a ponta da aleta de cima (comprimida de
-    0,15 + a folga de modelo), contorna a ponta e entra na fenda.
+    Secao (u medido da parede, z da borda): ~5 mm deitados no vao ate a face
+    da saia, a dobra contorna a ponta da aleta de cima, e ~4 mm sobem em pe
+    encostados na parede. Aperta 0,15 sobre a ponta da aleta.
     """
     w = u_int
-    sec = [(-0.9, -0.8), (-0.9, -6.3), (-0.05, -7.3), (-0.05, -9.2), (-0.6, -10.05),
-           (-ALETA_PONTA2, Z_FENDA_PISO + 0.05), (-FENDA_FUNDO + 0.05, Z_FENDA_PISO + 0.05),
+    sec = [(-0.4, -0.45), (-0.05, -0.95), (-0.05, -5.6), (-0.5, -6.5),
+           (-1.3, Z_FENDA_PISO + 0.05), (-FENDA_FUNDO + 0.05, Z_FENDA_PISO + 0.05),
            (-FENDA_FUNDO + 0.05, Z_FENDA_TETO - 0.05), (-ALETA_PONTA - 0.05, Z_FENDA_TETO - 0.05),
-           (-ALETA_PONTA - 0.05, Z_ALETA_TOPO + 0.05), (-REBAIXO + 0.05, Z_ALETA_RAIZ + 0.05),
-           (-REBAIXO + 0.05, -0.8)]
+           (-ALETA_PONTA - 0.05, Z_ALETA_TOPO + 0.05), (-2.0, -3.9), (-2.0, -0.45)]
     P = [('s', w(z) + du, z, r_par(w(z) + du, z)) for du, z in sec]
     return varre(P, n=n), P
 
@@ -581,7 +587,8 @@ def relatorio(P_):
     R['vedacao'] = dict(fita=f'{FITA_T} x {FITA_L} mm', montagem='gancho: borda de baixo na fenda',
                         fenda=f'{Z_FENDA_TETO - Z_FENDA_PISO:.2f} mm de altura x {FENDA_FUNDO - ALETA_PONTA:.2f} de fundo',
                         aperto_na_ponta=round(aperto, 2), aperto_pct=round(100 * aperto / FITA_T, 1),
-                        folga_no_rebaixo=round(REBAIXO - FITA_T, 2),
+                        vao=round(VAO, 2), vao_x_rev3=round(VAO / VAO_REV3, 1),
+                        sobra_no_canto_mm=round(math.pi / 2 * VAO, 1),
                         aperto_na_fenda_pct=round(100 * (1 - (Z_FENDA_TETO - Z_FENDA_PISO) / FITA_T)),
                         area_secao_mm2=round(fita_area(), 1),
                         curso_vedando=round(aperto / K, 1))
@@ -609,7 +616,7 @@ def verifica():
     # 2. a fita encosta, e so nos ultimos mm do curso (o ar sai antes)
     aperto = FITA_T - ALETA_PONTA
     ok(0.05 <= aperto <= 0.30, f'aperto da fita fora da faixa: {aperto:.2f}')
-    ok(REBAIXO - FITA_T >= 0.5, 'fita encosta na parede fora da ponta da aleta')
+    ok(VAO >= 3 * VAO_REV3, 'vao menos que o triplo da rev. 3')
     ok(Z_FENDA_TETO - Z_FENDA_PISO < FITA_T, 'fenda nao aperta a fita')
     ok(ALETA_PONTA2 > ALETA_PONTA - FITA_T + 0.3, 'aleta de baixo encosta na parede')
     ok(abs(fita_area() - FITA_T * FITA_L) / (FITA_T * FITA_L) < 0.15,
@@ -635,7 +642,7 @@ def verifica():
     ok(ANEL_I + ANEL_T + 3.0 < saia_int(ABA_H - TAMPA_T) - 2,
        'bandeja encosta na saia do plug')
     # 9. a fita cabe entre a aba e a aleta: 10 mm desenvolvidos
-    ok(-Z_FENDA_PISO > 0.8 + 7.0, 'nao cabe a fita entre aba e fenda')
+    ok(Z_FENDA_TETO - Z_FENDA_PISO >= 1.5 and Z_ALETA_TOPO - Z_FENDA_TETO >= 1.2, 'aleta ou vao fino demais')
     return erros, p
 
 

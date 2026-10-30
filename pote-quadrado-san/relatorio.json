@@ -30,9 +30,9 @@
   },
   "tampa-fechada": {
    "material": "PP",
-   "volume_cm3": 54.43,
-   "massa_g": 49.0,
-   "triangulos": 9132
+   "volume_cm3": 55.81,
+   "massa_g": 50.2,
+   "triangulos": 9612
   },
   "tampa-teca": {
    "material": "teca",
@@ -42,21 +42,21 @@
   },
   "tampa-bico": {
    "material": "PP",
-   "volume_cm3": 50.56,
-   "massa_g": 45.5,
-   "triangulos": 19212
+   "volume_cm3": 51.54,
+   "massa_g": 46.4,
+   "triangulos": 19692
   },
   "copo": {
    "material": "PP",
-   "volume_cm3": 36.71,
-   "massa_g": 33.0,
+   "volume_cm3": 34.94,
+   "massa_g": 31.4,
    "triangulos": 4800
   },
   "fita-tpe": {
    "material": "TPE",
-   "volume_cm3": 9.68,
-   "massa_g": 9.7,
-   "triangulos": 5760
+   "volume_cm3": 9.11,
+   "massa_g": 9.1,
+   "triangulos": 5280
   },
   "fita-teca": {
    "material": "TPE",
@@ -69,7 +69,7 @@
   {
    "altura": 57.0,
    "capacidade_borda_ml": 771,
-   "capacidade_util_ml": 717,
+   "capacidade_util_ml": 715,
    "fundo_externo": 124.0,
    "conicidade_pct": 3.1,
    "massa_g": 100.6
@@ -77,7 +77,7 @@
   {
    "altura": 114.0,
    "capacidade_borda_ml": 1567,
-   "capacidade_util_ml": 1513,
+   "capacidade_util_ml": 1511,
    "fundo_externo": 120.0,
    "conicidade_pct": 6.2,
    "massa_g": 156.3
@@ -85,7 +85,7 @@
   {
    "altura": 171.0,
    "capacidade_borda_ml": 2310,
-   "capacidade_util_ml": 2256,
+   "capacidade_util_ml": 2254,
    "fundo_externo": 116.1,
    "conicidade_pct": 9.3,
    "massa_g": 210.2
@@ -93,7 +93,7 @@
   {
    "altura": 228.0,
    "capacidade_borda_ml": 3002,
-   "capacidade_util_ml": 2948,
+   "capacidade_util_ml": 2946,
    "fundo_externo": 112.1,
    "conicidade_pct": 12.4,
    "massa_g": 262.1
@@ -161,12 +161,14 @@
  "vedacao": {
   "fita": "2.0 x 10.0 mm",
   "montagem": "gancho: borda de baixo na fenda",
-  "fenda": "1.70 mm de altura x 1.55 de fundo",
+  "fenda": "1.70 mm de altura x 5.00 de fundo",
   "aperto_na_ponta": 0.15,
   "aperto_pct": 7.5,
-  "folga_no_rebaixo": 0.9,
+  "vao": 5.0,
+  "vao_x_rev3": 3.2,
+  "sobra_no_canto_mm": 7.9,
   "aperto_na_fenda_pct": 15,
-  "area_secao_mm2": 20.6,
+  "area_secao_mm2": 19.5,
   "curso_vedando": 4.3
  },
  "verificacoes": "OK"

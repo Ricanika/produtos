@@ -1,4 +1,30 @@
-# Pote quadrado modular em SAN, revisão 3
+# Pote quadrado modular em SAN, revisão 4
+
+## Revisão 4 (vão 3× mais fundo, fita reta)
+
+Pedido: *"na parte de baixo dessa tampa, vamos chamar de vão... esse vão precisa ser mais fundo, pelo
+menos o triplo do tamanho atual, e a borracha é uma fita reta... ela vai entrar nesse vão."*
+
+- **Vão de 5,0 mm** de fundo além da ponta da aleta (era 1,55 mm, **3,2×**), com 1,7 mm de altura.
+  A fita de 2,0 entra apertada em 15%, e é isso que a segura.
+- **A fita é reta, 2 × 10, sem molde próprio.** Na montagem, ~5 mm entram deitados no vão até a face
+  da saia. A fita dobra na ponta da aleta de cima e ~4 mm sobem em pé, encostados na parede do pote.
+  Ela veda na dobra, sobre a ponta da aleta, com **0,15 mm** de aperto.
+- **As aletas viraram lâminas finas** (1,3 e 1,2 mm) saindo de uma saia de 1,4 mm, e o fundo do vão é
+  a própria face da saia. Cortar um vão de 5 mm numa saia grossa deixaria um anel maciço de ~6 mm de
+  PP, que chupa e alonga o ciclo. A tampa fechada tem 50,2 g.
+- **O plug ficou com 8,2 mm** (era 11,75).
+- **Ponto de atenção nos cantos.** Os 5 mm de fita deitados no vão precisam fazer a curva do canto.
+  Com o canto interno R8 do pote, a borda de dentro da fita sobra **~7,9 mm de material por canto**,
+  e ela vai enrugar ou embolar ali. É o primeiro item a olhar no protótipo. Há três saídas, se
+  precisar: (a) fazer a fita entrar menos no vão só nos cantos, com aleta mais curta ali; (b) abrir o
+  raio interno do pote para ~R15, deixando-o um pouco menos quadrado; (c) aceitar o embolado, se ele
+  não atrapalhar a vedação, que acontece na dobra e não no fundo do vão.
+- O anel externo da tampa de bico foi de 48,5 para 47,0, porque a saia agora fica mais para dentro.
+  O beiço continua cabendo no copo com folga.
+
+---
+
 
 ## Revisão 3 (foto 4: perfil da tampa de referência)
 
@@ -138,12 +164,10 @@ Isso vale para a fechada e para a de teca. A de bico não empilha.
 
 Ver o corte 2D na página do modelo.
 
-- O **plug** da tampa desce 11,75 mm dentro da boca, com a mesma saída da parede.
-- Embaixo do plug, **duas aletas com uma fenda de 1,7 mm**. A borda de baixo da fita entra na fenda,
-  a fita contorna a ponta da aleta de cima e sobe pelo corpo rebaixado até a aba (montagem em gancho,
-  revisão 3).
-- Sobre a ponta da aleta de cima a fita aperta a parede em **0,15 mm (7,5%)**. No rebaixo fica
-  0,9 mm afastada.
+- O **plug** da tampa desce 8,2 mm dentro da boca, com a mesma saída da parede.
+- Embaixo do plug, **duas aletas finas com um vão de 5,0 × 1,7 mm** entre elas. A fita reta entra
+  ~5 mm deitada no vão, dobra na ponta da aleta de cima e sobe ~4 mm encostada na parede (revisão 4).
+- Na dobra, sobre a ponta da aleta de cima, a fita aperta a parede em **0,15 mm (7,5%)**.
 - **A vedação é radial:** a fita aperta a parede lateral do corpo. O topo da borda só serve de
   batente. Não precisa de trava, e o SAN, que é quebradiço, não tem nenhum engate.
 - **O cone ajuda a fechar:** a fita só toca a parede nos **últimos 4,3 mm** de curso. Até ali o ar
@@ -159,11 +183,11 @@ Ver o corte 2D na página do modelo.
 
 | Tampa | Material | Massa | Notas |
 |---|---|---|---|
-| **Fechada** | PP RP 141 | 49,0 g | orelha de abrir; bolsão de empilhar no tampo; fita em gancho na fenda |
+| **Fechada** | PP RP 141 | 50,2 g | orelha de abrir; bolsão de empilhar no tampo; fita reta no vão de 5 mm |
 | **Teca** | teca maciça, CNC | 75,8 g | a mesma fita, em cava no maciço; escavada por baixo (5 mm de madeira no centro e na lateral); aba de 3 mm sobre a borda |
-| **Bico** | PP RP 141 | 45,5 g | bandeja rebaixada, anel externo, gargalo quadrado de 74 mm centrado, beiço de verter no lado +X |
-| **Copo** | PP RP 141 | 33,0 g | quadrado, invertido; a borda desce no canal entre anel e gargalo e trava num cordão de 0,3 mm; virado, é copo medidor de ~220 ml |
-| **Fita** | TPE Karinprene 45 | 9,7 g | 2 × 10 mm, perímetro ~470 mm; em gancho nas tampas de PP, deitada na teca |
+| **Bico** | PP RP 141 | 46,4 g | bandeja rebaixada, anel externo, gargalo quadrado de 74 mm centrado, beiço de verter no lado +X |
+| **Copo** | PP RP 141 | 31,4 g | quadrado, invertido; a borda desce no canal entre anel e gargalo e trava num cordão de 0,3 mm; virado, é copo medidor de ~220 ml |
+| **Fita** | TPE Karinprene 45 | 9,1 g | reta, 2 × 10 mm, perímetro ~460 mm; dobrada no vão nas tampas de PP, deitada na cava na teca |
 
 A fechada e a de bico podem sair do **mesmo molde com postiço trocável** no tampo.
 

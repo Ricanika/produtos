@@ -30,7 +30,7 @@ import geometria as G
 
 def corte_svg():
     H = G.ALTURAS[0]
-    u0, u1, z0, z1 = 50.0, 74.0, -19.0, 5.0
+    u0, u1, z0, z1 = 45.0, 73.0, -15.0, 5.0
     E = 34.0                       # px por mm
     W, Hh = (u1 - u0) * E, (z1 - z0) * E
     X = lambda u: (u - u0) * E
@@ -44,11 +44,11 @@ def corte_svg():
     uf = G.u_int(zf) - 0.9
     rot = [
         (G.U_I + G.T + 0.8, -12.0, 'SAN 2,0 · saída 2°', 'start'),
-        (50.4, 1.0, 'PP', 'start'),
-        (50.4, zf + 0.3, 'fita TPE 2 × 10', 'start'),
-        (50.4, G.Z_FENDA_PISO + 0.3, 'fenda da fita', 'start'),
+        (45.4, 1.0, 'PP', 'start'),
+        (45.4, zf + 0.3, 'fita reta TPE 2 × 10', 'start'),
+        (45.4, G.Z_FENDA_PISO + 0.6, 'vão 5,0 mm', 'start'),
         (G.U_BORDA - 2.6, 4.0, 'aba 3,0 sobre a borda', 'middle'),
-        (G.U_I + G.T + 0.8, -17.0, 'veda na aleta · 0,15', 'start'),
+        (G.U_I + G.T + 0.8, -13.5, 'veda na aleta · 0,15', 'start'),
     ]
     txt = ''.join(f'<text x="{X(u):.1f}" y="{Y(z):.1f}" text-anchor="{a}">{t}</text>' for u, z, t, a in rot)
     return (f'<svg viewBox="0 0 {W:.0f} {Hh:.0f}" role="img" aria-label="Corte da borda, da tampa e da fita, escala 5:1">'
