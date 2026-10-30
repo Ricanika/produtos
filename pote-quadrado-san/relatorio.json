@@ -1,0 +1,165 @@
+{
+ "saida_graus": 3.0,
+ "modulo": 57.0,
+ "boca_interna": 124.0,
+ "medida_maxima": 133.8,
+ "pecas": {
+  "corpo-1": {
+   "material": "SAN",
+   "volume_cm3": 91.43,
+   "massa_g": 98.7,
+   "triangulos": 13552
+  },
+  "corpo-2": {
+   "material": "SAN",
+   "volume_cm3": 140.81,
+   "massa_g": 152.1,
+   "triangulos": 13552
+  },
+  "corpo-3": {
+   "material": "SAN",
+   "volume_cm3": 187.63,
+   "massa_g": 202.6,
+   "triangulos": 13552
+  },
+  "corpo-4": {
+   "material": "SAN",
+   "volume_cm3": 231.87,
+   "massa_g": 250.4,
+   "triangulos": 13552
+  },
+  "tampa-fechada": {
+   "material": "PP",
+   "volume_cm3": 57.0,
+   "massa_g": 51.3,
+   "triangulos": 8172
+  },
+  "tampa-teca": {
+   "material": "teca",
+   "volume_cm3": 117.9,
+   "massa_g": 76.6,
+   "triangulos": 7200
+  },
+  "tampa-bico": {
+   "material": "PP",
+   "volume_cm3": 58.37,
+   "massa_g": 52.5,
+   "triangulos": 11532
+  },
+  "copo": {
+   "material": "PP",
+   "volume_cm3": 8.49,
+   "massa_g": 7.6,
+   "triangulos": 6720
+  },
+  "fita-tpe": {
+   "material": "TPE",
+   "volume_cm3": 9.44,
+   "massa_g": 9.4,
+   "triangulos": 2880
+  }
+ },
+ "corpos": [
+  {
+   "altura": 57.0,
+   "capacidade_borda_ml": 759,
+   "capacidade_util_ml": 706,
+   "fundo_externo": 122.0,
+   "conicidade_pct": 4.7,
+   "massa_g": 98.7
+  },
+  {
+   "altura": 114.0,
+   "capacidade_borda_ml": 1518,
+   "capacidade_util_ml": 1465,
+   "fundo_externo": 116.1,
+   "conicidade_pct": 9.3,
+   "massa_g": 152.1
+  },
+  {
+   "altura": 171.0,
+   "capacidade_borda_ml": 2200,
+   "capacidade_util_ml": 2147,
+   "fundo_externo": 110.1,
+   "conicidade_pct": 14.0,
+   "massa_g": 202.6
+  },
+  {
+   "altura": 228.0,
+   "capacidade_borda_ml": 2809,
+   "capacidade_util_ml": 2756,
+   "fundo_externo": 104.1,
+   "conicidade_pct": 18.7,
+   "massa_g": 250.4
+  }
+ ],
+ "passo_aninhado": 49.6,
+ "aninhamento": [
+  {
+   "altura": 57.0,
+   "n": 6,
+   "solto": 342,
+   "aninhado": 305,
+   "ganho_pct": 11
+  },
+  {
+   "altura": 57.0,
+   "n": 12,
+   "solto": 684,
+   "aninhado": 603,
+   "ganho_pct": 12
+  },
+  {
+   "altura": 114.0,
+   "n": 6,
+   "solto": 684,
+   "aninhado": 362,
+   "ganho_pct": 47
+  },
+  {
+   "altura": 114.0,
+   "n": 12,
+   "solto": 1368,
+   "aninhado": 660,
+   "ganho_pct": 52
+  },
+  {
+   "altura": 171.0,
+   "n": 6,
+   "solto": 1026,
+   "aninhado": 419,
+   "ganho_pct": 59
+  },
+  {
+   "altura": 171.0,
+   "n": 12,
+   "solto": 2052,
+   "aninhado": 717,
+   "ganho_pct": 65
+  },
+  {
+   "altura": 228.0,
+   "n": 6,
+   "solto": 1368,
+   "aninhado": 476,
+   "ganho_pct": 65
+  },
+  {
+   "altura": 228.0,
+   "n": 12,
+   "solto": 2736,
+   "aninhado": 774,
+   "ganho_pct": 72
+  }
+ ],
+ "vedacao": {
+  "fita": "2.0 x 10.0 mm",
+  "cava": "10.4 x 1.62 mm",
+  "folga_plug": 0.25,
+  "sobressai": 0.38,
+  "compressao": 0.13,
+  "compressao_pct": 6.5,
+  "curso_vedando": 2.5
+ },
+ "verificacoes": "OK"
+}

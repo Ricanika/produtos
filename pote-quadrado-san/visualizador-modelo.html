@@ -1,0 +1,335 @@
+<title>Pote Quadrado SAN 3D</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: folha de projeto - palco 3D no topo, abaixo a ficha em colunas que empilham no celular */
+  :root{
+    --paper:#E6E9E7; --sheet:#F2F4F2; --ink:#151A1A; --ink-2:#3B4444; --muted:#6B7473;
+    --line:#C3CAC7; --line-soft:#D7DCD9; --cota:#B4451D; --palco:#DCE1DF;
+    --san:#9CC3CF; --pp:#EEF0EC; --ppbico:#7E9A86; --teca:#8A5E36; --tpe:#2E3B3E;
+    --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+    --body:"Barlow","Helvetica Neue",Arial,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#131719; --sheet:#1A1F21; --ink:#E6EAE7; --ink-2:#BCC5C1; --muted:#8A9490;
+      --line:#323A3B; --line-soft:#262D2E; --cota:#E0703F; --palco:#0F1314;
+      --san:#86B7C6; --pp:#D9DDD7; --ppbico:#8FAE97; --teca:#B07C4C; --tpe:#55676B; color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#131719; --sheet:#1A1F21; --ink:#E6EAE7; --ink-2:#BCC5C1; --muted:#8A9490;
+    --line:#323A3B; --line-soft:#262D2E; --cota:#E0703F; --palco:#0F1314;
+    --san:#86B7C6; --pp:#D9DDD7; --ppbico:#8FAE97; --teca:#B07C4C; --tpe:#55676B; color-scheme:dark;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;}
+  .sheet{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px;}
+  h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,5.6vw,48px);text-transform:uppercase;letter-spacing:-.01em;margin:0;line-height:1.03;text-wrap:balance;}
+  h2{font-family:var(--display);font-weight:700;font-size:20px;text-transform:uppercase;letter-spacing:.02em;margin:0 0 8px;text-wrap:balance;}
+  p{margin:0;}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+  header p.sub{color:var(--ink-2);margin-top:8px;max-width:68ch;}
+
+  .barra{display:flex;flex-wrap:wrap;gap:20px;margin-top:22px;padding:14px 16px;border:1px solid var(--line);background:var(--sheet);}
+  .grupo{display:flex;flex-direction:column;gap:7px;min-width:0;}
+  .grupo .k{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+  .botoes{display:flex;flex-wrap:wrap;gap:6px;}
+  button{font-family:var(--body);font-size:13.5px;font-weight:500;color:var(--ink-2);background:var(--paper);border:1px solid var(--line);padding:6px 12px;cursor:pointer;}
+  button:hover{border-color:var(--muted);}
+  button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  button:focus-visible{outline:2px solid var(--cota);outline-offset:2px;}
+
+  .palco{position:relative;margin-top:-1px;border:1px solid var(--line);background:var(--palco);overflow:hidden;}
+  #cena{display:block;width:100%;height:min(64vh,580px);min-height:380px;touch-action:none;cursor:grab;}
+  #cena:active{cursor:grabbing;}
+  .hud{position:absolute;left:14px;bottom:12px;pointer-events:none;max-width:min(64%,460px);}
+  .hud .t{font-family:var(--display);font-weight:700;font-size:17px;text-transform:uppercase;letter-spacing:.02em;}
+  .hud .d{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);margin-top:3px;line-height:1.5;}
+  .dica{position:absolute;right:14px;top:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);pointer-events:none;}
+  .legenda{position:absolute;right:14px;bottom:12px;display:flex;flex-direction:column;gap:4px;font-family:var(--mono);font-size:11px;color:var(--ink-2);pointer-events:none;}
+  .legenda span{display:flex;align-items:center;gap:7px;}
+  .legenda i{display:inline-block;width:11px;height:11px;border:1px solid var(--line);}
+  .erro{padding:40px 20px;text-align:center;color:var(--muted);font-family:var(--mono);font-size:13px;}
+
+  .grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:24px;margin-top:32px;}
+  .bloco{min-width:0;border-top:2px solid var(--ink);padding-top:10px;}
+  .bloco p{font-size:14.5px;color:var(--ink-2);max-width:65ch;}
+  .bloco p + p{margin-top:8px;}
+  .tabela-wrap{overflow-x:auto;border:1px solid var(--line);background:var(--sheet);margin-top:30px;}
+  table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px;}
+  caption{caption-side:top;text-align:left;padding:12px 13px 4px;font-family:var(--display);font-weight:700;font-size:17px;text-transform:uppercase;letter-spacing:.02em;}
+  th,td{text-align:right;padding:8px 13px;border-bottom:1px solid var(--line-soft);white-space:nowrap;font-variant-numeric:tabular-nums;}
+  th{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);}
+  th:first-child,td:first-child{text-align:left;}
+  tr:last-child td{border-bottom:0;}
+  .nota{font-size:13px;color:var(--muted);margin-top:10px;max-width:80ch;}
+  .cota{color:var(--cota);}
+  .corte{margin:30px 0 0;border:1px solid var(--line);background:var(--sheet);padding:14px 16px;}
+  .corte-svg{overflow-x:auto;}
+  .corte svg{display:block;width:100%;max-width:560px;height:auto;margin:0 auto;}
+  .corte svg polygon{stroke:var(--ink);stroke-width:1.2;stroke-linejoin:round;}
+  .corte .s-san{fill:var(--san);fill-opacity:.55;}
+  .corte .s-pp{fill:var(--pp);}
+  .corte .s-tpe{fill:var(--tpe);}
+  .corte .s-borda{stroke:var(--cota);stroke-width:1.2;stroke-dasharray:6 5;}
+  .corte text{font-family:var(--mono);font-size:15px;fill:var(--ink);paint-order:stroke;stroke:var(--sheet);stroke-width:4px;}
+  .corte figcaption{font-size:13.5px;color:var(--ink-2);margin-top:10px;max-width:80ch;}
+  @media (max-width:560px){ .legenda{display:none;} .hud{max-width:calc(100% - 28px);} }
+</style>
+
+<div class="sheet">
+  <header>
+    <div class="eyebrow">Nitron · produto novo · estudo 3D rev. 1</div>
+    <h1>Pote quadrado modular em SAN</h1>
+    <p class="sub">Corpo em SAN cristal, uma boca para as quatro alturas, tampa de PP com uma fita de TPE de 2 × 10 mm na lateral. Três tampas: fechada, teca e bico com copo. As paredes têm 3° de saída por face: é isso que deixa os potes entrarem um no outro no frete.</p>
+  </header>
+
+  <div class="barra" role="toolbar" aria-label="Controles do modelo">
+    <div class="grupo"><span class="k">Vista</span>
+      <div class="botoes" id="modos">
+        <button type="button" id="m-linha" data-m="linha" aria-pressed="true">Linha</button>
+        <button type="button" id="m-tampas" data-m="tampas" aria-pressed="false">3 tampas</button>
+        <button type="button" id="m-vedacao" data-m="vedacao" aria-pressed="false">Vedação</button>
+        <button type="button" id="m-empilha" data-m="empilha" aria-pressed="false">Empilhar</button>
+        <button type="button" id="m-aninha" data-m="aninha" aria-pressed="false">Aninhar</button>
+        <button type="button" id="m-explode" data-m="explode" aria-pressed="false">Explodida</button>
+      </div>
+    </div>
+    <div class="grupo"><span class="k">Corte</span>
+      <div class="botoes"><button type="button" id="b-corte" aria-pressed="false">Cortar ao meio</button></div>
+    </div>
+  </div>
+
+  <div class="palco">
+    <canvas id="cena" aria-label="Modelo 3D do pote quadrado modular"></canvas>
+    <div class="dica">arraste para girar · role para zoom</div>
+    <div class="hud"><div class="t" id="hud-t"></div><div class="d" id="hud-d"></div></div>
+    <div class="legenda">
+      <span><i style="background:var(--san)"></i>SAN cristal</span>
+      <span><i style="background:var(--pp)"></i>PP</span>
+      <span><i style="background:var(--ppbico)"></i>PP (bico e copo)</span>
+      <span><i style="background:var(--teca)"></i>Teca</span>
+      <span><i style="background:var(--tpe)"></i>Fita TPE</span>
+    </div>
+  </div>
+
+  <figure class="corte">
+    <div class="corte-svg">__CORTE__</div>
+    <figcaption><b>Corte no meio de um lado, escala aproximada 5:1.</b> A linha tracejada é o topo da borda (plano modular). A fita calça na cava da saia da tampa e trabalha contra a parede interna do corpo, na lateral. Nada aperta no topo da borda.</figcaption>
+  </figure>
+
+  <div class="tabela-wrap">
+    <table id="t-corpos">
+      <caption>Os quatro corpos</caption>
+      <thead><tr><th>Altura</th><th>Capacidade na borda</th><th>Capacidade útil, tampa fechada</th><th>Fundo externo</th><th>Massa SAN</th><th>Resina a R$ 14/kg</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <p class="nota">Boca igual nos quatro: <span class="mono">124 × 124 mm</span> por dentro, medida máxima <span class="mono" id="maxima"></span> na borda. Parede de 2,0 mm, fundo de 2,2 mm, canto R10 por fora. O preço da resina é o do único lote comprado (25 kg, set/2026) e serve só como ordem de grandeza.</p>
+
+  <div class="grade">
+    <div class="bloco">
+      <h2>Fita de TPE na cava</h2>
+      <p>A fita de 2 × 10 mm calça numa cava de <span class="mono">10,4 × 1,62 mm</span> na lateral do plug. Ela sobressai <span class="mono">0,38 mm</span> da face, a folga até a parede do corpo é <span class="mono">0,25 mm</span>, e sobra <span class="mono cota">0,13 mm</span> de compressão (6,5%).</p>
+      <p>Como a boca também tem 3° de saída, a fita só toca a parede nos últimos <span class="mono">2,5 mm</span> de curso. Até ali o ar sai pela folga, e por isso a tampa fecha sem ter que vencer o ar preso.</p>
+    </div>
+    <div class="bloco">
+      <h2>Empilhar e aninhar</h2>
+      <p>As alturas são 57, 114, 171 e 228 mm. O pé (um anel de 95 mm) é o mesmo nos quatro e cai num bolsão de 3 mm da tampa. Assim a tampa não soma altura, e 57 + 57 + 114 dá a mesma pilha que um 228.</p>
+      <p>Vazios, os potes entram um no outro com passo de <span class="mono cota" id="passo"></span>, qualquer altura dentro de qualquer outra. Quatro nervuras de 0,6 mm por dentro param o pote antes de a parede encostar, e é isso que impede o SAN de travar no SAN.</p>
+    </div>
+    <div class="bloco">
+      <h2>Três tampas, uma cava</h2>
+      <p><b>Fechada</b>, em PP, com orelha de abrir num canto. <b>Teca</b> maciça usinada em CNC, com a mesma cava e a mesma fita, escavada por baixo. <b>Bico</b>: a mesma tampa com laje plana e um bico de Ø38 deslocado para um lado. O copo dosador (~25 ml) encaixa num cordão e veda com um anel que entra 4 mm no bico.</p>
+      <p>A fechada e a de bico podem sair do mesmo molde, trocando o postiço do tampo.</p>
+    </div>
+  </div>
+
+  <div class="tabela-wrap">
+    <table id="t-ninho">
+      <caption>Frete do pote vazio: pilha aninhada contra pilha solta</caption>
+      <thead><tr><th>Corpo</th><th>Potes</th><th>Soltos</th><th>Aninhados</th><th>Ganho de altura</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <p class="nota">O pote de 57 mm quase não ganha nada, porque a altura dele é praticamente o próprio passo. Para aninhar melhor o pequeno seria preciso mais saída, e aí o pote alto fica mais piramidal: com 4° o fundo do 228 cai de 104 para 96 mm. Os 3° são o compromisso entre "o mais quadrado possível" e o frete.</p>
+
+  <div class="tabela-wrap">
+    <table id="t-pecas">
+      <caption>Peças e massas</caption>
+      <thead><tr><th>Peça</th><th>Material</th><th>Massa</th><th>Processo</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const D = __DADOS__;
+(function(){
+  const cv = document.getElementById('cena');
+  if(!window.THREE){ cv.outerHTML = '<div class="erro">O motor 3D não carregou. Recarregue a página.</div>'; return; }
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const fmt = (x, d=0) => x.toLocaleString('pt-BR', {minimumFractionDigits:d, maximumFractionDigits:d});
+
+  // ---------- tabelas
+  const R = D.rel;
+  document.getElementById('maxima').textContent = fmt(R.medida_maxima,1).replace(',', ',') + ' mm';
+  document.getElementById('passo').textContent = fmt(D.passo,1) + ' mm';
+  const tb = document.querySelector('#t-corpos tbody');
+  R.corpos.forEach(c => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="mono">${fmt(c.altura)} mm</td><td class="mono">${fmt(c.capacidade_borda_ml)} ml</td><td class="mono">${fmt(c.capacidade_util_ml)} ml</td><td class="mono">${fmt(c.fundo_externo,1)} mm</td><td class="mono">${fmt(c.massa_g,1)} g</td><td class="mono">R$ ${fmt(c.massa_g*14/1000,2)}</td>`;
+    tb.appendChild(tr);
+  });
+  const tn = document.querySelector('#t-ninho tbody');
+  R.aninhamento.filter(a => a.n === 12).forEach(a => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="mono">${fmt(a.altura)} mm</td><td class="mono">${a.n}</td><td class="mono">${fmt(a.solto)} mm</td><td class="mono">${fmt(a.aninhado)} mm</td><td class="mono">${a.ganho_pct}%</td>`;
+    tn.appendChild(tr);
+  });
+  const nomes = {'corpo-1':'Corpo 57','corpo-2':'Corpo 114','corpo-3':'Corpo 171','corpo-4':'Corpo 228','tampa-fechada':'Tampa fechada','tampa-teca':'Tampa de teca','tampa-bico':'Tampa de bico','copo':'Copo dosador','fita-tpe':'Fita de vedação'};
+  const proc = {SAN:'injeção', PP:'injeção', teca:'CNC', TPE:'extrusão, corte e solda (ou injeção)'};
+  const tp = document.querySelector('#t-pecas tbody');
+  Object.entries(R.pecas).forEach(([k,p]) => {
+    const tr = document.createElement('tr');
+    let pr = proc[p.material];
+    if(k==='tampa-fechada'||k==='tampa-bico') pr = 'injeção, gavetas na cava';
+    tr.innerHTML = `<td>${nomes[k]}</td><td>${p.material}</td><td class="mono">${fmt(p.massa_g,1)} g</td><td>${pr}</td>`;
+    tp.appendChild(tr);
+  });
+
+  // ---------- malhas
+  function b64(s){ const b = atob(s); const u = new Uint8Array(b.length); for(let i=0;i<b.length;i++) u[i]=b.charCodeAt(i); return u.buffer; }
+  const GEO = {};
+  for(const [k,p] of Object.entries(D.pecas)){
+    const v16 = new Int16Array(b64(p.v));
+    const pos = new Float32Array(v16.length);
+    // STL e Z para cima; three.js e Y para cima: (x, y, z) -> (x, z, -y)
+    for(let i=0;i<v16.length;i+=3){ pos[i]=v16[i]/100; pos[i+1]=v16[i+2]/100; pos[i+2]=-v16[i+1]/100; }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos,3));
+    const idx = p.t==='u16' ? new Uint16Array(b64(p.i)) : new Uint32Array(b64(p.i));
+    g.setIndex(new THREE.BufferAttribute(idx,1));
+    g.computeVertexNormals();
+    GEO[k] = g;
+  }
+
+  // ---------- cena
+  const renderer = new THREE.WebGLRenderer({canvas:cv, antialias:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.localClippingEnabled = true;
+  const scene = new THREE.Scene();
+  const cam = new THREE.PerspectiveCamera(30, 1, 1, 6000);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8899a0, 0.85));
+  const sol = new THREE.DirectionalLight(0xffffff, 0.75); sol.position.set(300,600,500); scene.add(sol);
+  const sol2 = new THREE.DirectionalLight(0xffffff, 0.3); sol2.position.set(-400,200,-300); scene.add(sol2);
+  const corte = new THREE.Plane(new THREE.Vector3(0,0,-1), 0);
+  let cortando = false;
+
+  const MATS = {};
+  function mats(){
+    const c = n => new THREE.Color(css(n));
+    const base = {side:THREE.DoubleSide, clippingPlanes:cortando?[corte]:[]};
+    MATS.san = new THREE.MeshStandardMaterial(Object.assign({color:c('--san'), roughness:.15, metalness:0, transparent:true, opacity:cortando?.55:.32, depthWrite:false}, base));
+    MATS.pp = new THREE.MeshStandardMaterial(Object.assign({color:c('--pp'), roughness:.45}, base));
+    MATS.ppbico = new THREE.MeshStandardMaterial(Object.assign({color:c('--ppbico'), roughness:.45}, base));
+    MATS.teca = new THREE.MeshStandardMaterial(Object.assign({color:c('--teca'), roughness:.7}, base));
+    MATS.tpe = new THREE.MeshStandardMaterial(Object.assign({color:c('--tpe'), roughness:.8}, base));
+    scene.background = c('--palco');
+  }
+  const MAT_DE = {'tampa-fechada':'pp','tampa-teca':'teca','tampa-bico':'ppbico','copo':'ppbico','fita-tpe':'tpe'};
+  const grupo = new THREE.Group(); scene.add(grupo);
+  // posicao no sistema do STL (x, y, z) -> three
+  function poe(peca, x, z, y=0){
+    const m = new THREE.Mesh(GEO[peca], null);
+    m.userData.mat = peca.startsWith('corpo') ? 'san' : MAT_DE[peca];
+    m.position.set(x, z, -y);
+    if(m.userData.mat==='san') m.renderOrder = 2;
+    grupo.add(m); return m;
+  }
+  const H = D.alturas, P = D.passo;
+  function tampa(tipo, x, zr, bico=true){
+    poe('tampa-'+tipo, x, zr); poe('fita-tpe', x, zr);
+    if(tipo==='bico' && bico) poe('copo', x, zr);
+  }
+
+  const MODOS = {
+    linha:{t:'A linha: quatro alturas, uma tampa', d:'57 · 114 · 171 · 228 mm de corpo, boca 124 × 124 mm em todos. Tampa fechada de PP.', fazer(){
+      H.forEach((h,i)=>{ const x=-225+150*i; poe('corpo-'+(i+1),x,0); tampa('fechada',x,h); });
+    }, alvo:[0,120,0], dist:1150, az:.5, el:.32},
+    tampas:{t:'Três tampas na mesma boca', d:'Fechada (PP) · teca maciça (CNC) · bico com copo dosador (PP). A fita de TPE é a mesma nas três.', fazer(){
+      ['fechada','teca','bico'].forEach((t,i)=>{ const x=-160+160*i; poe('corpo-1',x,0); tampa(t,x,H[0]); });
+    }, alvo:[0,50,0], dist:720, az:.35, el:.55},
+    vedacao:{t:'Vedação radial: plug, cava e fita', d:'Fita 2 × 10 na cava de 10,4 × 1,62. Sobressai 0,38, folga 0,25: comprime 0,13 mm contra a parede de SAN.', fazer(){
+      poe('corpo-1',0,0); tampa('fechada',0,H[0]);
+    }, alvo:[-57,47,0], dist:95, az:0, el:.04, corte:true},
+    empilha:{t:'Empilha na mesma altura', d:'57 + 57 + 114 = 228. O pé de cada pote cai no bolsão da tampa de baixo, então a tampa não soma altura.', fazer(){
+      let z=0; [1,1,2].forEach(n=>{ poe('corpo-'+n,-85,z); z+=H[n-1]; tampa('fechada',-85,z); });
+      poe('corpo-4',85,0); tampa('fechada',85,H[3]);
+    }, alvo:[0,120,0], dist:860, az:.45, el:.25},
+    aninha:{t:'Aninha no frete', d:'Passo de '+fmt(D.passo,1)+' mm para qualquer combinação. À esquerda o kit dos quatro, à direita seis de 228 mm.', fazer(){
+      // kit: o maior por fora, os menores por dentro, cada topo um passo acima
+      let topo = H[3]; poe('corpo-4',-110,0);
+      [3,2,1].forEach(n=>{ topo += P; poe('corpo-'+n,-110,topo-H[n-1]); });
+      for(let k=0;k<6;k++) poe('corpo-4',110,k*P);
+    }, alvo:[0,240,0], dist:1150, az:.45, el:.22},
+    explode:{t:'Explodida', d:'Corpo, fita e tampa fechada. Ao lado, a tampa de bico com o copo dosador.', fazer(){
+      const h=H[0];
+      poe('corpo-1',-95,0); poe('fita-tpe',-95,h+45); poe('tampa-fechada',-95,h+90);
+      poe('corpo-1',95,0); poe('fita-tpe',95,h+45); poe('tampa-bico',95,h+90); poe('copo',95,h+150);
+    }, alvo:[0,110,0], dist:820, az:.4, el:.3},
+  };
+
+  let modo='linha';
+  const orb = {az:.5, el:.3, dist:1000, alvo:new THREE.Vector3()};
+  function aplica(){
+    mats();
+    grupo.children.forEach(m => m.material = MATS[m.userData.mat]);
+  }
+  function monta(m, manterCam){
+    modo=m; while(grupo.children.length) grupo.remove(grupo.children[0]);
+    const M = MODOS[m]; M.fazer();
+    if(!manterCam){ orb.az=M.az; orb.el=M.el; orb.dist=M.dist; orb.alvo.set(...M.alvo); }
+    cortando = !!M.corte; document.getElementById('b-corte').setAttribute('aria-pressed', String(cortando));
+    aplica();
+    document.getElementById('hud-t').textContent=M.t;
+    document.getElementById('hud-d').textContent=M.d;
+    document.querySelectorAll('#modos button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.m===m?'true':'false'));
+    desenha();
+  }
+  function desenha(){
+    const w=cv.clientWidth, h=cv.clientHeight;
+    if(cv.width!==Math.round(w*renderer.getPixelRatio())||cv.height!==Math.round(h*renderer.getPixelRatio())){ renderer.setSize(w,h,false); }
+    cam.aspect=w/h; cam.updateProjectionMatrix();
+    const e=orb.el, a=orb.az;
+    cam.position.set(orb.alvo.x+orb.dist*Math.cos(e)*Math.sin(a), orb.alvo.y+orb.dist*Math.sin(e), orb.alvo.z+orb.dist*Math.cos(e)*Math.cos(a));
+    cam.lookAt(orb.alvo);
+    renderer.render(scene,cam);
+  }
+
+  // orbita: arrastar gira, roda e pinca dao zoom
+  const ptrs=new Map(); let pinca0=0, dist0=0;
+  cv.addEventListener('pointerdown',ev=>{ cv.setPointerCapture(ev.pointerId); ptrs.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});
+    if(ptrs.size===2){ const [p,q]=[...ptrs.values()]; pinca0=Math.hypot(p.x-q.x,p.y-q.y); dist0=orb.dist; } });
+  cv.addEventListener('pointermove',ev=>{ if(!ptrs.has(ev.pointerId)) return; const ant=ptrs.get(ev.pointerId); ptrs.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});
+    if(ptrs.size===2){ const [p,q]=[...ptrs.values()]; const d=Math.hypot(p.x-q.x,p.y-q.y); if(pinca0>0) orb.dist=Math.min(3000,Math.max(60,dist0*pinca0/d)); }
+    else { orb.az-=(ev.clientX-ant.x)*0.008; orb.el=Math.min(1.45,Math.max(-0.6,orb.el+(ev.clientY-ant.y)*0.006)); }
+    desenha(); });
+  const solta=ev=>{ ptrs.delete(ev.pointerId); pinca0=0; };
+  cv.addEventListener('pointerup',solta); cv.addEventListener('pointercancel',solta);
+  cv.addEventListener('wheel',ev=>{ ev.preventDefault(); orb.dist=Math.min(3000,Math.max(60,orb.dist*Math.exp(ev.deltaY*0.001))); desenha(); },{passive:false});
+
+  document.querySelectorAll('#modos button').forEach(b=>b.addEventListener('click',()=>monta(b.dataset.m)));
+  document.getElementById('b-corte').addEventListener('click',e=>{ cortando=!cortando; e.currentTarget.setAttribute('aria-pressed',String(cortando)); aplica(); desenha(); });
+  new ResizeObserver(desenha).observe(cv);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{ aplica(); desenha(); });
+  new MutationObserver(()=>{ aplica(); desenha(); }).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  monta('linha');
+})();
+</script>
