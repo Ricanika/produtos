@@ -205,7 +205,7 @@ abertura), não o fechamento.
 
 ## Em aberto
 
-1. **Protótipo da vedação.** A compressão de 0,13 mm é o ponto de partida. Ensaio com água colorida,
+1. **Protótipo da vedação.** O aperto de 0,15 mm sobre a aleta é o ponto de partida. Ensaio com água colorida,
    24 h, deitado e de cabeça para baixo, e medir a força para abrir pela orelha.
 2. **Tampa de teca:** a aba de 3 mm de madeira sobre a borda é frágil na quina. Se lascar no
    protótipo, a teca sobe para 5 mm e deixa de ser modular, ou a aba vira um aro de PP.
