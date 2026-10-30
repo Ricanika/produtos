@@ -84,7 +84,7 @@
 
 <div class="sheet">
   <header>
-    <div class="eyebrow">Nitron · produto novo · estudo 3D rev. 6</div>
+    <div class="eyebrow">Nitron · produto novo · estudo 3D rev. 7</div>
     <h1>Pote modular 13 × 10 em SAN</h1>
     <p class="sub">Corpo em SAN cristal, 13 × 10 cm por fora na borda, uma boca para as quatro alturas e uma tampa de PP com uma fita de TPE de 2 × 10 mm. Três tampas: fechada, teca e bico com copo. As paredes têm 2° de saída por face, e é isso que deixa os potes entrarem um no outro no frete.</p>
   </header>
@@ -113,7 +113,7 @@
     <div class="legenda">
       <span><i style="background:var(--san)"></i>SAN cristal</span>
       <span><i style="background:var(--pp)"></i>PP</span>
-      <span><i style="background:var(--ppbico)"></i>PP (bico e copo)</span>
+      <span><i style="background:var(--ppbico)"></i>PP (tampa de bico)</span>
       <span><i style="background:var(--teca)"></i>Teca</span>
       <span><i style="background:var(--tpe)"></i>Fita TPE</span>
     </div>
@@ -146,7 +146,7 @@
     </div>
     <div class="bloco">
       <h2>Três tampas, uma fita</h2>
-      <p><b>Fechada</b>, em PP, sem orelha: abre pela aba. <b>Teca</b> maciça usinada em CNC, com a mesma fita numa cava (aleta de 1 mm em madeira quebraria), escavada por baixo. <b>Bico</b>: bandeja rebaixada, anel externo e um gargalo retangular arredondado de 70 × 40 mm, com o lábio abrindo num beiço de verter. O copo é quadrado, invertido: a borda desce no canal entre o anel e o gargalo e trava num cordão de 0,3 mm. Virado, é um copo medidor de ~220 ml.</p>
+      <p><b>Fechada</b>, em PP, sem orelha: abre pela aba. <b>Teca</b> maciça usinada em CNC, com a mesma fita numa cava (aleta de 1 mm em madeira quebraria), escavada por baixo. <b>Bico</b>: abertura quadrada de 51 × 51 mm, com o lábio abrindo num beiço de verter num lado curto. Uma parede de PP colada no gargalo, com 2 mm de vão, segura o copo. O <b>copo medidor é de SAN</b>, quadrado, com 157 ml e marcas de 50, 100 e 150 ml: dá para dosar sabão em pó. Como o SAN não aceita encaixe, o copo é liso e quem flexiona é a parede de PP, que aperta o copo 0,2 mm por lado.</p>
       <p>A fechada e a de bico podem sair do mesmo molde, trocando o postiço do tampo.</p>
     </div>
   </div>
@@ -195,7 +195,7 @@ const D = __DADOS__;
     tr.innerHTML = `<td class="mono">${fmt(a.altura)} mm</td><td class="mono">${a.n}</td><td class="mono">${fmt(a.solto)} mm</td><td class="mono">${fmt(a.aninhado)} mm</td><td class="mono">${a.ganho_pct}%</td>`;
     tn.appendChild(tr);
   });
-  const nomes = {'corpo-1':'Corpo 57','corpo-2':'Corpo 114','corpo-3':'Corpo 171','corpo-4':'Corpo 228','tampa-fechada':'Tampa fechada','tampa-teca':'Tampa de teca','tampa-bico':'Tampa de bico','copo':'Copo dosador','fita-tpe':'Fita de vedação (em gancho)','fita-teca':'Fita de vedação (na teca)'};
+  const nomes = {'corpo-1':'Corpo 57','corpo-2':'Corpo 114','corpo-3':'Corpo 171','corpo-4':'Corpo 228','tampa-fechada':'Tampa fechada','tampa-teca':'Tampa de teca','tampa-bico':'Tampa de bico','copo':'Copo medidor (157 ml)','fita-tpe':'Fita de vedação (em gancho)','fita-teca':'Fita de vedação (na teca)'};
   const proc = {SAN:'injeção', PP:'injeção', teca:'CNC', TPE:'extrusão, corte e solda (ou injeção)'};
   const tp = document.querySelector('#t-pecas tbody');
   Object.entries(R.pecas).forEach(([k,p]) => {
@@ -245,7 +245,7 @@ const D = __DADOS__;
     MATS.tpe = new THREE.MeshStandardMaterial(Object.assign({color:c('--tpe'), roughness:.8}, base));
     scene.background = c('--palco');
   }
-  const MAT_DE = {'tampa-fechada':'pp','tampa-teca':'teca','tampa-bico':'ppbico','copo':'ppbico','fita-tpe':'tpe','fita-teca':'tpe'};
+  const MAT_DE = {'tampa-fechada':'pp','tampa-teca':'teca','tampa-bico':'ppbico','copo':'san','fita-tpe':'tpe','fita-teca':'tpe'};
   const grupo = new THREE.Group(); scene.add(grupo);
   // posicao no sistema do STL (x, y, z) -> three
   function poe(peca, x, z, y=0){
@@ -265,10 +265,10 @@ const D = __DADOS__;
     linha:{t:'A linha: quatro alturas, uma tampa', d:'57 · 114 · 171 · 228 mm de corpo, boca 120 × 90 mm em todos. Tampa fechada de PP.', fazer(){
       H.forEach((h,i)=>{ const x=-225+150*i; poe('corpo-'+(i+1),x,0); tampa('fechada',x,h); });
     }, alvo:[0,120,0], dist:1150, az:.5, el:.32},
-    tampas:{t:'Três tampas na mesma boca', d:'Fechada (PP) · teca maciça (CNC) · bico com copo dosador (PP). A fita de TPE é a mesma nas três.', fazer(){
+    tampas:{t:'Três tampas na mesma boca', d:'Fechada (PP) · teca maciça (CNC) · bico com copo medidor de SAN. A fita de TPE é a mesma nas três.', fazer(){
       ['fechada','teca','bico'].forEach((t,i)=>{ const x=-160+160*i; poe('corpo-1',x,0); tampa(t,x,H[0]); });
     }, alvo:[0,50,0], dist:720, az:.35, el:.55},
-    bico:{t:'Bico e copo', d:'Gargalo de 70 × 40 mm com beiço de verter no lado direito, bandeja rebaixada e anel externo. À direita, o copo encaixado no canal.', fazer(){
+    bico:{t:'Bico e copo', d:'Abertura quadrada de 51 mm com beiço de verter à direita, e a parede que segura o copo colada no gargalo. À direita, o copo medidor de SAN (157 ml) vestido na parede.', fazer(){
       poe('corpo-1',-85,0); tampa('bico',-85,H[0],false);
       poe('corpo-1',85,0); tampa('bico',85,H[0]);
     }, alvo:[0,60,0], dist:470, az:-.12, el:.22},
@@ -285,7 +285,7 @@ const D = __DADOS__;
       [3,2,1].forEach(n=>{ topo += Math.min(P, H[n-1]); poe('corpo-'+n,-110,topo-H[n-1]); });
       for(let k=0;k<6;k++) poe('corpo-4',110,k*P);
     }, alvo:[0,240,0], dist:1150, az:.45, el:.22},
-    explode:{t:'Explodida', d:'Corpo, fita e tampa fechada. Ao lado, a tampa de bico com o copo dosador.', fazer(){
+    explode:{t:'Explodida', d:'Corpo, fita e tampa fechada. Ao lado, a tampa de bico com o copo medidor de SAN.', fazer(){
       const h=H[0];
       poe('corpo-1',-95,0); poe('fita-tpe',-95,h+45); poe('tampa-fechada',-95,h+90);
       poe('corpo-1',95,0); poe('fita-tpe',95,h+45); poe('tampa-bico',95,h+90); poe('copo',95,h+150);

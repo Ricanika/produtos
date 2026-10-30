@@ -1,4 +1,30 @@
-# Pote modular 13 × 10 cm em SAN, revisão 6
+# Pote modular 13 × 10 cm em SAN, revisão 7
+
+## Revisão 7: bico de abertura quadrada e copo medidor de SAN
+
+Pedido: *"a abertura do bico precisa ficar quadrada; a parede que segura o copo medidor precisa ficar
+mais próxima do bico, é ela que vai segurar o copinho; o copinho será de Sangel também e precisa ter
+pelo menos 150 ml, para usar como copo medidor de sabão em pó."*
+
+- **Abertura quadrada de 51 × 51 mm** por dentro (gargalo de 54 × 54 por fora, 22 mm de altura). Os
+  anéis do bico agora são quadrados (`'q'` no gerador) e não seguem mais o retângulo da tampa. O
+  beiço de verter continua num lado curto, mais contido (abre 2,5 mm e sobe 4) para caber no copo.
+- **A parede que segura o copo fica colada no gargalo:** vão de **2 mm** entre os dois, parede de
+  PP de 1,6 mm e 10 mm de altura, com chanfro no topo para o copo entrar sozinho.
+- **Copo medidor de SAN, 157 ml.** Quadrado, 64,4 × 64,4 × 47 mm por fora, parede de 1,8, saída de 1°
+  e fundo arredondado para lavar fácil. Marcas para gravar no molde, medidas do fundo do copo virado:
+  **50 ml a 14,6 mm · 100 ml a 28,9 mm · 150 ml a 43,0 mm**. 27,2 g de SAN.
+- **Como segura sem encaixe.** SAN é quebradiço e não aceita cordão nem encaixe de pressão. Então
+  os papéis se invertem: o copo é liso e rígido, veste a parede **por fora** com **0,2 mm de aperto
+  por lado**, e quem flexiona é a parede de PP, que entra no vão de 2 mm. O vão é a mola, e por isso
+  não pode fechar. O copo apoia na bandeja.
+- A tampa de bico ficou com 40,0 g.
+
+**A confirmar no protótipo:** se 0,2 mm de aperto segura o copo com o pote virado para servir. Se
+afrouxar, sobe para 0,3 (a parede de PP aguenta). Se ficar duro de tirar, desce para 0,1.
+
+---
+
 
 ## Revisão 6: retangular, 13 × 10 cm
 
@@ -225,7 +251,7 @@ Ver o corte 2D na página do modelo.
 | **Fechada** | PP RP 141 | 50,2 g | sem orelha (rev. 5); bolsão de empilhar no tampo; fita reta no vão de 5 mm |
 | **Teca** | teca maciça, CNC | 75,8 g | a mesma fita, em cava no maciço; escavada por baixo (5 mm de madeira no centro e na lateral); aba de 3 mm sobre a borda |
 | **Bico** | PP RP 141 | 46,4 g | bandeja rebaixada, anel externo, gargalo quadrado de 74 mm centrado, beiço de verter no lado +X |
-| **Copo** | PP RP 141 | 31,4 g | quadrado, invertido; a borda desce no canal entre anel e gargalo e trava num cordão de 0,3 mm; virado, é copo medidor de ~220 ml |
+| **Copo** (rev. 2, superado pela rev. 7: agora SAN, 157 ml) | PP RP 141 | 31,4 g | quadrado, invertido; a borda desce no canal entre anel e gargalo e trava num cordão de 0,3 mm; virado, é copo medidor de ~220 ml |
 | **Fita** | TPE Karinprene 45 | 9,1 g | reta, 2 × 10 mm, perímetro ~460 mm; dobrada no vão nas tampas de PP, deitada na cava na teca |
 
 A fechada e a de bico podem sair do **mesmo molde com postiço trocável** no tampo.

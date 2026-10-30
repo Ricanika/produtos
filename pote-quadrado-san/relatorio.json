@@ -42,15 +42,15 @@
   },
   "tampa-bico": {
    "material": "PP",
-   "volume_cm3": 40.97,
-   "massa_g": 36.9,
-   "triangulos": 19680
+   "volume_cm3": 44.39,
+   "massa_g": 40.0,
+   "triangulos": 19200
   },
   "copo": {
-   "material": "PP",
-   "volume_cm3": 24.06,
-   "massa_g": 21.7,
-   "triangulos": 4800
+   "material": "SAN",
+   "volume_cm3": 25.23,
+   "massa_g": 27.2,
+   "triangulos": 4320
   },
   "fita-tpe": {
    "material": "TPE",
@@ -170,6 +170,16 @@
   "aperto_na_fenda_pct": 15,
   "area_secao_mm2": 19.5,
   "curso_vedando": 4.3
+ },
+ "copo": {
+  "material": "SAN",
+  "capacidade_ml": 157,
+  "marcas_mm": {
+   "50": 14.6,
+   "100": 28.9,
+   "150": 43.0
+  },
+  "medida_externa": "64.4 x 64.4 x 47.1"
  },
  "verificacoes": "OK"
 }
