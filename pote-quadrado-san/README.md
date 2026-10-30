@@ -1,4 +1,35 @@
-# Pote quadrado modular em SAN, revisão 5
+# Pote modular 13 × 10 cm em SAN, revisão 6
+
+## Revisão 6: retangular, 13 × 10 cm
+
+Pedido: *"a largura eu queria que tivesse 10 cm e o comprimento 13 cm."*
+
+- **Medida máxima na borda: 130 × 100 mm.** Boca interna 120,2 × 90,2 mm. Parede externa no topo
+  124,2 × 94,2 mm. As quatro alturas, a saída de 2° e todo o resto ficam como estavam.
+- O gerador passou a fazer retângulo: cada anel tem meio-comprimento `u` e meia-largura `u − 15`. A
+  diferença constante mantém a regra da curva paralela, e a folga no canto continua igual à do lado.
+- As nervuras anti-travamento acompanham os lados compridos, que ficam 15 mm mais perto do centro.
+- O gargalo da tampa de bico virou **70 × 40 mm** e o anel do copo foi para 45, para caber no
+  retângulo menor. O beiço continua no lado curto (+X), que é o lado bom para verter.
+
+| Corpo | Altura | Capacidade útil | Na borda | Fundo por fora | Massa SAN | Resina (R$ 14/kg) |
+|---|---|---|---|---|---|---|
+| P | 57 mm | **496 ml** | 539 ml | 120,2 × 90,2 mm | 79,9 g | R$ 1,12 |
+| M | 114 mm | **1.046 ml** | 1.089 ml | 116,2 × 86,2 mm | 126,7 g | R$ 1,77 |
+| G | 171 mm | **1.551 ml** | 1.594 ml | 112,3 × 82,3 mm | 171,8 g | R$ 2,41 |
+| GG | 228 mm | **2.014 ml** | 2.057 ml | 108,3 × 78,3 mm | 214,9 g | R$ 3,01 |
+
+As capacidades úteis caem em **500 ml, 1 L, 1,5 L e 2 L**, bons nomes comerciais.
+
+Tampas: fechada 38,1 g · teca 56,4 g · bico 36,9 g · copo 21,7 g · fita 7,6 g (perímetro ~400 mm).
+O aninhamento não muda: o passo depende só de parede, nervura e saída.
+
+As seções abaixo da revisão 5 foram escritas para o pote quadrado de 13,4 cm. Os números de
+capacidade e massa delas estão superados pela tabela acima; os mecanismos (fita, aletas, bico,
+empilhamento, aninhamento) continuam valendo.
+
+---
+
 
 ## Revisão 5
 

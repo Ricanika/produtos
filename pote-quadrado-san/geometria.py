@@ -34,7 +34,12 @@ K = math.tan(math.radians(SAIDA))
 MODULO = 57.0                     # altura do menor; os outros sao 2x, 3x, 4x
 ALTURAS = [MODULO * n for n in (1, 2, 3, 4)]
 
-U_I = 62.0      # meio-lado INTERNO na boca (124 mm de vao) - igual nos quatro
+# rev. 6: RETANGULAR, 13 x 10 cm por fora na borda (era quadrado de 13,4).
+# Toda cota 'u' e o meio-COMPRIMENTO (eixo X); o meio-largura (eixo Y) e
+# sempre u - DIF. Diferenca constante = curva paralela tambem no retangulo.
+COMPRIMENTO, LARGURA = 130.0, 100.0          # medida maxima, na borda
+DIF = (COMPRIMENTO - LARGURA) / 2            # 15
+U_I = COMPRIMENTO / 2 - 4.9  # meio-comprimento INTERNO na boca - igual nos quatro
 T = 2.0         # parede SAN
 R_I = 8.0       # raio interno do canto (externo = 10), constante na altura
 FUNDO_Z = 3.0   # face de baixo do fundo (o pe ocupa 0..3)
@@ -44,7 +49,7 @@ FUNDO_T = 2.2   # espessura do fundo
 CANAL = 1.2     # canal entre parede e saia
 SAIA_T = 1.6    # saia na raiz
 SAIA_H = 7.0    # da borda ate o pe da saia
-U_BORDA = U_I + T + CANAL + SAIA_T + 0.1   # 66.9 - medida maxima /2
+U_BORDA = U_I + T + CANAL + SAIA_T + 0.1   # 65,0 - meio-comprimento maximo
 
 # pe comum (o mesmo nos quatro) e o bolsao da tampa que o recebe
 PE_I, PE_O, PE_H = 45.0, 47.6, 3.0
@@ -92,10 +97,10 @@ ABA_H = 3.0     # aba da tampa acima da borda = profundidade do bolsao
 # O copo e um copo quadrado invertido cuja borda desce no CANAL entre o anel
 # e o gargalo.
 BICO_X = 0.0
-GARG_O, GARG_R, GARG_T = 37.0, 14.0, 1.6     # gargalo: meio-lado externo, raio, parede
+GARG_O, GARG_R, GARG_T = 35.0, 12.0, 1.6     # gargalo: meio-lado externo, raio, parede
 GARG_H = 20.0                                 # topo do gargalo (z acima da borda)
 BEICO_A, BEICO_B, BEICO_P = 6.5, 6.0, 4.0     # beico: abre 6,5, sobe 6, largura (cos^p)
-ANEL_I, ANEL_T, ANEL_H = 47.0, 1.6, 8.0       # anel externo: face interna, parede, topo
+ANEL_I, ANEL_T, ANEL_H = 45.0, 1.6, 8.0       # anel externo: face interna, parede, topo
 CANAL_Z = 1.0                                 # piso do canal do copo
 BANDEJA_Z = 0.0                               # fundo da bandeja rebaixada
 COPO_T = 1.6
@@ -125,11 +130,14 @@ def thetas(n):
 
 
 def anel_quadrado(u, r, c, th):
-    """Interseca raios saindo de c com o quadrado arredondado (u, r).
-    Bissecao na funcao de distancia: robusta para c fora do centro."""
+    """Interseca raios saindo de c com o RETANGULO arredondado de meios-lados
+    (u, u - DIF) e raio r. Bissecao na funcao de distancia: robusta para c
+    fora do centro. u = 0 e o eixo (anel colapsado num ponto)."""
     if u <= 1e-9:
         return np.zeros((len(th), 2))
-    r = min(r, u)
+    assert u - DIF > 0.5, f'anel estreito demais: u={u}'
+    hs = np.array([u, u - DIF])
+    r = min(r, hs[1])
     d = np.stack([np.cos(th), np.sin(th)], 1)
     lo = np.zeros(len(th))
     hi = np.full(len(th), 4 * u + 2 * abs(c[0]) + 2 * abs(c[1]))
@@ -137,7 +145,7 @@ def anel_quadrado(u, r, c, th):
     for _ in range(48):
         m = (lo + hi) / 2
         p = np.abs(cc + d * m[:, None])
-        q = p - (u - r)
+        q = p - (hs - r)
         sd = (np.linalg.norm(np.maximum(q, 0), axis=1)
               + np.minimum(np.maximum(q[:, 0], q[:, 1]), 0) - r)
         dentro = sd < 0
@@ -270,12 +278,13 @@ def corpo(H, n=N_ANEL):
     # nervuras anti-travamento: meio de cada lado, por dentro
     nerv = []
     z0, z1, z2 = zi + 3.5, H - NERV_TOPO - 4, H - NERV_TOPO
-    def sec(z, e):
-        x0, x1 = ui(z) - e, ui(z) + 0.6
-        h = NERV_L / 2
-        return [(x0, -h, z), (x0, h, z), (x1, h, z), (x1, -h, z)]
-    nb = caixa([sec(z0 - 0.01, 0.02), sec(z0 + 1.2, NERV_E), sec(z1, NERV_E), sec(z2, 0.02)])
     for q in range(4):
+        dif = DIF if q % 2 else 0.0        # lados compridos (+-Y) ficam DIF mais perto
+        def sec(z, e, dif=dif):
+            x0, x1 = ui(z) - dif - e, ui(z) - dif + 0.6
+            h = NERV_L / 2
+            return [(x0, -h, z), (x0, h, z), (x1, h, z), (x1, -h, z)]
+        nb = caixa([sec(z0 - 0.01, 0.02), sec(z0 + 1.2, NERV_E), sec(z1, NERV_E), sec(z2, 0.02)])
         nerv.append(roda(nb, q * math.pi / 2))
     return np.concatenate([malha] + nerv), P
 
@@ -480,8 +489,8 @@ def fita_area():
 
 # ---------------------------------------------------------------- contas
 def area_q(u, r):
-    r = min(r, u)
-    return (2 * u) ** 2 - (4 - math.pi) * r * r
+    r = min(r, u - DIF)
+    return (2 * u) * (2 * (u - DIF)) - (4 - math.pi) * r * r
 
 
 def capacidade(H, ate):
@@ -543,8 +552,9 @@ MAT = {'corpo': 'SAN', 'tampa-fechada': 'PP', 'tampa-bico': 'PP', 'copo': 'PP',
 
 
 def relatorio(P_):
-    R = {'saida_graus': SAIDA, 'modulo': MODULO, 'boca_interna': 2 * U_I,
-         'medida_maxima': round(2 * U_BORDA, 1), 'pecas': {}, 'corpos': []}
+    R = {'saida_graus': SAIDA, 'modulo': MODULO,
+         'boca_interna': f'{2 * U_I:.1f} x {2 * (U_I - DIF):.1f}',
+         'medida_maxima': f'{2 * U_BORDA:.1f} x {2 * (U_BORDA - DIF):.1f}', 'pecas': {}, 'corpos': []}
     for nome, T_ in P_.items():
         base = 'corpo' if nome.startswith('corpo') else nome
         v = volume(T_) / 1000
@@ -555,12 +565,12 @@ def relatorio(P_):
         brim = capacidade(H, H)
         util = capacidade(H, H + deck)
         # o anel do plug (face + cava + saia) ocupa a faixa de -PLUG a deck
-        anel = sum(4 * 2 * (u_int(z)) * (FENDA_FUNDO + SAIA_PLUG_T)
+        anel = sum((8 * u_int(z) - 4 * DIF) * (FENDA_FUNDO + SAIA_PLUG_T)
                    for z in np.linspace(-PLUG, deck, 50)) * (PLUG + deck) / 50 / 1000
         fundo_ext = U_I + T - H * K
         R['corpos'].append(dict(
             altura=H, capacidade_borda_ml=round(brim), capacidade_util_ml=round(util - anel),
-            fundo_externo=round(2 * fundo_ext, 1), conicidade_pct=round(100 * (1 - fundo_ext / (U_I + T)), 1),
+            fundo_externo=f'{2 * fundo_ext:.1f} x {2 * (fundo_ext - DIF):.1f}', conicidade_pct=round(100 * (1 - fundo_ext / (U_I + T)), 1),
             massa_g=R['pecas'][f'corpo-{i + 1}']['massa_g']))
     p = passo_aninhado()
     R['passo_aninhado'] = round(p, 1)

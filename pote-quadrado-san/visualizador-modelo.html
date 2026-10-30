@@ -84,9 +84,9 @@
 
 <div class="sheet">
   <header>
-    <div class="eyebrow">Nitron · produto novo · estudo 3D rev. 5</div>
-    <h1>Pote quadrado modular em SAN</h1>
-    <p class="sub">Corpo em SAN cristal, uma boca para as quatro alturas, tampa de PP com uma fita de TPE de 2 × 10 mm na lateral. Três tampas: fechada, teca e bico com copo. As paredes têm 2° de saída por face: é isso que deixa os potes entrarem um no outro no frete.</p>
+    <div class="eyebrow">Nitron · produto novo · estudo 3D rev. 6</div>
+    <h1>Pote modular 13 × 10 em SAN</h1>
+    <p class="sub">Corpo em SAN cristal, 13 × 10 cm por fora na borda, uma boca para as quatro alturas e uma tampa de PP com uma fita de TPE de 2 × 10 mm. Três tampas: fechada, teca e bico com copo. As paredes têm 2° de saída por face, e é isso que deixa os potes entrarem um no outro no frete.</p>
   </header>
 
   <div class="barra" role="toolbar" aria-label="Controles do modelo">
@@ -107,7 +107,7 @@
   </div>
 
   <div class="palco">
-    <canvas id="cena" aria-label="Modelo 3D do pote quadrado modular"></canvas>
+    <canvas id="cena" aria-label="Modelo 3D do pote modular de 13 × 10 cm"></canvas>
     <div class="dica">arraste para girar · role para zoom</div>
     <div class="hud"><div class="t" id="hud-t"></div><div class="d" id="hud-d"></div></div>
     <div class="legenda">
@@ -131,7 +131,7 @@
       <tbody></tbody>
     </table>
   </div>
-  <p class="nota">Boca igual nos quatro: <span class="mono">124 × 124 mm</span> por dentro, medida máxima <span class="mono" id="maxima"></span> na borda. Parede de 2,0 mm, fundo de 2,2 mm, canto R10 por fora. O preço da resina é o do único lote comprado (25 kg, set/2026) e serve só como ordem de grandeza.</p>
+  <p class="nota">Boca igual nos quatro: <span class="mono">120 × 90 mm</span> por dentro, medida máxima <span class="mono" id="maxima"></span> na borda. Parede de 2,0 mm, fundo de 2,2 mm, canto R10 por fora. O preço da resina é o do único lote comprado (25 kg, set/2026) e serve só como ordem de grandeza.</p>
 
   <div class="grade">
     <div class="bloco">
@@ -146,7 +146,7 @@
     </div>
     <div class="bloco">
       <h2>Três tampas, uma fita</h2>
-      <p><b>Fechada</b>, em PP, sem orelha: abre pela aba. <b>Teca</b> maciça usinada em CNC, com a mesma fita numa cava (aleta de 1 mm em madeira quebraria), escavada por baixo. <b>Bico</b>: bandeja rebaixada, anel externo e um gargalo quadrado arredondado de 74 mm, com o lábio abrindo num beiço de verter. O copo é quadrado, invertido: a borda desce no canal entre o anel e o gargalo e trava num cordão de 0,3 mm. Virado, é um copo medidor de ~220 ml.</p>
+      <p><b>Fechada</b>, em PP, sem orelha: abre pela aba. <b>Teca</b> maciça usinada em CNC, com a mesma fita numa cava (aleta de 1 mm em madeira quebraria), escavada por baixo. <b>Bico</b>: bandeja rebaixada, anel externo e um gargalo retangular arredondado de 70 × 40 mm, com o lábio abrindo num beiço de verter. O copo é quadrado, invertido: a borda desce no canal entre o anel e o gargalo e trava num cordão de 0,3 mm. Virado, é um copo medidor de ~220 ml.</p>
       <p>A fechada e a de bico podem sair do mesmo molde, trocando o postiço do tampo.</p>
     </div>
   </div>
@@ -180,12 +180,13 @@ const D = __DADOS__;
 
   // ---------- tabelas
   const R = D.rel;
-  document.getElementById('maxima').textContent = fmt(R.medida_maxima,1).replace(',', ',') + ' mm';
+  const mm = t => t.replace(/\./g, ',').replace(' x ', ' × ') + ' mm';
+  document.getElementById('maxima').textContent = mm(R.medida_maxima);
   document.getElementById('passo').textContent = fmt(D.passo,1) + ' mm';
   const tb = document.querySelector('#t-corpos tbody');
   R.corpos.forEach(c => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td class="mono">${fmt(c.altura)} mm</td><td class="mono">${fmt(c.capacidade_borda_ml)} ml</td><td class="mono">${fmt(c.capacidade_util_ml)} ml</td><td class="mono">${fmt(c.fundo_externo,1)} mm</td><td class="mono">${fmt(c.massa_g,1)} g</td><td class="mono">R$ ${fmt(c.massa_g*14/1000,2)}</td>`;
+    tr.innerHTML = `<td class="mono">${fmt(c.altura)} mm</td><td class="mono">${fmt(c.capacidade_borda_ml)} ml</td><td class="mono">${fmt(c.capacidade_util_ml)} ml</td><td class="mono">${mm(c.fundo_externo)}</td><td class="mono">${fmt(c.massa_g,1)} g</td><td class="mono">R$ ${fmt(c.massa_g*14/1000,2)}</td>`;
     tb.appendChild(tr);
   });
   const tn = document.querySelector('#t-ninho tbody');
@@ -261,13 +262,13 @@ const D = __DADOS__;
   }
 
   const MODOS = {
-    linha:{t:'A linha: quatro alturas, uma tampa', d:'57 · 114 · 171 · 228 mm de corpo, boca 124 × 124 mm em todos. Tampa fechada de PP.', fazer(){
+    linha:{t:'A linha: quatro alturas, uma tampa', d:'57 · 114 · 171 · 228 mm de corpo, boca 120 × 90 mm em todos. Tampa fechada de PP.', fazer(){
       H.forEach((h,i)=>{ const x=-225+150*i; poe('corpo-'+(i+1),x,0); tampa('fechada',x,h); });
     }, alvo:[0,120,0], dist:1150, az:.5, el:.32},
     tampas:{t:'Três tampas na mesma boca', d:'Fechada (PP) · teca maciça (CNC) · bico com copo dosador (PP). A fita de TPE é a mesma nas três.', fazer(){
       ['fechada','teca','bico'].forEach((t,i)=>{ const x=-160+160*i; poe('corpo-1',x,0); tampa(t,x,H[0]); });
     }, alvo:[0,50,0], dist:720, az:.35, el:.55},
-    bico:{t:'Bico e copo', d:'Gargalo de 74 mm com beiço de verter no lado direito, bandeja rebaixada e anel externo. À direita, o copo encaixado no canal.', fazer(){
+    bico:{t:'Bico e copo', d:'Gargalo de 70 × 40 mm com beiço de verter no lado direito, bandeja rebaixada e anel externo. À direita, o copo encaixado no canal.', fazer(){
       poe('corpo-1',-85,0); tampa('bico',-85,H[0],false);
       poe('corpo-1',85,0); tampa('bico',85,H[0]);
     }, alvo:[0,60,0], dist:470, az:-.12, el:.22},

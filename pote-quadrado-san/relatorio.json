@@ -1,102 +1,102 @@
 {
  "saida_graus": 2.0,
  "modulo": 57.0,
- "boca_interna": 124.0,
- "medida_maxima": 133.8,
+ "boca_interna": "120.2 x 90.2",
+ "medida_maxima": "130.0 x 100.0",
  "pecas": {
   "corpo-1": {
    "material": "SAN",
-   "volume_cm3": 93.12,
-   "massa_g": 100.6,
+   "volume_cm3": 73.94,
+   "massa_g": 79.9,
    "triangulos": 13552
   },
   "corpo-2": {
    "material": "SAN",
-   "volume_cm3": 144.73,
-   "massa_g": 156.3,
+   "volume_cm3": 117.36,
+   "massa_g": 126.7,
    "triangulos": 13552
   },
   "corpo-3": {
    "material": "SAN",
-   "volume_cm3": 194.6,
-   "massa_g": 210.2,
+   "volume_cm3": 159.03,
+   "massa_g": 171.8,
    "triangulos": 13552
   },
   "corpo-4": {
    "material": "SAN",
-   "volume_cm3": 242.73,
-   "massa_g": 262.1,
+   "volume_cm3": 198.99,
+   "massa_g": 214.9,
    "triangulos": 13552
   },
   "tampa-fechada": {
    "material": "PP",
-   "volume_cm3": 55.43,
-   "massa_g": 49.9,
+   "volume_cm3": 42.36,
+   "massa_g": 38.1,
    "triangulos": 9600
   },
   "tampa-teca": {
    "material": "teca",
-   "volume_cm3": 118.07,
-   "massa_g": 76.7,
+   "volume_cm3": 86.73,
+   "massa_g": 56.4,
    "triangulos": 7200
   },
   "tampa-bico": {
    "material": "PP",
-   "volume_cm3": 51.16,
-   "massa_g": 46.0,
+   "volume_cm3": 40.97,
+   "massa_g": 36.9,
    "triangulos": 19680
   },
   "copo": {
    "material": "PP",
-   "volume_cm3": 34.94,
-   "massa_g": 31.4,
+   "volume_cm3": 24.06,
+   "massa_g": 21.7,
    "triangulos": 4800
   },
   "fita-tpe": {
    "material": "TPE",
-   "volume_cm3": 9.11,
-   "massa_g": 9.1,
+   "volume_cm3": 7.64,
+   "massa_g": 7.6,
    "triangulos": 5280
   },
   "fita-teca": {
    "material": "TPE",
-   "volume_cm3": 9.46,
-   "massa_g": 9.5,
+   "volume_cm3": 7.96,
+   "massa_g": 8.0,
    "triangulos": 2880
   }
  },
  "corpos": [
   {
    "altura": 57.0,
-   "capacidade_borda_ml": 771,
-   "capacidade_util_ml": 715,
-   "fundo_externo": 124.0,
-   "conicidade_pct": 3.1,
-   "massa_g": 100.6
+   "capacidade_borda_ml": 539,
+   "capacidade_util_ml": 496,
+   "fundo_externo": "120.2 x 90.2",
+   "conicidade_pct": 3.2,
+   "massa_g": 79.9
   },
   {
    "altura": 114.0,
-   "capacidade_borda_ml": 1567,
-   "capacidade_util_ml": 1511,
-   "fundo_externo": 120.0,
-   "conicidade_pct": 6.2,
-   "massa_g": 156.3
+   "capacidade_borda_ml": 1089,
+   "capacidade_util_ml": 1046,
+   "fundo_externo": "116.2 x 86.2",
+   "conicidade_pct": 6.4,
+   "massa_g": 126.7
   },
   {
    "altura": 171.0,
-   "capacidade_borda_ml": 2310,
-   "capacidade_util_ml": 2254,
-   "fundo_externo": 116.1,
-   "conicidade_pct": 9.3,
-   "massa_g": 210.2
+   "capacidade_borda_ml": 1594,
+   "capacidade_util_ml": 1551,
+   "fundo_externo": "112.3 x 82.3",
+   "conicidade_pct": 9.6,
+   "massa_g": 171.8
   },
   {
    "altura": 228.0,
-   "capacidade_borda_ml": 3002,
-   "capacidade_util_ml": 2946,
-   "fundo_externo": 112.1,
-   "conicidade_pct": 12.4,
-   "massa_g": 262.1
+   "capacidade_borda_ml": 2057,
+   "capacidade_util_ml": 2014,
+   "fundo_externo": "108.3 x 78.3",
+   "conicidade_pct": 12.8,
+   "massa_g": 214.9
   }
  ],
  "passo_aninhado": 68.7,
