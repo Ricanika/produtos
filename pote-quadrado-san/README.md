@@ -1,4 +1,35 @@
-# Pote modular 13 × 10 cm em SAN, revisão 10
+# Pote modular 13 × 10 cm em SAN, revisão 11
+
+## Revisão 11: bico invertido, fita reta que dobra ao fechar, aleta afundada
+
+Pedido: *"inverta o lado do bico, o lado mais alto precisa ficar para fora, é por aí que vai sair o
+líquido; a fita de TPE está dobrada, preciso que ela fique reta, e ao fechar ela vai ser obrigada a
+dobrar; para ajudar a dobrar, afunde a parte de cima para a saliência descer e forçar a fita reta a
+ficar curvada."*
+
+- **Bico invertido:** a metade **alta (19 mm) fica para fora**, voltada para a borda da tampa, e
+  abre 0,8 mm para fora: é por ela que o líquido sai. A metade voltada para o centro é 6 mm mais
+  baixa.
+- **Fita reta:** com a tampa fora do pote, a fita de 2 × 10 fica reta. Uns 5 mm dela entram no vão
+  de 1,7 mm (apertada 15%) e o resto sai para fora e para baixo. Não é mais montada dobrada.
+- **Aleta de cima afundada:** a face de baixo dela é um arco de R 2,85 que desce **45°** até a
+  ponta, que fica 0,8 mm abaixo do teto do vão. É ela que dá a curva na fita: solta, a fita sai a
+  **55° para baixo**. A aleta de baixo ficou curta (2,3 mm) para não atrapalhar a dobra.
+- **Ao fechar:** a ponta da fita solta passa **1,2 mm** da parede do pote. Ela bate no **chanfro de
+  1,2 mm** que entrou na boca do pote e é obrigada a dobrar para baixo, deitando contra a parede. É
+  aí que veda. Como a aleta já deu a curva, a fita dobra sempre para baixo, nunca para cima.
+- **Por que a curva é necessária:** se a fita saísse reta na horizontal, a primeira coisa a tocar
+  seria o topo da borda do pote, que a dobraria para cima, o lado errado, e ela não vedaria.
+- O modelo tem as duas posições da fita: `fita-solta.stl` (tampa fora do pote) e `fita-tpe.stl`
+  (fechada). As duas seções conferem com a fita de 2 × 10: 20,0 e 20,2 mm².
+- Tampa fechada 36,8 g, tampa de bico 37,1 g.
+
+**A confirmar no protótipo:** se a fita volta reta depois de muitas aberturas (memória do TPE) e a
+força para fechar, que depende de quanto a fita passa da parede (1,2 mm, ajustável pelo ângulo da
+aleta).
+
+---
+
 
 ## Revisão 10: copo alto e fino, bico redondo de duas alturas, 2 dentes
 

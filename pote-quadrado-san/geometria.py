@@ -68,20 +68,23 @@ FOLGA = 0.25    # face do plug ate a parede do corpo, por lado
 # REBAIXADO da tampa ate a aba. Quem veda e a faixa da fita SOBRE A PONTA da
 # aleta de cima: uma linha estreita, nao a fita inteira. Cotas medidas a
 # partir da PAREDE do corpo (u_int), negativo = para dentro.
-# rev. 4: o VAO (fenda entre as aletas) ficou 3x mais fundo - 5,0 mm alem da
-# ponta, era 1,55 - e a fita e RETA, dobrada na montagem. Para nao virar um
-# anel macico de PP de 6 mm (chupa), as aletas viraram duas LAMINAS saindo
-# de uma saia fina; o fundo do vao e a propria face da saia.
-ALETA_PONTA = 1.85  # ponta da aleta de cima: a fita livre passaria 0,15 da parede
-VAO = 5.0           # fundo do vao alem da ponta da aleta (rev. 3: 1,55)
-VAO_REV3 = 1.55
-FENDA_FUNDO = ALETA_PONTA + VAO     # 6,85: face da saia, medida da parede
-ALETA_PONTA2 = 1.4  # ponta da aleta de baixo
-Z_ALETA_RAIZ = -3.6     # topo da aleta de cima na raiz (rampa = saida da gaveta)
-Z_ALETA_TOPO = -4.0     # topo da aleta de cima, na ponta
-Z_FENDA_TETO = -5.3     # aleta de cima com 1,3 na ponta
+# rev. 11: a fita e RETA quando a tampa esta fora do pote. Uns 5 mm dela entram
+# no VAO e o resto fica para fora. A ALETA DE CIMA e AFUNDADA: a ponta dela desce
+# abaixo do teto do vao e ja curva a fita para baixo, ~50 graus. Ao fechar, a
+# ponta da fita (que passa 0,8 da parede) bate no CHANFRO da boca do pote e e
+# obrigada a dobrar para baixo, deitando contra a parede - sempre para o lado
+# certo, porque a aleta ja deu a curva. Cotas medidas da PAREDE (u_int).
+FENDA_FUNDO = 7.0       # face da saia = fundo do vao
+Z_FENDA_TETO = -5.3     # teto do vao
 Z_FENDA_PISO = -7.0     # vao de 1,7: aperta a fita de 2,0 em 15% (segura)
-PLUG = 8.2              # pe da aleta de baixo (1,2)
+Z_ALETA_RAIZ = -3.4     # topo da aleta de cima, na raiz
+ALETA_DOBRA_U = -4.5    # onde a aleta comeca a afundar (u medido da parede)
+ALETA_RAIO = 2.85       # raio da face de baixo da aleta: e o que curva a fita
+ALETA_ANG = 45.0        # quanto a aleta afunda (graus)
+ALETA_PONTA2 = 4.7      # ponta da aleta de baixo (curta: deixa a fita dobrar)
+FITA_ANG_LIVRE = 55.0   # angulo da fita solta, abaixo da horizontal
+CHANFRO_BOCA = 1.2      # chanfro de entrada na boca do pote
+PLUG = 8.2              # pe da aleta de baixo
 # teca: aleta de 1,3 mm em madeira quebra - fica a cava no macico (rev. 1)
 CAVA_Z0, CAVA_Z1 = -3.0, -13.4
 CAVA_P = 1.62
@@ -206,7 +209,8 @@ def anel(spec, c, th):
         xy = np.array(c) + rho * d
         if len(spec) > 3 and (spec[3] or spec[4]):
             f = meia(th)
-            return np.column_stack([xy + d * (spec[3] * f)[:, None], z + spec[4] * f])
+            # A (labio para fora) na metade +X; B (desnivel) na metade -X
+            return np.column_stack([xy + d * (spec[3] * f)[:, None], z + spec[4] * meia(th + np.pi)])
     return np.column_stack([xy, np.full(len(th), z)])
 
 
@@ -304,9 +308,8 @@ def corpo(H, n=N_ANEL):
     s(U_BORDA, H - 1.0, r_par(U_BORDA, 0))
     s(U_BORDA - 0.5, H - 0.13, r_par(U_BORDA - 0.5, 0))
     s(U_BORDA - 1.0, H, r_par(U_BORDA - 1.0, 0))
-    s(U_I + 0.6, H, r_par(U_I + 0.6, 0))
-    s(U_I + 0.18, H - 0.18, r_par(U_I + 0.18, 0))
-    s(U_I, H - 0.6, R_I)
+    s(U_I + CHANFRO_BOCA, H, r_par(U_I + CHANFRO_BOCA, 0))     # chanfro: dobra a fita para baixo
+    s(U_I, H - CHANFRO_BOCA, R_I)
     # parede interna ate o fundo, R3
     pts = arco(ui(zi + 3) - 3, zi + 3, 3.0, 357, 270, 5)
     for u, z in pts:
@@ -340,12 +343,21 @@ def _aba_e_plug(P, s, aletas=True):
     s(U_BORDA, 0.0)
     if aletas:
         fs = lambda z: w(z) - FENDA_FUNDO          # face da saia = fundo do vao
+        cz = Z_FENDA_TETO - ALETA_RAIO              # centro da curva da aleta
         s(fs(0) + 0.6, 0.0)
         s(fs(-0.6), -0.6)
         s(fs(Z_ALETA_RAIZ), Z_ALETA_RAIZ)
-        s(w(Z_ALETA_TOPO) - ALETA_PONTA - 0.3, Z_ALETA_TOPO)
-        s(w(Z_ALETA_TOPO - 0.3) - ALETA_PONTA, Z_ALETA_TOPO - 0.3)
-        s(w(Z_FENDA_TETO) - ALETA_PONTA, Z_FENDA_TETO)
+        # face de cima da aleta, descendo ate a ponta afundada
+        a = math.radians(ALETA_ANG)
+        pu = ALETA_DOBRA_U + ALETA_RAIO * math.sin(a)
+        pz = cz + ALETA_RAIO * math.cos(a)
+        for du, z in ((-4.8, -3.6), (-3.2, -4.3), (pu + 0.25, pz + 0.95), (pu + 0.35, pz + 0.4)):
+            s(w(z) + du, z)
+        # face de baixo: arco que curva a fita, voltando para dentro
+        for ang in (ALETA_ANG, 30.0, 15.0, 0.0):
+            t_ = math.radians(ang)
+            du, z = ALETA_DOBRA_U + ALETA_RAIO * math.sin(t_), cz + ALETA_RAIO * math.cos(t_)
+            s(w(z) + du, z)
         s(fs(Z_FENDA_TETO), Z_FENDA_TETO)
         s(fs(Z_FENDA_PISO), Z_FENDA_PISO)
         s(w(Z_FENDA_PISO) - ALETA_PONTA2, Z_FENDA_PISO)
@@ -558,20 +570,59 @@ def marcas_copo():
     return out
 
 
-def fita(n=N_ANEL):
-    """A fita RETA de TPE 2 x 10, dobrada em gancho, com a tampa FECHADA.
-
-    Secao (u medido da parede, z da borda): ~5 mm deitados no vao ate a face
-    da saia, a dobra contorna a ponta da aleta de cima, e ~4 mm sobem em pe
-    encostados na parede. Aperta 0,15 sobre a ponta da aleta.
-    """
+def _anel_fita(sec, n):
     w = u_int
-    sec = [(-0.4, -0.45), (-0.05, -0.95), (-0.05, -5.6), (-0.5, -6.5),
-           (-1.3, Z_FENDA_PISO + 0.05), (-FENDA_FUNDO + 0.05, Z_FENDA_PISO + 0.05),
-           (-FENDA_FUNDO + 0.05, Z_FENDA_TETO - 0.05), (-ALETA_PONTA - 0.05, Z_FENDA_TETO - 0.05),
-           (-ALETA_PONTA - 0.05, Z_ALETA_TOPO + 0.05), (-2.0, -3.9), (-2.0, -0.45)]
     P = [('s', w(z) + du, z, r_par(w(z) + du, z)) for du, z in sec]
     return varre(P, n=n), P
+
+
+def sec_fita_solta():
+    """Secao da fita RETA com a tampa FORA do pote: deitada no vao, curvada
+    pela aleta afundada, e o resto reto a FITA_ANG_LIVRE para baixo. Linha de
+    centro de 10 mm, espessura 2."""
+    cz = Z_FENDA_TETO - ALETA_RAIO - 0.85 + 0.85     # centro da curva (mesmo da aleta)
+    zc = (Z_FENDA_TETO + Z_FENDA_PISO) / 2
+    R = zc - (Z_FENDA_TETO - ALETA_RAIO)             # raio da linha de centro (2,0)
+    cz = Z_FENDA_TETO - ALETA_RAIO
+    pts = []
+    L0 = ALETA_DOBRA_U - (-FENDA_FUNDO + 0.05)
+    for k in range(4):
+        pts.append((-FENDA_FUNDO + 0.05 + L0 * k / 3, zc, 0.0))
+    a = math.radians(FITA_ANG_LIVRE)
+    for k in range(1, 7):
+        t_ = a * k / 6
+        pts.append((ALETA_DOBRA_U + R * math.sin(t_), cz + R * math.cos(t_), t_))
+    resto = FITA_L - L0 - R * a
+    u1, z1 = pts[-1][0], pts[-1][1]
+    for k in range(1, 4):
+        pts.append((u1 + resto * k / 3 * math.cos(a), z1 - resto * k / 3 * math.sin(a), a))
+    cima = [(u + math.sin(t) * 1.0 * 0 - 0 + (FITA_T / 2) * math.sin(t), z + (FITA_T / 2) * math.cos(t)) for u, z, t in pts]
+    baixo = [(u - (FITA_T / 2) * math.sin(t), z - (FITA_T / 2) * math.cos(t)) for u, z, t in pts]
+    return cima + baixo[::-1]
+
+
+def sec_fita_fechada():
+    """Secao da fita com a tampa FECHADA: deitada no vao, curvada pela aleta,
+    e dobrada para baixo, deitada contra a parede (aperto de 0,15 + o da dobra)."""
+    cz = Z_FENDA_TETO - ALETA_RAIO
+    cima = [(-FENDA_FUNDO + 0.05, Z_FENDA_TETO + 0.15), (ALETA_DOBRA_U, Z_FENDA_TETO + 0.15)]
+    for ang in (15, 30, 45):
+        t_ = math.radians(ang)
+        cima.append((ALETA_DOBRA_U + (ALETA_RAIO + 0.15) * math.sin(t_), cz + (ALETA_RAIO + 0.15) * math.cos(t_)))
+    cima += [(-1.2, -6.9), (-0.4, -7.8), (-0.05, -8.7), (-0.05, -11.9), (-0.45, -12.3)]
+    baixo = [(-2.0, -12.0), (-2.0, -9.4), (-2.35, -8.6), (-3.0, -7.75), (-3.8, -7.3),
+             (ALETA_DOBRA_U, Z_FENDA_PISO - 0.15), (-FENDA_FUNDO + 0.05, Z_FENDA_PISO - 0.15)]
+    return cima + baixo
+
+
+def fita(n=N_ANEL):
+    """A fita de TPE 2 x 10 com a tampa FECHADA (dobrada contra a parede)."""
+    return _anel_fita(sec_fita_fechada(), n)
+
+
+def fita_solta(n=N_ANEL):
+    """A mesma fita com a tampa FORA do pote: reta, so curvada pela aleta."""
+    return _anel_fita(sec_fita_solta(), n)
 
 
 def fita_teca(n=N_ANEL):
@@ -590,12 +641,13 @@ def fita_teca(n=N_ANEL):
     return varre(P, n=n), P
 
 
-def fita_area():
-    """Area da secao em gancho: tem de bater com os 20 mm2 da fita reta."""
-    w0 = 0.0
-    sec = fita(8)[1]
-    pts = [(p[1] - u_int(p[2]), p[2]) for p in sec]
+def area_sec(pts):
     return abs(sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(pts, pts[1:] + pts[:1]))) / 2
+
+
+def fita_area():
+    """Area da secao fechada: tem de bater com os 20 mm2 da fita reta."""
+    return area_sec(sec_fita_fechada())
 
 
 # ---------------------------------------------------------------- contas
@@ -652,14 +704,15 @@ def pecas(n):
     out['tampa-bico'] = tampa_bico(n)[0]
     out['copo'] = copo(n)[0]
     out['fita-tpe'] = fita(n)[0]
+    out['fita-solta'] = fita_solta(n)[0]
     out['fita-teca'] = fita_teca(n)[0]
     return out
 
 
 DENS = {'corpo': 1.08, 'tampa-fechada': 0.90, 'tampa-bico': 0.90, 'copo': 1.08,
-        'tampa-teca': 0.65, 'fita-tpe': 1.00, 'fita-teca': 1.00}
+        'tampa-teca': 0.65, 'fita-tpe': 1.00, 'fita-teca': 1.00, 'fita-solta': 1.00}
 MAT = {'corpo': 'SAN', 'tampa-fechada': 'PP', 'tampa-bico': 'PP', 'copo': 'SAN',
-       'tampa-teca': 'teca', 'fita-tpe': 'TPE', 'fita-teca': 'TPE'}
+       'tampa-teca': 'teca', 'fita-tpe': 'TPE', 'fita-teca': 'TPE', 'fita-solta': 'TPE'}
 
 
 def relatorio(P_):
@@ -694,15 +747,15 @@ def relatorio(P_):
             R['aninhamento'].append(dict(altura=H, n=nn, solto=round(solto), aninhado=round(ninho),
                                          ganho_pct=round(100 * (1 - ninho / solto))))
     # vedacao: a fita sobressai da face do plug e encontra a parede
-    aperto = FITA_T - ALETA_PONTA
-    R['vedacao'] = dict(fita=f'{FITA_T} x {FITA_L} mm', montagem='gancho: borda de baixo na fenda',
-                        fenda=f'{Z_FENDA_TETO - Z_FENDA_PISO:.2f} mm de altura x {FENDA_FUNDO - ALETA_PONTA:.2f} de fundo',
-                        aperto_na_ponta=round(aperto, 2), aperto_pct=round(100 * aperto / FITA_T, 1),
-                        vao=round(VAO, 2), vao_x_rev3=round(VAO / VAO_REV3, 1),
-                        sobra_no_canto_mm=round(math.pi / 2 * VAO, 1),
-                        aperto_na_fenda_pct=round(100 * (1 - (Z_FENDA_TETO - Z_FENDA_PISO) / FITA_T)),
-                        area_secao_mm2=round(fita_area(), 1),
-                        curso_vedando=round(aperto / K, 1))
+    sol = sec_fita_solta()
+    ponta = max(u for u, z in sol)
+    R['vedacao'] = dict(fita=f'{FITA_T} x {FITA_L} mm, reta', montagem='5 mm no vao, o resto para fora; dobra ao fechar',
+                        vao=f'{Z_FENDA_TETO - Z_FENDA_PISO:.2f} mm de altura x {FENDA_FUNDO + ALETA_DOBRA_U + ALETA_RAIO * math.sin(math.radians(ALETA_ANG)):.2f} de fundo (ate a ponta da aleta de cima)',
+                        aperto_no_vao_pct=round(100 * (1 - (Z_FENDA_TETO - Z_FENDA_PISO) / FITA_T)),
+                        aleta_afunda_graus=ALETA_ANG, fita_solta_graus=FITA_ANG_LIVRE,
+                        fita_solta_passa_da_parede=round(ponta, 2),
+                        area_fechada_mm2=round(fita_area(), 1), area_solta_mm2=round(area_sec(sol), 1),
+                        chanfro_boca=CHANFRO_BOCA)
     return R
 
 
@@ -725,13 +778,19 @@ def verifica():
     dp = math.sqrt(2) * (u_p - R_I) + R_I
     ok(abs((dc - dp) - FOLGA) > 0.05, 'autoteste: a checagem do canto nao reprova raio fixo')
     # 2. a fita encosta, e so nos ultimos mm do curso (o ar sai antes)
-    aperto = FITA_T - ALETA_PONTA
-    ok(0.05 <= aperto <= 0.30, f'aperto da fita fora da faixa: {aperto:.2f}')
-    ok(VAO >= 3 * VAO_REV3, 'vao menos que o triplo da rev. 3')
-    ok(Z_FENDA_TETO - Z_FENDA_PISO < FITA_T, 'fenda nao aperta a fita')
-    ok(ALETA_PONTA2 > ALETA_PONTA - FITA_T + 0.3, 'aleta de baixo encosta na parede')
-    ok(abs(fita_area() - FITA_T * FITA_L) / (FITA_T * FITA_L) < 0.15,
-       f'secao em gancho nao bate com a fita 2 x 10: {fita_area():.1f} mm2')
+    sol = sec_fita_solta()
+    ponta = max(u for u, z in sol)
+    ok(0.3 <= ponta <= 1.5, f'fita solta tem de passar a parede (dobrar ao fechar): {ponta:.2f}')
+    ok(Z_FENDA_TETO - Z_FENDA_PISO < FITA_T, 'vao nao aperta a fita')
+    a_ = math.radians(ALETA_ANG)
+    pz = Z_FENDA_TETO - ALETA_RAIO + ALETA_RAIO * math.cos(a_)
+    ok(pz < Z_FENDA_TETO - 0.5, 'aleta de cima nao afunda')
+    pu = ALETA_DOBRA_U + ALETA_RAIO * math.sin(a_)
+    ok(pu <= -FITA_T - 0.3, 'ponta da aleta encosta na fita dobrada')
+    ok(ALETA_PONTA2 > -ALETA_DOBRA_U - 0.5 and ALETA_PONTA2 < FENDA_FUNDO - 1.5, 'aleta de baixo atrapalha a dobra')
+    for nome, sec in (('fechada', sec_fita_fechada()), ('solta', sol)):
+        ok(abs(area_sec(sec) - FITA_T * FITA_L) / (FITA_T * FITA_L) < 0.12,
+           f'secao {nome} nao bate com a fita 2 x 10: {area_sec(sec):.1f} mm2')
     # 3. modular: n potes empilhados com tampa = o maior com tampa
     for a in range(1, 4):
         ok(abs(ALTURAS[a - 1] + ALTURAS[3 - a] - ALTURAS[3]) < 1e-9, 'alturas nao somam')
@@ -767,7 +826,7 @@ def verifica():
         ok(d <= COPO_RO - COPO_T - 0.3, 'dreno fora do copo')
         ok(abs(cx) + lx / 2 + 1 <= lim and abs(cy) + ly / 2 + 1 <= lim - DIF, 'dreno cai na saia')
     # 9. a fita cabe entre a aba e a aleta: 10 mm desenvolvidos
-    ok(Z_FENDA_TETO - Z_FENDA_PISO >= 1.5 and Z_ALETA_TOPO - Z_FENDA_TETO >= 1.2, 'aleta ou vao fino demais')
+    ok(Z_FENDA_TETO - Z_FENDA_PISO >= 1.5 and Z_ALETA_RAIZ - Z_FENDA_TETO >= 1.2, 'aleta ou vao fino demais')
     return erros, p
 
 
@@ -787,6 +846,7 @@ def main():
                   'tampa-bico': tampa_bico(96)[0],
                   'copo': varre(copo()[1], c=(BICO_X, BICO_Y), n=96),
                   'fita-tpe': varre(fita()[1], n=96),
+                  'fita-solta': varre(fita_solta()[1], n=96),
                   'fita-teca': varre(fita_teca()[1], n=96)}
     for nome, T_ in principais.items():
         r = checa_malha(T_)

@@ -6,33 +6,33 @@
  "pecas": {
   "corpo-1": {
    "material": "SAN",
-   "volume_cm3": 73.94,
-   "massa_g": 79.9,
-   "triangulos": 13552
+   "volume_cm3": 73.47,
+   "massa_g": 79.4,
+   "triangulos": 13072
   },
   "corpo-2": {
    "material": "SAN",
-   "volume_cm3": 117.36,
-   "massa_g": 126.7,
-   "triangulos": 13552
+   "volume_cm3": 116.65,
+   "massa_g": 126.0,
+   "triangulos": 13072
   },
   "corpo-3": {
    "material": "SAN",
-   "volume_cm3": 159.03,
-   "massa_g": 171.8,
-   "triangulos": 13552
+   "volume_cm3": 158.09,
+   "massa_g": 170.7,
+   "triangulos": 13072
   },
   "corpo-4": {
    "material": "SAN",
-   "volume_cm3": 198.99,
-   "massa_g": 214.9,
-   "triangulos": 13552
+   "volume_cm3": 197.82,
+   "massa_g": 213.6,
+   "triangulos": 13072
   },
   "tampa-fechada": {
    "material": "PP",
-   "volume_cm3": 42.36,
-   "massa_g": 38.1,
-   "triangulos": 9600
+   "volume_cm3": 40.93,
+   "massa_g": 36.8,
+   "triangulos": 12000
   },
   "tampa-teca": {
    "material": "teca",
@@ -42,9 +42,9 @@
   },
   "tampa-bico": {
    "material": "PP",
-   "volume_cm3": 42.7,
-   "massa_g": 38.4,
-   "triangulos": 18760
+   "volume_cm3": 41.28,
+   "massa_g": 37.1,
+   "triangulos": 21160
   },
   "copo": {
    "material": "SAN",
@@ -54,9 +54,15 @@
   },
   "fita-tpe": {
    "material": "TPE",
-   "volume_cm3": 7.64,
-   "massa_g": 7.6,
-   "triangulos": 5280
+   "volume_cm3": 7.82,
+   "massa_g": 7.8,
+   "triangulos": 8160
+  },
+  "fita-solta": {
+   "material": "TPE",
+   "volume_cm3": 7.74,
+   "massa_g": 7.7,
+   "triangulos": 12480
   },
   "fita-teca": {
    "material": "TPE",
@@ -72,15 +78,15 @@
    "capacidade_util_ml": 496,
    "fundo_externo": "120.2 x 90.2",
    "conicidade_pct": 3.2,
-   "massa_g": 79.9
+   "massa_g": 79.4
   },
   {
    "altura": 114.0,
    "capacidade_borda_ml": 1089,
-   "capacidade_util_ml": 1046,
+   "capacidade_util_ml": 1045,
    "fundo_externo": "116.2 x 86.2",
    "conicidade_pct": 6.4,
-   "massa_g": 126.7
+   "massa_g": 126.0
   },
   {
    "altura": 171.0,
@@ -88,15 +94,15 @@
    "capacidade_util_ml": 1551,
    "fundo_externo": "112.3 x 82.3",
    "conicidade_pct": 9.6,
-   "massa_g": 171.8
+   "massa_g": 170.7
   },
   {
    "altura": 228.0,
    "capacidade_borda_ml": 2057,
-   "capacidade_util_ml": 2014,
+   "capacidade_util_ml": 2013,
    "fundo_externo": "108.3 x 78.3",
    "conicidade_pct": 12.8,
-   "massa_g": 214.9
+   "massa_g": 213.6
   }
  ],
  "passo_aninhado": 68.7,
@@ -159,17 +165,16 @@
   }
  ],
  "vedacao": {
-  "fita": "2.0 x 10.0 mm",
-  "montagem": "gancho: borda de baixo na fenda",
-  "fenda": "1.70 mm de altura x 5.00 de fundo",
-  "aperto_na_ponta": 0.15,
-  "aperto_pct": 7.5,
-  "vao": 5.0,
-  "vao_x_rev3": 3.2,
-  "sobra_no_canto_mm": 7.9,
-  "aperto_na_fenda_pct": 15,
-  "area_secao_mm2": 19.5,
-  "curso_vedando": 4.3
+  "fita": "2.0 x 10.0 mm, reta",
+  "montagem": "5 mm no vao, o resto para fora; dobra ao fechar",
+  "vao": "1.70 mm de altura x 4.52 de fundo (ate a ponta da aleta de cima)",
+  "aperto_no_vao_pct": 15,
+  "aleta_afunda_graus": 45.0,
+  "fita_solta_graus": 55.0,
+  "fita_solta_passa_da_parede": 1.19,
+  "area_fechada_mm2": 20.2,
+  "area_solta_mm2": 20.0,
+  "chanfro_boca": 1.2
  },
  "copo": {
   "material": "SAN",

@@ -40,15 +40,18 @@ def corte_svg():
         return f'<polygon class="{cls}" points="{pts}"/>'
     corpo = G.corpo(H, 8)[1]
     partes = [poli(corpo, -H, 's-san'), poli(G.tampa_pp(8)[1], 0, 's-pp'), poli(G.fita(8)[1], 0, 's-tpe')]
+    sol = [('s', G.u_int(z) + du, z, 0) for du, z in G.sec_fita_solta()]
+    partes.append(poli(sol, 0, 's-livre'))
     zf = -4.0
     uf = G.u_int(zf) - 0.9
     rot = [
         (G.U_I + G.T + 0.8, -12.0, 'SAN 2,0 · saída 2°', 'start'),
         (45.4, 1.0, 'PP', 'start'),
-        (45.4, zf + 0.3, 'fita reta TPE 2 × 10', 'start'),
-        (45.4, G.Z_FENDA_PISO + 0.6, 'vão 5,0 mm', 'start'),
+        (45.4, zf + 0.3, 'fita TPE 2 × 10', 'start'),
+        (45.4, G.Z_FENDA_PISO + 0.6, 'vão', 'start'),
+        (G.U_I + G.T + 0.8, -9.5, 'tracejado: fita solta', 'start'),
         (G.U_BORDA - 2.6, 4.0, 'aba 3,0 sobre a borda', 'middle'),
-        (G.U_I + G.T + 0.8, -13.5, 'veda na aleta · 0,15', 'start'),
+        (G.U_I + G.T + 0.8, -13.5, 'fechada: deitada na parede', 'start'),
     ]
     txt = ''.join(f'<text x="{X(u):.1f}" y="{Y(z):.1f}" text-anchor="{a}">{t}</text>' for u, z, t, a in rot)
     return (f'<svg viewBox="0 0 {W:.0f} {Hh:.0f}" role="img" aria-label="Corte da borda, da tampa e da fita, escala 5:1">'
