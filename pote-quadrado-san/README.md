@@ -1,4 +1,38 @@
-# Pote modular 13 × 10 cm em SAN, revisão 8
+# Pote modular 13 × 10 cm em SAN, revisão 9
+
+## Revisão 9: um vão só, copo redondo com trava, bico no canto
+
+Pedido: *"o copinho fica no vão de dentro; o vão de fora não existe, é só o de dentro; o copinho
+circular, e na boca do copo uma trava que irá travar na tampa; o bico em uma das pontas."*
+
+- **Um vão só.** O rebaixo de fora saiu. O copo senta direto no vão entre o gargalo e a parede, e o
+  piso do vão é o próprio tampo.
+- **Bico num canto** (+X +Y): centro a 27 mm no comprimento e 12 mm na largura. A parede redonda
+  fica a ~2,6 mm da borda da tampa nos dois lados, e a abertura fica dentro da saia do plug.
+- **Abertura quadrada de 40,8 × 40,8 mm** (gargalo de 44 × 44 por fora, 19 mm de altura acima do
+  tampo), com o beiço de verter no lado curto. O gargalo encolheu para os cantos dele caberem
+  dentro do copo redondo.
+- **Copo redondo de SAN, 154 ml:** Ø 66 mm na parede, Ø 66,8 no rebordo, 53,8 mm de altura, parede
+  de 1,8, saída de 1°, fundo arredondado. 27,1 g. Marcas a **17,2 / 34,0 / 50,5 mm** do fundo para
+  **50 / 100 / 150 ml**.
+- **A trava (clique):** na boca do copo há um **rebordo de 0,4 × 1,0 mm**, rente à borda. Rente à
+  boca, ele sai do molde sem gaveta, o que importa porque SAN não flexiona. Ao empurrar o copo, o
+  rebordo passa por um **lábio** da parede de PP, que abre, e fica preso embaixo dele. Para tirar,
+  puxa: a parede de PP abre de novo.
+- **A vedação é o mesmo lábio:** ele aperta a parede do copo em **0,15 mm** em toda a volta, acima
+  do rebordo.
+- **Drenos: 2 rasgos de 3 × 12 mm** no piso do vão, nos lados −X e −Y do gargalo (voltados para o
+  centro do pote), **dentro do copo** e por dentro da vedação. Os lados +X e +Y cairiam sobre a saia
+  do plug, fora do pote, e por isso não têm dreno.
+- **Molde da tampa:** o lábio é contra-saída interna de 0,95 mm num anel de Ø 68. Sai por arraste,
+  com 2,8% de deformação, dentro do que o PP aceita.
+- Tampa de bico 38,9 g.
+
+**A confirmar no protótipo:** a força do clique, que se ajusta pela altura do rebordo (0,3 a 0,5 mm),
+e se o copo de SAN aguenta o clique repetido sem trincar no rebordo.
+
+---
+
 
 ## Revisão 8: bico na borda, rebaixo do copo e drenos
 

@@ -92,32 +92,33 @@ TAMPA_T = 2.0   # espessura de casca da tampa
 ABA_H = 3.0     # aba da tampa acima da borda = profundidade do bolsao
 
 # tampa de bico + copo
-# rev. 8: o bico inteiro vai para PERTO DA BORDA (lado curto +X, onde fica o
-# beico). O copo encaixa num REBAIXO da tampa. E o que escorre do copo cai no
-# VAO entre o gargalo e a parede e volta para o pote por 4 DRENOS no piso do
-# vao - por DENTRO da linha em que o copo veda, entao com o copo no lugar a
-# tampa continua hermetica. Os aneis 'q' sao quadrados centrados no bico.
-BICO_X = 16.5                                 # centro do bico: o mais perto da borda que a saia deixa
-GARG_O, GARG_R, GARG_T = 25.5, 8.0, 1.6      # gargalo: abertura 47,8 x 47,8 por dentro
-GARG_H = 19.0                                 # topo do gargalo (z acima da borda)
-BEICO_A, BEICO_B, BEICO_P = 2.5, 4.0, 4.0     # beico: abre 2,5, sobe 4 (cabe no copo)
-VAO_COPO = 3.5                                # gargalo -> parede: mola da parede e calha do dreno
-ANEL_T, ANEL_H = 1.6, 7.0                     # parede que segura o copo (topo em z=7)
-ANEL_I = GARG_O + VAO_COPO                    # 29,0
-ANEL_O = ANEL_I + ANEL_T                      # 30,6
-REBAIXO_Z = -3.0                              # piso do vao e do rebaixo (6 mm abaixo do tampo)
-CANAL_Z = REBAIXO_Z
-PISO_T = 2.0
-DRENO_L, DRENO_W = 12.0, 2.6                  # 4 drenos, um por lado, no piso do vao
+# rev. 9: UM VAO SO. O copo REDONDO senta no vao entre o gargalo e a parede.
+# O bico vai para um CANTO da tampa. Na boca do copo ha um REBORDO de 0,4 que
+# passa por um LABIO da parede de PP e TRAVA embaixo dele (clique); o mesmo
+# labio aperta 0,15 a parede do copo em volta e e a VEDACAO. Os drenos ficam
+# no piso do vao, DENTRO do copo - por dentro da vedacao.
+BICO_X, BICO_Y = 27.0, 12.0                   # centro do bico: canto +X +Y da tampa
+GARG_O, GARG_R, GARG_T = 22.0, 8.0, 1.6      # gargalo quadrado: abertura 40,8 x 40,8
+PISO_Z = ABA_H                                # o vao e o proprio tampo (sem rebaixo)
+GARG_H = PISO_Z + 19.0                        # topo do gargalo (z acima da borda)
+BEICO_A, BEICO_B, BEICO_P = 2.5, 4.0, 4.0     # beico em +X: abre 2,5, sobe 4
+COPO_RO = 33.0                                # raio externo do copo acima do rebordo
 COPO_T = 1.8                                  # parede de SAN
-COPO_APERTO = 0.2                             # copo na parede de PP, por lado
 COPO_SAIDA = math.tan(math.radians(1.0))      # 1 grau por face
-COPO_FUNDO = 45.0                             # profundidade interna (vira copo medidor)
-COPO_CI = ANEL_O - COPO_APERTO                # face interna do copo na borda: 30,4
-COPO_ZB = REBAIXO_Z + 0.3                     # borda do copo, 0,3 acima do piso do rebaixo
+COPO_FUNDO = 52.0                             # profundidade interna (vira copo medidor)
+COPO_ZB = PISO_Z + 0.3                        # boca do copo, 0,3 acima do piso
 COPO_TETO = COPO_ZB + COPO_FUNDO
-REBAIXO_I = COPO_CI + COPO_T + 0.5            # parede do rebaixo: 0,5 de folga em volta do copo
-REBAIXO_T = 1.6
+REBORDO = 0.4                                 # trava na boca do copo
+REBORDO_H = 1.0
+LABIO_APERTO = 0.15                           # labio da parede sobre o copo = vedacao
+PAREDE_FOLGA = 0.4                            # do rebordo ate a parede, embaixo do labio
+PAREDE_T = 1.6
+PAREDE_H = 5.5                                # altura da parede sobre o tampo
+R_PAREDE_I = COPO_RO + REBORDO + PAREDE_FOLGA # 33,8: face interna embaixo do labio
+R_LABIO = COPO_RO - LABIO_APERTO              # 32,85
+R_PAREDE_O = R_PAREDE_I + PAREDE_T            # 35,4
+Z_LABIO0, Z_LABIO1 = 1.9, 2.9                 # faixa do labio, acima do piso
+DRENO_L, DRENO_W = 12.0, 3.0
 
 N_ANEL = 240    # pontos por anel no STL
 N_VIEW = 144    # pontos por anel no visualizador
@@ -178,7 +179,7 @@ def anel(spec, c, th):
         u, z, r = spec[1:4]
         A, B = (spec[4], spec[5]) if len(spec) > 4 else (0.0, 0.0)
         q = spec[0] == 'q'
-        xy = anel_quadrado(u, r, c, th, 0.0 if q else None, (BICO_X, 0.0) if q else (0.0, 0.0))
+        xy = anel_quadrado(u, r, c, th, 0.0 if q else None, (BICO_X, BICO_Y) if q else (0.0, 0.0))
         if A or B:
             f = beico(th)
             d = np.stack([np.cos(th), np.sin(th)], 1)
@@ -378,76 +379,75 @@ def tampa_teca(n=N_ANEL):
 
 
 def tampa_bico(n=N_ANEL):
-    """Tampa de BICO (rev. 8). PP. Bico deslocado BICO_X para a borda.
+    """Tampa de BICO (rev. 9). PP. Bico num canto, um vao so.
 
-    Por cima, de fora para dentro: aba -> tampo plano -> REBAIXO quadrado
-    (6 mm, onde o copo senta) -> PAREDE que segura o copo -> VAO de 3,5 com
-    os DRENOS -> GARGALO de abertura quadrada com o beico em +X.
-    O laco e varrido com raios saindo do centro do bico; os drenos saem por
-    subtracao booleana (manifold3d).
+    Por cima, de fora para dentro: aba -> tampo -> PAREDE redonda (com o
+    LABIO que trava e veda o copo) -> VAO (o proprio tampo, com os drenos)
+    -> GARGALO de abertura quadrada com beico em +X. Laco varrido com raios
+    saindo do centro do bico; os drenos saem por subtracao booleana.
     """
     P = []
     def q(u, z, r, A=0.0, B=0.0):
         P.append(('q', u, z, r, A, B))
+    def c(rho, z):
+        P.append(('c', rho, z))
     def s(u, z, r=None):
         P.append(('s', u, z, r_par(u, z) if r is None else r, 0.0, 0.0))
     t = TAMPA_T
     ri = GARG_R - GARG_T
     gi = GARG_O - GARG_T
-    zf = REBAIXO_Z - PISO_T
-    rv = GARG_R + VAO_COPO                     # raio da face interna da parede
-    rw = rv + ANEL_T                           # raio da face externa da parede
-    rr = rw + (REBAIXO_I - ANEL_O)             # raio do rebaixo
+    z0 = PISO_Z
     # gargalo por fora, subindo e abrindo no beico
-    q(GARG_O + 0.5, REBAIXO_Z, GARG_R + 0.5)
-    q(GARG_O, REBAIXO_Z + 0.5, GARG_R)
+    q(GARG_O + 0.5, z0, GARG_R + 0.5)
+    q(GARG_O, z0 + 0.5, GARG_R)
     q(GARG_O - 0.15, GARG_H - 7.0, GARG_R)
     q(GARG_O - 0.2, GARG_H - 4.0, GARG_R, 0.6 * BEICO_A, 0.35 * BEICO_B)
     q(GARG_O - 0.25, GARG_H - 1.5, GARG_R, 0.9 * BEICO_A, 0.8 * BEICO_B)
     q(GARG_O - 0.25, GARG_H - 0.4, GARG_R, BEICO_A, BEICO_B)
-    q(GARG_O - 0.65, GARG_H, GARG_R - 0.4, BEICO_A, BEICO_B)       # labio
+    q(GARG_O - 0.65, GARG_H, GARG_R - 0.4, BEICO_A, BEICO_B)       # labio do bico
     q(gi + 0.3, GARG_H, ri + 0.3, BEICO_A, BEICO_B)
     q(gi - 0.05, GARG_H - 0.4, ri, BEICO_A, BEICO_B)                # aresta viva: corta a gota
     q(gi, GARG_H - 1.8, ri, 0.9 * BEICO_A, 0.8 * BEICO_B)
     q(gi + 0.05, GARG_H - 4.3, ri, 0.6 * BEICO_A, 0.35 * BEICO_B)
     q(gi + 0.15, GARG_H - 7.3, ri)
-    q(gi + 0.3, zf, ri)                                             # abertura com saida
-    # por baixo: piso do vao e do rebaixo, parede do rebaixo, laje ate a saia
-    q(REBAIXO_I + REBAIXO_T, zf, rr + REBAIXO_T)
-    q(REBAIXO_I + REBAIXO_T, ABA_H - t, rr + REBAIXO_T)
-    s(saia_int(ABA_H - t), ABA_H - t)
+    q(gi + 0.3, z0 - t, ri)                                         # abertura com saida
+    # por baixo: laje do tampo ate a saia
+    s(saia_int(z0 - t), z0 - t)
     s(saia_int(-PLUG), -PLUG)
     tmp = []
     _aba_e_plug(tmp, lambda u, z, r=None: tmp.append(('s', u, z, r_par(u, z) if r is None else r, 0.0, 0.0)))
     P += tmp[::-1]
-    # por cima, voltando: tampo, rebaixo, parede do copo, vao
-    q(REBAIXO_I + 0.5, ABA_H, rr + 0.5)
-    q(REBAIXO_I, ABA_H - 0.5, rr)
-    q(REBAIXO_I, REBAIXO_Z + 0.4, rr)
-    q(REBAIXO_I - 0.4, REBAIXO_Z, rr - 0.4)
-    q(ANEL_O + 0.4, REBAIXO_Z, rw + 0.4)
-    q(ANEL_O, REBAIXO_Z + 0.4, rw)
-    q(ANEL_O, ANEL_H - 1.2, rw)
-    q(ANEL_O - 0.6, ANEL_H, rw - 0.6)                 # chanfro: o copo entra sozinho
-    q(ANEL_I + 0.3, ANEL_H - 0.4, rv + 0.3)           # topo cai para DENTRO: a gota vai ao vao
-    q(ANEL_I, ANEL_H - 0.8, rv)
-    q(ANEL_I, REBAIXO_Z + 0.4, rv)
-    q(ANEL_I - 0.4, REBAIXO_Z, rv - 0.4)
-    casca = varre(P, c=(BICO_X, 0.0), n=n)
+    # por cima, voltando: tampo, parede redonda, labio, vao
+    c(R_PAREDE_O + 0.5, z0)
+    c(R_PAREDE_O, z0 + 0.5)
+    c(R_PAREDE_O - 0.1, z0 + PAREDE_H - 0.5)
+    c(R_PAREDE_O - 0.6, z0 + PAREDE_H)
+    c(R_PAREDE_I + 0.4, z0 + PAREDE_H)                # chanfro de entrada
+    c(R_PAREDE_I - 0.2, z0 + PAREDE_H - 0.6)
+    c(R_PAREDE_I - 0.2, z0 + Z_LABIO1 + 1.1)
+    c(R_LABIO, z0 + Z_LABIO1)                         # rampa: o rebordo desce abrindo a parede
+    c(R_LABIO, z0 + Z_LABIO0)                         # faixa que veda
+    c(R_PAREDE_I, z0 + Z_LABIO0 - 0.3)                # face de trava, quase reta
+    c(R_PAREDE_I, z0 + 0.4)
+    c(R_PAREDE_I - 0.4, z0)
+    casca = varre(P, c=(BICO_X, BICO_Y), n=n)
     return com_drenos(casca), P
 
 
+def drenos():
+    """Centro e tamanho dos drenos: lados -X e -Y do gargalo, os que caem
+    sobre o interior do pote (os de +X e +Y cairiam na saia)."""
+    meio = (GARG_O + COPO_RO - COPO_T) / 2
+    return [((BICO_X - meio, BICO_Y), (DRENO_W, DRENO_L)),
+            ((BICO_X, BICO_Y - meio), (DRENO_L, DRENO_W))]
+
+
 def com_drenos(T_):
-    """Fura os 4 drenos no piso do vao: um no meio de cada lado do bico."""
     import manifold3d as mf
     m = para_manifold(T_)
-    meio = (GARG_O + ANEL_I) / 2
-    zc = REBAIXO_Z - PISO_T / 2
-    for ang in range(4):
-        cx, cy = BICO_X + meio * math.cos(ang * math.pi / 2), meio * math.sin(ang * math.pi / 2)
-        lx, ly = (DRENO_W, DRENO_L) if ang % 2 == 0 else (DRENO_L, DRENO_W)
-        furo = mf.Manifold.cube([lx, ly, PISO_T + 2.0], True).translate([cx, cy, zc])
-        m = m - furo
+    zc = PISO_Z - TAMPA_T / 2
+    for (cx, cy), (lx, ly) in drenos():
+        m = m - mf.Manifold.cube([lx, ly, TAMPA_T + 2.0], True).translate([cx, cy, zc])
     return de_manifold(m)
 
 
@@ -469,39 +469,38 @@ def de_manifold(m):
 
 
 def copo(n=N_ANEL):
-    """Copo medidor de SAN, quadrado, vestido de boca para baixo (montado).
+    """Copo medidor de SAN, REDONDO, de boca para baixo (montado).
 
-    Liso, sem cordao: SAN nao aceita encaixe. Veste a parede de PP POR FORA
-    com 0,2 de aperto por lado; a parede flexiona para dentro no vao de 2 mm.
-    Saida de 1 grau por face. Virado, e copo medidor de 150 ml.
+    Na boca, um REBORDO de 0,4 rente a borda: passa pelo labio da parede de
+    PP (que abre) e fica preso embaixo dele - a trava. Rente a boca, sai do
+    molde sem gaveta. Saida de 1 grau. Virado, copo medidor de 150 ml.
     """
     P = []
-    ci = lambda z: COPO_CI - (z - COPO_ZB) * COPO_SAIDA
-    rci = GARG_R + VAO_COPO + ANEL_T - COPO_APERTO        # 11,4
-    co = lambda z: ci(z) + COPO_T
-    rco = rci + COPO_T
+    ro = lambda z: COPO_RO - (z - COPO_ZB) * COPO_SAIDA
+    ri = lambda z: ro(z) - COPO_T
     zt = COPO_TETO + COPO_T
-    def q(u, z, r):
-        P.append(('q', u, z, r))
-    q(0, zt, 0)
-    q(co(zt) - 2.0, zt, rco - 2.0)
-    q(co(zt - 0.6) - 0.6, zt - 0.6, rco - 0.6)
-    q(co(zt - 2.0), zt - 2.0, rco)
-    q(co(COPO_ZB + 0.5), COPO_ZB + 0.5, rco)
-    q(co(COPO_ZB) - 0.5, COPO_ZB, rco - 0.5)
-    q(ci(COPO_ZB) + 0.5, COPO_ZB, rci + 0.5)
-    q(ci(COPO_ZB + 0.8), COPO_ZB + 0.8, rci)
-    q(ci(COPO_TETO - 2.0), COPO_TETO - 2.0, rci)
-    q(ci(COPO_TETO) - 2.0, COPO_TETO, rci - 2.0)          # fundo do copo arredondado: lava facil
-    q(0, COPO_TETO, 0)
-    return varre(P, c=(BICO_X, 0.0), n=n), P
+    def c(rho, z):
+        P.append(('c', rho, z))
+    c(0, zt)
+    c(ro(zt) - 2.0, zt)
+    c(ro(zt - 0.6) - 0.6, zt - 0.6)
+    c(ro(zt - 2.0), zt - 2.0)
+    c(ro(COPO_ZB + REBORDO_H + 0.3), COPO_ZB + REBORDO_H + 0.3)
+    c(COPO_RO + REBORDO, COPO_ZB + REBORDO_H)                  # face de trava do rebordo
+    c(COPO_RO + REBORDO, COPO_ZB + 0.3)
+    c(COPO_RO + REBORDO - 0.3, COPO_ZB)
+    c(ri(COPO_ZB) + 0.4, COPO_ZB)
+    c(ri(COPO_ZB + 0.6), COPO_ZB + 0.6)
+    c(ri(COPO_TETO - 3.0), COPO_TETO - 3.0)
+    c(ri(COPO_TETO) - 3.0, COPO_TETO)                          # fundo arredondado: lava facil
+    c(0, COPO_TETO)
+    return varre(P, c=(BICO_X, BICO_Y), n=n), P
 
 
 def copo_ml(ate=None):
     """Volume interno do copo virado, do fundo ate a altura 'ate' (mm)."""
-    rci = GARG_R + VAO_COPO + ANEL_T - COPO_APERTO
     zs = np.linspace(0, COPO_FUNDO if ate is None else ate, 800)
-    a = [(2 * (COPO_CI - (COPO_FUNDO - h) * COPO_SAIDA)) ** 2 - (4 - math.pi) * rci ** 2 for h in zs]
+    a = [math.pi * (COPO_RO - COPO_T - (COPO_FUNDO - h) * COPO_SAIDA) ** 2 for h in zs]
     return float(np.trapezoid(a, zs)) / 1000
 
 
@@ -703,21 +702,27 @@ def verifica():
     ok(abs(folga_parede - NERV_E) < 1e-9, 'passo nao vem da nervura')
     ok(NERV_TOPO > PLUG + 2, 'nervura invade a zona da fita')
     # 6. o beico cabe dentro do copo, com folga, tambem no canto
-    ci_beico = COPO_CI - (GARG_H + BEICO_B - COPO_ZB) * COPO_SAIDA
-    ok(GARG_O + BEICO_A + 0.3 <= ci_beico, 'beico encosta no copo')
+    ri_beico = COPO_RO - COPO_T - (GARG_H + BEICO_B - COPO_ZB) * COPO_SAIDA
+    canto_garg = (GARG_O - GARG_R) * math.sqrt(2) + GARG_R
+    ok(max(GARG_O + BEICO_A, canto_garg) + 0.5 <= ri_beico, 'gargalo ou beico encosta no copo')
     ok(COPO_TETO > GARG_H + BEICO_B + 1.0, 'beico encosta no fundo do copo')
-    # 7. o copo segura pela parede, que flexiona no vao
-    ok(0.1 <= COPO_APERTO <= 0.3, 'aperto do copo fora da faixa')
-    ok(VAO_COPO >= 1.5, 'vao da parede pequeno: nao flexiona nem lava')
     ok(copo_ml() >= 150, f'copo com menos de 150 ml: {copo_ml():.0f}')
-    # 8. o copo senta no rebaixo, e o rebaixo cabe dentro da saia (nos dois eixos)
-    ok(COPO_CI + COPO_T + 0.3 <= REBAIXO_I, 'copo nao entra no rebaixo')
-    lim = saia_int(ABA_H - TAMPA_T)
-    ok(BICO_X + REBAIXO_I + REBAIXO_T + 0.8 <= lim, 'rebaixo encosta na saia (lado do beico)')
-    ok(REBAIXO_I + REBAIXO_T + 0.8 <= lim - DIF, 'rebaixo encosta na saia (lado comprido)')
-    # 8b. os drenos ficam dentro do vao, por dentro da linha de vedacao do copo
-    ok(DRENO_W <= VAO_COPO - 0.6, 'dreno mais largo que o vao')
-    ok(DRENO_L <= 2 * (GARG_O - GARG_R), 'dreno invade o canto')
+    # 7. a trava: o rebordo passa o labio e fica preso; o labio veda
+    ok(COPO_RO + REBORDO > R_LABIO + 0.3, 'rebordo nao trava no labio')
+    ok(0.1 <= LABIO_APERTO <= 0.3, 'aperto do labio fora da faixa')
+    ok(COPO_ZB + REBORDO_H < PISO_Z + Z_LABIO0, 'rebordo nao cabe embaixo do labio')
+    ok((R_PAREDE_I - R_LABIO) / R_PAREDE_I < 0.05, 'labio fundo demais para extrair por arraste')
+    # 8. o bico no canto: parede dentro da tampa, abertura dentro da saia
+    ok(BICO_X + R_PAREDE_O + 1.5 <= U_BORDA, 'parede passa da tampa no comprimento')
+    ok(BICO_Y + R_PAREDE_O + 1.5 <= U_BORDA - DIF, 'parede passa da tampa na largura')
+    lim = saia_int(PISO_Z - TAMPA_T)
+    ok(BICO_X + GARG_O + 2.0 <= lim, 'abertura cai na saia (comprimento)')
+    ok(BICO_Y + GARG_O + 2.0 <= lim - DIF, 'abertura cai na saia (largura)')
+    # 8b. drenos dentro do copo e sobre o interior do pote
+    for (cx, cy), (lx, ly) in drenos():
+        d = math.hypot(cx - BICO_X, cy - BICO_Y) + max(lx, ly) / 2 * 0 + min(lx, ly) / 2
+        ok(d <= COPO_RO - COPO_T - 0.3, 'dreno fora do copo')
+        ok(abs(cx) + lx / 2 + 1 <= lim and abs(cy) + ly / 2 + 1 <= lim - DIF, 'dreno cai na saia')
     # 9. a fita cabe entre a aba e a aleta: 10 mm desenvolvidos
     ok(Z_FENDA_TETO - Z_FENDA_PISO >= 1.5 and Z_ALETA_TOPO - Z_FENDA_TETO >= 1.2, 'aleta ou vao fino demais')
     return erros, p
@@ -737,7 +742,7 @@ def main():
                   'tampa-fechada': varre(tampa_pp()[1], n=96),
                   'tampa-teca': varre(tampa_teca()[1], n=96),
                   'tampa-bico': tampa_bico(96)[0],
-                  'copo': varre(copo()[1], c=(BICO_X, 0), n=96),
+                  'copo': varre(copo()[1], c=(BICO_X, BICO_Y), n=96),
                   'fita-tpe': varre(fita()[1], n=96),
                   'fita-teca': varre(fita_teca()[1], n=96)}
     for nome, T_ in principais.items():
@@ -746,7 +751,7 @@ def main():
             erros.append(f'malha aberta em {nome}: {r} arestas')
     R = relatorio(P_)
     R['copo'] = dict(material='SAN', capacidade_ml=round(copo_ml()), marcas_mm=marcas_copo(),
-                     medida_externa=f'{2 * (COPO_CI + COPO_T):.1f} x {2 * (COPO_CI + COPO_T):.1f} x {COPO_FUNDO + COPO_T + 0.3:.1f}')
+                     medida_externa=f'diametro {2 * (COPO_RO + REBORDO):.1f} x {COPO_FUNDO + COPO_T:.1f} de altura')
     R['verificacoes'] = 'OK' if not erros else erros
     with open(os.path.join(AQUI, 'relatorio.json'), 'w') as f:
         json.dump(R, f, indent=1, ensure_ascii=False)
