@@ -1,4 +1,33 @@
-# Pote modular 13 × 10 cm em SAN, revisão 9
+# Pote modular 13 × 10 cm em SAN, revisão 10
+
+## Revisão 10: copo alto e fino, bico redondo de duas alturas, 2 dentes
+
+Pedido: *"deixe o copo mais alto e mais fino, 150 ml; o bico redondo, com a circunferência dividida
+em 50% mais alta e 50% mais baixa; na boca do copo, 2 dentes que irão travar na tampa."*
+
+- **Copo de SAN alto e fino:** **Ø 55 mm na boca × 79,6 mm** de altura (era Ø 66 × 54), **153 ml**,
+  29,3 g. A profundidade sai calculada para o volume (`_fundo_para`). Marcas a **26,4 / 51,8 / 76,3
+  mm** do fundo para **50 / 100 / 150 ml**. Com o copo mais alto, as marcas ficam mais espaçadas e a
+  dose fica mais precisa.
+- **Bico redondo**, abertura **Ø 36,8 mm** (gargalo Ø 40 por fora). **Metade de trás** (voltada para
+  o centro da tampa) a **19 mm** do tampo. **Metade da frente** (voltada para a borda, lado de
+  verter) **6 mm mais baixa**, a 13 mm, abrindo 0,8 mm para fora, com aresta viva por dentro para
+  cortar a gota. A transição entre as metades fica nos dois lados, em ~±7°. A metade alta funciona
+  como anteparo e o líquido sai pela baixa.
+- **2 dentes na boca do copo**, em lados opostos: **0,6 × 1,2 × 12 mm**, rentes à boca, com chanfro
+  de entrada embaixo e face de trava reta em cima. Passam pelo lábio da parede de PP e ficam presos
+  embaixo dele (clique). Rentes à boca, saem do molde de SAN sem gaveta. Com só dois dentes, a
+  parede ovaliza um pouco em vez de abrir toda, e o clique fica mais leve que com o rebordo inteiro.
+- **A vedação continua no lábio,** que aperta a parede do copo em 0,15 mm em toda a volta.
+- **Bico mais no canto:** centro a 29,5 × 14,5 mm do centro da tampa, porque a parede ficou menor
+  (Ø 60). Dois drenos de 3 × 10 mm dentro do copo, nos lados −X e −Y.
+- Tampa de bico 38,4 g.
+
+**A confirmar no protótipo:** o clique com 2 dentes (ajusta pela saliência do dente, 0,4 a 0,8 mm) e
+se o copo alto fica firme deitado na mão ao dosar sabão em pó.
+
+---
+
 
 ## Revisão 9: um vão só, copo redondo com trava, bico no canto
 
