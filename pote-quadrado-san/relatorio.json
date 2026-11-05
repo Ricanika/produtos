@@ -42,15 +42,15 @@
   },
   "tampa-bico": {
    "material": "PP",
-   "volume_cm3": 40.92,
-   "massa_g": 36.8,
-   "triangulos": 21064
+   "volume_cm3": 40.29,
+   "massa_g": 36.3,
+   "triangulos": 21096
   },
   "copo": {
    "material": "SAN",
-   "volume_cm3": 19.0,
-   "massa_g": 20.5,
-   "triangulos": 4874
+   "volume_cm3": 16.77,
+   "massa_g": 18.1,
+   "triangulos": 4710
   },
   "fita-tpe": {
    "material": "TPE",
@@ -178,14 +178,14 @@
  },
  "copo": {
   "material": "SAN",
-  "capacidade_ml": 102,
+  "capacidade_ml": 103,
   "marcas_mm": {
-   "25": 19.1,
-   "50": 37.6,
-   "75": 55.5,
-   "100": 72.9
+   "25": 9.5,
+   "50": 18.9,
+   "75": 28.2,
+   "100": 37.4
   },
-  "medida_externa": "diametro 46.3 na boca x 75.9 de altura",
+  "medida_externa": "diametro 62.2 na boca x 40.0 de altura",
   "dentes": "2 dentes de 0.6 x 1.2 x 12.0 mm"
  },
  "verificacoes": "OK"

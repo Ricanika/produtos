@@ -1,4 +1,24 @@
-# Pote modular 13 × 10 cm em SAN, revisão 12
+# Pote modular 13 × 10 cm em SAN, revisão 13
+
+## Revisão 13: copo baixo e largo, no máximo 4 cm
+
+Pedido: *"o copinho está alto demais; deixe ele mais baixo, aumente o diâmetro, no máximo 4 cm de
+altura."*
+
+- **Copo de SAN Ø 62,2 × 40,0 mm, 103 ml**, 18,1 g (era Ø 46 × 76). A altura é fixa em 40 mm e o
+  raio sai calculado do volume (`_raio_para`). Marcas a **9,5 / 18,9 / 28,2 / 37,4 mm** do fundo
+  para **25 / 50 / 75 / 100 ml**.
+- **O bico cresceu junto:** com o aro mantido a 3 mm do bico, a abertura foi de Ø 36,8 para
+  **Ø 52,7 mm**. O aro tem Ø 67,4 por fora.
+- **O bico recuou do canto:** o centro foi de (29,5; 14,5) para **(22,6; 7,5) mm**. Agora a posição é
+  calculada: o mais no canto possível com o aro a 1,5 mm da borda da tampa e a abertura 1 mm dentro
+  da saia do plug, para cair no pote. Um bico maior não cabe tão no canto.
+- O bico continua com 19 mm na metade alta e cabe dentro do copo (38,4 mm de fundo). Dentes,
+  lábio, vedação e entalhes de dreno continuam iguais.
+- Tampa de bico 36,3 g. A contra-saída do lábio do aro caiu para 3,7% de deformação (aro maior).
+
+---
+
 
 ## Revisão 12: aro colado no bico (3 mm) e copo de ~100 ml
 

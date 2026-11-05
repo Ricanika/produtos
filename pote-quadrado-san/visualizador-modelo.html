@@ -85,7 +85,7 @@
 
 <div class="sheet">
   <header>
-    <div class="eyebrow">Nitron · produto novo · estudo 3D rev. 12</div>
+    <div class="eyebrow">Nitron · produto novo · estudo 3D rev. 13</div>
     <h1>Pote modular 13 × 10 em SAN</h1>
     <p class="sub">Corpo em SAN cristal, 13 × 10 cm por fora na borda, uma boca para as quatro alturas e uma tampa de PP com uma fita de TPE de 2 × 10 mm. Três tampas: fechada, teca e bico com copo. As paredes têm 2° de saída por face, e é isso que deixa os potes entrarem um no outro no frete.</p>
   </header>
@@ -147,7 +147,7 @@
     </div>
     <div class="bloco">
       <h2>Três tampas, uma fita</h2>
-      <p><b>Fechada</b>, em PP, sem orelha: abre pela aba. <b>Teca</b> maciça usinada em CNC, com a mesma fita numa cava (aleta de 1 mm em madeira quebraria), escavada por baixo. <b>Bico</b>: redondo, num canto da tampa, com abertura de Ø 37 mm. A metade voltada para a borda é a alta (19 mm): é por ela que o líquido sai. A metade voltada para o centro é 6 mm mais baixa. O aro que segura o copo fica a <b>3 mm</b> do bico. O <b>copo medidor é de SAN</b>, Ø 46 × 76 mm, com 102 ml e marcas de 25, 50, 75 e 100 ml. Ele senta entre o bico e o aro e trava com <b>2 dentes</b> na boca, que passam pelo lábio do aro e ficam presos embaixo dele. O lábio também veda o copo em volta. O que escorre do copo entra por 4 entalhes no pé do bico e cai no pote.</p>
+      <p><b>Fechada</b>, em PP, sem orelha: abre pela aba. <b>Teca</b> maciça usinada em CNC, com a mesma fita numa cava (aleta de 1 mm em madeira quebraria), escavada por baixo. <b>Bico</b>: redondo, num canto da tampa, com abertura de Ø 53 mm. A metade voltada para a borda é a alta (19 mm): é por ela que o líquido sai. A metade voltada para o centro é 6 mm mais baixa. O aro que segura o copo fica a <b>3 mm</b> do bico. O <b>copo medidor é de SAN</b>, baixo e largo: Ø 62 × 40 mm, com 103 ml e marcas de 25, 50, 75 e 100 ml. Ele senta entre o bico e o aro e trava com <b>2 dentes</b> na boca, que passam pelo lábio do aro e ficam presos embaixo dele. O lábio também veda o copo em volta. O que escorre do copo entra por 4 entalhes no pé do bico e cai no pote.</p>
       <p>A fechada e a de bico podem sair do mesmo molde, trocando o postiço do tampo.</p>
     </div>
   </div>
@@ -196,7 +196,7 @@ const D = __DADOS__;
     tr.innerHTML = `<td class="mono">${fmt(a.altura)} mm</td><td class="mono">${a.n}</td><td class="mono">${fmt(a.solto)} mm</td><td class="mono">${fmt(a.aninhado)} mm</td><td class="mono">${a.ganho_pct}%</td>`;
     tn.appendChild(tr);
   });
-  const nomes = {'corpo-1':'Corpo 57','corpo-2':'Corpo 114','corpo-3':'Corpo 171','corpo-4':'Corpo 228','tampa-fechada':'Tampa fechada','tampa-teca':'Tampa de teca','tampa-bico':'Tampa de bico','copo':'Copo medidor (102 ml, Ø 46 × 76)','fita-tpe':'Fita de vedação (fechada)','fita-solta':'Fita de vedação (solta, reta)','fita-teca':'Fita de vedação (na teca)'};
+  const nomes = {'corpo-1':'Corpo 57','corpo-2':'Corpo 114','corpo-3':'Corpo 171','corpo-4':'Corpo 228','tampa-fechada':'Tampa fechada','tampa-teca':'Tampa de teca','tampa-bico':'Tampa de bico','copo':'Copo medidor (103 ml, Ø 62 × 40)','fita-tpe':'Fita de vedação (fechada)','fita-solta':'Fita de vedação (solta, reta)','fita-teca':'Fita de vedação (na teca)'};
   const proc = {SAN:'injeção', PP:'injeção', teca:'CNC', TPE:'extrusão, corte e solda (ou injeção)'};
   const tp = document.querySelector('#t-pecas tbody');
   Object.entries(R.pecas).forEach(([k,p]) => {
@@ -269,7 +269,7 @@ const D = __DADOS__;
     tampas:{t:'Três tampas na mesma boca', d:'Fechada (PP) · teca maciça (CNC) · bico com copo medidor de SAN. A fita de TPE é a mesma nas três.', fazer(){
       ['fechada','teca','bico'].forEach((t,i)=>{ const x=-160+160*i; poe('corpo-1',x,0); tampa(t,x,H[0]); });
     }, alvo:[0,50,0], dist:720, az:.35, el:.55},
-    bico:{t:'Bico e copo', d:'Bico redondo num canto: metade de fora alta, por onde o líquido sai, e metade de dentro 6 mm mais baixa. O aro fica a 3 mm do bico. O copo de SAN (Ø 46 × 76 mm, 102 ml) trava com 2 dentes no lábio do aro.', fazer(){
+    bico:{t:'Bico e copo', d:'Bico redondo num canto: metade de fora alta, por onde o líquido sai, e metade de dentro 6 mm mais baixa. O aro fica a 3 mm do bico. O copo de SAN (Ø 62 × 40 mm, 103 ml) trava com 2 dentes no lábio do aro.', fazer(){
       poe('corpo-1',-85,0); tampa('bico',-85,H[0],false);
       poe('corpo-1',85,0); tampa('bico',85,H[0]);
     }, alvo:[0,75,0], dist:440, az:-.35, el:.45},

@@ -100,33 +100,40 @@ ABA_H = 3.0     # aba da tampa acima da borda = profundidade do bolsao
 # e por onde verte. Copo MAIS ALTO E MAIS FINO, 150 ml, com DOIS DENTES na
 # boca que passam pelo labio da parede e travam embaixo dele (clique). O
 # labio continua sendo a vedacao, em volta toda do copo.
-BICO_X, BICO_Y = 29.5, 14.5                   # centro do bico: canto +X +Y da tampa
-GARG_O, GARG_T = 20.0, 1.6                    # gargalo redondo: abertura Ø36,8
 PISO_Z = ABA_H                                # o vao e o proprio tampo
-GARG_ALTO = 19.0                              # metade de tras: 19 mm sobre o tampo
-GARG_DESNIVEL = 6.0                           # metade da frente: 6 mm mais baixa
+GARG_T = 1.6
+GARG_ALTO = 19.0                              # metade alta: 19 mm sobre o tampo
+GARG_DESNIVEL = 6.0                           # a outra metade: 6 mm mais baixa
 GARG_H = PISO_Z + GARG_ALTO
 BEICO_A = 0.3                                 # a metade alta abre 0,3 para fora: solta a gota
 MEIA_W = 0.12                                 # transicao entre as metades (~ +-7 graus)
-# rev. 12: o ARO (labio da parede) fica a 3 mm do bico; o copo cai para ~100 ml
+# rev. 13: copo BAIXO E LARGO - no maximo 4 cm de altura, ~100 ml. O raio sai
+# calculado do volume. O aro continua a 3 mm do bico, entao o BICO cresce junto
+# com o copo, e o centro do bico vai o mais para o canto que a tampa deixa.
 VAO_ARO = 3.0                                 # do bico ate o labio do aro
 LABIO_APERTO = 0.15
-COPO_RO = GARG_O + VAO_ARO + LABIO_APERTO     # 23,15: raio externo do copo na boca
 COPO_T = 1.6                                  # parede de SAN
 COPO_SAIDA = math.tan(math.radians(1.0))      # 1 grau por face
 COPO_ML_ALVO = 102.0                          # 100 ml na marca, com folga
+COPO_ALTURA_MAX = 40.0                        # altura total do copo, por fora
+COPO_FUNDO = COPO_ALTURA_MAX - COPO_T         # profundidade interna
 
 
-def _fundo_para(ml):
-    lo, hi = 10.0, 200.0
+def _ml(ro, fundo):
+    return sum(math.pi * (ro - COPO_T - (fundo - h) * COPO_SAIDA) ** 2
+               for h in np.linspace(0, fundo, 400)) * fundo / 400 / 1000
+
+
+def _raio_para(ml, fundo):
+    lo, hi = 10.0, 60.0
     for _ in range(60):
-        d = (lo + hi) / 2
-        v = sum(math.pi * (COPO_RO - COPO_T - (d - h) * COPO_SAIDA) ** 2 for h in np.linspace(0, d, 400)) * d / 400 / 1000
-        lo, hi = (d, hi) if v < ml else (lo, d)
-    return round(hi, 1)
+        r = (lo + hi) / 2
+        lo, hi = (r, hi) if _ml(r, fundo) < ml else (lo, r)
+    return round(hi + 0.05, 1)
 
 
-COPO_FUNDO = _fundo_para(COPO_ML_ALVO)        # profundidade interna, calculada
+COPO_RO = _raio_para(COPO_ML_ALVO, COPO_FUNDO)   # raio externo do copo na boca, calculado
+GARG_O = COPO_RO - LABIO_APERTO - VAO_ARO        # o bico acompanha: aro sempre a 3 mm
 COPO_ZB = PISO_Z + 0.3
 COPO_TETO = COPO_ZB + COPO_FUNDO
 DENTE = 0.6                                   # quanto o dente sai da parede do copo
@@ -134,9 +141,14 @@ DENTE_H, DENTE_L = 1.2, 12.0                  # altura e largura de cada dente
 PAREDE_FOLGA = 0.4
 PAREDE_T = 1.6
 PAREDE_H = 5.5
-R_PAREDE_I = COPO_RO + DENTE + PAREDE_FOLGA   # 24,15
-R_LABIO = COPO_RO - LABIO_APERTO              # 23,0 = bico + 3
-R_PAREDE_O = R_PAREDE_I + PAREDE_T            # 25,75
+R_PAREDE_I = COPO_RO + DENTE + PAREDE_FOLGA
+R_LABIO = COPO_RO - LABIO_APERTO              # = bico + 3
+R_PAREDE_O = R_PAREDE_I + PAREDE_T
+# centro do bico: o mais no canto +X +Y que a tampa deixa - o aro a 1,5 da
+# borda da tampa, e a abertura 1 mm dentro da saia do plug (cai no pote)
+_saia = U_I - FENDA_FUNDO - SAIA_PLUG_T
+BICO_X = round(min(U_BORDA - R_PAREDE_O - 1.5, _saia - GARG_O - 1.0) - 0.2, 1)
+BICO_Y = round(min(U_BORDA - DIF - R_PAREDE_O - 1.5, _saia - DIF - GARG_O - 1.0) - 0.2, 1)
 Z_LABIO0, Z_LABIO1 = 1.9, 2.9
 DRENO_L, DRENO_H = 6.0, 1.2                   # 4 entalhes no pe do bico: largura, altura
 
@@ -820,7 +832,7 @@ def verifica():
     ok(GARG_O + BEICO_A + 0.5 <= ri_topo, 'bico encosta no copo')
     ok(COPO_TETO > GARG_H + 1.0, 'bico encosta no fundo do copo')
     ok(copo_ml() >= 100, f'copo com menos de 100 ml: {copo_ml():.0f}')
-    ok(COPO_FUNDO / (2 * COPO_RO) > 1.2, 'copo nao ficou mais alto que largo')
+    ok(COPO_FUNDO + COPO_T <= COPO_ALTURA_MAX + 1e-9, 'copo passa de 4 cm de altura')
     ok(GARG_DESNIVEL >= 3 and GARG_ALTO - GARG_DESNIVEL >= 8, 'metades do bico mal definidas')
     # 7. a trava: os 2 dentes passam o labio e ficam presos; o labio veda
     ok(COPO_RO + DENTE > R_LABIO + 0.3, 'dente nao trava no labio')
