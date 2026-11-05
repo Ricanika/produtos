@@ -106,12 +106,15 @@ PISO_Z = ABA_H                                # o vao e o proprio tampo
 GARG_ALTO = 19.0                              # metade de tras: 19 mm sobre o tampo
 GARG_DESNIVEL = 6.0                           # metade da frente: 6 mm mais baixa
 GARG_H = PISO_Z + GARG_ALTO
-BEICO_A = 0.8                                 # a metade baixa abre 0,8 para fora: solta a gota
+BEICO_A = 0.3                                 # a metade alta abre 0,3 para fora: solta a gota
 MEIA_W = 0.12                                 # transicao entre as metades (~ +-7 graus)
-COPO_RO = 27.5                                # raio externo do copo na boca (Ø55)
-COPO_T = 1.8                                  # parede de SAN
+# rev. 12: o ARO (labio da parede) fica a 3 mm do bico; o copo cai para ~100 ml
+VAO_ARO = 3.0                                 # do bico ate o labio do aro
+LABIO_APERTO = 0.15
+COPO_RO = GARG_O + VAO_ARO + LABIO_APERTO     # 23,15: raio externo do copo na boca
+COPO_T = 1.6                                  # parede de SAN
 COPO_SAIDA = math.tan(math.radians(1.0))      # 1 grau por face
-COPO_ML_ALVO = 153.0                          # 150 ml na marca, com folga
+COPO_ML_ALVO = 102.0                          # 100 ml na marca, com folga
 
 
 def _fundo_para(ml):
@@ -128,15 +131,14 @@ COPO_ZB = PISO_Z + 0.3
 COPO_TETO = COPO_ZB + COPO_FUNDO
 DENTE = 0.6                                   # quanto o dente sai da parede do copo
 DENTE_H, DENTE_L = 1.2, 12.0                  # altura e largura de cada dente
-LABIO_APERTO = 0.15
 PAREDE_FOLGA = 0.4
 PAREDE_T = 1.6
 PAREDE_H = 5.5
-R_PAREDE_I = COPO_RO + DENTE + PAREDE_FOLGA   # 28,5
-R_LABIO = COPO_RO - LABIO_APERTO              # 27,35
-R_PAREDE_O = R_PAREDE_I + PAREDE_T            # 30,1
+R_PAREDE_I = COPO_RO + DENTE + PAREDE_FOLGA   # 24,15
+R_LABIO = COPO_RO - LABIO_APERTO              # 23,0 = bico + 3
+R_PAREDE_O = R_PAREDE_I + PAREDE_T            # 25,75
 Z_LABIO0, Z_LABIO1 = 1.9, 2.9
-DRENO_L, DRENO_W = 10.0, 3.0
+DRENO_L, DRENO_H = 6.0, 1.2                   # 4 entalhes no pe do bico: largura, altura
 
 N_ANEL = 240    # pontos por anel no STL
 N_VIEW = 144    # pontos por anel no visualizador
@@ -472,19 +474,30 @@ def tampa_bico(n=N_ANEL):
 
 
 def drenos():
-    """Centro e tamanho dos drenos: lados -X e -Y do gargalo, os que caem
-    sobre o interior do pote (os de +X e +Y cairiam na saia)."""
-    meio = (GARG_O + 0.5 + COPO_RO - COPO_T) / 2
-    return [((BICO_X - meio, BICO_Y), (DRENO_W, DRENO_L)),
-            ((BICO_X, BICO_Y - meio), (DRENO_L, DRENO_W))]
+    """Os 4 drenos sao ENTALHES no pe do bico (rev. 12). Com o aro a 3 mm nao
+    sobra piso entre o bico e o copo para furar, entao o que escorre entra
+    pela base do bico e cai no pote pela propria abertura. Cada entalhe corta
+    o piso e o pe da parede do bico, de baixo ate DRENO_H acima do tampo:
+    sai do molde com um macho por baixo (encosto), sem gaveta."""
+    r0 = GARG_O - GARG_T - 1.0                 # comeca dentro da abertura
+    r1 = COPO_RO - COPO_T - 0.2                # termina antes da parede do copo
+    out = []
+    for k in range(4):
+        a = k * math.pi / 2 + math.pi / 4      # nas diagonais: longe do labio alto do bico
+        rm = (r0 + r1) / 2
+        out.append(((BICO_X + rm * math.cos(a), BICO_Y + rm * math.sin(a)), a, r1 - r0))
+    return out
 
 
 def com_drenos(T_):
     import manifold3d as mf
     m = para_manifold(T_)
-    zc = PISO_Z - TAMPA_T / 2
-    for (cx, cy), (lx, ly) in drenos():
-        m = m - mf.Manifold.cube([lx, ly, TAMPA_T + 2.0], True).translate([cx, cy, zc])
+    z0 = PISO_Z - TAMPA_T - 1.0
+    h = TAMPA_T + 1.0 + DRENO_H
+    for (cx, cy), a, comp in drenos():
+        furo = (mf.Manifold.cube([comp, DRENO_L, h], True).rotate([0, 0, math.degrees(a)])
+                .translate([cx, cy, z0 + h / 2]))
+        m = m - furo
     return de_manifold(m)
 
 
@@ -561,7 +574,7 @@ def copo_ml(ate=None):
 def marcas_copo():
     """Altura das marcas de 50/100/150 ml, medida do fundo do copo virado."""
     out = {}
-    for ml in (50, 100, 150):
+    for ml in (25, 50, 75, 100):
         lo, hi = 0.0, COPO_FUNDO
         for _ in range(40):
             m = (lo + hi) / 2
@@ -806,7 +819,7 @@ def verifica():
     ri_topo = COPO_RO - COPO_T - (GARG_H - COPO_ZB) * COPO_SAIDA
     ok(GARG_O + BEICO_A + 0.5 <= ri_topo, 'bico encosta no copo')
     ok(COPO_TETO > GARG_H + 1.0, 'bico encosta no fundo do copo')
-    ok(copo_ml() >= 150, f'copo com menos de 150 ml: {copo_ml():.0f}')
+    ok(copo_ml() >= 100, f'copo com menos de 100 ml: {copo_ml():.0f}')
     ok(COPO_FUNDO / (2 * COPO_RO) > 1.2, 'copo nao ficou mais alto que largo')
     ok(GARG_DESNIVEL >= 3 and GARG_ALTO - GARG_DESNIVEL >= 8, 'metades do bico mal definidas')
     # 7. a trava: os 2 dentes passam o labio e ficam presos; o labio veda
@@ -821,10 +834,10 @@ def verifica():
     ok(BICO_X + GARG_O + 1.0 <= lim, 'abertura cai na saia (comprimento)')
     ok(BICO_Y + GARG_O + 1.0 <= lim - DIF, 'abertura cai na saia (largura)')
     # 8b. drenos dentro do copo e sobre o interior do pote
-    for (cx, cy), (lx, ly) in drenos():
-        d = math.hypot(cx - BICO_X, cy - BICO_Y) + max(lx, ly) / 2 * 0 + min(lx, ly) / 2
-        ok(d <= COPO_RO - COPO_T - 0.3, 'dreno fora do copo')
-        ok(abs(cx) + lx / 2 + 1 <= lim and abs(cy) + ly / 2 + 1 <= lim - DIF, 'dreno cai na saia')
+    for (cx, cy), a_, comp in drenos():
+        ok(math.hypot(cx - BICO_X, cy - BICO_Y) + comp / 2 <= COPO_RO - COPO_T, 'dreno fora do copo')
+        ok(abs(cx) + comp / 2 + 1 <= lim and abs(cy) + comp / 2 + 1 <= lim - DIF, 'dreno cai na saia')
+    ok(abs(R_LABIO - GARG_O - VAO_ARO) < 1e-9 and VAO_ARO <= 3.5, 'aro longe do bico')
     # 9. a fita cabe entre a aba e a aleta: 10 mm desenvolvidos
     ok(Z_FENDA_TETO - Z_FENDA_PISO >= 1.5 and Z_ALETA_RAIZ - Z_FENDA_TETO >= 1.2, 'aleta ou vao fino demais')
     return erros, p

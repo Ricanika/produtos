@@ -1,4 +1,28 @@
-# Pote modular 13 × 10 cm em SAN, revisão 11
+# Pote modular 13 × 10 cm em SAN, revisão 12
+
+## Revisão 12: aro colado no bico (3 mm) e copo de ~100 ml
+
+Pedido: *"o aro de fora do bico está longe do bico, queria algo mais colado, com um espaço de
+aproximadamente 3 mm; diminua a altura do copo para aproximadamente 100 ml."*
+
+- **Aro a 3,0 mm do bico:** o lábio do aro agora fica em R 23,0, com o bico em R 20,0 (era 7,35 mm).
+  O aro inteiro tem Ø 51,5 por fora (era Ø 60,2).
+- **Copo de SAN de 102 ml:** **Ø 46,3 × 75,9 mm**, parede de 1,6, 20,5 g (era Ø 55 × 80, 153 ml).
+  Marcas a **19,1 / 37,6 / 55,5 / 72,9 mm** do fundo para **25 / 50 / 75 / 100 ml**. O copo continua
+  com os 2 dentes na boca e a vedação no lábio.
+- **Drenos viraram entalhes no pé do bico.** Com o aro a 3 mm sobra só ~1 mm de piso entre o bico e a
+  parede do copo, pouco para um furo. São **4 entalhes de 6 mm de largura e 1,2 mm de altura** na base
+  do bico, nas diagonais. O que escorre do copo entra pela base do bico e cai no pote pela própria
+  abertura. Continuam dentro do copo, por dentro da vedação. No molde, cada entalhe sai com um
+  macho por baixo encostando no de cima, sem gaveta.
+- O lábio do bico abre menos para fora (0,3 mm) para caber no copo mais estreito.
+- Tampa de bico 36,8 g.
+
+**A conferir com a ferramentaria:** o lábio do aro é contra-saída de 1,15 mm num anel de Ø 48 (4,8%
+de deformação para extrair por arraste), mais perto do limite que antes (2,8%).
+
+---
+
 
 ## Revisão 11: bico invertido, fita reta que dobra ao fechar, aleta afundada
 
