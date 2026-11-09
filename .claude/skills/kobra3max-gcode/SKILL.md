@@ -18,7 +18,8 @@ Arquivos do PrusaSlicer, Cura etc. são recusados pela Kobra 3 Max com
 PrusaSlicer usando os valores do **perfil oficial da Kobra 3 Max**
 (`profiles/*.json`, extraídos do Anycubic Slicer Next 2.0.0.6) e reescreve o
 arquivo nesse formato. O início usa o macro oficial `G9111`, que aquece, faz o
-home, nivela e limpa o bico.
+home, nivela e limpa o bico, seguido de `T0`: sem ele o firmware fica preso em
+"analisando" (OrcaSlicer issues #12444 e #12952).
 
 ## Passos
 

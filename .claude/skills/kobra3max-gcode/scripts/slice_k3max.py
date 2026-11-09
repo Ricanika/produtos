@@ -237,6 +237,14 @@ def serialize(v):
 
 
 # ---------------------------------------------------------------- G-code
+# nomes de ;TYPE: do PrusaSlicer -> nomes do Anycubic Slicer Next / OrcaSlicer
+TYPE_NAMES = {'Skirt/Brim': 'Skirt', 'Perimeter': 'Inner wall', 'External perimeter': 'Outer wall',
+              'Overhang perimeter': 'Overhang wall', 'Internal infill': 'Sparse infill',
+              'Solid infill': 'Internal solid infill', 'Top solid infill': 'Top surface',
+              'Bridge infill': 'Bridge', 'Gap fill': 'Gap infill', 'Support material': 'Support',
+              'Support material interface': 'Support interface'}
+
+
 def to_anycubic(raw, full, T, model_name):
     body = raw.split('\n')
     stats, out_body, layers = {}, [], 0
@@ -257,6 +265,13 @@ def to_anycubic(raw, full, T, model_name):
         if line.startswith('EXCLUDE_OBJECT'):
             # nomes de objeto sem aspas, como o Anycubic Slicer Next grava
             line = re.sub(r"NAME='([^']*)'", lambda g: 'NAME=' + re.sub(r'\W', '_', g.group(1)), line)
+        elif line.startswith(';TYPE:'):
+            line = ';TYPE:' + TYPE_NAMES.get(line[6:], line[6:])
+        elif line == '; Filament gcode':
+            # sem um T0 inicial o firmware fica preso em "analisando"
+            # (OrcaSlicer issues #12444 e #12952)
+            out_body += ['; filament start gcode', 'T0']
+            continue
         out_body.append(line)
         if line == ';LAYER_CHANGE':
             layers += 1
